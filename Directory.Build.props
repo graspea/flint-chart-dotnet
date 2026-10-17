@@ -1,0 +1,57 @@
+<Project>
+  <!-- Build settings shared by every project. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <!-- Package metadata. PackageId, Title and Description live in each .csproj. -->
+  <PropertyGroup>
+    <Authors>GRASPEA</Authors>
+    <Company>GRASPEA s.r.o.</Company>
+    <Copyright>Copyright (c) 2026 GRASPEA s.r.o.</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/graspea/flint-dotnet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/graspea/flint-dotnet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <!-- Symbols as a .snupkg next to the .nupkg; release.yml pushes both. -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageTags>flint;flint-chart;flintchart;chartassemblyinput;chart;charts;charting;visualization;dataviz;data-visualization;vega;vegalite;vega-lite;echarts;chartjs;plotly;semantic;fluent;sdk;json;ai;llm;agent</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' != 'false'">
+    <None Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="\" Visible="false" />
+    <!-- The flint-chart MIT notice: the generated code, docs, catalog and AGENTS.md derive from flint-chart. -->
+    <None Include="$(MSBuildThisFileDirectory)THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="$(IntermediateOutputPath)README.pack.md" Pack="true" PackagePath="README.md" Visible="false" />
+    <!-- Both written by the generator (npm run generate); scripts/check-nupkg.sh asserts that the nupkg contains them. -->
+    <None Include="$(MSBuildThisFileDirectory)docs/package/AGENTS.md" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="$(MSBuildThisFileDirectory)src/Graspea.Flint/Generated/catalog.json" Pack="true" PackagePath="catalog/" Visible="false" />
+  </ItemGroup>
+
+  <!--
+    Writes the packed README: README.md without the generated-section marker lines
+    (<!- - flint:generated:<id> start/end - ->), so packing needs no Node.
+    ReadLinesFromFile is not used because it drops blank lines and leading whitespace.
+  -->
+  <Target Name="FlintWritePackReadme" BeforeTargets="GenerateNuspec" Condition="'$(IsPackable)' != 'false'">
+    <PropertyGroup>
+      <_FlintReadme>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)README.md'))</_FlintReadme>
+      <_FlintReadme>$([System.Text.RegularExpressions.Regex]::Replace($(_FlintReadme), '(?m)^&lt;!-- flint:generated:[a-z0-9-]+ (start|end) --&gt;\r?\n', ''))</_FlintReadme>
+    </PropertyGroup>
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+    <WriteLinesToFile File="$(IntermediateOutputPath)README.pack.md" Lines="$([MSBuild]::Escape($(_FlintReadme.TrimEnd())))" Overwrite="true" WriteOnlyWhenDifferent="true" />
+  </Target>
+</Project>

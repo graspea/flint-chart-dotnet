@@ -1,0 +1,35 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{json,jsonl,yml,yaml,props,targets,csproj,slnx,config,xml}]
+indent_size = 2
+
+[*.{ts,mts,js,mjs}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.cs]
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_using_directive_placement = outside_namespace
+dotnet_sort_system_directives_first = true
+csharp_prefer_braces = true
+csharp_style_var_for_built_in_types = true
+csharp_style_var_when_type_is_apparent = true
+csharp_new_line_before_open_brace = all
+
+# Public API tracking: every public symbol is declared in PublicAPI.*.txt.
+dotnet_diagnostic.RS0016.severity = error
+dotnet_diagnostic.RS0017.severity = error
+# The fixed overload sets (FlintJson.Serialize, ChartData.FromRows, the fluent API) use optional parameters on
+# purpose; RS0027 fires on FlintJson.Serialize and ChartData.FromRows, so it is disabled with RS0026 (design §8.6).
+dotnet_diagnostic.RS0026.severity = none
+dotnet_diagnostic.RS0027.severity = none

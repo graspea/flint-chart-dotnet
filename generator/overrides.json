@@ -1,0 +1,84 @@
+{
+  "$schema": "./overrides.schema.json",
+  "unions": {
+    "AssembleOptions.continuousMarkCrossSection": "Graspea.Flint.ContinuousMarkCrossSection",
+    "Radar Chart/property/filled": "JsonNode",
+    "ThemeChartDefaults{*}{*}": "JsonNode",
+    "ThemeCompileDefaults.continuousMarkCrossSection": "Graspea.Flint.ContinuousMarkCrossSection",
+    "TypeRole.size": "JsonNode"
+  },
+  "flatten": [
+    "ThemeVariant.then"
+  ],
+  "dedup": {
+    "Graspea.Flint.ChartSize": [
+      "AssembleOptions.facetFixedPadding",
+      "ThemeCompileDefaults.baseSize",
+      "ThemeCompileDefaults.canvasSize",
+      "ThemeCompileDefaults.facetFixedPadding"
+    ]
+  },
+  "renames": {
+    "Boxplot/enum/whiskerMethod/minmax": "MinMax",
+    "Regression/enum/regressionMethod": "RegressionMethod",
+    "Tree/enum/orient/LR": "LeftToRight",
+    "Tree/enum/orient/TB": "TopToBottom",
+    "catalog.semanticTypes[Name]": "NameType",
+    "catalog.themePresets[powerbi-light]": "PowerBiLight",
+    "catalog.themePresets[powerbi]": "PowerBi"
+  },
+  "docs": {
+    "AssembleOptions": "The Excel backend reads no member of these options.",
+    "AssembleOptions.maxStretch": "When this member is absent, the flint-chart 0.5.1 layout uses 1.5 (src/core/compute-layout.ts:178), not the 2 stated above.",
+    "ThemeCompileDefaults.maxStretch": "When this member is absent, the flint-chart 0.5.1 layout uses 1.5 (src/core/compute-layout.ts:178), not the 2 stated above.",
+    "ThemeSpec": "Applied by the Vega-Lite and Plotly backends; the ECharts, Chart.js and Excel backends ignore theme_spec (recorded probe against flint-chart 0.5.1)."
+  },
+  "backendsApplyingTheme": [
+    "vegalite",
+    "plotly"
+  ],
+  "hostStateKeys": [
+    "facetColumns",
+    "pivot",
+    "sort",
+    "colorScheme",
+    "arrange",
+    "chartType",
+    "xAxisType",
+    "yAxisType",
+    "showValueLabels",
+    "showTextLabels"
+  ],
+  "ignoredOptions": {
+    "bandStepFitCapacityX": [
+      "vegalite",
+      "echarts",
+      "chartjs",
+      "plotly"
+    ],
+    "bandStepFitCapacityY": [
+      "vegalite",
+      "echarts",
+      "chartjs",
+      "plotly"
+    ],
+    "facetColumns": [
+      "vegalite",
+      "echarts",
+      "chartjs",
+      "plotly"
+    ],
+    "maxStretchX": [
+      "vegalite",
+      "echarts",
+      "chartjs",
+      "plotly"
+    ],
+    "maxStretchY": [
+      "vegalite",
+      "echarts",
+      "chartjs",
+      "plotly"
+    ]
+  }
+}

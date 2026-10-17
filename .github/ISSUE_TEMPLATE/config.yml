@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/graspea/flint-dotnet/security/advisories/new
+    about: Report vulnerabilities privately, never in a public issue (SECURITY.md).
+  - name: A problem in flint-chart or flint-chart-mcp
+    url: https://github.com/microsoft/flint-chart/issues
+    about: Rendering, layout and the MCP server belong to the upstream project.

@@ -1,0 +1,33 @@
+{
+  "name": "flint-dotnet-generator",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Generates the Graspea.Flint IR, C# sources, docs and fixtures from the pinned flint-chart package.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "extract": "node --import tsx src/cli.ts extract",
+    "emit": "node --import tsx src/cli.ts emit",
+    "fixtures": "node --import tsx src/cli.ts fixtures",
+    "install-upstream": "node scripts/install-upstream.mjs",
+    "generate": "node --import tsx src/cli.ts generate",
+    "probes": "node --import tsx src/cli.ts probes",
+    "crosscheck": "node --import tsx src/extract/crosscheck.ts",
+    "ir-diff": "node --import tsx src/cli.ts ir-diff",
+    "upstream-report": "node --import tsx scripts/upstream-report.mjs",
+    "test": "node --import tsx --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "flint-chart": "0.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "ajv": "8.20.0",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

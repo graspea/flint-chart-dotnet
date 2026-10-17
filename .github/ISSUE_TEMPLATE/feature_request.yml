@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest an addition to the API, the validator or the documentation.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Chart types, channels, properties, semantic types and theme presets are generated from flint-chart; new ones arrive with the upstream release that adds them.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What you are trying to do, and what stops you today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: The API or behaviour you would like, ideally as a C# snippet.
+      render: csharp
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Workarounds you use now, such as Chart.Of, Property or Extensions.

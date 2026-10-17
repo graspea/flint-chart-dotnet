@@ -1,0 +1,259 @@
+{
+  "dateParse": {
+    "1": "parses",
+    "2024": "parses",
+    "2024-01-15": "parses",
+    "2024-01-15T10:30:00Z": "parses",
+    "2024-02-30": "parses",
+    "2024-13": "NaN",
+    "East": "NaN",
+    "Jan 2024": "parses",
+    "Mar-Apr": "NaN",
+    "May": "NaN",
+    "Monday January": "NaN",
+    "Sat, Jan": "NaN",
+    "Stage 1": "parses",
+    "now": "NaN"
+  },
+  "nullHandling": {
+    "channel null": {
+      "chartjs": "throws",
+      "echarts": "throws",
+      "excel": "ok",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "chartType unknown": {
+      "chartjs": "throws",
+      "echarts": "throws",
+      "excel": "throws",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "data null": {
+      "chartjs": "throws",
+      "echarts": "throws",
+      "excel": "throws",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "data url only": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "throws",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "data values empty": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "throws",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "data values empty, typed encodings": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "encoding field null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "throws",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "encodings empty": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "throws",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "encodings missing": {
+      "chartjs": "throws",
+      "echarts": "throws",
+      "excel": "throws",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "row null": {
+      "chartjs": "throws",
+      "echarts": "throws",
+      "excel": "throws",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "row null first": {
+      "chartjs": "throws",
+      "echarts": "throws",
+      "excel": "throws",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "row number with an unbound temporal key": {
+      "chartjs": "throws",
+      "echarts": "throws",
+      "excel": "throws",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "row number with temporal x": {
+      "chartjs": "throws",
+      "echarts": "throws",
+      "excel": "throws",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "row number, no temporal key": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "theme_spec null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "tolerated: baseSize null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "tolerated: canvasSize null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "tolerated: chartProperties null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "tolerated: encoding type null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "tolerated: field_display_names null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "tolerated: options null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "tolerated: semantic type value null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "tolerated: semantic_types null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "tolerated: title null": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "tolerated: unknown keys at every level": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    }
+  },
+  "prototypeKeys": {
+    "semantic type \"constructor\" on a bound field": {
+      "chartjs": "throws",
+      "echarts": "throws",
+      "excel": "throws",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "semantic type \"toString\" on an unbound key of the first row": {
+      "chartjs": "throws",
+      "echarts": "throws",
+      "excel": "throws",
+      "plotly": "throws",
+      "vegalite": "throws"
+    },
+    "semantic type \"valueOf\" on no field": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "theme_spec \"constructor\"": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    },
+    "theme_spec extends \"toString\"": {
+      "chartjs": "ok",
+      "echarts": "ok",
+      "excel": "ok",
+      "plotly": "ok",
+      "vegalite": "ok"
+    }
+  },
+  "themeBackends": {
+    "presetChangesOutput": [
+      "vegalite",
+      "plotly"
+    ],
+    "unknownExtendsThrows": [
+      "vegalite",
+      "plotly"
+    ],
+    "unknownPresetThrows": [
+      "vegalite",
+      "plotly"
+    ]
+  },
+  "valueInference": {
+    "DateOnly \"2024-01-15\"": "temporal",
+    "Guid, digit-leading": "nominal",
+    "Guid, letter-leading": "nominal",
+    "TimeOnly \"10:00:00\"": "nominal",
+    "TimeSpan \"1.02:03:04\"": "temporal",
+    "TimeSpan \"2.00:00:00\"": "temporal",
+    "Uri": "nominal",
+    "bool": "nominal",
+    "empty string": "quantitative",
+    "nested object": "nominal",
+    "single-number array": "quantitative"
+  }
+}

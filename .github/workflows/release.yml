@@ -1,0 +1,140 @@
+# Design part 3 §9.6 step 4. A maintainer pushes a v* tag on the release pull request's merge commit; this workflow
+# checks the tag, runs the full CI suite, packs with the tag's version, waits for approval in the nuget environment,
+# publishes through NuGet Trusted Publishing (OIDC, no API key secret) and creates the GitHub release.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # The tag prefix, read by generator/scripts/release-check.mjs and by the upstream sync report; keep it on one line.
+  # The on.push.tags filter above, the tag ruleset and the nuget environment tag policy must change with it
+  # (generator/test/release-check.test.ts checks the filter).
+  TAG_PREFIX: v
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      upstream: ${{ steps.check.outputs.upstream }}
+      prerelease: ${{ steps.check.outputs.prerelease }}
+      latest: ${{ steps.check.outputs.latest }}
+    steps:
+      # Full history and tags: release-check compares the tag with the other release tags (latest).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      # Grammar, first three parts == FlintUpstream.Version == generator pin, CHANGELOG entry present; writes the notes
+      # and whether the tag is the highest stable release.
+      - id: check
+        env:
+          TAG: ${{ github.ref_name }}
+        run: node generator/scripts/release-check.mjs --tag "$TAG" --notes-dir "$RUNNER_TEMP/notes"
+      # Unpublish guard: the pinned upstream version must still be on npm.
+      - env:
+          UPSTREAM: ${{ steps.check.outputs.upstream }}
+        run: npm view "flint-chart@$UPSTREAM" version
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-notes
+          path: ${{ runner.temp }}/notes
+          if-no-files-found: error
+
+  ci:
+    needs: check
+    permissions:
+      contents: read
+    uses: ./.github/workflows/ci.yml
+
+  pack:
+    needs: [check, ci]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      # Package validation runs as part of pack (EnablePackageValidation in Directory.Build.props).
+      - run: dotnet pack src/Graspea.Flint -c Release -p:Version="$VERSION" -o artifacts/pack
+      - run: |
+          test -f "artifacts/pack/Graspea.Flint.$VERSION.nupkg"
+          test -f "artifacts/pack/Graspea.Flint.$VERSION.snupkg"
+      # README, icon, AGENTS.md, catalog/catalog.json, THIRD-PARTY-NOTICES.md present; no package dependencies.
+      - run: scripts/check-nupkg.sh "artifacts/pack/Graspea.Flint.$VERSION.nupkg"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package
+          path: artifacts/pack/
+          if-no-files-found: error
+
+  publish:
+    needs: [check, pack]
+    runs-on: ubuntu-latest
+    # Required reviewer and the Trusted Publishing policy (owner, graspea/flint-dotnet, release.yml, nuget).
+    environment: nuget
+    permissions:
+      id-token: write
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: package
+          path: package
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+      - id: login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ vars.NUGET_USER }}
+      # Pushes the .nupkg and, from the same folder, its .snupkg to the symbol server.
+      - env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: dotnet nuget push "package/Graspea.Flint.$VERSION.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json
+
+  github-release:
+    needs: [check, publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-notes
+          path: notes
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+          PRERELEASE: ${{ needs.check.outputs.prerelease }}
+          LATEST: ${{ needs.check.outputs.latest }}
+        # GitHub marks a new published release Latest unless told otherwise; a fix on an older line must not take it.
+        run: |
+          flags=()
+          if [ "$PRERELEASE" = true ]; then flags+=(--prerelease); fi
+          if [ "$PRERELEASE" != true ] && [ "$LATEST" != true ]; then flags+=(--latest=false); fi
+          gh release create "$TAG" --verify-tag --title "$(cat notes/title.txt)" --notes-file notes/notes.md "${flags[@]}"

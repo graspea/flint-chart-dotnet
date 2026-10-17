@@ -1,0 +1,30 @@
+# Keeps the action SHA pins and the test and generator tooling current. The weekly activity also keeps the scheduled
+# upstream-sync workflow from being disabled after 60 days without repository activity (design part 4). flint-chart in
+# generator/ is never updated here: upstream-sync.yml owns that pin, because a bump needs the gate and regeneration.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      nuget:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /generator
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: flint-chart
+    groups:
+      generator:
+        patterns: ["*"]
