@@ -9,3 +9,4 @@
 #
 # A key is added or removed only through a pull request reviewed by the maintainers team (.github/CODEOWNERS).
 # docs/maintainers.md, "Release signing key", has the steps.
+git@graspea.com namespaces="git" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIqxPD0TotCZgTWqtCI2MBUnz1+rWwsqoRJK0EsqBfR1
