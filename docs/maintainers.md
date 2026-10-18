@@ -81,25 +81,38 @@ Once the repository is public, require approval before workflows run for any out
 gh api --method PUT repos/graspea/flint-chart-dotnet/actions/permissions/fork-pr-contributor-approval -f approval_policy=all_external_contributors
 ```
 
-**Rulesets.** Two repository rulesets, kept as files under `.github/rulesets/` and applied by hand:
+**Rulesets.** Three repository rulesets, kept as files under `.github/rulesets/` and applied by hand:
 
-- `main.json` (branch `main`): changes only through pull requests with one approving review by a code owner (stale approvals dismissed, the last push approved by someone else), only commits with a verified signature, the required status checks `verify-generated`, `dotnet`, `samples` and `contract-node` (the jobs of `ci.yml`) and `dependency-review`, merge or squash (no rebase merge, which GitHub cannot sign), no force push, no deletion, no bypass. Sync pull requests opened by the app run these checks without an approval click; their commits are signed by GitHub as the app's bot (`sign-commits` in `upstream-sync.yml`).
-- `release-tags.json` (tags `refs/tags/v*`): creation, update and deletion restricted, with the team `flint-chart-dotnet-maintainers` as the only bypass actor. The upstream sync app has `contents: write` and must not be able to push a release tag. The file holds `"actor_id": null` because the team's numeric id exists only once the team does; the command below fills it in, and the API refuses the file as it is.
+- `main.json` (branch `main`, no bypass): only commits with a verified signature, linear history, no force push, no deletion. Nobody can bypass it, so every commit on `main` is signed and `main` is never rewritten.
+- `main-review.json` (branch `main`): changes only through pull requests with one approving review by a code owner (stale approvals dismissed, the last push approved by someone else), and the required status checks `verify-generated`, `dotnet`, `samples` and `contract-node` (the jobs of `ci.yml`) and `dependency-review`, on a branch that is up to date with `main`. The team `flint-chart-dotnet-maintainers` is its bypass actor, only so a maintainer can land a pull request by a fast-forward push (below). `main.json` still applies to that push.
+- `release-tags.json` (tags `refs/tags/v*`): creation, update and deletion restricted, with the team `flint-chart-dotnet-maintainers` as the only bypass actor. The upstream sync app has `contents: write` and must not be able to push a release tag.
+
+`main-review.json` and `release-tags.json` hold `"actor_id": null` because the team's numeric id exists only once the team does; the commands below fill it in, and the API refuses the files as they are.
 
 ```
 gh api --method POST repos/graspea/flint-chart-dotnet/rulesets --input .github/rulesets/main.json
 team_id=$(gh api orgs/graspea/teams/flint-chart-dotnet-maintainers --jq .id)
-jq --argjson id "$team_id" '.bypass_actors[0].actor_id = $id' .github/rulesets/release-tags.json \
-  | gh api --method POST repos/graspea/flint-chart-dotnet/rulesets --input -
+for f in main-review release-tags; do
+  jq --argjson id "$team_id" '.bypass_actors[0].actor_id = $id' ".github/rulesets/$f.json" \
+    | gh api --method POST repos/graspea/flint-chart-dotnet/rulesets --input -
+done
 gh api repos/graspea/flint-chart-dotnet/rulesets --jq '.[] | "\(.id) \(.name) \(.target) \(.enforcement)"'
+gh repo edit graspea/flint-chart-dotnet --enable-rebase-merge --enable-merge-commit=false --enable-squash-merge=false
 ```
 
-To change a ruleset later, edit the file in a pull request, then `gh api --method PUT repos/graspea/flint-chart-dotnet/rulesets/<id> --input <file>` (for `release-tags.json` through the same `jq` filter). A pull request author cannot approve their own pull request, so the `main` ruleset needs two maintainers. While there is only one, add the team as a bypass actor that may merge pull requests without the review, and remove it when a second maintainer joins:
+To change a ruleset later, edit the file in a pull request, then `gh api --method PUT repos/graspea/flint-chart-dotnet/rulesets/<id> --input <file>` (for `main-review.json` and `release-tags.json` through the same `jq` filter).
+
+**Landing a pull request.** GitHub's "Rebase and merge" rewrites the commits without signing them, so `main.json` refuses it. A maintainer lands a pull request from a clone instead, once its checks are green and, with two maintainers, another maintainer has approved it:
 
 ```
-jq --argjson id "$team_id" '.bypass_actors = [{"actor_type":"Team","actor_id":$id,"bypass_mode":"pull_request"}]' .github/rulesets/main.json \
-  | gh api --method PUT repos/graspea/flint-chart-dotnet/rulesets/<main ruleset id> --input -
+gh pr checkout <number>
+git rebase --gpg-sign origin/main      # signs every commit as the maintainer; authorship is kept
+git push --force-with-lease            # updates the pull request; CI runs again on the rebased commits
+gh pr checks <number> --watch
+git push origin HEAD:main              # fast-forward; GitHub marks the pull request as merged
 ```
+
+Skip the rebase and the first push when the branch is already on top of `main` and every commit has a verified signature (Dependabot and the upstream sync app sign theirs through GitHub). Push only the exact commit the checks ran on. A fork's branch cannot be force-pushed unless the author allows edits by maintainers; then push the rebased commits to a branch of this repository and land that.
 
 **Security features (once the repository is public).** All free on a public repository. Secret scanning with push protection, Dependabot alerts and security updates, private vulnerability reporting (`SECURITY.md` points reporters there), and code scanning through the advanced setup in `codeql.yml`, so the default setup stays off (with it on, GitHub rejects the uploads from `codeql.yml`):
 
@@ -243,7 +256,7 @@ Release tags are annotated and signed with the maintainer's SSH key; `release.ym
    echo "<email> namespaces=\"git\" $(cut -d' ' -f1,2 ~/.ssh/flint_signing.pub)" >> .github/allowed_signers
    ```
 
-   The first key is added the same way before the rulesets are applied, or with the single-maintainer bypass above. To retire a key, remove its line in a pull request. Once that is merged the key is revoked: a tag it signed, also an earlier one whose run is repeated, no longer passes, because the key must also be listed in the file on `main`.
+   The first key is added the same way and landed by a fast-forward push (above). To retire a key, remove its line in a pull request. Once that is merged the key is revoked: a tag it signed, also an earlier one whose run is repeated, no longer passes, because the key must also be listed in the file on `main`.
 
 ## Release checklist
 

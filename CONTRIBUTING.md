@@ -50,8 +50,9 @@ npm run generate -- --check # what CI runs: fails when a committed file differs 
 
 - English, a short imperative subject (`Add the docs emitter`), one topic per commit.
 - No co-author trailers and no tool attribution.
-- Signed commits: `main` accepts only commits with a verified signature. Sign with an SSH or GPG key that your GitHub account lists as a signing key (for SSH: `git config gpg.format ssh`, `git config user.signingkey ~/.ssh/id_ed25519.pub`, `git config commit.gpgsign true`). A pull request with unsigned commits can only be squash-merged, because GitHub signs the squash commit.
+- Signed commits: `main` accepts only commits with a verified signature. Sign with an SSH or GPG key that your GitHub account lists as a signing key (for SSH: `git config gpg.format ssh`, `git config user.signingkey ~/.ssh/id_ed25519.pub`, `git config commit.gpgsign true`). Unsigned commits are fine in a pull request: the maintainer who lands it rebases and signs them.
 - Changes to `main` go through a pull request with an approving review by a code owner (`.github/CODEOWNERS`) and passing checks.
+- `main` has a linear history. A maintainer lands a pull request by rebasing it onto `main`, signing its commits and fast-forwarding `main` to them, so the pull request shows as merged with your authorship kept. There are no merge commits and no squash merges.
 - A pull request describes what changed and why, and passes CI: generated files in sync, `dotnet build -warnaserror`, all tests, the samples and the contract tests.
 
 ## Releases
