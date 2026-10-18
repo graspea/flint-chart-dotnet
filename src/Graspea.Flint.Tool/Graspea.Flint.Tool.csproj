@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PackageId>Graspea.Flint.Tool</PackageId>
+    <Title>Flint.NET spec-to-C# tool</Title>
+    <Description>Unofficial .NET tool for Flint (flint-chart): flint-cs to-csharp converts a Flint ChartAssemblyInput JSON document, such as one an AI agent drafted with flint-chart-mcp, into readable C# that builds the same document with the Graspea.Flint fluent builder or typed model. Install it at the version of the Graspea.Flint package it targets. It does not render charts. Not affiliated with or endorsed by Microsoft.</Description>
+    <RootNamespace>Graspea.Flint.Tool</RootNamespace>
+    <AssemblyName>flint-cs</AssemblyName>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>flint-cs</ToolCommandName>
+    <!-- Runs on any .NET 8 or later runtime (design §12.2). -->
+    <RollForward>Major</RollForward>
+    <!-- One language version for the shared conversion core in every compilation (design §12.2.1). -->
+    <LangVersion>13</LangVersion>
+    <!-- The tool exposes no library API (design §12.8). -->
+    <EnablePackageValidation>false</EnablePackageValidation>
+    <!-- The tool package carries its own README; the library's AGENTS.md and catalog are not packed. -->
+    <FlintLibraryPackage>false</FlintLibraryPackage>
+    <PackageTags>flint;flint-chart;chartassemblyinput;chart;charts;visualization;dataviz;codegen;csharp;dotnet-tool;json;ai;agent</PackageTags>
+    <!-- Not publishable: a release packs with -p:Version from the tag, the same version as Graspea.Flint (design §12.8). -->
+    <Version>0.0.0-local</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../Graspea.Flint.CSharp/**/*.cs" LinkBase="CSharp" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Graspea.Flint/Graspea.Flint.csproj" />
+  </ItemGroup>
+
+</Project>

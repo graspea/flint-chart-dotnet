@@ -1,0 +1,9 @@
+{
+  "cases": 934,
+  "excludedNondeterministic": [],
+  "integrity": "sha512-2JWtwM/rj86SXGZYgNsFzya/VUy5SsG4X+nEeGVndr88MmY+yN0zACi1MotHOSpZ9MZY9R0D/xQiGSTuhQngvQ==",
+  "probeCases": 38,
+  "seed": 42,
+  "tz": "UTC",
+  "upstream": "0.5.1"
+}

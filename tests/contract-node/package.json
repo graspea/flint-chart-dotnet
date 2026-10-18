@@ -1,0 +1,9 @@
+{
+  "name": "flint-chart-dotnet-contract-node",
+  "private": true,
+  "type": "module",
+  "description": "Assembles the emitted samples and the README quick-start document with the pinned flint-chart from the generator's lockfile (node:test).",
+  "scripts": {
+    "test": "node --test \"*.test.js\""
+  }
+}

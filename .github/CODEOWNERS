@@ -1,0 +1,5 @@
+# Reviewers for every change. The team is created once (docs/maintainers.md). The main ruleset requires a code-owner
+# review, so the workflows and the release signing keys cannot change without the maintainers.
+*                        @graspea/flint-chart-dotnet-maintainers
+/.github/                @graspea/flint-chart-dotnet-maintainers
+/.github/allowed_signers @graspea/flint-chart-dotnet-maintainers

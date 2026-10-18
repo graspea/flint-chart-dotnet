@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The source generator sample (design §12.2, §12.9 step 6): mode A and mode B over specs in Charts/. It keeps the
+    net8.0 default language version (C# 12), the consumer floor. The trimming analyzers run (IsAotCompatible) with
+    warnings as errors, so the generated annotations are checked: the mode A calls sit in methods with the same
+    annotations, the mode B calls in methods without any. By default the generator comes from the project, with its
+    build/ targets imported as the package would; -p:FlintGeneratorsFromPackage=true restores the packed generator.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IsAotCompatible>true</IsAotCompatible>
+    <RollForward>Major</RollForward>
+    <!-- The generator's contract is in preview (FLINTEXP001); this project opts in. -->
+    <NoWarn>$(NoWarn);FLINTEXP001</NoWarn>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(FlintGeneratorsFromPackage)' != 'true'">
+    <ProjectReference Include="../../src/Graspea.Flint/Graspea.Flint.csproj" />
+    <ProjectReference Include="../../src/Graspea.Flint.Generators/Graspea.Flint.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(FlintGeneratorsFromPackage)' == 'true'">
+    <PackageReference Include="Graspea.Flint.Generators" VersionOverride="$(FlintGeneratorsVersion)" />
+  </ItemGroup>
+
+  <Import Project="../../src/Graspea.Flint.Generators/build/Graspea.Flint.Generators.targets" Condition="'$(FlintGeneratorsFromPackage)' != 'true'" />
+
+</Project>

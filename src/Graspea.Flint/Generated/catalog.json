@@ -1,0 +1,6040 @@
+{
+  "backends": [
+    "vegalite",
+    "echarts",
+    "chartjs",
+    "plotly",
+    "excel"
+  ],
+  "backendsApplyingTheme": [
+    "vegalite",
+    "plotly"
+  ],
+  "channels": [
+    "x",
+    "y",
+    "x2",
+    "y2",
+    "id",
+    "color",
+    "opacity",
+    "size",
+    "shape",
+    "strokeDash",
+    "column",
+    "row",
+    "latitude",
+    "longitude",
+    "radius",
+    "detail",
+    "group",
+    "open",
+    "high",
+    "low",
+    "close",
+    "angle",
+    "order",
+    "metric",
+    "value",
+    "goal",
+    "theta"
+  ],
+  "chartTypes": [
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "stackMode",
+              "label": "Stack",
+              "options": [
+                {
+                  "label": "Stacked (default)",
+                  "omitted": true
+                },
+                {
+                  "label": "Layered (overlap)",
+                  "value": "layered"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "stackMode",
+              "label": "Stack",
+              "options": [
+                {
+                  "label": "Stacked (default)",
+                  "omitted": true
+                },
+                {
+                  "label": "Normalize (100%)",
+                  "value": "normalize"
+                },
+                {
+                  "label": "Center",
+                  "value": "center"
+                },
+                {
+                  "label": "Layered (overlap)",
+                  "value": "layered"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "vertical": "Area"
+          }
+        },
+        "plotly": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "stackMode",
+              "label": "Stack",
+              "options": [
+                {
+                  "label": "Stacked (default)",
+                  "omitted": true
+                },
+                {
+                  "label": "Normalize (100%)",
+                  "value": "normalize"
+                },
+                {
+                  "label": "Layered (overlap)",
+                  "value": "layered"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Lines & Areas",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.1,
+              "type": "continuous"
+            },
+            {
+              "key": "stackMode",
+              "label": "Stack",
+              "options": [
+                {
+                  "label": "Stacked (default)",
+                  "omitted": true
+                },
+                {
+                  "label": "Normalize (100%)",
+                  "value": "normalize"
+                },
+                {
+                  "label": "Center",
+                  "value": "center"
+                },
+                {
+                  "label": "Layered (overlap)",
+                  "value": "layered"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "xAxisType",
+              "label": "X as",
+              "options": [
+                {
+                  "label": "Temporal",
+                  "value": "temporal"
+                },
+                {
+                  "label": "Discrete",
+                  "value": "nominal"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "yAxisType",
+              "label": "Y as",
+              "options": [
+                {
+                  "label": "Temporal",
+                  "value": "temporal"
+                },
+                {
+                  "label": "Discrete",
+                  "value": "nominal"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Area Chart"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 15,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 15,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "horizontal": "BarClustered",
+            "vertical": "ColumnClustered"
+          }
+        },
+        "plotly": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 15,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Bars",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 15,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "showValueLabels",
+              "label": "Values",
+              "type": "binary"
+            },
+            {
+              "key": "xAxisType",
+              "label": "X as",
+              "options": [
+                {
+                  "label": "Temporal",
+                  "value": "temporal"
+                },
+                {
+                  "label": "Discrete",
+                  "value": "nominal"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "yAxisType",
+              "label": "Y as",
+              "options": [
+                {
+                  "label": "Temporal",
+                  "value": "temporal"
+                },
+                {
+                  "label": "Discrete",
+                  "value": "nominal"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Bar Chart"
+    },
+    {
+      "backends": {
+        "plotly": {
+          "category": "Tables & KPIs",
+          "channels": [
+            "y",
+            "x",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "maxRows",
+              "label": "Max Rows",
+              "max": 100,
+              "min": 5,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "showPercent",
+              "label": "% of total",
+              "type": "binary"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Tables & Maps",
+          "channels": [
+            "y",
+            "x",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "maxRows",
+              "label": "Max Rows",
+              "max": 100,
+              "min": 5,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "showPercent",
+              "label": "% of total",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Bar Table"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "dodge",
+              "label": "Dodge",
+              "options": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "Local (compact)",
+                  "value": "local"
+                },
+                {
+                  "label": "Global (aligned)",
+                  "value": "global"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "showOutliers",
+              "label": "Outliers",
+              "type": "binary"
+            },
+            {
+              "key": "showPoints",
+              "label": "Points",
+              "type": "binary"
+            },
+            {
+              "key": "whiskerMethod",
+              "label": "Whiskers",
+              "options": [
+                {
+                  "label": "Tukey (1.5 × IQR)",
+                  "value": "iqr"
+                },
+                {
+                  "label": "Min–Max",
+                  "value": "minmax"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "vertical": "BoxWhisker"
+          }
+        },
+        "plotly": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "showOutliers",
+              "label": "Outliers",
+              "type": "binary"
+            },
+            {
+              "key": "showPoints",
+              "label": "Points",
+              "type": "binary"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "dodge",
+              "label": "Dodge",
+              "options": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "Local (compact)",
+                  "value": "local"
+                },
+                {
+                  "label": "Global (aligned)",
+                  "value": "global"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "showOutliers",
+              "label": "Outliers",
+              "type": "binary"
+            },
+            {
+              "key": "showPoints",
+              "label": "Points",
+              "type": "binary"
+            },
+            {
+              "key": "whiskerMethod",
+              "label": "Whiskers",
+              "options": [
+                {
+                  "label": "Tukey (1.5 × IQR)",
+                  "value": "iqr"
+                },
+                {
+                  "label": "Min–Max",
+                  "value": "minmax"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Boxplot"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "size",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.05,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Bubble Chart"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Other",
+          "channels": [
+            "y",
+            "x",
+            "goal",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "plotly": {
+          "category": "Tables & KPIs",
+          "channels": [
+            "y",
+            "x",
+            "goal",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Bars",
+          "channels": [
+            "y",
+            "x",
+            "goal",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Bullet Chart"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "echarts": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "plotly": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Lines & Areas",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Bump Chart"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "color"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Tables & Maps",
+          "channels": [
+            "x",
+            "color"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 8,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Calendar Heatmap"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Financial",
+          "channels": [
+            "x",
+            "open",
+            "high",
+            "low",
+            "close",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "maWindow",
+              "label": "Average window",
+              "max": 30,
+              "min": 3,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "showMA",
+              "label": "Moving average",
+              "type": "binary"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "open",
+            "high",
+            "low",
+            "close"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "vertical": "StockOHLC"
+          }
+        },
+        "plotly": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "open",
+            "high",
+            "low",
+            "close",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "maWindow",
+              "label": "Average window",
+              "max": 30,
+              "min": 3,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "showMA",
+              "label": "Moving average",
+              "type": "binary"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "open",
+            "high",
+            "low",
+            "close",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Candlestick Chart"
+    },
+    {
+      "backends": {
+        "plotly": {
+          "category": "Maps",
+          "channels": [
+            "id",
+            "color",
+            "detail"
+          ],
+          "properties": [
+            {
+              "key": "region",
+              "label": "Region",
+              "options": [
+                {
+                  "label": "Auto-detect",
+                  "value": "auto"
+                },
+                {
+                  "label": "United States",
+                  "value": "us"
+                },
+                {
+                  "label": "World",
+                  "value": "world"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Tables & Maps",
+          "channels": [
+            "id",
+            "color",
+            "detail"
+          ],
+          "properties": [
+            {
+              "key": "region",
+              "label": "Region",
+              "options": [
+                {
+                  "label": "Auto-detect",
+                  "value": "auto"
+                },
+                {
+                  "label": "United States",
+                  "value": "us"
+                },
+                {
+                  "label": "World",
+                  "value": "world"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Choropleth"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 15,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Combo Chart"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "order",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "echarts": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "order",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "order",
+            "color",
+            "detail"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "vertical": "XYScatterLines",
+            "xy": true
+          }
+        },
+        "plotly": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "order",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Points",
+          "channels": [
+            "x",
+            "y",
+            "order",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Connected Scatter Plot"
+    },
+    {
+      "backends": {
+        "plotly": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "y",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "binCount",
+              "label": "Bins",
+              "max": 50,
+              "min": 5,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "showPoints",
+              "label": "Show points",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Density Contour"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Statistical",
+          "channels": [
+            "x",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "bandwidth",
+              "label": "Bandwidth",
+              "max": 2,
+              "min": 0.05,
+              "step": 0.05,
+              "type": "continuous"
+            }
+          ]
+        },
+        "plotly": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "bandwidth",
+              "label": "Bandwidth",
+              "max": 2,
+              "min": 0.05,
+              "step": 0.05,
+              "type": "continuous"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "bandwidth",
+              "label": "Bandwidth",
+              "max": 2,
+              "min": 0.05,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Density Plot"
+    },
+    {
+      "backends": {
+        "excel": {
+          "channels": [
+            "color",
+            "size",
+            "theta"
+          ],
+          "hasValidate": false,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "noAxes": true,
+            "vertical": "Doughnut"
+          }
+        },
+        "plotly": {
+          "category": "Circular",
+          "channels": [
+            "size",
+            "color"
+          ],
+          "properties": [
+            {
+              "key": "innerRadius",
+              "label": "Donut",
+              "max": 80,
+              "min": 20,
+              "step": 5,
+              "type": "continuous"
+            },
+            {
+              "key": "labelType",
+              "label": "Labels",
+              "options": [
+                {
+                  "label": "Name + %",
+                  "value": "categoryPercent"
+                },
+                {
+                  "label": "Name",
+                  "value": "category"
+                },
+                {
+                  "label": "Value",
+                  "value": "value"
+                },
+                {
+                  "label": "Percent",
+                  "value": "percent"
+                },
+                {
+                  "label": "None",
+                  "value": "none"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Circular",
+          "channels": [
+            "size",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "innerRadius",
+              "label": "Donut",
+              "max": 100,
+              "min": 0,
+              "step": 5,
+              "type": "continuous"
+            },
+            {
+              "key": "showValueLabels",
+              "label": "Values",
+              "type": "binary"
+            },
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Donut Chart"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Part-to-Whole",
+          "channels": [
+            "size",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "innerRadius",
+              "label": "Hole",
+              "max": 80,
+              "min": 20,
+              "step": 5,
+              "type": "continuous"
+            },
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Doughnut Chart"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "showPoints",
+              "label": "Points",
+              "type": "binary"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Statistical",
+          "channels": [
+            "x",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "showPoints",
+              "label": "Points",
+              "type": "binary"
+            }
+          ]
+        },
+        "plotly": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "showPoints",
+              "label": "Points",
+              "type": "binary"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "showPoints",
+              "label": "Points",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "ECDF Plot"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Part-to-Whole",
+          "channels": [
+            "y",
+            "size"
+          ],
+          "properties": [
+            {
+              "key": "gap",
+              "label": "Gap",
+              "max": 20,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "orient",
+              "label": "Orient",
+              "options": [
+                {
+                  "label": "Vertical (default)",
+                  "value": "vertical"
+                },
+                {
+                  "label": "Horizontal",
+                  "value": "horizontal"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "sort",
+              "label": "Sort",
+              "options": [
+                {
+                  "label": "Descending (default)",
+                  "value": "descending"
+                },
+                {
+                  "label": "Ascending",
+                  "value": "ascending"
+                },
+                {
+                  "label": "Original order",
+                  "value": "none"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "y",
+            "size"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "noAxes": true,
+            "vertical": "Funnel"
+          }
+        },
+        "plotly": {
+          "category": "Opportunity",
+          "channels": [
+            "y",
+            "size"
+          ],
+          "properties": [
+            {
+              "key": "sort",
+              "label": "Sort",
+              "options": [
+                {
+                  "label": "Descending (default)",
+                  "value": "descending"
+                },
+                {
+                  "label": "Ascending",
+                  "value": "ascending"
+                },
+                {
+                  "label": "Original order",
+                  "value": "none"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Funnel Chart"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Bar",
+          "channels": [
+            "y",
+            "x",
+            "x2",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 8,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "intervalLabels",
+              "label": "Labels",
+              "type": "binary"
+            },
+            {
+              "key": "taskHeight",
+              "label": "Task height",
+              "max": 90,
+              "min": 40,
+              "step": 5,
+              "type": "continuous"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Other",
+          "channels": [
+            "y",
+            "x",
+            "x2",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 8,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "intervalLabels",
+              "label": "Labels",
+              "type": "binary"
+            },
+            {
+              "key": "taskHeight",
+              "label": "Task height",
+              "max": 90,
+              "min": 40,
+              "step": 5,
+              "type": "continuous"
+            }
+          ]
+        },
+        "plotly": {
+          "category": "Tables & KPIs",
+          "channels": [
+            "y",
+            "x",
+            "x2",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 8,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "intervalLabels",
+              "label": "Labels",
+              "type": "binary"
+            },
+            {
+              "key": "taskHeight",
+              "label": "Task height",
+              "max": 90,
+              "min": 40,
+              "step": 5,
+              "type": "continuous"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Bars",
+          "channels": [
+            "y",
+            "x",
+            "x2",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 8,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "intervalLabels",
+              "label": "Labels",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "taskHeight",
+              "label": "Task height",
+              "max": 90,
+              "min": 40,
+              "step": 5,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Gantt Chart"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Indicator",
+          "channels": [
+            "size",
+            "column"
+          ],
+          "properties": [
+            {
+              "key": "max",
+              "label": "Max",
+              "max": 10000,
+              "min": 0,
+              "step": 100,
+              "type": "continuous"
+            },
+            {
+              "key": "min",
+              "label": "Min",
+              "max": 1000,
+              "min": 0,
+              "step": 10,
+              "type": "continuous"
+            },
+            {
+              "key": "showProgress",
+              "label": "Progress",
+              "options": [
+                {
+                  "label": "Show (default)",
+                  "value": true
+                },
+                {
+                  "label": "Hide",
+                  "value": false
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "plotly": {
+          "category": "Opportunity",
+          "channels": [
+            "size",
+            "column"
+          ],
+          "properties": [
+            {
+              "key": "max",
+              "label": "Max",
+              "max": 10000,
+              "min": 0,
+              "step": 100,
+              "type": "continuous"
+            },
+            {
+              "key": "min",
+              "label": "Min",
+              "max": 1000,
+              "min": 0,
+              "step": 10,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Gauge Chart"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "group",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "dodge",
+              "label": "Dodge",
+              "options": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "Local (compact)",
+                  "value": "local"
+                },
+                {
+                  "label": "Global (aligned)",
+                  "value": "global"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "group",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "dodge",
+              "label": "Dodge",
+              "options": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "Local (compact)",
+                  "value": "local"
+                },
+                {
+                  "label": "Global (aligned)",
+                  "value": "global"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "group"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "horizontal": "BarClustered",
+            "vertical": "ColumnClustered"
+          }
+        },
+        "plotly": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "group",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Bars",
+          "channels": [
+            "x",
+            "y",
+            "group",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "dodge",
+              "label": "Dodge",
+              "options": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "Local (compact)",
+                  "value": "local"
+                },
+                {
+                  "label": "Global (aligned)",
+                  "value": "global"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "showValueLabels",
+              "label": "Values",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Grouped Bar Chart"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "plotly": {
+          "category": "Tables & KPIs",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Tables & Maps",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "showValueLabels",
+              "label": "Values",
+              "type": "binary"
+            },
+            {
+              "key": "xAxisType",
+              "label": "X as",
+              "options": [
+                {
+                  "label": "Temporal",
+                  "value": "temporal"
+                },
+                {
+                  "label": "Discrete",
+                  "value": "nominal"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "yAxisType",
+              "label": "Y as",
+              "options": [
+                {
+                  "label": "Temporal",
+                  "value": "temporal"
+                },
+                {
+                  "label": "Discrete",
+                  "value": "nominal"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Heatmap"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "binCount",
+              "label": "Max Bins",
+              "max": 50,
+              "min": 5,
+              "step": 1,
+              "type": "continuous"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Statistical",
+          "channels": [
+            "x",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "binCount",
+              "label": "Max Bins",
+              "max": 50,
+              "min": 5,
+              "step": 1,
+              "type": "continuous"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "color"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "vertical": "ColumnClustered"
+          }
+        },
+        "plotly": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "binCount",
+              "label": "Max Bins",
+              "max": 50,
+              "min": 5,
+              "step": 1,
+              "type": "continuous"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "binCount",
+              "label": "Max Bins",
+              "max": 50,
+              "min": 5,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Histogram"
+    },
+    {
+      "backends": {
+        "plotly": {
+          "category": "Tables & KPIs",
+          "channels": [
+            "metric",
+            "value",
+            "goal"
+          ],
+          "properties": [
+            {
+              "key": "layout",
+              "label": "Layout",
+              "options": [
+                {
+                  "label": "Horizontal (default)",
+                  "value": "horizontal"
+                },
+                {
+                  "label": "Vertical",
+                  "value": "vertical"
+                },
+                {
+                  "label": "Grid",
+                  "value": "grid"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Tables & Maps",
+          "channels": [
+            "metric",
+            "value",
+            "goal"
+          ],
+          "properties": [
+            {
+              "key": "behindThreshold",
+              "label": "Behind threshold",
+              "max": 1,
+              "min": 0,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "layout",
+              "label": "Layout",
+              "options": [
+                {
+                  "label": "Horizontal",
+                  "value": "horizontal"
+                },
+                {
+                  "label": "Vertical",
+                  "value": "vertical"
+                },
+                {
+                  "label": "Grid",
+                  "value": "grid"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "style",
+              "label": "Card style",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "KPI Card"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "showPoints",
+              "label": "Points",
+              "type": "binary"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "strokeDash"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "vertical": "Line"
+          }
+        },
+        "plotly": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "strokeDash",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "showPoints",
+              "label": "Show points",
+              "type": "binary"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Lines & Areas",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "strokeDash",
+            "detail",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "showPoints",
+              "label": "Points",
+              "type": "binary"
+            },
+            {
+              "key": "xAxisType",
+              "label": "X as",
+              "options": [
+                {
+                  "label": "Temporal",
+                  "value": "temporal"
+                },
+                {
+                  "label": "Discrete",
+                  "value": "nominal"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "yAxisType",
+              "label": "Y as",
+              "options": [
+                {
+                  "label": "Temporal",
+                  "value": "temporal"
+                },
+                {
+                  "label": "Discrete",
+                  "value": "nominal"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Line Chart"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "dotSize",
+              "label": "Dot Size",
+              "max": 300,
+              "min": 20,
+              "step": 10,
+              "type": "continuous"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "dotSize",
+              "label": "Dot Size",
+              "max": 300,
+              "min": 20,
+              "step": 10,
+              "type": "continuous"
+            }
+          ]
+        },
+        "plotly": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "dotSize",
+              "label": "Dot Size",
+              "max": 300,
+              "min": 20,
+              "step": 10,
+              "type": "continuous"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Bars",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "dotSize",
+              "label": "Dot Size",
+              "max": 300,
+              "min": 20,
+              "step": 10,
+              "type": "continuous"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "showValueLabels",
+              "label": "Values",
+              "type": "binary"
+            },
+            {
+              "key": "xAxisType",
+              "label": "X as",
+              "options": [
+                {
+                  "label": "Temporal",
+                  "value": "temporal"
+                },
+                {
+                  "label": "Discrete",
+                  "value": "nominal"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "yAxisType",
+              "label": "Y as",
+              "options": [
+                {
+                  "label": "Temporal",
+                  "value": "temporal"
+                },
+                {
+                  "label": "Discrete",
+                  "value": "nominal"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Lollipop Chart"
+    },
+    {
+      "backends": {
+        "plotly": {
+          "category": "Maps",
+          "channels": [
+            "longitude",
+            "latitude",
+            "color",
+            "size",
+            "opacity"
+          ],
+          "properties": [
+            {
+              "key": "projection",
+              "label": "Projection",
+              "options": [
+                {
+                  "label": "Default",
+                  "value": "default"
+                },
+                {
+                  "label": "Mercator",
+                  "value": "mercator"
+                },
+                {
+                  "label": "Equal Earth",
+                  "value": "equalEarth"
+                },
+                {
+                  "label": "Orthographic (Globe)",
+                  "value": "orthographic"
+                },
+                {
+                  "label": "Stereographic",
+                  "value": "stereographic"
+                },
+                {
+                  "label": "Conic Equal Area",
+                  "value": "conicEqualArea"
+                },
+                {
+                  "label": "Conic Equidistant",
+                  "value": "conicEquidistant"
+                },
+                {
+                  "label": "Azimuthal Equidistant",
+                  "value": "azimuthalEquidistant"
+                },
+                {
+                  "label": "Mollweide",
+                  "value": "mollweide"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "projectionCenter",
+              "label": "Center",
+              "options": [
+                {
+                  "label": "Default",
+                  "omitted": true
+                },
+                {
+                  "label": "World (Atlantic) [0, 0]",
+                  "value": [
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "label": "World (Pacific) [150, 0]",
+                  "value": [
+                    150,
+                    0
+                  ]
+                },
+                {
+                  "label": "China [105, 35]",
+                  "value": [
+                    105,
+                    35
+                  ]
+                },
+                {
+                  "label": "USA [-98, 39]",
+                  "value": [
+                    -98,
+                    39
+                  ]
+                },
+                {
+                  "label": "Europe [10, 50]",
+                  "value": [
+                    10,
+                    50
+                  ]
+                },
+                {
+                  "label": "Japan [138, 36]",
+                  "value": [
+                    138,
+                    36
+                  ]
+                },
+                {
+                  "label": "India [78, 22]",
+                  "value": [
+                    78,
+                    22
+                  ]
+                },
+                {
+                  "label": "Brazil [-52, -14]",
+                  "value": [
+                    -52,
+                    -14
+                  ]
+                },
+                {
+                  "label": "Australia [134, -25]",
+                  "value": [
+                    134,
+                    -25
+                  ]
+                },
+                {
+                  "label": "Russia [100, 60]",
+                  "value": [
+                    100,
+                    60
+                  ]
+                },
+                {
+                  "label": "Africa [20, 0]",
+                  "value": [
+                    20,
+                    0
+                  ]
+                },
+                {
+                  "label": "Middle East [45, 28]",
+                  "value": [
+                    45,
+                    28
+                  ]
+                },
+                {
+                  "label": "Southeast Asia [115, 5]",
+                  "value": [
+                    115,
+                    5
+                  ]
+                },
+                {
+                  "label": "South America [-60, -15]",
+                  "value": [
+                    -60,
+                    -15
+                  ]
+                },
+                {
+                  "label": "North America [-100, 45]",
+                  "value": [
+                    -100,
+                    45
+                  ]
+                },
+                {
+                  "label": "UK [-2, 54]",
+                  "value": [
+                    -2,
+                    54
+                  ]
+                },
+                {
+                  "label": "Germany [10, 51]",
+                  "value": [
+                    10,
+                    51
+                  ]
+                },
+                {
+                  "label": "France [2, 47]",
+                  "value": [
+                    2,
+                    47
+                  ]
+                },
+                {
+                  "label": "Korea [128, 36]",
+                  "value": [
+                    128,
+                    36
+                  ]
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "region",
+              "label": "Region",
+              "options": [
+                {
+                  "label": "Auto-detect",
+                  "value": "auto"
+                },
+                {
+                  "label": "United States",
+                  "value": "us"
+                },
+                {
+                  "label": "World",
+                  "value": "world"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Tables & Maps",
+          "channels": [
+            "longitude",
+            "latitude",
+            "color",
+            "size",
+            "opacity"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "projection",
+              "label": "Projection",
+              "options": [
+                {
+                  "label": "Default",
+                  "value": "default"
+                },
+                {
+                  "label": "Mercator",
+                  "value": "mercator"
+                },
+                {
+                  "label": "Equal Earth",
+                  "value": "equalEarth"
+                },
+                {
+                  "label": "Orthographic (Globe)",
+                  "value": "orthographic"
+                },
+                {
+                  "label": "Stereographic",
+                  "value": "stereographic"
+                },
+                {
+                  "label": "Conic Equal Area",
+                  "value": "conicEqualArea"
+                },
+                {
+                  "label": "Conic Equidistant",
+                  "value": "conicEquidistant"
+                },
+                {
+                  "label": "Azimuthal Equidistant",
+                  "value": "azimuthalEquidistant"
+                },
+                {
+                  "label": "Mollweide",
+                  "value": "mollweide"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "projectionCenter",
+              "label": "Center",
+              "options": [
+                {
+                  "label": "Default",
+                  "omitted": true
+                },
+                {
+                  "label": "World (Atlantic) [0, 0]",
+                  "value": [
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "label": "World (Pacific) [150, 0]",
+                  "value": [
+                    150,
+                    0
+                  ]
+                },
+                {
+                  "label": "China [105, 35]",
+                  "value": [
+                    105,
+                    35
+                  ]
+                },
+                {
+                  "label": "USA [-98, 39]",
+                  "value": [
+                    -98,
+                    39
+                  ]
+                },
+                {
+                  "label": "Europe [10, 50]",
+                  "value": [
+                    10,
+                    50
+                  ]
+                },
+                {
+                  "label": "Japan [138, 36]",
+                  "value": [
+                    138,
+                    36
+                  ]
+                },
+                {
+                  "label": "India [78, 22]",
+                  "value": [
+                    78,
+                    22
+                  ]
+                },
+                {
+                  "label": "Brazil [-52, -14]",
+                  "value": [
+                    -52,
+                    -14
+                  ]
+                },
+                {
+                  "label": "Australia [134, -25]",
+                  "value": [
+                    134,
+                    -25
+                  ]
+                },
+                {
+                  "label": "Russia [100, 60]",
+                  "value": [
+                    100,
+                    60
+                  ]
+                },
+                {
+                  "label": "Africa [20, 0]",
+                  "value": [
+                    20,
+                    0
+                  ]
+                },
+                {
+                  "label": "Middle East [45, 28]",
+                  "value": [
+                    45,
+                    28
+                  ]
+                },
+                {
+                  "label": "Southeast Asia [115, 5]",
+                  "value": [
+                    115,
+                    5
+                  ]
+                },
+                {
+                  "label": "South America [-60, -15]",
+                  "value": [
+                    -60,
+                    -15
+                  ]
+                },
+                {
+                  "label": "North America [-100, 45]",
+                  "value": [
+                    -100,
+                    45
+                  ]
+                },
+                {
+                  "label": "UK [-2, 54]",
+                  "value": [
+                    -2,
+                    54
+                  ]
+                },
+                {
+                  "label": "Germany [10, 51]",
+                  "value": [
+                    10,
+                    51
+                  ]
+                },
+                {
+                  "label": "France [2, 47]",
+                  "value": [
+                    2,
+                    47
+                  ]
+                },
+                {
+                  "label": "Korea [128, 36]",
+                  "value": [
+                    128,
+                    36
+                  ]
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "region",
+              "label": "Region",
+              "options": [
+                {
+                  "label": "Auto-detect",
+                  "value": "auto"
+                },
+                {
+                  "label": "United States",
+                  "value": "us"
+                },
+                {
+                  "label": "World",
+                  "value": "world"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Map"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Flow",
+          "channels": [
+            "x",
+            "y",
+            "size"
+          ],
+          "properties": [
+            {
+              "key": "layout",
+              "label": "Layout",
+              "options": [
+                {
+                  "label": "Circular (default)",
+                  "value": "circular"
+                },
+                {
+                  "label": "Force-directed",
+                  "value": "force"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Network Graph"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Statistical",
+          "channels": [
+            "color",
+            "detail"
+          ],
+          "properties": []
+        }
+      },
+      "name": "Parallel Coordinates"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Part-to-Whole",
+          "channels": [
+            "size",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "innerRadius",
+              "label": "Donut",
+              "max": 60,
+              "min": 0,
+              "step": 5,
+              "type": "continuous"
+            },
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Part-to-Whole",
+          "channels": [
+            "size",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 10,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "innerRadius",
+              "label": "Donut",
+              "max": 60,
+              "min": 0,
+              "step": 5,
+              "type": "continuous"
+            },
+            {
+              "key": "labelType",
+              "label": "Labels",
+              "options": [
+                {
+                  "label": "Name + %",
+                  "value": "categoryPercent"
+                },
+                {
+                  "label": "Name",
+                  "value": "category"
+                },
+                {
+                  "label": "Value",
+                  "value": "value"
+                },
+                {
+                  "label": "Percent",
+                  "value": "percent"
+                },
+                {
+                  "label": "None",
+                  "value": "none"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "color",
+            "size",
+            "theta"
+          ],
+          "hasValidate": false,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "noAxes": true,
+            "vertical": "Pie"
+          }
+        },
+        "plotly": {
+          "category": "Circular",
+          "channels": [
+            "size",
+            "color"
+          ],
+          "properties": [
+            {
+              "key": "labelType",
+              "label": "Labels",
+              "options": [
+                {
+                  "label": "Name + %",
+                  "value": "categoryPercent"
+                },
+                {
+                  "label": "Name",
+                  "value": "category"
+                },
+                {
+                  "label": "Value",
+                  "value": "value"
+                },
+                {
+                  "label": "Percent",
+                  "value": "percent"
+                },
+                {
+                  "label": "None",
+                  "value": "none"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Circular",
+          "channels": [
+            "size",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "innerRadius",
+              "label": "Donut",
+              "max": 100,
+              "min": 0,
+              "step": 5,
+              "type": "continuous"
+            },
+            {
+              "key": "showValueLabels",
+              "label": "Values",
+              "type": "binary"
+            },
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Pie Chart"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "properties": []
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "horizontal": "BarStacked",
+            "vertical": "BarStacked"
+          }
+        },
+        "plotly": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "properties": [
+            {
+              "key": "showValueLabels",
+              "label": "Values",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Pyramid Chart"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Polar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "fillOpacity",
+              "label": "Opacity",
+              "max": 0.8,
+              "min": 0.05,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "filled",
+              "label": "Fill",
+              "options": [
+                {
+                  "label": "Filled (default)",
+                  "value": true
+                },
+                {
+                  "label": "Outline only",
+                  "value": false
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Polar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "fillOpacity",
+              "label": "Opacity",
+              "max": 0.8,
+              "min": 0.05,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "filled",
+              "label": "Fill",
+              "options": [
+                {
+                  "label": "Filled (default)",
+                  "value": true
+                },
+                {
+                  "label": "Outline only",
+                  "value": false
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "shape",
+              "label": "Grid",
+              "options": [
+                {
+                  "label": "Polygon (default)",
+                  "omitted": true
+                },
+                {
+                  "label": "Circle",
+                  "value": "circle"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "vertical": "RadarMarkers"
+          }
+        },
+        "plotly": {
+          "category": "Circular",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "fillOpacity",
+              "label": "Opacity",
+              "max": 0.8,
+              "min": 0.05,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "filled",
+              "label": "Fill",
+              "options": [
+                {
+                  "label": "Filled (default)",
+                  "value": true
+                },
+                {
+                  "label": "Outline only",
+                  "value": false
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Circular",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "fillOpacity",
+              "label": "Fill Opacity",
+              "max": 0.5,
+              "min": 0,
+              "step": 0.1,
+              "type": "continuous"
+            },
+            {
+              "key": "filled",
+              "label": "Filled",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "strokeWidth",
+              "label": "Line Width",
+              "max": 4,
+              "min": 0.5,
+              "step": 0.5,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Radar Chart"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "y2",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "echarts": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "y2",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "plotly": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "y2",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.05,
+              "type": "continuous"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Lines & Areas",
+          "channels": [
+            "x",
+            "y",
+            "y2",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.1,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Range Area Chart"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "properties": []
+        },
+        "plotly": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Points",
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Ranged Dot Plot"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "size",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "polyOrder",
+              "label": "Poly Order",
+              "max": 10,
+              "min": 2,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "regressionMethod",
+              "label": "Method",
+              "options": [
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Logarithmic",
+                  "value": "log"
+                },
+                {
+                  "label": "Exponential",
+                  "value": "exp"
+                },
+                {
+                  "label": "Power",
+                  "value": "pow"
+                },
+                {
+                  "label": "Quadratic",
+                  "value": "quad"
+                },
+                {
+                  "label": "Polynomial",
+                  "value": "poly"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "plotly": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "size",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "polyOrder",
+              "label": "Poly Order",
+              "max": 10,
+              "min": 2,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "regressionMethod",
+              "label": "Method",
+              "options": [
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Logarithmic",
+                  "value": "log"
+                },
+                {
+                  "label": "Exponential",
+                  "value": "exp"
+                },
+                {
+                  "label": "Power",
+                  "value": "pow"
+                },
+                {
+                  "label": "Quadratic",
+                  "value": "quad"
+                },
+                {
+                  "label": "Polynomial",
+                  "value": "poly"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Points",
+          "channels": [
+            "x",
+            "y",
+            "size",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "polyOrder",
+              "label": "Poly Order",
+              "max": 10,
+              "min": 2,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "regressionMethod",
+              "label": "Method",
+              "options": [
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Logarithmic",
+                  "value": "log"
+                },
+                {
+                  "label": "Exponential",
+                  "value": "exp"
+                },
+                {
+                  "label": "Power",
+                  "value": "pow"
+                },
+                {
+                  "label": "Quadratic",
+                  "value": "quad"
+                },
+                {
+                  "label": "Polynomial",
+                  "value": "poly"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Regression"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Polar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "alignment",
+              "label": "Alignment",
+              "options": [
+                {
+                  "label": "Left (default)",
+                  "value": "left"
+                },
+                {
+                  "label": "Center",
+                  "value": "center"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Polar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "alignment",
+              "label": "Alignment",
+              "options": [
+                {
+                  "label": "Left (default)",
+                  "value": "left"
+                },
+                {
+                  "label": "Center",
+                  "value": "center"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "plotly": {
+          "category": "Circular",
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "properties": [
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Circular",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "alignment",
+              "label": "Alignment",
+              "options": [
+                {
+                  "label": "Left (default)",
+                  "value": "left"
+                },
+                {
+                  "label": "Center",
+                  "value": "center"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "padAngle",
+              "label": "Gap",
+              "max": 0.1,
+              "min": 0,
+              "step": 0.005,
+              "type": "continuous"
+            },
+            {
+              "key": "showValueLabels",
+              "label": "Values",
+              "type": "binary"
+            },
+            {
+              "key": "sortSlices",
+              "label": "Sort slices",
+              "options": [
+                {
+                  "label": "Data order",
+                  "value": "none"
+                },
+                {
+                  "label": "Largest first",
+                  "value": "descending"
+                },
+                {
+                  "label": "Smallest first",
+                  "value": "ascending"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Rose Chart"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Flow",
+          "channels": [
+            "x",
+            "y",
+            "size"
+          ],
+          "properties": [
+            {
+              "key": "nodeGap",
+              "label": "Node Gap",
+              "max": 30,
+              "min": 2,
+              "step": 2,
+              "type": "continuous"
+            },
+            {
+              "key": "nodeWidth",
+              "label": "Node Width",
+              "max": 40,
+              "min": 5,
+              "step": 5,
+              "type": "continuous"
+            },
+            {
+              "key": "orient",
+              "label": "Orient",
+              "options": [
+                {
+                  "label": "Horizontal (default)",
+                  "value": "horizontal"
+                },
+                {
+                  "label": "Vertical",
+                  "value": "vertical"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Sankey Diagram"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "size",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.05,
+              "type": "continuous"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "size",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.05,
+              "type": "continuous"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "size"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "vertical": "XYScatter",
+            "xy": true
+          }
+        },
+        "plotly": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "size",
+            "shape",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.05,
+              "type": "continuous"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Points",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "size",
+            "shape",
+            "opacity",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.1,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Scatter Plot"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "echarts": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "plotly": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Lines & Areas",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "detail",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "showSeriesInLabel",
+              "label": "Name in label",
+              "type": "binary"
+            },
+            {
+              "key": "showText",
+              "label": "Values",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Slope Chart"
+    },
+    {
+      "backends": {
+        "plotly": {
+          "category": "Tables & KPIs",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "detail"
+          ],
+          "properties": [
+            {
+              "key": "baseline",
+              "label": "Reference line",
+              "options": [
+                {
+                  "label": "Average",
+                  "value": "mean"
+                },
+                {
+                  "label": "Zero",
+                  "value": "zero"
+                },
+                {
+                  "label": "Median",
+                  "value": "median"
+                },
+                {
+                  "label": "None",
+                  "value": "none"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "trendWidth",
+              "label": "Sparkline width",
+              "max": 600,
+              "min": 80,
+              "step": 10,
+              "type": "continuous"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Lines & Areas",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "detail",
+            "row",
+            "column"
+          ],
+          "properties": [
+            {
+              "key": "baseline",
+              "label": "Reference line",
+              "options": [
+                {
+                  "label": "Average",
+                  "value": "mean"
+                },
+                {
+                  "label": "Zero",
+                  "value": "zero"
+                },
+                {
+                  "label": "Median",
+                  "value": "median"
+                },
+                {
+                  "label": "None",
+                  "value": "none"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "trendWidth",
+              "label": "Sparkline width",
+              "max": 600,
+              "min": 80,
+              "step": 10,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Sparkline"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "echarts": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "stackMode",
+              "label": "Stack",
+              "options": [
+                {
+                  "label": "Stacked (default)",
+                  "omitted": true
+                },
+                {
+                  "label": "Normalize (100%)",
+                  "value": "normalize"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "horizontal": "BarStacked",
+            "vertical": "ColumnStacked"
+          }
+        },
+        "plotly": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "stackMode",
+              "label": "Stack",
+              "options": [
+                {
+                  "label": "Stacked (default)",
+                  "omitted": true
+                },
+                {
+                  "label": "Normalize (100%)",
+                  "value": "normalize"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Bars",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "showValueLabels",
+              "label": "Values",
+              "type": "binary"
+            },
+            {
+              "key": "stackMode",
+              "label": "Stack",
+              "options": [
+                {
+                  "label": "Stacked (default)",
+                  "omitted": true
+                },
+                {
+                  "label": "Normalize (100%)",
+                  "value": "normalize"
+                },
+                {
+                  "label": "Center",
+                  "value": "center"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Stacked Bar Chart"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "plotly": {
+          "category": "Line & Area",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Lines & Areas",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                },
+                {
+                  "label": "Cardinal",
+                  "value": "cardinal"
+                },
+                {
+                  "label": "Catmull-Rom",
+                  "value": "catmull-rom"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Streamgraph"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "size",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "pointSize",
+              "label": "Size",
+              "max": 150,
+              "min": 0,
+              "step": 5,
+              "type": "continuous"
+            },
+            {
+              "key": "stepWidth",
+              "label": "Jitter",
+              "max": 100,
+              "min": 10,
+              "step": 5,
+              "type": "continuous"
+            }
+          ]
+        },
+        "echarts": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "size",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "plotly": {
+          "category": "Scatter & Point",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "size",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "vegalite": {
+          "category": "Points",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "size",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0,
+              "step": 0.1,
+              "type": "continuous"
+            },
+            {
+              "key": "pointSize",
+              "label": "Size",
+              "max": 150,
+              "min": 0,
+              "step": 5,
+              "type": "continuous"
+            },
+            {
+              "key": "stepWidth",
+              "label": "Jitter",
+              "max": 100,
+              "min": 10,
+              "step": 5,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Strip Plot"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Part-to-Whole",
+          "channels": [
+            "color",
+            "size",
+            "detail",
+            "group"
+          ],
+          "properties": [
+            {
+              "key": "innerRadius",
+              "label": "Inner R",
+              "max": 80,
+              "min": 0,
+              "step": 5,
+              "type": "continuous"
+            },
+            {
+              "key": "labelRotate",
+              "label": "Labels",
+              "options": [
+                {
+                  "label": "Radial (default)",
+                  "value": "radial"
+                },
+                {
+                  "label": "Tangential",
+                  "value": "tangential"
+                },
+                {
+                  "label": "Horizontal",
+                  "value": 0
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "color",
+            "size",
+            "group",
+            "detail"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "noAxes": true,
+            "vertical": "Sunburst"
+          }
+        }
+      },
+      "name": "Sunburst Chart"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Part-to-Whole",
+          "channels": [
+            "color",
+            "detail",
+            "size"
+          ],
+          "properties": [
+            {
+              "key": "orient",
+              "label": "Orient",
+              "options": [
+                {
+                  "label": "Left → Right (default)",
+                  "value": "LR"
+                },
+                {
+                  "label": "Top → Bottom",
+                  "value": "TB"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Tree"
+    },
+    {
+      "backends": {
+        "echarts": {
+          "category": "Part-to-Whole",
+          "channels": [
+            "color",
+            "size",
+            "detail"
+          ],
+          "properties": [
+            {
+              "key": "breadcrumb",
+              "label": "Breadcrumb",
+              "options": [
+                {
+                  "label": "Show (default)",
+                  "value": true
+                },
+                {
+                  "label": "Hide",
+                  "value": false
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "excel": {
+          "channels": [
+            "color",
+            "size",
+            "detail"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "noAxes": true,
+            "vertical": "Treemap"
+          }
+        }
+      },
+      "name": "Treemap"
+    },
+    {
+      "backends": {
+        "plotly": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "showBox",
+              "label": "Inner box",
+              "type": "binary"
+            },
+            {
+              "key": "showPoints",
+              "label": "Points",
+              "type": "binary"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "bandwidth",
+              "label": "Bandwidth",
+              "max": 2,
+              "min": 0.05,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "medianWidth",
+              "label": "Median width",
+              "max": 1,
+              "min": 0.2,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "showContour",
+              "label": "Contour",
+              "type": "binary"
+            },
+            {
+              "key": "showMedian",
+              "label": "Median rule",
+              "type": "binary"
+            },
+            {
+              "key": "showPoints",
+              "label": "Observations",
+              "type": "binary"
+            }
+          ]
+        }
+      },
+      "name": "Violin Plot"
+    },
+    {
+      "backends": {
+        "chartjs": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "echarts": {
+          "category": "Other",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": []
+        },
+        "excel": {
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "hasValidate": true,
+          "properties": [],
+          "supportsFacets": false,
+          "typeMapping": {
+            "vertical": "Waterfall"
+          }
+        },
+        "plotly": {
+          "category": "Bar",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "showTextLabels",
+              "label": "Value labels",
+              "type": "binary"
+            },
+            {
+              "key": "totals",
+              "label": "Totals",
+              "options": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "None",
+                  "value": "none"
+                },
+                {
+                  "label": "First only",
+                  "value": "first"
+                },
+                {
+                  "label": "Last only",
+                  "value": "last"
+                },
+                {
+                  "label": "First and last",
+                  "value": "both"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        },
+        "vegalite": {
+          "category": "Bars",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "column",
+            "row"
+          ],
+          "properties": [
+            {
+              "key": "cornerRadius",
+              "label": "Corners",
+              "max": 8,
+              "min": 0,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "independentYAxis",
+              "label": "Independent Y",
+              "type": "binary"
+            },
+            {
+              "key": "showValueLabels",
+              "label": "Values",
+              "type": "binary"
+            },
+            {
+              "key": "totals",
+              "label": "Totals",
+              "options": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "None",
+                  "value": "none"
+                },
+                {
+                  "label": "First",
+                  "value": "first"
+                },
+                {
+                  "label": "Last",
+                  "value": "last"
+                },
+                {
+                  "label": "Both",
+                  "value": "both"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Waterfall Chart"
+    }
+  ],
+  "hostStateKeys": [
+    "facetColumns",
+    "pivot",
+    "sort",
+    "colorScheme",
+    "arrange",
+    "chartType",
+    "xAxisType",
+    "yAxisType",
+    "showValueLabels",
+    "showTextLabels"
+  ],
+  "ignoredOptions": {
+    "bandStepFitCapacityX": [
+      "vegalite",
+      "echarts",
+      "chartjs",
+      "plotly"
+    ],
+    "bandStepFitCapacityY": [
+      "vegalite",
+      "echarts",
+      "chartjs",
+      "plotly"
+    ],
+    "facetColumns": [
+      "vegalite",
+      "echarts",
+      "chartjs",
+      "plotly"
+    ],
+    "maxStretchX": [
+      "vegalite",
+      "echarts",
+      "chartjs",
+      "plotly"
+    ],
+    "maxStretchY": [
+      "vegalite",
+      "echarts",
+      "chartjs",
+      "plotly"
+    ]
+  },
+  "semanticTypes": [
+    {
+      "doc": "Street address (geo lookup)",
+      "name": "Address",
+      "t0": "Geographic",
+      "t1": "GeoPlace",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "Monetary or general amounts",
+      "name": "Amount",
+      "t0": "Measure",
+      "t1": "Amount",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "True/False, Yes/No",
+      "name": "Boolean",
+      "t0": "Categorical",
+      "t1": "Coded",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "Discrete category / product / entity class",
+      "name": "Category",
+      "t0": "Categorical",
+      "t1": "Entity",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "City name",
+      "name": "City",
+      "t0": "Geographic",
+      "t1": "GeoPlace",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "Positive/negative correlation coefficient",
+      "name": "Correlation",
+      "t0": "Measure",
+      "t1": "SignedMeasure",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "Discrete count of items",
+      "name": "Count",
+      "t0": "Measure",
+      "t1": "GenericMeasure",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "Country name or code",
+      "name": "Country",
+      "t0": "Geographic",
+      "t1": "GeoPlace",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "Date only: \"2024-01-15\"",
+      "name": "Date",
+      "t0": "Temporal",
+      "t1": "DateTime",
+      "visEncodings": [
+        "temporal"
+      ]
+    },
+    {
+      "doc": "Full date and time: \"2024-01-15T14:30:00\"",
+      "name": "DateTime",
+      "t0": "Temporal",
+      "t1": "DateTime",
+      "visEncodings": [
+        "temporal"
+      ]
+    },
+    {
+      "doc": "\"Monday\", \"Mon\", 1-31",
+      "name": "Day",
+      "t0": "Temporal",
+      "t1": "DateGranule",
+      "visEncodings": [
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "\"1990s\", \"2000s\"",
+      "name": "Decade",
+      "t0": "Temporal",
+      "t1": "DateGranule",
+      "visEncodings": [
+        "temporal",
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "Compass direction: \"N\", \"NE\", \"East\", etc.",
+      "name": "Direction",
+      "t0": "Categorical",
+      "t1": "Coded",
+      "visEncodings": [
+        "ordinal",
+        "nominal"
+      ]
+    },
+    {
+      "doc": "Time span: \"2 hours\", \"3 days\", milliseconds",
+      "name": "Duration",
+      "t0": "Temporal",
+      "t1": "Duration",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "0-23",
+      "name": "Hour",
+      "t0": "Temporal",
+      "t1": "DateGranule",
+      "visEncodings": [
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "Unique identifier (not for aggregation!)",
+      "name": "ID",
+      "t0": "Identifier",
+      "t1": "ID",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "-90 to 90",
+      "name": "Latitude",
+      "t0": "Geographic",
+      "t1": "GeoCoordinate",
+      "visEncodings": [
+        "quantitative",
+        "geographic"
+      ]
+    },
+    {
+      "doc": "-180 to 180",
+      "name": "Longitude",
+      "t0": "Geographic",
+      "t1": "GeoCoordinate",
+      "visEncodings": [
+        "quantitative",
+        "geographic"
+      ]
+    },
+    {
+      "doc": "\"January\", \"Jan\", 1-12",
+      "name": "Month",
+      "t0": "Temporal",
+      "t1": "DateGranule",
+      "visEncodings": [
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "Generic named entity (person, company, product, etc.)",
+      "name": "Name",
+      "t0": "Categorical",
+      "t1": "Entity",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "Generic number (measure fallback)",
+      "name": "Number",
+      "t0": "Measure",
+      "t1": "GenericMeasure",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "0-100% or 0-1 ratio",
+      "name": "Percentage",
+      "t0": "Measure",
+      "t1": "Proportion",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "Growth rate, change %",
+      "name": "PercentageChange",
+      "t0": "Measure",
+      "t1": "SignedMeasure",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "Unit price",
+      "name": "Price",
+      "t0": "Measure",
+      "t1": "Amount",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "Gain/loss, profit/deficit",
+      "name": "Profit",
+      "t0": "Measure",
+      "t1": "SignedMeasure",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "Generic continuous measure",
+      "name": "Quantity",
+      "t0": "Measure",
+      "t1": "Physical",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "\"Q1\", \"Q2\", \"2024-Q1\"",
+      "name": "Quarter",
+      "t0": "Temporal",
+      "t1": "DateGranule",
+      "visEncodings": [
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "Numeric range, age group, binned values",
+      "name": "Range",
+      "t0": "Categorical",
+      "t1": "Binned",
+      "visEncodings": [
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "Position in ordered list: 1st, 2nd, 3rd",
+      "name": "Rank",
+      "t0": "Discrete",
+      "t1": "Rank",
+      "visEncodings": [
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "Geographic region",
+      "name": "Region",
+      "t0": "Geographic",
+      "t1": "GeoPlace",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "Rating score: 1-5, 1-10, 0-100",
+      "name": "Score",
+      "t0": "Discrete",
+      "t1": "Score",
+      "visEncodings": [
+        "quantitative",
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "Positive/negative sentiment score",
+      "name": "Sentiment",
+      "t0": "Measure",
+      "t1": "SignedMeasure",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "State/Province",
+      "name": "State",
+      "t0": "Geographic",
+      "t1": "GeoPlace",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "State: \"Active\", \"Pending\", \"Closed\"",
+      "name": "Status",
+      "t0": "Categorical",
+      "t1": "Coded",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "Degrees",
+      "name": "Temperature",
+      "t0": "Measure",
+      "t1": "Physical",
+      "visEncodings": [
+        "quantitative"
+      ]
+    },
+    {
+      "doc": "Time only: \"14:30:00\"",
+      "name": "Time",
+      "t0": "Temporal",
+      "t1": "DateTime",
+      "visEncodings": [
+        "temporal"
+      ]
+    },
+    {
+      "doc": "Unix timestamp (seconds or milliseconds since epoch)",
+      "name": "Timestamp",
+      "t0": "Temporal",
+      "t1": "DateTime",
+      "visEncodings": [
+        "temporal"
+      ]
+    },
+    {
+      "doc": "Cannot determine type",
+      "name": "Unknown",
+      "t0": "Categorical",
+      "t1": "Entity",
+      "visEncodings": [
+        "nominal"
+      ]
+    },
+    {
+      "doc": "\"Week 1\", 1-52",
+      "name": "Week",
+      "t0": "Temporal",
+      "t1": "DateGranule",
+      "visEncodings": [
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "\"2024\" (as a time unit, not a measure)",
+      "name": "Year",
+      "t0": "Temporal",
+      "t1": "DateGranule",
+      "visEncodings": [
+        "temporal",
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "\"2024-01\", \"Jan 2024\"",
+      "name": "YearMonth",
+      "t0": "Temporal",
+      "t1": "DateGranule",
+      "visEncodings": [
+        "temporal",
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "\"2024-Q1\"",
+      "name": "YearQuarter",
+      "t0": "Temporal",
+      "t1": "DateGranule",
+      "visEncodings": [
+        "temporal",
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "\"2024-W01\"",
+      "name": "YearWeek",
+      "t0": "Temporal",
+      "t1": "DateGranule",
+      "visEncodings": [
+        "temporal",
+        "ordinal"
+      ]
+    },
+    {
+      "doc": "Postal code (geo lookup)",
+      "name": "ZipCode",
+      "t0": "Geographic",
+      "t1": "GeoPlace",
+      "visEncodings": [
+        "nominal"
+      ]
+    }
+  ],
+  "themePresets": [
+    {
+      "description": "A playful comic house: warm cream paper, a rounded comic typeface, fat dark \"sticker\" outlines around bright crayon-coloured bars, wedges and dots, rounded corners, chunky round-capped lines, and a soft dashed grid.",
+      "id": "cartoon",
+      "label": "Cartoon"
+    },
+    {
+      "description": "Embedded web chart: narrow column, plain headline and deck, a rule under the footer.",
+      "id": "datawrapper",
+      "label": "Datawrapper"
+    },
+    {
+      "description": "Print weekly: compact, flat headline over a deck that names the measure, units repeated down the ruler.",
+      "id": "economist",
+      "label": "The Economist"
+    },
+    {
+      "description": "Consulting deck: wide bands, every value printed in a column, a headline that states the takeaway.",
+      "id": "mckinsey",
+      "label": "McKinsey"
+    },
+    {
+      "description": "Journal figure: small panel, axis titles kept with units, statistics printed beside the fit.",
+      "id": "nature",
+      "label": "Nature"
+    },
+    {
+      "description": "Newsroom graphics: a headline that states the finding, values printed on the marks, series named at their own ends.",
+      "id": "nyt",
+      "label": "New York Times"
+    },
+    {
+      "description": "A pop-art remix of Swiss: electric process colours, heavy black structure, oversized marks, and punchy display type.",
+      "id": "pop",
+      "label": "Pop"
+    },
+    {
+      "description": "Dashboard tile: compact, legend to the right, the latest point emphasised.",
+      "id": "powerbi",
+      "label": "Power BI"
+    },
+    {
+      "description": "Light dashboard tile: white canvas, Segoe UI, hairline grid, legend to the right.",
+      "id": "powerbi-light",
+      "label": "Power BI (light)"
+    },
+    {
+      "description": "International Typographic Style: warm paper, a visible modular grid, black structural axes, a bold flush-left Helvetica headline over a rule, and a single signal-red accent.",
+      "id": "swiss",
+      "label": "Swiss"
+    }
+  ]
+}

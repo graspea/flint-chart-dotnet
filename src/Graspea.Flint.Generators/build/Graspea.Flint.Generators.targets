@@ -1,0 +1,31 @@
+<Project>
+  <!--
+    Graspea.Flint.Generators (design §12.6.1, §12.6.4). In build/, not buildTransitive/: it applies only to a project
+    that references the generator directly.
+  -->
+
+  <!-- Every *.flint.json in the project is a spec; one the project already lists is not added twice. -->
+  <ItemGroup Condition="'$(FlintIncludeSpecFiles)' != 'false'">
+    <AdditionalFiles Include="**/*.flint.json" Exclude="@(AdditionalFiles);$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+  </ItemGroup>
+
+  <!-- Attribute paths are relative to the project directory. -->
+  <ItemGroup>
+    <CompilerVisibleProperty Include="ProjectDir" />
+  </ItemGroup>
+
+  <!--
+    FLINT109: the generator is compiled against Roslyn 4.14 (SDK 9.0.300, Visual Studio 17.14). An older compiler would
+    skip it with CS8032 and a cascade of missing members, so the build stops here instead. CompilerApiVersion is set by
+    the compiler's own targets (roslyn4.14, roslyn5.9, ...) and selects the analyzers/dotnet/roslynX.Y folder.
+  -->
+  <Target Name="FlintCheckCompilerApiVersion" BeforeTargets="CoreCompile" Condition="'$(Language)' == 'C#'">
+    <PropertyGroup>
+      <_FlintCompilerApi>$(CompilerApiVersion.Replace('roslyn', ''))</_FlintCompilerApi>
+      <_FlintCompilerTooOld Condition="'$(_FlintCompilerApi)' == ''">true</_FlintCompilerTooOld>
+      <_FlintCompilerTooOld Condition="'$(_FlintCompilerApi)' != '' and $([MSBuild]::VersionLessThan('$(_FlintCompilerApi)', '4.14'))">true</_FlintCompilerTooOld>
+    </PropertyGroup>
+    <Error Code="FLINT109" Condition="'$(_FlintCompilerTooOld)' == 'true'"
+           Text="Graspea.Flint.Generators needs the C# compiler of .NET SDK 9.0.300 or Visual Studio 17.14 or later (Roslyn 4.14); this build uses '$(CompilerApiVersion)'. Update the SDK or Visual Studio, or use the flint-cs tool, which has no compiler floor." />
+  </Target>
+</Project>

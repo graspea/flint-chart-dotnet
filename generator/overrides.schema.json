@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/graspea/flint-chart-dotnet/generator/overrides.schema.json",
+  "title": "Generator overrides",
+  "description": "The only hand-maintained generator input. Every entry is a reviewed decision; an entry that matches nothing fails generation.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "unions": {
+      "description": "IR path -> C# type for a construct the type mapping cannot map (union, any, unknown, a template property whose kind differs across backends). Value: a fully qualified hand-written type such as Graspea.Flint.ContinuousMarkCrossSection, or JsonNode for an explicitly accepted opaque member.",
+      "type": "object",
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "flatten": {
+      "description": "IR paths of mapped types (Omit, Pick, Partial of a non-reference) accepted as a generated class <Parent><Prop> with the checker-resolved members.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "dedup": {
+      "description": "Fully qualified hand-written type -> IR paths of inline objects that are structurally identical to it (ChartSize: required numeric width and height).",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 },
+        "uniqueItems": true
+      }
+    },
+    "renames": {
+      "description": "IR path (type member, catalog constant, or <Template>/property/<key>, <Template>/channel/<channel>, <Template>/enum/<key>, <Template>/enum/<key>/<value>) -> C# name. Template paths rename the builder method of a channel or property, the enum of a discrete property, or one enum member (the value is the raw string, or the JSON of another value); the wire value never changes.",
+      "type": "object",
+      "additionalProperties": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" }
+    },
+    "docs": {
+      "description": "IR path (type or type member) -> remark text for a fact the d.ts gets wrong or omits.",
+      "type": "object",
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "backendsApplyingTheme": {
+      "description": "Backends that read theme_spec (backed by the recorded probe); copied into IR catalog.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "hostStateKeys": {
+      "description": "chartProperties keys read even where a template does not declare them; copied into IR catalog.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "ignoredOptions": {
+      "description": "AssembleOptions member -> backends that overwrite it; copied into IR catalog and the member docs.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 },
+        "uniqueItems": true
+      }
+    },
+    "keepObsolete": {
+      "description": "Rename paths whose old shipped name is kept as an [Obsolete] FLINT0002 member.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  }
+}

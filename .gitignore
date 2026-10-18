@@ -1,0 +1,24 @@
+# .NET
+bin/
+obj/
+artifacts/
+TestResults/
+*.user
+*.suo
+*.nupkg
+*.snupkg
+.vs/
+.idea/
+*.DotSettings.user
+
+# Samples output
+samples/out/
+
+# Node
+node_modules/
+*.tsbuildinfo
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

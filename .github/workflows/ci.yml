@@ -1,0 +1,138 @@
+# Design part 3 §10.2: verify-generated, dotnet, samples, contract-node; all four are gates. Read-only token, no
+# secrets. release.yml calls this workflow as its test suite. The newer-upstream probe is not a CI job: it is the
+# forward-compat step of upstream-sync.yml (§8.7). Every action is pinned to a full commit SHA with its tag in a
+# comment (design part 4, Security).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  verify-generated:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+        working-directory: generator
+      # Generator, docs emitter and pipeline-script tests (node:test).
+      - run: npm test
+        working-directory: generator
+      - run: npm run typecheck
+        working-directory: generator
+      # Drift over the IR, Generated/, fixtures, PublicAPI.Unshipped.txt, README sections and docs/package/AGENTS.md.
+      - run: npm run generate -- --check
+        working-directory: generator
+
+  dotnet:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+          # The 8.0 runtime for the net8.0 test target; global.json selects the SDK.
+          dotnet-version: 8.0.x
+      - run: dotnet build -warnaserror
+      # Unit and contract tests on net10.0 and net8.0, offline.
+      - run: dotnet test --no-build
+      # Package validation runs as part of pack (EnablePackageValidation in Directory.Build.props).
+      - run: dotnet pack src/Graspea.Flint -c Release -o artifacts/pack
+      # The agent artifacts (AGENTS.md, catalog/catalog.json) ship in every package; no package dependencies.
+      - run: scripts/check-nupkg.sh artifacts/pack/*.nupkg
+      # The flint-cs tool package (design §12.9 step 1), in a folder of its own so the library check keeps its glob.
+      - run: dotnet pack src/Graspea.Flint.Tool -c Release -o artifacts/pack-tool
+      - run: scripts/check-nupkg.sh --tool artifacts/pack-tool/*.nupkg
+      # The source generator package (design §12.9 step 1): the analyzer under roslyn4.14, build/ targets, Graspea.Flint [X].
+      - run: dotnet pack src/Graspea.Flint.Generators -c Release -o artifacts/pack-generators
+      - run: scripts/check-nupkg.sh --generators artifacts/pack-generators/*.nupkg
+
+  samples:
+    needs: dotnet
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      # Writes samples/out/*.json; exits non-zero when a sample has an Error or a Warning.
+      - run: dotnet run --project samples/Graspea.Flint.Samples -c Release
+      # Trimming and AOT warnings are errors; the native binary must run and print JSON.
+      - run: dotnet publish samples/Graspea.Flint.Samples.Aot -c Release -p:PublishAot=true -o artifacts/aot
+      - run: ./artifacts/aot/Graspea.Flint.Samples.Aot
+      # The packed flint-cs, installed from a folder feed, converts every sample output (design §12.9 step 6).
+      - run: dotnet pack src/Graspea.Flint.Tool -c Release -o artifacts/pack-tool
+      - run: dotnet tool install Graspea.Flint.Tool --tool-path artifacts/tool --add-source artifacts/pack-tool --version 0.0.0-local
+      - run: |
+          for sample in samples/out/*.json; do
+            artifacts/tool/flint-cs to-csharp "$sample" --data parameter > /dev/null
+          done
+      # The generator sample, modes A and B, with the trimming analyzers on and warnings as errors (design §12.9 step 6).
+      - run: dotnet run --project samples/Graspea.Flint.Samples.Generators -c Release
+      # The same sample restored from the packed generator and library in a folder feed, into a package folder of its own
+      # so that no cached 0.0.0-ci is used, and the package flow to a project that references a generator user (design
+      # §12.10, Packaging).
+      - run: |
+          dotnet pack src/Graspea.Flint -c Release -o artifacts/feed -p:Version=0.0.0-ci
+          dotnet pack src/Graspea.Flint.Generators -c Release -o artifacts/feed -p:Version=0.0.0-ci
+      - run: >-
+          dotnet build samples/Graspea.Flint.Samples.Generators -c Release -warnaserror
+          -p:FlintGeneratorsFromPackage=true -p:FlintGeneratorsVersion=0.0.0-ci
+          -p:RestoreAdditionalProjectSources="$PWD/artifacts/feed" -p:RestorePackagesPath="$RUNNER_TEMP/generator-packages"
+      - run: scripts/check-generator-flow.sh artifacts/feed 0.0.0-ci
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: samples-out
+          path: samples/out/
+          if-no-files-found: error
+
+  contract-node:
+    needs: samples
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: samples-out
+          path: samples/out
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      # The pinned flint-chart is the generator's (generator/package-lock.json).
+      - run: npm ci --ignore-scripts
+        working-directory: generator
+      - run: npm test
+        working-directory: tests/contract-node

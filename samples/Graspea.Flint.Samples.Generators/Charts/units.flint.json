@@ -1,0 +1,9 @@
+{
+  "semantic_types": { "region": "Region", "units": "Quantity" },
+  "field_display_names": { "units": "Units sold" },
+  "chart_spec": {
+    "chartType": "Bar Chart",
+    "title": "Units by region",
+    "encodings": { "x": "region", "y": { "field": "units", "aggregate": "sum" } }
+  }
+}

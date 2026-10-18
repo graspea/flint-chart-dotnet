@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework />
+    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- The shared conversion core is compiled in (design §12.2: no InternalsVisibleTo); one language version for it everywhere. -->
+    <LangVersion>13</LangVersion>
+    <!-- The round-trip compiles generated C# with Roslyn; the tests are not an analyzer. -->
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../../src/Graspea.Flint.CSharp/**/*.cs" LinkBase="Core" />
+    <!-- The tool's command, run in process; Program.cs is the tool's entry point. -->
+    <Compile Include="../../src/Graspea.Flint.Tool/*.cs" Exclude="../../src/Graspea.Flint.Tool/Program.cs" LinkBase="Tool" />
+    <!-- The fixture sets and the contract canonicaliser of design §10.3, shared with the contract tests. -->
+    <Compile Include="../Graspea.Flint.ContractTests/Support/*.cs" LinkBase="ContractSupport" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Graspea.Flint/Graspea.Flint.csproj" />
+    <!-- The source generator, run in process through GeneratorDriver. -->
+    <ProjectReference Include="../../src/Graspea.Flint.Generators/Graspea.Flint.Generators.csproj" />
+    <!-- Built for the process-level tests, which run flint-cs.dll. -->
+    <ProjectReference Include="../../src/Graspea.Flint.Tool/Graspea.Flint.Tool.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

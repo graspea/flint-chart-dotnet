@@ -1,0 +1,47 @@
+name: Bug report
+description: The package writes, reads or validates a document wrongly, or fails to build or run.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Graspea.Flint emits Flint JSON and does not render. If the JSON is right but the chart looks wrong, the problem is probably in flint-chart; please check that first.
+  - type: input
+    id: version
+    attributes:
+      label: Graspea.Flint version
+      placeholder: 0.5.1.1-preview.1
+    validations:
+      required: true
+  - type: input
+    id: upstream
+    attributes:
+      label: flint-chart or flint-chart-mcp version that reads the JSON
+      placeholder: flint-chart 0.5.1
+  - type: input
+    id: runtime
+    attributes:
+      label: .NET runtime and OS
+      placeholder: .NET 8.0.10 on Linux x64
+  - type: textarea
+    id: code
+    attributes:
+      label: Code
+      description: The smallest C# code that shows the problem.
+      render: csharp
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happens
+      description: The JSON written, the validation issues, or the exception with its stack trace.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: If flint-chart behaves differently, say which backend and what it does.
+    validations:
+      required: true

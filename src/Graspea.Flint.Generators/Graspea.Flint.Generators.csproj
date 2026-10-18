@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- The compiler loads analyzers on .NET Framework (Visual Studio) and on .NET (the SDK), design §12.6.1. -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Graspea.Flint.Generators</PackageId>
+    <RootNamespace>Graspea.Flint.Generators</RootNamespace>
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <!-- One language version for the shared conversion core in every compilation (design §12.2.1). -->
+    <LangVersion>13</LangVersion>
+    <!-- The generator exposes no library API (design §12.8); its contract is the attributes and the FLINT ids. -->
+    <EnablePackageValidation>false</EnablePackageValidation>
+    <FlintLibraryPackage>false</FlintLibraryPackage>
+    <!-- The package layout of design §12.6.1 is written by the nuspec: the analyzer under analyzers/dotnet/roslyn4.14/cs,
+         build/Graspea.Flint.Generators.targets, lib/net8.0/_._ and the exact dependency on Graspea.Flint. -->
+    <NuspecFile>Graspea.Flint.Generators.nuspec</NuspecFile>
+    <IncludeSymbols>false</IncludeSymbols>
+    <DebugType>embedded</DebugType>
+    <!-- Not publishable: a release packs with -p:Version from the tag, the same version as Graspea.Flint (design §12.8). -->
+    <Version>0.0.0-local</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../Graspea.Flint.CSharp/**/*.cs" LinkBase="CSharp" />
+    <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
+    <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The compiler floor (design §12.6.1): compiled against Roslyn 4.14, nothing packed. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- The nuspec tokens, set when packing: OutputPath and the package version are final only then. -->
+  <Target Name="FlintNuspecProperties" BeforeTargets="GenerateNuspec">
+    <PropertyGroup>
+      <NuspecProperties>version=$(PackageVersion);output=$(OutputPath);root=$(MSBuildThisFileDirectory)../../</NuspecProperties>
+    </PropertyGroup>
+  </Target>
+
+</Project>

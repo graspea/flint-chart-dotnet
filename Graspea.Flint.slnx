@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/Graspea.Flint.Samples.Aot/Graspea.Flint.Samples.Aot.csproj" />
+    <Project Path="samples/Graspea.Flint.Samples.Generators/Graspea.Flint.Samples.Generators.csproj" />
+    <Project Path="samples/Graspea.Flint.Samples/Graspea.Flint.Samples.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Graspea.Flint/Graspea.Flint.csproj" />
+    <Project Path="src/Graspea.Flint.Generators/Graspea.Flint.Generators.csproj" />
+    <Project Path="src/Graspea.Flint.Tool/Graspea.Flint.Tool.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Graspea.Flint.ContractTests/Graspea.Flint.ContractTests.csproj" />
+    <Project Path="tests/Graspea.Flint.CSharp.Tests/Graspea.Flint.CSharp.Tests.csproj" />
+    <Project Path="tests/Graspea.Flint.Tests/Graspea.Flint.Tests.csproj" />
+  </Folder>
+</Solution>

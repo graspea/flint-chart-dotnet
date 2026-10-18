@@ -1,0 +1,181 @@
+# Design part 3 §9.6 step 4. A maintainer pushes an annotated, SSH-signed v* tag on the release pull request's merge
+# commit; this workflow checks the tag and its signer (advisory, see job check), checks the version, runs the full CI
+# suite without secrets, waits for approval in the nuget environment, then packs the three packages (Graspea.Flint,
+# Graspea.Flint.Tool, Graspea.Flint.Generators) with the tag's version, checks, attests (Sigstore build provenance) and
+# publishes them through NuGet Trusted Publishing (OIDC, no API key secret) in that one approved job (design part 7
+# §12.9), and finally creates the GitHub release.
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # The tag prefix, read by generator/scripts/release-check.mjs and by the upstream sync report; keep it on one line.
+  # The on.push.tags filter above, the tag ruleset and the nuget environment tag policy must change with it
+  # (generator/test/release-check.test.ts checks the filter).
+  TAG_PREFIX: v
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+      upstream: ${{ steps.check.outputs.upstream }}
+      prerelease: ${{ steps.check.outputs.prerelease }}
+      latest: ${{ steps.check.outputs.latest }}
+    steps:
+      # Full history and the tag objects: the tag check needs the annotated tag and origin/main, release-check compares
+      # the tag with the other release tags (latest).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      # Before anything is built: the tag is annotated and its object names it, its SSH signature verifies against
+      # .github/allowed_signers of the tagged commit and of origin/main, the signer is the tagger and the tagged commit is
+      # on main. This step runs from the tagged commit, so it is advisory: the tag ruleset and the nuget reviewers, who run
+      # the same checks locally before approving (docs/maintainers.md), are the security boundary.
+      - env:
+          TAG: ${{ github.ref_name }}
+        run: node generator/scripts/verify-release-tag.mjs --tag "$TAG"
+      # Grammar, first three parts == FlintUpstream.Version == generator pin, CHANGELOG entry present; outputs whether
+      # the tag is the highest stable release.
+      - id: check
+        env:
+          TAG: ${{ github.ref_name }}
+        run: node generator/scripts/release-check.mjs --tag "$TAG"
+      # Unpublish guard: the pinned upstream version must still be on npm.
+      - env:
+          UPSTREAM: ${{ steps.check.outputs.upstream }}
+        run: npm view "flint-chart@$UPSTREAM" version
+
+  ci:
+    needs: check
+    permissions:
+      contents: read
+    uses: ./.github/workflows/ci.yml
+
+  # The only job that produces packages, and only after a maintainer approves the nuget deployment. The tests ran in
+  # job ci without secrets; this job holds the OIDC token for NuGet and the attestation.
+  publish:
+    needs: [check, ci]
+    runs-on: ubuntu-latest
+    # Required reviewers (the maintainers team), deployment policy tags v*, and the Trusted Publishing policy (owner,
+    # graspea/flint-chart-dotnet, release.yml, nuget), which covers every package id of the owner account.
+    environment: nuget
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    # The artifact of the attempt that ran this job; a re-run of only github-release keeps the earlier attempt's output.
+    outputs:
+      artifact: package-${{ github.run_attempt }}
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
+      # The library first: the tool packs the Graspea.Flint.dll of the same build, the generator depends on Graspea.Flint
+      # [VERSION]. Package validation runs as part of the library's pack (EnablePackageValidation in Directory.Build.props).
+      - run: dotnet pack src/Graspea.Flint -c Release -p:Version="$VERSION" -o artifacts/pack
+      - run: dotnet pack src/Graspea.Flint.Tool -c Release -p:Version="$VERSION" -o artifacts/pack
+      - run: dotnet pack src/Graspea.Flint.Generators -c Release -p:Version="$VERSION" -o artifacts/pack
+      # Every file of the tag's version; the generator package has no symbols (its assembly is an analyzer).
+      - run: |
+          test -f "artifacts/pack/Graspea.Flint.$VERSION.nupkg"
+          test -f "artifacts/pack/Graspea.Flint.$VERSION.snupkg"
+          test -f "artifacts/pack/Graspea.Flint.Tool.$VERSION.nupkg"
+          test -f "artifacts/pack/Graspea.Flint.Tool.$VERSION.snupkg"
+          test -f "artifacts/pack/Graspea.Flint.Generators.$VERSION.nupkg"
+      # Library: README, icon, AGENTS.md, catalog/catalog.json, THIRD-PARTY-NOTICES.md; no package dependencies.
+      - run: scripts/check-nupkg.sh "artifacts/pack/Graspea.Flint.$VERSION.nupkg"
+      # Tool: DotnetTool flint-cs, rollForward Major, the packed Graspea.Flint.dll of VERSION and no other assembly.
+      - run: scripts/check-nupkg.sh --tool "artifacts/pack/Graspea.Flint.Tool.$VERSION.nupkg"
+      # Generators: the analyzer under roslyn4.14 only, build/ targets, nothing under lib/ but _._, Graspea.Flint [VERSION].
+      - run: scripts/check-nupkg.sh --generators "artifacts/pack/Graspea.Flint.Generators.$VERSION.nupkg"
+      # Sigstore build provenance for the files exactly as built; `gh attestation verify` checks them. nuget.org adds its
+      # repository signature on upload, so the copy downloaded from nuget.org has another digest: the GitHub release
+      # carries these files.
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            artifacts/pack/Graspea.Flint.${{ env.VERSION }}.nupkg
+            artifacts/pack/Graspea.Flint.${{ env.VERSION }}.snupkg
+            artifacts/pack/Graspea.Flint.Tool.${{ env.VERSION }}.nupkg
+            artifacts/pack/Graspea.Flint.Tool.${{ env.VERSION }}.snupkg
+            artifacts/pack/Graspea.Flint.Generators.${{ env.VERSION }}.nupkg
+      # One artifact per attempt: a run cannot upload an artifact name twice, and a re-run packs and attests again.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package-${{ github.run_attempt }}
+          path: artifacts/pack/
+          if-no-files-found: error
+      - id: login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ vars.NUGET_USER }}
+      # One Trusted Publishing key for the three ids. Each push also sends the .snupkg of the same folder to the symbol
+      # server. --skip-duplicate lets a rerun after a partial failure complete the set: a version already on nuget.org is
+      # skipped, never replaced.
+      - env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push "artifacts/pack/Graspea.Flint.$VERSION.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          dotnet nuget push "artifacts/pack/Graspea.Flint.Tool.$VERSION.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          dotnet nuget push "artifacts/pack/Graspea.Flint.Generators.$VERSION.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  github-release:
+    needs: [check, publish]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # The title and body come from the tagged commit's CHANGELOG.md, written here: an artifact of this run could have
+      # been replaced by any earlier job, including ci, which runs npm and NuGet dependencies. release-check.mjs has no
+      # npm dependencies. The package artifact is uploaded by publish, after ci has finished.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - env:
+          TAG: ${{ github.ref_name }}
+        run: node generator/scripts/release-check.mjs --tag "$TAG" --notes-dir notes
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ${{ needs.publish.outputs.artifact }}
+          path: package
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+          PRERELEASE: ${{ needs.check.outputs.prerelease }}
+          LATEST: ${{ needs.check.outputs.latest }}
+        # GitHub marks a new published release Latest unless told otherwise; a release of an older line must not take
+        # it. The attested .nupkg and .snupkg files of the three packages are attached as built.
+        run: |
+          flags=()
+          if [ "$PRERELEASE" = true ]; then flags+=(--prerelease); fi
+          if [ "$PRERELEASE" != true ] && [ "$LATEST" != true ]; then flags+=(--latest=false); fi
+          gh release create "$TAG" --verify-tag --title "$(cat notes/title.txt)" --notes-file notes/notes.md "${flags[@]}" \
+            package/*.nupkg package/*.snupkg

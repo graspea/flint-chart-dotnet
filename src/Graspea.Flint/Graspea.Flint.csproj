@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Graspea.Flint</PackageId>
+    <Title>Flint.NET</Title>
+    <Description>Unofficial, type-safe .NET SDK for Flint (flint-chart), Microsoft's visualization language for AI agents. Build Flint ChartAssemblyInput chart specs in C# with a typed model or a fluent builder and serialize them to JSON with System.Text.Json; there are no other dependencies. flint-chart compiles that JSON to Vega-Lite, ECharts, Chart.js, Plotly or Excel charts. This package emits JSON only; it does not render charts. Not affiliated with or endorsed by Microsoft.</Description>
+    <RootNamespace>Graspea.Flint</RootNamespace>
+    <IsAotCompatible>true</IsAotCompatible>
+    <!-- C# 13 to apply OverloadResolutionPriority (design §13.5); no feature that needs runtime support net8 lacks. -->
+    <LangVersion>13</LangVersion>
+    <!-- Not publishable: a release packs with -p:Version from the tag (design part 3 §9.6, §8.1). -->
+    <Version>0.0.0-local</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,19 @@
+{
+  "data": {
+    "values": [
+      { "month": "2024-01-01", "revenue": 1200.50, "region": "EU" },
+      { "month": "2024-02-01", "revenue": 1350.00, "region": "EU" },
+      { "month": "2024-01-01", "revenue": 980.25, "region": "US" },
+      { "month": "2024-02-01", "revenue": 1100.75, "region": "US" }
+    ]
+  },
+  "semantic_types": { "month": "YearMonth", "revenue": "Amount" },
+  "chart_spec": {
+    "chartType": "Line Chart",
+    "title": "Revenue by region",
+    "encodings": { "x": "month", "y": "revenue", "color": "region" },
+    "baseSize": { "width": 800, "height": 400 },
+    "chartProperties": { "interpolate": "monotone" }
+  },
+  "theme_spec": "economist"
+}

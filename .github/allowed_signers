@@ -1,0 +1,11 @@
+# Maintainer keys for release tags. release.yml takes this file from the tagged commit and verifies every v* tag with
+#   git -c gpg.format=ssh -c gpg.ssh.allowedSignersFile=.github/allowed_signers verify-tag <tag>
+# (generator/scripts/verify-release-tag.mjs). Without a key line below, every release stops before anything is built.
+#
+# Format: git's allowed signers file (ssh-keygen(1), section ALLOWED SIGNERS), one line per key:
+#   <email> namespaces="git" <key type> <base64 public key> [comment]
+# The email is the maintainer's git user.email, which is also the tagger email of their tags. One email per line, no
+# wildcards, no cert-authority lines; namespaces="git" is required.
+#
+# A key is added or removed only through a pull request reviewed by the maintainers team (.github/CODEOWNERS).
+# docs/maintainers.md, "Release signing key", has the steps.
