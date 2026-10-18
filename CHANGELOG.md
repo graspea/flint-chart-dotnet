@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions follow the four-part scheme of [docs/versioning.md](docs/versioning.md): the first three parts are the `flint-chart` version the release tracks.
 
-## [Unreleased]
+## [0.5.1.1-preview.1] - 2026-10-18
 
 The first preview, `0.5.1.1-preview.1`, tracking `flint-chart` 0.5.1 (npm).
 

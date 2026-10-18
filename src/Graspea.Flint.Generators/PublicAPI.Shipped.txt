@@ -1,1 +1,4 @@
 #nullable enable
+Graspea.Flint.Generators.FlintChartGenerator
+Graspea.Flint.Generators.FlintChartGenerator.FlintChartGenerator() -> void
+Graspea.Flint.Generators.FlintChartGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
