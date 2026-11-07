@@ -120,7 +120,7 @@ A fork or an unpublished build: `"flint-chart": "file:../flint-chart-0.6.0.tgz"`
 | `FixtureExpectationTests` on the new set | upstream throws where no Error is reported, or stopped throwing | add or demote the rule, unit test first; a new Error is allowed in an upstream-version release |
 | RS0017 | a hand-written line names a symbol that is gone (the generator writes `*REMOVED*` for its own lines, `docs/generator.md`) | fix the hand-written line |
 | Package validation | a breaking change against the baseline | only in a breaking window with a suppression entry |
-| A unit test pinned to a probe fact | upstream behaviour changed | re-run `probes.ts`, update the `// source:` comment and the expectation in one commit |
+| A probe fact (no failure: the sync report lists it as a `behavioural` row, `needs-attention`) | upstream behaviour changed | `npm run generate` records the new version's `tests/fixtures/flint-chart@<version>/probes.json`; when the SDK follows the change, move `DOCUMENTED` in `probes.test.ts`, the expectations, the `// source:` comments, the docs and the validator in one commit (`docs/generator.md` "Probes") |
 | `samples/` build | a facade renamed by an override | update the sample; if the old name shipped in a previous line, the override must set `keepObsolete: true` |
 | `contract-node` pinned | a sample now warns (e.g. a retired option) | change the sample to a current option |
 | Generator `import 'flint-chart'` fails | the release statically imports an optional peer (`vega`, unverified risk) | add the peer as a generator devDependency; nothing changes for consumers |

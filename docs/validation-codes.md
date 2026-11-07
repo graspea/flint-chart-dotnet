@@ -24,6 +24,8 @@ result.ThrowIfInvalid();   // FlintValidationException carrying every issue
 
 **Paths** are wire paths: `chart_spec.encodings.x`, `chart_spec.encodings.y[1].type` (an entry of a static series), `semantic_types.revenue`, `data.values[3]`, `chart_spec.chartProperties.interpolate`. Keys are written verbatim.
 
+**Upstream version.** The upstream facts below, and the probes they cite, describe flint-chart 0.5.1: a probe is the record `tests/fixtures/flint-chart@0.5.1/probes.json` ([generator.md](generator.md#probes)). A later upstream version that changes one is listed in its sync pull request; the validator follows it only when this page does.
+
 ## Error
 
 | Code | Upstream fact | Source |
@@ -80,7 +82,7 @@ The row-value infos of [part 2 §5.3](design/02-sdk-serialisation-validation-cod
 |---|---|
 | `large_integer` | An integer beyond 2^53, which JavaScript reads as the nearest double. |
 | `unspecified_datetime` | An ISO date and time without `Z` or an offset, as a `DateTime` of kind Unspecified is written. It is read in the local time zone of the process that runs flint-chart. |
-| `timespan_as_string` | A `TimeSpan` of a day or more (`"1.02:03:04"`), which upstream infers as temporal. A shorter one looks like a time of day (`"10:00:00"`), which infers nominal, and is not reported. |
+| `timespan_as_string` | A `TimeSpan` of a day or more (`"1.02:03:04"`), which flint-chart 0.5.1 infers as temporal (probe `valueInference`). A shorter one looks like a time of day (`"10:00:00"`), which infers nominal, and is not reported. |
 | `null_in_temporal_field` | A `null` in a field annotated with a semantic type whose encodings include `temporal`. |
 | `nested_value` | A nested object or array, which upstream reads as a nominal value. |
 
@@ -95,7 +97,7 @@ The Excel rules, and `series_nominal_entry`, need the encoding type that upstrea
 
 The candidate encodings of each semantic type come from the IR (`catalog.semanticTypes[].visEncodings`).
 
-JavaScript semantics such as `Number(v)`, `String(v)` and set membership are reproduced exactly. `Date.parse` is decided only in three cases: the ISO 8601 forms parse, and a string without a digit never parses (both recorded in `generator/verify/probes.json`, `dateParse`); for numbers V8's legacy parser decides, so they are undecided. Anything else, such as `"Stage 1"`, which V8 also parses, leaves the type undecided. A condition that depends on an undecided type is skipped, so the validator never reports an Error that upstream might not throw.
+JavaScript semantics such as `Number(v)`, `String(v)` and set membership are reproduced exactly. `Date.parse` is decided only in three cases: the ISO 8601 forms parse, and a string without a digit never parses (both recorded in `tests/fixtures/flint-chart@0.5.1/probes.json`, `dateParse`); for numbers V8's legacy parser decides, so they are undecided. Anything else, such as `"Stage 1"`, which V8 also parses, leaves the type undecided. A condition that depends on an undecided type is skipped, so the validator never reports an Error that upstream might not throw.
 
 On the 0.5.1 fixture corpus this resolves every Excel decision. All 219 recorded Excel throws are reported as Errors, and no non-throwing fixture gets one (`FixtureExpectationTests`).
 

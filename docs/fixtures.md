@@ -44,6 +44,7 @@ Upstream's own converters are not used, because they write an unread `semantic_a
 | `probe-cases.jsonl` | The crafted cases of `generator/src/extract/probe-cases.ts`, in the `cases.jsonl` format with ids `Probe\|#<n>`: one small document per validator rule that the corpus never makes an assembler throw or warn on (each static-series rule, null and empty data, null and empty encodings, a null channel, an unknown chart type and one without a template on some backends, unknown and `Object.prototype`-named themes, null and primitive rows, invalid and label-valued options including `projectionCenter`, and `Object.prototype`-named semantic types). Only documents the SDK model can express are listed. A case is recorded on every backend that has the template; the unknown chart type and the missing template on every backend. |
 | `probe-expectations.jsonl` | The outcomes of the crafted cases, in the `expectations.jsonl` format. |
 | `manifest.json` | See Provenance; `probeCases` is the number of crafted cases. |
+| `probes.json` | The runtime probe record of the version (`generator/src/probes.ts`; [generator.md](generator.md#probes)): null handling, row shapes, theme backends, `Object.prototype` names, value inference and `Date.parse`. |
 | `known-failures.txt` | Fixture ids, one per line, whose round-trip is a known failure (`#` starts a comment). The step creates the file empty and never rewrites it. |
 
 ## Counts on flint-chart 0.5.1

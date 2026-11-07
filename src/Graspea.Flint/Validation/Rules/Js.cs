@@ -237,7 +237,7 @@ internal static partial class Js
     /// <summary>
     /// Whether V8's <c>Date.parse</c> returns a number: true for the ISO 8601 forms of ECMA-262 §21.4.1.32 with a valid
     /// month, a day of at most 31 and a valid time of day, false for a string without an ASCII digit (V8 needs a number for a date), null
-    /// otherwise (V8's legacy parser accepts more, such as <c>"Stage 1"</c>; recorded in generator/verify/probes.json).
+    /// otherwise (V8's legacy parser accepts more, such as <c>"Stage 1"</c>; recorded in tests/fixtures/flint-chart@0.5.1/probes.json).
     /// </summary>
     internal static bool? DateParses(string s)
     {

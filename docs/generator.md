@@ -11,8 +11,7 @@ npm test                 # node:test via tsx
 npm run typecheck        # tsc, no emit
 npm run generate         # extract, emit, fixtures
 npm run generate -- --check   # drift check: writes nothing, lists every file a fresh run would change, exits 1
-npm run fixtures         # the fixture step alone
-npm run probes           # re-record verify/probes.json (not part of generate)
+npm run fixtures         # the fixture step alone (with the probe record)
 npm run crosscheck -- <flint-chart checkout>    # one-off, not in CI (fixtures.md)
 npm run ir-diff -- <before.json> [after.json]   # markdown table; after defaults to ir/flint-ir.json
 cd .. && dotnet build -warnaserror && dotnet test -f net10.0
@@ -22,13 +21,15 @@ cd .. && dotnet build -warnaserror && dotnet test -f net10.0
 |---|---|
 | `extract` | Sets `TZ=UTC` and loads `overrides.json`. Builds `IR.types` with the TypeScript checker, starting from `package.json` `types`, and `IR.catalog` from the runtime registries. Diffs the result against the committed IR and appends each removal to `retired.json`. Writes `ir/flint-ir.json` canonically: sorted keys, two-space indent, LF, trailing newline. |
 | `emit` | Reads only the IR and `overrides.json`. Checks property kinds and the entry, builder, enum, channel and property names (design §7.6), then writes `Generated/Constants`, `Generated/Options`, `Generated/Theming`, `Generated/Json`, `Generated/Tables`, the fluent facades `Generated/Builders`, `Generated/Enums` and `Generated/Entries`, and `Generated/catalog.json` (the IR `catalog` node, canonical JSON, packed as `catalog/catalog.json`). Removes stale `*.g.cs` files and rewrites `PublicAPI.Unshipped.txt` (hand-written lines are kept; generated lines are owned by the generator, including the `*REMOVED*` lines of [Removed public API](#removed-public-api)). Rewrites the marked sections of `README.md` and writes `docs/package/AGENTS.md` (see [Documentation](#documentation)). Writes the spec-to-C# name tables `src/Graspea.Flint.CSharp/Generated/NameTables.g.cs` and `Catalog.g.cs` (see [Spec-to-C# name tables](#spec-to-c-name-tables)). |
-| `fixtures` | Runs in a process of its own (the seed and `TZ` are process-wide): `TZ=UTC`, Park-Miller seed 42 in place of `Math.random`, then `flint-chart/test-data`. Writes `cases.jsonl`, `expectations.jsonl` and `manifest.json` to `tests/fixtures/flint-chart@<version>/`, and an empty `known-failures.txt` when there is none ([fixtures.md](fixtures.md)). |
+| `fixtures` | Runs in a process of its own (the seed and `TZ` are process-wide): `TZ=UTC`, Park-Miller seed 42 in place of `Math.random`, then `flint-chart/test-data`. Writes `cases.jsonl`, `expectations.jsonl`, `manifest.json` and the probe record `probes.json` ([Probes](#probes)) to `tests/fixtures/flint-chart@<version>/`, and an empty `known-failures.txt` when there is none ([fixtures.md](fixtures.md)). |
 
 `npm run generate` is deterministic: a second run, or a run from an empty `Generated/` and `ir/`, leaves `git status` clean. `generate -- --check` runs the same steps without writing: it fails when the IR, `retired.json`, a generated file (including a stale `*.g.cs`, and the files under `src/Graspea.Flint.CSharp/Generated/` written by the csharp-names emitter of [design part 7](design/07-spec-to-csharp-tool-and-generator.md) §12.7), `PublicAPI.Unshipped.txt`, a marked `README.md` section, `docs/package/AGENTS.md` or a fixture file would change, or when the `generator/package.json` pin differs from the installed version.
 
-`npm run probes` records the runtime facts the design cites as probed (null handling, the backends that apply the theme, the inference of the values .NET writes, and the `Date.parse` results the validator relies on) in `generator/verify/probes.json`; `test/probes.test.ts` keeps the record equal to a fresh run.
+Not implemented yet: the `[Obsolete]` emission of retired members (design §7.8); until it is, a retired member is dropped and leaves a `*REMOVED*` line ([Removed public API](#removed-public-api)).
 
-Not implemented yet: the `[Obsolete]` emission of retired members (design §7.8); until it is, a retired member is dropped and leaves a `*REMOVED*` line (below).
+### Probes
+
+The `fixtures` step also records the runtime facts the design cites as probed (null handling, the backends that apply the theme, the inference of the values .NET writes, and the `Date.parse` results the validator relies on) per upstream version, in `tests/fixtures/flint-chart@<version>/probes.json`. `test/probes.test.ts` keeps the record of the pinned version equal to a fresh run, and pins the documented facts to the record of the version the design, `docs/validation-codes.md` and the validator describe (`DOCUMENTED` in the test, 0.5.1 today). The sync report diffs the pin's record against the new version's and lists each changed fact as a `behavioural` row under "Behaviour probes", which adds `needs-attention`; a changed fact does not fail `npm test`. The maintainer then decides whether the SDK follows it, and moves `DOCUMENTED`, its expectations, the docs and the validator together.
 
 ### Removed public API
 
@@ -57,7 +58,7 @@ npm --prefix generator run ir-diff -- <(git show main:generator/ir/flint-ir.json
 
 `npm run install-upstream -- <version>` (`scripts/install-upstream.mjs`) stops at the first failure: `npm install --save-exact --ignore-scripts flint-chart@<version>` (no package code runs), `npm audit signatures` (registry signature and Sigstore provenance), then `scripts/verify-provenance.mjs`, which requires the provenance to name the package and tarball digest, the repository `microsoft/flint-chart`, the workflow `.github/workflows/npm-publish.yml` and the packument's `gitHead` as the commit. Last it writes `generator/mcp-pin.json`. Versions without provenance (0.1.0) fail the gate.
 
-The generator tests that run against the installed package (`extract-dts`, `extract-registry`, `fixtures`, `naming-ir`, `emit-docs`) read the values that change with every upstream release, such as member lists and counts, from the committed IR and the fixture set of the pinned version, which the sync writes; the rules behind them are pinned on synthetic input. A behaviour fact (a probe in `verify/probes.json`, a crafted case outcome) stays pinned, so a sync that changes one fails `npm test` until a maintainer updates the fact and the SDK code that relies on it.
+The generator tests that run against the installed package (`extract-dts`, `extract-registry`, `fixtures`, `naming-ir`, `emit-docs`) read the values that change with every upstream release, such as member lists and counts, from the committed IR and the fixture set of the pinned version, which the sync writes; the rules behind them are pinned on synthetic input. A probe fact is recorded per version and a change is reported, not failed ([Probes](#probes)); a crafted case outcome stays pinned, so a sync that changes one fails `npm test` until a maintainer updates the fact and the SDK code that relies on it.
 
 The scripts in `generator/scripts/` are plain Node modules with `node:test` tests in `generator/test/`, run by `npm test`:
 

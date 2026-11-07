@@ -1,22 +1,38 @@
 import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { canonicalJson } from '../src/ir.ts';
+import { canonicalJson, type Ir } from '../src/ir.ts';
 import { runProbes, type ProbeResults } from '../src/probes.ts';
 
 const all = ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel'];
 const layout = ['vegalite', 'echarts', 'chartjs', 'plotly'];
 
-// Runs against the installed flint-chart@0.5.1. Each expectation is the documented fact the probe backs.
-describe('probes', () => {
-  let results: ProbeResults;
-  const throwingBackends = (probe: string) =>
-    Object.entries(results.nullHandling[probe]!)
-      .filter(([, outcome]) => outcome === 'throws')
-      .map(([b]) => b);
+const record = (version: string) => new URL(`../../tests/fixtures/flint-chart@${version}/probes.json`, import.meta.url);
+const pinned = (JSON.parse(readFileSync(new URL('../ir/flint-ir.json', import.meta.url), 'utf8')) as Ir).upstream.version;
 
-  before(async () => {
-    results = await runProbes();
+/**
+ * The flint-chart version whose facts the design, docs/validation-codes.md and the validator describe. Each expectation
+ * below is the documented fact the probe backs, checked against that version's record; when a sync changes a fact
+ * (the report lists it as a behavioural row), the maintainer moves this version, the expectations and the docs together.
+ */
+const DOCUMENTED = '0.5.1';
+
+// A fresh run against the installed flint-chart (the pinned version) equals its record, which `npm run generate` writes.
+describe('probes: record of the pinned version', () => {
+  // source: tests/fixtures/flint-chart@<pinned version>/probes.json (written by `npm run generate`, docs/generator.md "Probes")
+  it('matches a fresh run', async () => {
+    assert.equal(canonicalJson(await runProbes()), readFileSync(record(pinned), 'utf8'));
+  });
+});
+
+describe(`probes: documented facts (flint-chart ${DOCUMENTED})`, () => {
+  let results: ProbeResults;
+  // The record is canonical JSON (keys sorted), so backends are listed in the fixed order.
+  const throwingIn = (outcomes: Record<string, string>) => all.filter((b) => outcomes[b] === 'throws');
+  const throwingBackends = (probe: string) => throwingIn(results.nullHandling[probe]!);
+
+  before(() => {
+    results = JSON.parse(readFileSync(record(DOCUMENTED), 'utf8')) as ProbeResults;
   });
 
   // source: part 01 §2 Null handling (throws on all five: data null, missing encodings, unknown chartType)
@@ -46,8 +62,7 @@ describe('probes', () => {
   // source: core/theme/presets.ts (THEME_PRESETS[id] is a plain-object lookup) and core registry isRegistered
   // (`semanticType in TYPE_REGISTRY`, so a name of Object.prototype counts as registered and has no visEncodings) (review D2-5)
   it('finds how names of Object.prototype resolve', () => {
-    const throwing = (probe: string) =>
-      Object.entries(results.prototypeKeys[probe]!).filter(([, o]) => o === 'throws').map(([b]) => b);
+    const throwing = (probe: string) => throwingIn(results.prototypeKeys[probe]!);
     assert.deepEqual(throwing('theme_spec "constructor"'), []);
     assert.deepEqual(throwing('theme_spec extends "toString"'), []);
     assert.deepEqual(throwing('semantic type "constructor" on a bound field'), all);
@@ -55,7 +70,7 @@ describe('probes', () => {
     assert.deepEqual(throwing('semantic type "valueOf" on no field'), []);
   });
 
-  // source: verify/probes.json (Excel's empty-data throw comes from a type requirement that untyped fields cannot meet
+  // source: tests/fixtures/flint-chart@0.5.1/probes.json (Excel's empty-data throw comes from a type requirement that untyped fields cannot meet
   // without rows; with explicit types the Bar Chart assembles on Excel too; see docs/validation-codes.md data_empty)
   it('finds no throw for empty data with explicit encoding types', () => {
     assert.deepEqual(throwingBackends('data values empty, typed encodings'), []);
@@ -115,11 +130,5 @@ describe('probes', () => {
       'Sat, Jan': 'NaN',
       'now': 'NaN',
     });
-  });
-
-  // source: generator/verify/probes.json (the recorded output is the one a fresh run produces)
-  it('matches the recorded output', () => {
-    const recorded = readFileSync(new URL('../verify/probes.json', import.meta.url), 'utf8');
-    assert.equal(canonicalJson(results), recorded);
   });
 });

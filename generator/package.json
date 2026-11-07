@@ -14,7 +14,6 @@
     "fixtures": "node --import tsx src/cli.ts fixtures",
     "install-upstream": "node scripts/install-upstream.mjs",
     "generate": "node --import tsx src/cli.ts generate",
-    "probes": "node --import tsx src/cli.ts probes",
     "crosscheck": "node --import tsx src/extract/crosscheck.ts",
     "ir-diff": "node --import tsx src/cli.ts ir-diff",
     "upstream-report": "node --import tsx scripts/upstream-report.mjs",

@@ -186,7 +186,7 @@ generator/
   src/extract/registry.ts import('flint-chart') -> IR.catalog
   src/extract/fixtures.ts TZ=UTC, Park-Miller seed 42 -> fixtures + expectations
   src/extract/crosscheck.ts  one-off, not in CI: compares mapped fixtures with upstream's shared/test-data input.json files (§7.9)
-  src/probes.ts           runtime probes behind documented facts (null handling, theme backends, value inference); outputs recorded in verify/
+  src/probes.ts           runtime probes behind documented facts (null handling, theme backends, value inference); outputs recorded per version in tests/fixtures/flint-chart@<version>/probes.json
   src/diff.ts             ir-diff: two IR files -> markdown table (added / removed / changed, with IR paths); feeds the sync PR body
   src/ir.ts               IR types + canonical writer (sorted keys, LF, 2 spaces, trailing newline)
   src/emit/*.ts           constants, options, theming, tables, builders, enums, entries, public-api, docs

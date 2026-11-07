@@ -36,7 +36,7 @@ Rows are written to JSON when the `ChartData` is created, so later changes to th
 
 ## How each .NET type is written
 
-| .NET | JSON | flint-chart infers | Notes |
+| .NET | JSON | flint-chart 0.5.1 infers (probe `valueInference`) | Notes |
 |---|---|---|---|
 | `bool` | `true` / `false` | nominal | |
 | `byte` to `long`, `uint` to `ulong` | number | quantitative | beyond 2^53 JavaScript loses precision; Info `large_integer` |

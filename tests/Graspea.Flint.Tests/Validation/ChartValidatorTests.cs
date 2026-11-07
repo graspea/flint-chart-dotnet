@@ -7,7 +7,7 @@ namespace Graspea.Flint.Tests.Validation;
 
 /// <summary>
 /// Every code of design §6 on a minimal document, with the severity its upstream fact implies (§10.3 unit: validation;
-/// §10.4 tests 16 and 17). Facts marked "probe" are recorded in generator/verify/probes.json.
+/// §10.4 tests 16 and 17). Facts marked "probe" are recorded in tests/fixtures/flint-chart@0.5.1/probes.json.
 /// </summary>
 public sealed partial class ChartValidatorTests
 {
@@ -362,7 +362,7 @@ public sealed partial class ChartValidatorTests
         Assert.That(Issues(input, null, "inconsistent_row_keys").Single().Path, Is.EqualTo("data.values[1]"));
     }
 
-    // source: generator/verify/probes.json nullHandling "row number, no temporal key" (a number row assembles when no key of
+    // source: tests/fixtures/flint-chart@0.5.1/probes.json nullHandling "row number, no temporal key" (a number row assembles when no key of
     // the first row is temporal; the MCP front door rejects it)
     [Test]
     public void Infos_RowNotObject()
@@ -371,7 +371,7 @@ public sealed partial class ChartValidatorTests
         AssertOne(input, null, "row_not_object", IssueSeverity.Info);
     }
 
-    // source: generator/verify/probes.json nullHandling "row null" and "row null first" (every backend throws reading a
+    // source: tests/fixtures/flint-chart@0.5.1/probes.json nullHandling "row null" and "row null first" (every backend throws reading a
     // key of a null row)
     [Test]
     public void Errors_NullRow_OnEveryBackend()
@@ -387,7 +387,7 @@ public sealed partial class ChartValidatorTests
         AssertOne(Bar(i => i.Data = ChartData.FromJson([null, new JsonObject { ["city"] = "A", ["revenue"] = 1 }])), null, "row_not_object", IssueSeverity.Error);
     }
 
-    // source: generator/verify/probes.json nullHandling "row number with temporal x" and "row number with an unbound
+    // source: tests/fixtures/flint-chart@0.5.1/probes.json nullHandling "row number with temporal x" and "row number with an unbound
     // temporal key" (convertTemporalData writes every temporal key of the first row back into each row)
     [Test]
     public void Errors_PrimitiveRow_WithATemporalKey()
@@ -403,7 +403,7 @@ public sealed partial class ChartValidatorTests
         AssertOne(unbound, null, "row_not_object", IssueSeverity.Error);
     }
 
-    // source: generator/verify/probes.json prototypeKeys (THEME_PRESETS["constructor"] and THEME_PRESETS["toString"] are
+    // source: tests/fixtures/flint-chart@0.5.1/probes.json prototypeKeys (THEME_PRESETS["constructor"] and THEME_PRESETS["toString"] are
     // truthy, so nothing throws)
     [Test]
     public void Validate_ThemeNamedLikeAnObjectPrototypeMember_IsNotUnknown()
@@ -413,7 +413,7 @@ public sealed partial class ChartValidatorTests
         Assert.That(ChartValidator.Validate(Bar(i => i.ThemeSpec = new ThemePreset("__proto__")), null).IsValid, Is.True);
     }
 
-    // source: generator/verify/probes.json prototypeKeys (`semanticType in TYPE_REGISTRY` holds for a name of
+    // source: tests/fixtures/flint-chart@0.5.1/probes.json prototypeKeys (`semanticType in TYPE_REGISTRY` holds for a name of
     // Object.prototype, which has no visEncodings: every backend throws when the field is bound or a key of the first row)
     [Test]
     public void Errors_SemanticTypeNamedLikeAnObjectPrototypeMember()

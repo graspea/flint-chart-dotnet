@@ -1,4 +1,4 @@
-// npm run extract | emit | fixtures | generate [-- --check] | probes | ir-diff. `generate` = extract + emit + fixtures;
+// npm run extract | emit | fixtures | generate [-- --check] | ir-diff. `generate` = extract + emit + fixtures;
 // emit also writes the marked README.md sections, docs/package/AGENTS.md and the spec-to-C# name tables.
 // Paths are relative to generator/. With --check nothing is written: every file that would change is listed and the
 // command fails (the drift check of design §7.7).
@@ -24,7 +24,7 @@ import { flintPackageDir, lockedIntegrity, packageManifest, PACKAGE_NAME } from 
 import { extractCatalog } from './extract/registry.ts';
 import { canonicalJson, type Ir } from './ir.ts';
 import { loadOverrides } from './overrides.ts';
-import { runProbes } from './probes.ts';
+import { PROBES_FILE, runProbes } from './probes.ts';
 
 const generatorDir = dirname(dirname(fileURLToPath(import.meta.url)));
 const repoDir = dirname(generatorDir);
@@ -35,7 +35,6 @@ const LIBRARY_DIR = join(repoDir, 'src/Graspea.Flint');
 const GENERATED_DIR = join(LIBRARY_DIR, 'Generated');
 const CSHARP_GENERATED_DIR = join(repoDir, 'src/Graspea.Flint.CSharp/Generated');
 const FIXTURES_DIR = join(repoDir, 'tests/fixtures');
-const PROBES_FILE = join(generatorDir, 'verify/probes.json');
 const MCP_PIN_FILE = join(generatorDir, 'mcp-pin.json');
 const README_FILE = join(repoDir, 'README.md');
 const PACKAGE_AGENTS_FILE = join(repoDir, 'docs/package/AGENTS.md');
@@ -143,12 +142,16 @@ function emit(ir: Ir = readJson<Ir>(IR_FILE)): void {
   console.log(`emit: ${wrote} ${result.files.length} files, ${result.apiLines.length} API lines, ${names.length} name table file(s), README.md sections and docs/package/AGENTS.md`);
 }
 
-/** Writes tests/fixtures/flint-chart@<version>/ (or under --out). Must run in a process that has not imported flint-chart. */
+/**
+ * Writes tests/fixtures/flint-chart@<version>/ (or under --out), with the runtime probe record probes.json (design §7.2).
+ * Must run in a process that has not imported flint-chart.
+ */
 async function fixtures(outRoot: string): Promise<void> {
   const version = packageManifest(flintPackageDir()).version;
   const set = await extractFixtures({ version, integrity: lockedIntegrity(join(generatorDir, 'package-lock.json')) });
   const folder = join(outRoot, fixtureFolder(version));
   for (const file of fixtureFiles(set)) writeText(join(folder, file.path), file.content);
+  writeText(join(folder, PROBES_FILE), canonicalJson(await runProbes()));
   const knownFailures = join(folder, KNOWN_FAILURES_FILE);
   if (!existsSync(knownFailures)) writeText(knownFailures, '');
   console.log(`fixtures: ${wrote} ${set.cases.length} cases in ${folder}`);
@@ -168,13 +171,6 @@ async function generate(): Promise<void> {
     if (check) drift.push('tests/fixtures (see above)');
     else throw new Error(`fixtures failed with exit code ${child.status}`);
   }
-}
-
-/** Records the runtime probes (design §7.2); not part of generate. */
-async function probes(): Promise<void> {
-  process.env.TZ = 'UTC';
-  writeText(PROBES_FILE, canonicalJson(await runProbes()));
-  console.log(`probes: ${wrote} ${PROBES_FILE}`);
 }
 
 function argValue(args: string[], name: string): string | undefined {
@@ -202,14 +198,11 @@ switch (command) {
   case 'generate':
     await generate();
     break;
-  case 'probes':
-    await probes();
-    break;
   case 'ir-diff':
     irDiff(args);
     break;
   default:
-    throw new Error(`Unknown command "${command}". Use extract, emit, fixtures, generate, probes or ir-diff.`);
+    throw new Error(`Unknown command "${command}". Use extract, emit, fixtures, generate or ir-diff.`);
 }
 
 if (check && drift.length > 0) {

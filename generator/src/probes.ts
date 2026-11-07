@@ -1,8 +1,12 @@
 // Runtime probes behind the facts the design cites as probed (design §7.2): null handling and row shapes, the backends
 // that apply the theme (by preset id or an object's `extends`), names of Object.prototype used as ids, the inference of the values .NET writes, and the Date.parse results the validator relies on.
-// `npm run probes` records the output in verify/probes.json; a unit test that cites a probe fact names this file, and
-// test/probes.test.ts keeps the record equal to a fresh run.
+// `npm run generate` (its fixtures step) records the output per version in tests/fixtures/flint-chart@<version>/probes.json;
+// a unit test that cites a probe fact names that file, and test/probes.test.ts keeps the pinned version's record equal to
+// a fresh run.
 import { BACKENDS, type Backend, type Input } from './extract/fixtures.ts';
+
+/** The record's file name in the fixture folder of a version. */
+export const PROBES_FILE = 'probes.json';
 
 type Outcome = 'ok' | 'throws';
 

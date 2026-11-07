@@ -76,8 +76,9 @@ describe('extract/fixtures', () => {
   });
 
   // source: design §10.2 (cases.jsonl, expectations.jsonl, manifest.json, known-failures.txt) and review D2-3 (the
-  // crafted cases in probe-cases.jsonl and probe-expectations.jsonl)
-  it('writes the six files of the version folder', () => {
+  // crafted cases in probe-cases.jsonl and probe-expectations.jsonl); docs/generator.md "Probes" (the runtime probe
+  // record, probes.json, is written per version)
+  it('writes the seven files of the version folder', () => {
     assert.deepEqual(readdirSync(folder).sort(), [
       'cases.jsonl',
       'expectations.jsonl',
@@ -85,6 +86,7 @@ describe('extract/fixtures', () => {
       'manifest.json',
       'probe-cases.jsonl',
       'probe-expectations.jsonl',
+      'probes.json',
     ]);
     assert.equal(readFileSync(join(folder, 'known-failures.txt'), 'utf8'), '');
   });
@@ -149,7 +151,7 @@ describe('extract/fixtures', () => {
   });
 
   // source: src/extract/probe-cases.ts (one case per rule; a case without the template on a backend is recorded there
-  // too) and verify/probes.json (the layout backends throw on a static-series rule, Excel on every static series)
+  // too) and tests/fixtures/flint-chart@0.5.1/probes.json (the layout backends throw on a static-series rule, Excel on every static series)
   it('records the crafted cases on every backend that has the template', () => {
     const cases = lines('probe-cases.jsonl');
     const expectations = lines('probe-expectations.jsonl');
