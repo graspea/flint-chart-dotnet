@@ -146,7 +146,7 @@ All three numbers appear in upstream material. The generator takes the union, de
 
 ## Type mapping of the 0.5.1 d.ts
 
-Emission starts at three roots. `AssembleOptions` goes to `Graspea.Flint` (`Generated/Options`). `ThemeSpec` goes to `Graspea.Flint.Theming` (`Generated/Theming`, 53 classes on 0.5.1). From 1.0.0, `InteractionSpec` (the type of `ChartAssemblyInput.interaction_spec`) goes to `Graspea.Flint` (`Generated/Interaction`). A named type reached from more than one root goes to `Graspea.Flint` (`Generated/Options`), like the hand-written shared `ContinuousMarkCrossSection`; the namespace follows from which roots reach the type, not from the order the emitter meets it (see [Namespaces](#namespaces)). `ChartAssemblyInput`, `ChartEncoding` and `SemanticAnnotation` are extracted for the parity test only. So are the anonymous core types, stored under their SDK names: `ChartData`, `ChartSpec`, `ChartSize` and `ContinuousMarkCrossSection`.
+Emission starts at three roots. `AssembleOptions` goes to `Graspea.Flint` (`Generated/Options`). `ThemeSpec` goes to `Graspea.Flint.Theming` (`Generated/Theming`, 53 classes on 0.5.1). From 1.0.0, `InteractionSpec` (the type of `ChartAssemblyInput.interaction_spec`) goes to `Graspea.Flint` (`Generated/Interaction`), and so do the interaction preset options ([Interaction presets](#interaction-presets)). A named type reached from more than one root goes to `Graspea.Flint` (`Generated/Options`), like the hand-written shared `ContinuousMarkCrossSection`; the namespace follows from which roots reach the type, not from the order the emitter meets it (see [Namespaces](#namespaces)). `ChartAssemblyInput`, `ChartEncoding` and `SemanticAnnotation` are extracted for the parity test only. So are the anonymous core types, stored under their SDK names: `ChartData`, `ChartSpec`, `ChartSize` and `ContinuousMarkCrossSection`.
 
 | Construct found | Where | Decision |
 |---|---|---|
@@ -185,6 +185,18 @@ Every map value type (other than `JsonNode`) gets a `[JsonSerializable]` line in
 
 Required upstream members are nullable too, because "omitted" and "null" are one state in C# (design §5.2).
 
+### Interaction presets
+
+`extract` reads a second entry point, `flint-chart/interactive` (package.json `exports["./interactive"].types`), in the same TypeScript program, and starts from its `InteractionPresetOptions`: one member per preset type (the 23 `InteractionPresetType` literals on 1.0.0, which `extract-dts` checks), whose type is the options that preset's factory takes. Upstream calls it the option shape of `interaction_spec` "so the JSON shape and the code shape cannot drift apart"; the link is in the types, so it is extracted, not hand-written. A version without the entry point has no presets.
+
+The options emitter treats `InteractionPresetOptions` as a root it does not emit:
+
+- each member type becomes a class in `Graspea.Flint` (`Generated/Interaction`): a named interface under its upstream name (`SelectOptions` for `select`, `brush-x`, `brush-y` and `brush-angle`; `NavigateOptions`), a mapped one as `<Preset>Options` (`LassoSelectOptions`);
+- these classes have no `id` member: `InteractionPresetSpec` omits it, upstream rejects `options.id`, and the id lives on the entry. A nested class (`ContextMenuItem`) keeps its own `id`;
+- `InteractionEntry` gets one factory per preset, `InteractionEntry.<Preset>(options, id)` (`InteractionEntry.Navigate(new NavigateOptions { Axes = "x", Pan = false })`), in `Interaction/InteractionEntry.Presets.g.cs`. It writes the typed options into the generic `Options` map through the source-generated `InteractionPresetJsonContext` (trimming- and AOT-safe); options without a member set write none. A preset with a required option (`hover-group-focus`, `linked-brush`, `context-menu`) takes its options; the others default to none. `Options` stays `Dictionary<string, JsonNode?>`, the escape hatch for a preset or option this version does not know.
+
+The members the type mapping cannot map are `unions` entries (the 1.0.0 table above), so 12 of the 23 presets have at least one `JsonNode` or `string` member. The spec-to-C# name tables list each preset with its factory and class (`Presets`), and the conversion writes an entry through its factory when that writes the entry exactly; otherwise (an unknown preset, a key beside `type`, `id` and `options`, an empty options object) it writes `new InteractionEntry { … }`.
+
 ### Namespaces
 
 The options emitter places every named object type before it emits anything: it walks the IR from each root, without passing through another root, and records which roots reach the type. Reached from one root, the type takes that root's namespace and folder; reached from more than one, `Graspea.Flint` and `Generated/Options`. A nested `<Parent><Prop>` class takes its parent's namespace, and every PublicAPI line names the type in that namespace. On 0.5.1 no named type is reached from both roots; on 1.0.0 `CanvasTreatment` is (`AssembleOptions.canvasTreatment` and `ThemeCompileDefaults.canvasTreatment`), so it is `Graspea.Flint.CanvasTreatment`.
@@ -216,7 +228,13 @@ The options emitter places every named object type before it emits anything: it 
 | Entry | Reason |
 |---|---|
 | `unions["InteractionSpec.assistedTargeting"]` = `Graspea.Flint.AssistedTargeting` | `boolean \| AssistedTargetingOptions`; the hand-written class carries the boolean form (`AssistedTargeting = false`) and the object form, whose `details` (`boolean \| TargetDetailsOptions`) is the hand-written `TargetDetails`. `CoreParityTests` pins both object forms to the IR |
-| `unions["InteractionEntry.options{*}"]` = `JsonNode` | `Record<string, any>`: each preset's options, whose per-type shape lives in `flint-chart/interactive` (`InteractionPresetSpec`), outside the IR |
+| `unions["InteractionEntry.options{*}"]` = `JsonNode` | `Record<string, any>`: the options of any preset, also one this version does not know; the typed options of each known preset come from `flint-chart/interactive` ([Interaction presets](#interaction-presets)) and are written into this map by its factory |
+| `unions` = `JsonNode` at `SelectOptions.guide`, `BrushZoomOptions.guide`, `LinkedBrushOptions.guide`, `InspectOptions.guide`, `InspectIndexOptions.guide`, `InteractionPresetOptions.lasso-select.guide` | `GestureGuideOptions<TStyle> \| false`: an instantiated generic interface (the extractor maps no type arguments) or `false` |
+| `unions` = `JsonNode` at `ClickGroupFocusOptions.groupBy`, `HoverGroupFocusOptions.groupBy`, `LinkedBrushOptions.groupBy` | `GroupBy = string \| readonly string[]` |
+| `unions` = `JsonNode` at `InspectOptions.selector`, `InspectIndexOptions.selector`, `InspectIndexOptions.show` | unions of objects (`SemanticTargetSelector`; `'all' \| 'single' \| {series}`) |
+| `unions` = `JsonNode` at `FilterControlsOptions.fields`, `FilterControlsOptions.initial{*}` | `readonly (string \| FilterFieldOptions)[]` (an array of an unmappable union maps as a whole) and `FilterValue = {in} \| {range}` |
+| `unions` = `string` at `InspectOptions.mode`, `InspectOptions.cycle[]` | `InspectMode`: three literals and template literal types (`` `x${InspectOperator}` ``), all strings |
+| `flatten` = `InteractionPresetOptions.click-annotate`, `InteractionPresetOptions.lasso-select` | `Omit<ClickAnnotateOptions, 'format'>` and `Omit<SelectOptions, 'mode'>`, accepted as `ClickAnnotateOptions` and `LassoSelectOptions` |
 
 ## `overrides.json` entries written ahead for 1.0.0
 

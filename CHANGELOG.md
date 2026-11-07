@@ -10,6 +10,7 @@ Tracks `flint-chart` 1.0.0 (npm), an upstream major and so a breaking window ([d
 
 - The `flint-chart` 1.0.0 catalog: the chart types Marginal Plot, Ridgeline Plot and Table (`Chart.Marginal`, `Chart.Ridgeline`, `Chart.Table`), and the channels, chart properties, options and theme members the sync pull request lists.
 - `ChartAssemblyInput.InteractionSpec` (`interaction_spec`), read by the Vega-Lite interactive surface: the generated `InteractionSpec` and `InteractionEntry`, the hand-written `AssistedTargeting` and `TargetDetails` (each `true`/`false` or an object), and `ChartBuilder.Interaction(...)`.
+- Typed options for the 23 interaction presets of `flint-chart/interactive` (`SelectOptions`, `NavigateOptions`, `InspectOptions`, …) and one factory per preset, `InteractionEntry.Navigate(new NavigateOptions { Axes = "x", Pan = false })`; `InteractionEntry.Options` stays the generic map for anything else. `flint-cs to-csharp` and `Graspea.Flint.Generators` write a known preset through its factory.
 - `ChartSpec.Label`, `ChartSpec.Source` (`ChartSource`: a string, or text with a link) and `ChartSpec.Chrome` (`ChartChrome`: `ChartChrome.None` or the parts to turn off), with `Label`, `Source` and `Chrome` on the builders.
 - `ChartEncoding.Title` (`ChannelTitle`: a name, or `ChannelTitle.None`, written as `null`, for no title), `Reverse`, `Mid`, `Domain`, `Bins` and `Colors`.
 - `SemanticAnnotation.Colors` and `SemanticAnnotation.Polarity` (`Polarity.HigherIsBetter`, `Polarity.LowerIsBetter`).
