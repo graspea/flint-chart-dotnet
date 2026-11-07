@@ -324,30 +324,14 @@ internal sealed class CatalogCheck
         }
     }
 
-    /// <summary><c>normalizeChartProperties</c>: a value equal (===) to an option value, or a string equal to an option label
-    /// ignoring case and surrounding whitespace.</summary>
+    /// <summary><c>normalizeChartProperties</c>: a value equal to an option value under <c>sameOptionValue</c> (===, or for
+    /// two arrays the same length with every entry ===), or a string equal to an option label ignoring case and surrounding
+    /// whitespace.</summary>
     private static bool Accepts(CatalogPropertyRow property, JsonItem value)
     {
-        if (value.IsArray || value.IsObject)
-        {
-            return false;
-        }
-
         foreach (var option in property.Options ?? [])
         {
-            if (option is null)
-            {
-                continue;
-            }
-
-            var optionValue = JsonReader.Parse(option);
-            var equal = (optionValue.Kind, value.Kind) switch
-            {
-                (JsonItemKind.String, JsonItemKind.String) => optionValue.Value == value.Value,
-                (JsonItemKind.Number, JsonItemKind.Number) => Number(optionValue.Value!) == Number(value.Value!),
-                _ => optionValue.Kind == value.Kind,
-            };
-            if (equal)
+            if (option is not null && SameOptionValue(JsonReader.Parse(option), value))
             {
                 return true;
             }
@@ -356,6 +340,21 @@ internal sealed class CatalogCheck
         return value.IsString && property.Labels is { } labels
             && labels.Any(l => string.Equals(l.ToLowerInvariant(), value.Value!.Trim(JsWhiteSpace).ToLowerInvariant(), StringComparison.Ordinal));
     }
+
+    private static bool SameOptionValue(JsonItem option, JsonItem value) =>
+        option.IsArray && value.IsArray
+            ? option.Items.Count == value.Items.Count && option.Items.Select((entry, i) => StrictEquals(entry, value.Items[i])).All(e => e)
+            : StrictEquals(option, value);
+
+    /// <summary>JavaScript <c>===</c> on JSON values: equal strings, equal numbers, the same boolean, both null; an object or an
+    /// array parsed from JSON is never === to another.</summary>
+    private static bool StrictEquals(JsonItem a, JsonItem b) => (a.Kind, b.Kind) switch
+    {
+        (JsonItemKind.String, JsonItemKind.String) => a.Value == b.Value,
+        (JsonItemKind.Number, JsonItemKind.Number) => Number(a.Value!) == Number(b.Value!),
+        (JsonItemKind.Object, _) or (JsonItemKind.Array, _) => false,
+        _ => a.Kind == b.Kind,
+    };
 
     private void LiteralChecks(JsonItem? encodings)
     {
