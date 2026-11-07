@@ -57,6 +57,8 @@ npm --prefix generator run ir-diff -- <(git show main:generator/ir/flint-ir.json
 
 `npm run install-upstream -- <version>` (`scripts/install-upstream.mjs`) stops at the first failure: `npm install --save-exact --ignore-scripts flint-chart@<version>` (no package code runs), `npm audit signatures` (registry signature and Sigstore provenance), then `scripts/verify-provenance.mjs`, which requires the provenance to name the package and tarball digest, the repository `microsoft/flint-chart`, the workflow `.github/workflows/npm-publish.yml` and the packument's `gitHead` as the commit. Last it writes `generator/mcp-pin.json`. Versions without provenance (0.1.0) fail the gate.
 
+The generator tests that run against the installed package (`extract-dts`, `extract-registry`, `fixtures`, `naming-ir`, `emit-docs`) read the values that change with every upstream release, such as member lists and counts, from the committed IR and the fixture set of the pinned version, which the sync writes; the rules behind them are pinned on synthetic input. A behaviour fact (a probe in `verify/probes.json`, a crafted case outcome) stays pinned, so a sync that changes one fails `npm test` until a maintainer updates the fact and the SDK code that relies on it.
+
 The scripts in `generator/scripts/` are plain Node modules with `node:test` tests in `generator/test/`, run by `npm test`:
 
 | Script | Used by | Does |
