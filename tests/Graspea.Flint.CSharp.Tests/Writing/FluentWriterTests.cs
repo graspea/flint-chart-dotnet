@@ -193,7 +193,7 @@ public sealed class FluentWriterTests
     [Test]
     public void Convert_DisplayNamesThemeOptionsExtensions()
     {
-        var chain = Chain(Convert(Doc("Bar Chart", "{\"x\":\"a\"}", extra: "\"field_display_names\":{\"a\":\"Alpha\",\"z\":\"Zed\"},\"theme_spec\":\"no-such\",\"options\":{\"maxStretch\":1.5,\"continuousMarkCrossSection\":{\"x\":1,\"y\":2,\"seriesCountAxis\":\"auto\"},\"background\":\"#fff\"},\"interaction_spec\":{\"zoom\":true},")));
+        var chain = Chain(Convert(Doc("Bar Chart", "{\"x\":\"a\"}", extra: "\"field_display_names\":{\"a\":\"Alpha\",\"z\":\"Zed\"},\"theme_spec\":\"no-such\",\"options\":{\"maxStretch\":1.5,\"continuousMarkCrossSection\":{\"x\":1,\"y\":2,\"seriesCountAxis\":\"auto\"},\"background\":\"#fff\"},\"layout_spec\":{\"zoom\":true},")));
 
         Assert.That(chain, Is.EqualTo(new[]
         {
@@ -203,9 +203,38 @@ public sealed class FluentWriterTests
             ".DisplayName(\"z\", \"Zed\")",
             ".Theme(new ThemePreset(\"no-such\"))",
             ".Options(o => { o.MaxStretch = 1.5; o.ContinuousMarkCrossSection = ContinuousMarkCrossSection.Axes(1, 2, seriesCountAxis: SeriesCountAxis.Auto); o.Extensions = new() { [\"background\"] = Json(\"\\\"#fff\\\"\") }; })",
-            ".Configure(d => (d.Extensions ??= new())[\"interaction_spec\"] = Json(\"\"\"{\"zoom\":true}\"\"\"))",
+            ".Configure(d => (d.Extensions ??= new())[\"layout_spec\"] = Json(\"\"\"{\"zoom\":true}\"\"\"))",
             ".Build();",
         }));
+    }
+
+    // source: flint-chart 1.0.0 d.ts (chart_spec label, source, chrome; interaction_spec; ChartEncoding title, reverse, mid,
+    // domain, bins, colors; SemanticAnnotation colors, polarity) and design §12.4.1 (a member the builder has a method for
+    // is written with it; a value holding a null is assigned in Configure, because the builder copies through JSON)
+    [Test]
+    public void Convert_Upstream100CoreMembers()
+    {
+        var chain = Chain(Convert(Doc(
+            "Bar Chart",
+            "{\"x\":{\"field\":\"a\",\"title\":\"A\",\"reverse\":true,\"mid\":0,\"domain\":[0,1],\"bins\":4,\"colors\":{\"x\":\"#000\"}}}",
+            extra: "\"semantic_types\":{\"b\":{\"semanticType\":\"Amount\",\"colors\":{\"x\":\"#111\"},\"polarity\":\"lower-is-better\"}},\"interaction_spec\":{\"interactions\":[{\"type\":\"navigate\",\"options\":{\"pan\":false}}],\"assistedTargeting\":false},",
+            specExtra: "\"label\":\"Figure 2\",\"source\":{\"text\":\"Open data\",\"href\":\"https://example.com\"},\"chrome\":false,")));
+
+        Assert.That(chain, Is.EqualTo(new[]
+        {
+            "Chart.Bar(Rows)",
+            ".X(new ChartEncoding { Field = \"a\", Title = \"A\", Reverse = true, Mid = 0, Domain = [0, 1], Bins = 4, Colors = new() { [\"x\"] = \"#000\" } })",
+            ".Label(\"Figure 2\")",
+            ".Source(new ChartSource { Text = \"Open data\", Href = \"https://example.com\" })",
+            ".Chrome(ChartChrome.None)",
+            ".Annotate(r => r.B, new SemanticAnnotation { Type = SemanticType.Amount, Colors = new() { [\"x\"] = \"#111\" }, Polarity = Polarity.LowerIsBetter })",
+            ".Interaction(new InteractionSpec { Interactions = [new InteractionEntry { Type = \"navigate\", Options = new() { [\"pan\"] = false } }], AssistedTargeting = false })",
+            ".Build();",
+        }));
+
+        var nulls = Chain(Convert(Doc("Bar Chart", "{\"x\":{\"field\":\"a\",\"title\":null}}", specExtra: "\"source\":{\"text\":\"t\",\"href\":null},")));
+        Assert.That(nulls, Does.Contain(".Configure(d => d.ChartSpec.Encodings[\"x\"] = new ChartEncoding { Field = \"a\", Title = ChannelTitle.None })"));
+        Assert.That(nulls, Does.Contain(".Configure(d => d.ChartSpec.Source = new ChartSource { Text = \"t\", Extensions = new() { [\"href\"] = Json(\"null\") } })"));
     }
 
     // source: design §12.4.1 (theme_spec object -> new ThemeSpec { … } with class and property names from the theming

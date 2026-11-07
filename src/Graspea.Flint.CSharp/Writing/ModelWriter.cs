@@ -6,7 +6,7 @@ namespace Graspea.Flint.CSharp;
 /// </summary>
 internal sealed class ModelWriter(SpecDocument spec, DataSource source, ValueWriter values)
 {
-    private static readonly string[] Known = ["data", "semantic_types", "chart_spec", "theme_spec", "options", "field_display_names"];
+    private static readonly string[] Known = ["data", "semantic_types", "chart_spec", "theme_spec", "options", "field_display_names", "interaction_spec"];
 
     public WrittenBody Write()
     {
@@ -82,6 +82,18 @@ internal sealed class ModelWriter(SpecDocument spec, DataSource source, ValueWri
             }
         }
 
+        if (spec.Root.Get("interaction_spec") is { } interaction)
+        {
+            if (interaction.IsObject && NameTables.Class("Graspea.Flint.InteractionSpec") is { } names)
+            {
+                members.Add($"InteractionSpec = {values.Object(names, interaction)}");
+            }
+            else
+            {
+                extensions.Add(Member("interaction_spec"));
+            }
+        }
+
         extensions.AddRange(spec.Root.Members.Where(m => Array.IndexOf(Known, m.Key) < 0));
         if (source.AsExtension is { } data)
         {
@@ -113,6 +125,9 @@ internal sealed class ModelWriter(SpecDocument spec, DataSource source, ValueWri
                 "chartType" => $"ChartType = {values.Constant("ChartType", value.Value!, NameTables.Template(value.Value!)?.Constant)}",
                 "title" when value.IsString => $"Title = {CSharpText.StringLiteral(value.Value!)}",
                 "subtitle" when value.IsString => $"Subtitle = {CSharpText.StringLiteral(value.Value!)}",
+                "label" when value.IsString => $"Label = {CSharpText.StringLiteral(value.Value!)}",
+                "source" when values.Typed(value, "Graspea.Flint.ChartSource") is { } source => $"Source = {source}",
+                "chrome" when values.Typed(value, "Graspea.Flint.ChartChrome") is { } chrome => $"Chrome = {chrome}",
                 "encodings" when value.IsNull => "Encodings = null!",
                 "encodings" when value.IsObject => value.Members.Count == 0
                     ? string.Empty

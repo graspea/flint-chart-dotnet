@@ -29,7 +29,7 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
 
         // chart_spec first, so a channel call takes its field's annotation before the remaining annotations are written.
         ChartSpec(chartSpec);
-        foreach (var key in new[] { "semantic_types", "field_display_names", "theme_spec", "options" })
+        foreach (var key in new[] { "semantic_types", "field_display_names", "theme_spec", "options", "interaction_spec" })
         {
             if (spec.Root.Members.FirstOrDefault(m => m.Key == key) is not { } member)
             {
@@ -47,13 +47,16 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
                 case "theme_spec":
                     Theme(member);
                     break;
+                case "interaction_spec":
+                    Interaction(member);
+                    break;
                 default:
                     Options(member);
                     break;
             }
         }
 
-        foreach (var member in spec.Root.Members.Where(m => m.Key is not ("data" or "chart_spec" or "semantic_types" or "field_display_names" or "theme_spec" or "options")))
+        foreach (var member in spec.Root.Members.Where(m => m.Key is not ("data" or "chart_spec" or "semantic_types" or "field_display_names" or "theme_spec" or "options" or "interaction_spec")))
         {
             TopExtension(member);
         }
@@ -111,7 +114,7 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
 
     private void ChartSpec(JsonItem chartSpec)
     {
-        string[] order = ["encodings", "chartProperties", "title", "subtitle", "baseSize", "canvasSize"];
+        string[] order = ["encodings", "chartProperties", "title", "subtitle", "label", "source", "chrome", "baseSize", "canvasSize"];
         var members = order.Select(key => chartSpec.Members.FirstOrDefault(m => m.Key == key)).Where(m => m is not null)
             .Concat(chartSpec.Members.Where(m => m.Key != "chartType" && Array.IndexOf(order, m.Key) < 0));
         foreach (var member in members)
@@ -124,8 +127,22 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
                 case "chartProperties":
                     Properties(member);
                     break;
-                case "title" or "subtitle" when member.Value.IsString:
-                    _calls.Add($".{(member.Key == "title" ? "Title" : "Subtitle")}({CSharpText.StringLiteral(member.Value.Value!)})");
+                case "title" or "subtitle" or "label" when member.Value.IsString:
+                    _calls.Add($".{char.ToUpperInvariant(member.Key[0])}{member.Key.Substring(1)}({CSharpText.StringLiteral(member.Value.Value!)})");
+                    break;
+                // The builder copies the value through JSON, which reads a member set to null back as absent; such a value
+                // is assigned in Configure, which keeps it as given.
+                case "source" or "chrome" when values.Typed(member.Value, member.Key == "source" ? "Graspea.Flint.ChartSource" : "Graspea.Flint.ChartChrome") is { } typed:
+                    var property = member.Key == "source" ? "Source" : "Chrome";
+                    if (HoldsNull(member.Value))
+                    {
+                        _configure.Add($".Configure(d => d.ChartSpec.{property} = {typed})");
+                    }
+                    else
+                    {
+                        _calls.Add($".{property}({typed})");
+                    }
+
                     break;
                 case "baseSize" or "canvasSize" when Size(member.Value) is { } size:
                     _calls.Add($".{(member.Key == "baseSize" ? "BaseSize" : "CanvasSize")}({size})");
@@ -372,6 +389,26 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
         else
         {
             TopExtension(member);
+        }
+    }
+
+    private void Interaction(JsonMember member)
+    {
+        var interaction = member.Value;
+        if (!interaction.IsObject || NameTables.Class("Graspea.Flint.InteractionSpec") is not { } names)
+        {
+            TopExtension(member);
+            return;
+        }
+
+        var expression = values.Object(names, interaction);
+        if (HoldsNull(interaction))
+        {
+            _configure.Add($".Configure(d => d.InteractionSpec = {expression})");
+        }
+        else
+        {
+            _calls.Add($".Interaction({expression})");
         }
     }
 

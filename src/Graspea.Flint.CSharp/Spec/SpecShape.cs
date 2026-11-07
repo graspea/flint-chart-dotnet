@@ -65,6 +65,9 @@ internal static class SpecShape
                 case "field_display_names":
                     Typed(value, "Dictionary<string, string>", path);
                     break;
+                case "interaction_spec":
+                    Typed(value, "Graspea.Flint.InteractionSpec", path);
+                    break;
             }
         }
     }
@@ -113,8 +116,14 @@ internal static class SpecShape
                 case "chartType":
                     Typed(member.Value, RequiredLiteral, at);
                     break;
-                case "title" or "subtitle":
+                case "title" or "subtitle" or "label":
                     Typed(member.Value, "string", at);
+                    break;
+                case "source":
+                    Typed(member.Value, "Graspea.Flint.ChartSource", at);
+                    break;
+                case "chrome":
+                    Typed(member.Value, "Graspea.Flint.ChartChrome", at);
                     break;
                 case "encodings":
                     Map(member.Value, at, Encoding);
@@ -161,8 +170,12 @@ internal static class SpecShape
         {
             var type = member.Key switch
             {
-                "field" or "sortBy" or "scheme" => "string",
+                "field" or "sortBy" or "scheme" or "title" => "string",
                 "type" or "aggregate" or "sortOrder" => Literal,
+                "reverse" => "bool",
+                "mid" or "bins" => "double",
+                "domain" => "double[]",
+                "colors" => "Dictionary<string, string>",
                 _ => null,
             };
             if (type is not null)
@@ -195,6 +208,8 @@ internal static class SpecShape
                 "unit" => "string",
                 "divergingMidpoint" => "double",
                 "sortOrder" => "string[]",
+                "colors" => "Dictionary<string, string>",
+                "polarity" => Literal,
                 _ => null,
             };
             if (type is not null)
@@ -277,8 +292,14 @@ internal static class SpecShape
             case "Graspea.Flint.Theming.LabelOverflow":
                 Require(value.IsString || (value.IsArray && value.Items.All(i => i.IsString)), value, path, $"{path} must be a string or an array of strings.");
                 return;
-            case "Graspea.Flint.Theming.RuleSpec" or "Graspea.Flint.Theming.MinorGridSpec" when value.IsString:
-                return; // the presence form; the object form is checked as a class below
+            case "Graspea.Flint.Theming.RuleSpec" or "Graspea.Flint.Theming.MinorGridSpec" or "Graspea.Flint.ChartSource" when value.IsString:
+                return; // the string form; the object form is checked as a class below
+            case "Graspea.Flint.ChartChrome" when value.Kind == JsonItemKind.False:
+                return;
+            case "Graspea.Flint.AssistedTargeting" or "Graspea.Flint.TargetDetails" when value.IsBoolean:
+                return;
+            case "Graspea.Flint.ChartSource" when value.IsObject && value.Get("text") is null:
+                throw new ShapeException(value, path, $"{path}.text is required.");
         }
 
         if (type.EndsWith("[]", StringComparison.Ordinal))

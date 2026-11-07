@@ -55,6 +55,7 @@ internal static partial class NameTables
     private static Dictionary<string, string>? _encodingTypes;
     private static Dictionary<string, string>? _aggregates;
     private static Dictionary<string, string>? _sortOrders;
+    private static Dictionary<string, string>? _polarities;
     private static Dictionary<string, string>? _seriesCountAxes;
     private static Dictionary<string, ClassNames>? _classes;
     private static Dictionary<string, StringUnionNames>? _stringUnions;
@@ -72,6 +73,8 @@ internal static partial class NameTables
     public static string? Aggregate(string value) => Find(ref _aggregates, Aggregates, value);
 
     public static string? SortOrder(string value) => Find(ref _sortOrders, SortOrders, value);
+
+    public static string? Polarity(string value) => Find(ref _polarities, Polarities, value);
 
     public static string? SeriesCountAxis(string value) => Find(ref _seriesCountAxes, SeriesCountAxes, value);
 
@@ -113,8 +116,8 @@ internal static partial class NameTables
         return unions.TryGetValue(name, out var found) ? found : null;
     }
 
-    /// <summary>The object forms of the hand-written theme unions, written and checked as classes; their string forms are
-    /// handled by type name in <c>ValueWriter</c> and <c>SpecShape</c>.</summary>
+    /// <summary>The object forms of the hand-written unions, written and checked as classes; their string, <c>false</c> and
+    /// boolean forms are handled by type name in <c>ValueWriter</c> and <c>SpecShape</c>.</summary>
     internal static readonly ClassNames[] UnionObjectForms =
     [
         new("Graspea.Flint.Theming.RuleSpec",
@@ -128,6 +131,14 @@ internal static partial class NameTables
             new("layer", "Layer", "string"), new("on", "On", "string[]"), new("presence", "Presence", "string"),
             new("style", "Style", "string"), new("weight", "Weight", "double"),
         ]),
+        new("Graspea.Flint.ChartChrome", [new("footer", "Footer", "bool"), new("header", "Header", "bool"), new("logos", "Logos", "bool")]),
+        new("Graspea.Flint.ChartSource", [new("href", "Href", "string"), new("text", "Text", "string")]),
+        new("Graspea.Flint.AssistedTargeting",
+        [
+            new("details", "Details", "Graspea.Flint.TargetDetails"), new("indicator", "Indicator", "bool"),
+            new("maxDistance", "MaxDistance", "double"),
+        ]),
+        new("Graspea.Flint.TargetDetails", [new("fields", "Fields", "string[]"), new("maxRows", "MaxRows", "double")]),
     ];
 
     public static string SimpleName(string name) => name.Substring(name.LastIndexOf('.') + 1);

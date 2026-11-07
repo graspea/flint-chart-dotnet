@@ -90,14 +90,14 @@ public sealed class NameTablesCrossCheckTests
     public static IEnumerable<TestCaseData> UnionObjectForms() =>
         NameTables.UnionObjectForms.Select(c => new TestCaseData(c.Name).SetName($"UnionObjectForm_MatchesTheLibrary({c.Name})"));
 
-    // source: the compiled Graspea.Flint (the hand-written theme union and its converter): every member of the table,
+    // source: the compiled Graspea.Flint (the hand-written union and its converter): every member of the table,
     // written under its wire name, is read into the property of that name and type
     [TestCaseSource(nameof(UnionObjectForms))]
     public void UnionObjectForm_MatchesTheLibrary(string name)
     {
         var type = Library.GetType(name, throwOnError: true)!;
         var members = NameTables.Class(name)!.Members;
-        var json = "{" + string.Join(",", members.Select(m => $"\"{m.Wire}\":{(m.Type switch { "double" => "1", "double[]" => "[1]", "string[]" => "[\"a\"]", _ => "\"a\"" })}")) + "}";
+        var json = "{" + string.Join(",", members.Select(m => $"\"{m.Wire}\":{(m.Type switch { "double" => "1", "double[]" => "[1]", "string[]" => "[\"a\"]", "bool" or "Graspea.Flint.TargetDetails" => "true", _ => "\"a\"" })}")) + "}";
         var value = System.Text.Json.JsonSerializer.Deserialize(json, type)!;
         Assert.That(type.GetProperty("Extensions")!.GetValue(value), Is.Null, json);
         foreach (var member in members)

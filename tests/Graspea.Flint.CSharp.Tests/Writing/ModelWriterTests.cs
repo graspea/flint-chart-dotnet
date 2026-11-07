@@ -71,6 +71,27 @@ public sealed class ModelWriterTests
         Assert.That(code, Does.Contain("[\"title\"] = Json(\"null\"),"));
     }
 
+    // source: flint-chart 1.0.0 d.ts (interaction_spec; chart_spec label, source, chrome; ChartEncoding title null prints
+    // none) and design §12.4.2 (each member typed where the model writes it exactly, otherwise in Extensions)
+    [Test]
+    public void Convert_Upstream100CoreMembers()
+    {
+        var code = Model(Doc(
+            "Bar Chart",
+            "{\"x\":{\"field\":\"a\",\"title\":null}}",
+            extra: "\"interaction_spec\":{\"interactions\":[],\"assistedTargeting\":{\"details\":true}},",
+            specExtra: "\"label\":\"Figure 2\",\"source\":\"Survey\",\"chrome\":{\"footer\":false},"));
+
+        Assert.That(code, Does.Contain("Label = \"Figure 2\","));
+        Assert.That(code, Does.Contain("Source = \"Survey\","));
+        Assert.That(code, Does.Contain("Chrome = new ChartChrome { Footer = false },"));
+        Assert.That(code, Does.Contain("[\"x\"] = new ChartEncoding { Field = \"a\", Title = ChannelTitle.None },"));
+        Assert.That(code, Does.Contain("InteractionSpec = new InteractionSpec { Interactions = [], AssistedTargeting = new AssistedTargeting { Details = true } },"));
+
+        var untyped = Model(Doc("Bar Chart", "{}", specExtra: "\"source\":{\"text\":null},"));
+        Assert.That(untyped, Does.Contain("[\"source\"] = Json(\"\"\"{\"text\":null}\"\"\"),"));
+    }
+
     // source: design §12.5.2 and §13.3.3 (parameter: the template from the model, ChartTemplate.Create<Row>(spec))
     [Test]
     public void Convert_Parameter_CreatesTheTemplateFromTheModel()

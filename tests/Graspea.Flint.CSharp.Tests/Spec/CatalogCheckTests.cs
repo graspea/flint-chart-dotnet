@@ -143,14 +143,18 @@ public sealed class CatalogCheckTests
     [Test]
     public void Run_UnknownKeys_AreFlint140AtEachKey()
     {
-        var issues = Check("{\"interaction_spec\":{},\"chart_spec\":{\"chartType\":\"Line Chart\",\"zoom\":1,\"encodings\":{\"x\":\"a\",\"y\":\"b\"}}}");
+        var issues = Check("{\"annotations_spec\":{},\"chart_spec\":{\"chartType\":\"Line Chart\",\"zoom\":1,\"encodings\":{\"x\":\"a\",\"y\":\"b\"}}}");
 
         Assert.That(issues.Select(Describe), Is.EqualTo(new[]
         {
-            "FLINT140 unknown_key Info interaction_spec @1:2",
+            "FLINT140 unknown_key Info annotations_spec @1:2",
             "FLINT140 unknown_key Info chart_spec.zoom @1:63",
         }));
         Assert.That(issues[0].End, Is.EqualTo(19));
+
+        // source: flint-chart 1.0.0 d.ts (interaction_spec; chart_spec label, source and chrome are modelled)
+        var modelled = Check("{\"interaction_spec\":{},\"chart_spec\":{\"chartType\":\"Line Chart\",\"label\":\"L\",\"source\":\"S\",\"chrome\":false,\"encodings\":{\"x\":\"a\",\"y\":\"b\"}}}");
+        Assert.That(modelled.Where(i => i.Code == "unknown_key").Select(Describe), Is.Empty);
     }
 
     /// <summary>The validator codes the catalog checks mirror (design §12.6.7, FLINT110 to FLINT116).</summary>

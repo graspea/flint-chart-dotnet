@@ -126,8 +126,14 @@ internal sealed class ValueWriter
                 return item.IsArray && item.Items.All(i => i.IsString)
                     ? $"new string[] {{ {string.Join(", ", item.Items.Select(i => CSharpText.StringLiteral(i.Value!)))} }}"
                     : null;
-            case "Graspea.Flint.Theming.RuleSpec" or "Graspea.Flint.Theming.MinorGridSpec" when item.IsString:
-                return CSharpText.StringLiteral(item.Value!); // the presence form; the object form is written as a class below
+            case "Graspea.Flint.Theming.RuleSpec" or "Graspea.Flint.Theming.MinorGridSpec" or "Graspea.Flint.ChartSource" when item.IsString:
+                return CSharpText.StringLiteral(item.Value!); // the string form; the object form is written as a class below
+            case "Graspea.Flint.ChartSource" when item.Get("text") is not { IsString: true }:
+                return null; // the object form needs its text, which a null or absent text cannot set
+            case "Graspea.Flint.ChartChrome" when item.Kind == JsonItemKind.False:
+                return $"{Flint("ChartChrome")}.None";
+            case "Graspea.Flint.AssistedTargeting" or "Graspea.Flint.TargetDetails" when item.IsBoolean:
+                return item.Kind == JsonItemKind.True ? "true" : "false";
         }
 
         if (type.EndsWith("[]", StringComparison.Ordinal))
@@ -274,8 +280,8 @@ internal sealed class ValueWriter
         return $"{Flint("ContinuousMarkCrossSection")}.Axes({string.Join(", ", arguments)})";
     }
 
-    /// <summary><c>new ChartEncoding { … }</c>: field, type, aggregate, sortOrder, sortBy and scheme typed, the rest in
-    /// <c>Extensions</c>.</summary>
+    /// <summary><c>new ChartEncoding { … }</c>: field, type, aggregate, sortOrder, sortBy, scheme, title and the colour
+    /// scale members typed, the rest in <c>Extensions</c>.</summary>
     public string Encoding(JsonItem item)
     {
         var assignments = new List<string>();
@@ -291,6 +297,13 @@ internal sealed class ValueWriter
                 ("sortOrder", { } v) => $"SortOrder = {Constant("SortOrder", v, NameTables.SortOrder(v))}",
                 ("sortBy", { } v) => $"SortBy = {CSharpText.StringLiteral(v)}",
                 ("scheme", { } v) => $"Scheme = {CSharpText.StringLiteral(v)}",
+                ("title", { } v) => $"Title = {CSharpText.StringLiteral(v)}",
+                ("title", null) when member.Value.IsNull => $"Title = {Flint("ChannelTitle")}.None",
+                ("reverse", null) => Typed(member.Value, "bool") is { } reverse ? $"Reverse = {reverse}" : null,
+                ("mid", null) => Number(member.Value) is { } mid ? $"Mid = {mid}" : null,
+                ("bins", null) => Number(member.Value) is { } bins ? $"Bins = {bins}" : null,
+                ("domain", null) => Typed(member.Value, "double[]") is { } domain ? $"Domain = {domain}" : null,
+                ("colors", null) => Typed(member.Value, "Dictionary<string, string>") is { } colors ? $"Colors = {colors}" : null,
                 _ => null,
             };
             if (assignment is null)
@@ -354,6 +367,8 @@ internal sealed class ValueWriter
                 "unit" => Typed(member.Value, "string") is { } unit ? $"Unit = {unit}" : null,
                 "divergingMidpoint" => Number(member.Value) is { } midpoint ? $"DivergingMidpoint = {midpoint}" : null,
                 "sortOrder" => Typed(member.Value, "string[]") is { } order ? $"SortOrder = {order}" : null,
+                "colors" => Typed(member.Value, "Dictionary<string, string>") is { } colors ? $"Colors = {colors}" : null,
+                "polarity" => member.Value.IsString ? $"Polarity = {Constant("Polarity", member.Value.Value!, NameTables.Polarity(member.Value.Value!))}" : null,
                 _ => null,
             };
             if (assignment is null)

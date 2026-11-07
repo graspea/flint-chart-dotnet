@@ -213,9 +213,9 @@ internal static class CSharpText
         var names = new HashSet<string>(StringComparer.Ordinal)
         {
             "Graspea", "System",
-            "Aggregate", "Channel", "Chart", "ChartAssemblyInput", "ChartData", "ChartEncoding", "ChartSpec", "ChartTemplate", "ChartType",
-            "EncodingType", "EncodingValue", "FlintBackend", "FlintJson", "RowOptions", "SemanticAnnotation", "SemanticType",
-            "SeriesCountAxis", "SortOrder", "ThemePreset", "ValidationResult",
+            "Aggregate", "AssistedTargeting", "Channel", "ChannelTitle", "Chart", "ChartAssemblyInput", "ChartChrome", "ChartData", "ChartEncoding",
+            "ChartSource", "ChartSpec", "ChartTemplate", "ChartType", "EncodingType", "EncodingValue", "FlintBackend", "FlintJson", "Polarity",
+            "RowOptions", "SemanticAnnotation", "SemanticType", "SeriesCountAxis", "SortOrder", "TargetDetails", "ThemePreset", "ValidationResult",
             "JsonArray", "JsonDocument", "JsonElement", "JsonNode", "JsonPropertyName", "JsonTypeInfo",
             "RequiresDynamicCode", "RequiresUnreferencedCode", "LazyInitializer",
             "CancellationToken", "DateOnly", "DateTime", "DateTimeOffset", "IAsyncEnumerable", "IEnumerable", "Stream", "Task", "ValueTask",
