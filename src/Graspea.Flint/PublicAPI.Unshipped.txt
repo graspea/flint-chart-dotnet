@@ -833,7 +833,7 @@ Graspea.Flint.ViolinPlotWidths.Area = 2 -> Graspea.Flint.ViolinPlotWidths
 Graspea.Flint.ViolinPlotWidths.Auto = 1 -> Graspea.Flint.ViolinPlotWidths
 Graspea.Flint.ViolinPlotWidths.Band = 3 -> Graspea.Flint.ViolinPlotWidths
 Graspea.Flint.ViolinPlotWidths.Default = 0 -> Graspea.Flint.ViolinPlotWidths
-const Graspea.Flint.FlintUpstream.Version = "1.0.0" -> string!
+const Graspea.Flint.FlintUpstream.Version = "1.0.1" -> string!
 override Graspea.Flint.ChannelTitle.ToString() -> string!
 override Graspea.Flint.Polarity.GetHashCode() -> int
 override Graspea.Flint.Polarity.ToString() -> string!

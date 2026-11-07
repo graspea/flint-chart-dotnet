@@ -2,7 +2,7 @@
 
 [![NuGet](https://img.shields.io/nuget/vpre/Graspea.Flint)](https://www.nuget.org/packages/Graspea.Flint)
 <!-- flint:generated:upstream-badge start -->
-[![flint-chart](https://img.shields.io/badge/flint--chart-1.0.0-blue)](https://github.com/microsoft/flint-chart/tree/60324d2fa31acd46bb2e79bc4503930da69f2619)
+[![flint-chart](https://img.shields.io/badge/flint--chart-1.0.1-blue)](https://github.com/microsoft/flint-chart/tree/f098e497f27a2b36daabc33b659c0988c17ac0f2)
 [![CI](https://github.com/graspea/flint-chart-dotnet/actions/workflows/ci.yml/badge.svg)](https://github.com/graspea/flint-chart-dotnet/actions/workflows/ci.yml)
 <!-- flint:generated:upstream-badge end -->
 
@@ -15,7 +15,7 @@ independent project, not affiliated with or endorsed by Microsoft.
     dotnet add package Graspea.Flint --prerelease
 
 <!-- flint:generated:upstream-version start -->
-Flint.NET 1.0.0.x tracks flint-chart 1.0.0; the first three version parts always equal the pinned upstream release.
+Flint.NET 1.0.1.x tracks flint-chart 1.0.1; the first three version parts always equal the pinned upstream release.
 <!-- flint:generated:upstream-version end -->
 
 ## What it is / what it is not
@@ -237,7 +237,7 @@ and diagnostics:
 ## Chart catalog
 
 <!-- flint:generated:chart-catalog start -->
-flint-chart 1.0.0 declares 51 chart types. Backend ids map to `FlintBackend`: `vegalite` = `FlintBackend.VegaLite`, `echarts` = `FlintBackend.ECharts`, `chartjs` = `FlintBackend.ChartJs`, `plotly` = `FlintBackend.Plotly`, `excel` = `FlintBackend.Excel`. Channels and properties are wire names, the union over the backends of the template; `Validate(backend)` reports one that the target backend does not declare (`unsupported_channel`, `unknown_chart_property`).
+flint-chart 1.0.1 declares 51 chart types. Backend ids map to `FlintBackend`: `vegalite` = `FlintBackend.VegaLite`, `echarts` = `FlintBackend.ECharts`, `chartjs` = `FlintBackend.ChartJs`, `plotly` = `FlintBackend.Plotly`, `excel` = `FlintBackend.Excel`. Channels and properties are wire names, the union over the backends of the template; `Validate(backend)` reports one that the target backend does not declare (`unsupported_channel`, `unknown_chart_property`).
 
 | Chart type | Constant and entry | Backends | Channels | Properties |
 |---|---|---|---|---|
@@ -297,7 +297,7 @@ flint-chart 1.0.0 declares 51 chart types. Backend ids map to `FlintBackend`: `v
 ## Semantic types
 
 <!-- flint:generated:semantic-types start -->
-flint-chart 1.0.0 registers 44 semantic types. Annotate a field with the `SemanticType` constant of the same name (`SemanticType.YearMonth`); a different constant name is given in brackets.
+flint-chart 1.0.1 registers 44 semantic types. Annotate a field with the `SemanticType` constant of the same name (`SemanticType.YearMonth`); a different constant name is given in brackets.
 
 | Group | Semantic types |
 |---|---|
@@ -352,13 +352,13 @@ The authoritative check is upstream's `flint-chart-mcp` server. Its `validate_ch
   "mcpServers": {
     "flint-chart": {
       "command": "npx",
-      "args": ["-y", "flint-chart-mcp@1.0.0"]
+      "args": ["-y", "flint-chart-mcp@1.0.1"]
     }
   }
 }
 ```
 
-The hosted endpoint is `https://flint.data-formulator.ai/mcp`. It runs the version upstream has deployed, which can differ from flint-chart 1.0.0.
+The hosted endpoint is `https://flint.data-formulator.ai/mcp`. It runs the version upstream has deployed, which can differ from flint-chart 1.0.1.
 <!-- flint:generated:mcp-commands end -->
 
 ## For AI agents
@@ -466,15 +466,15 @@ ValidationResult result = ChartValidator.Validate(input); // unknown_chart_type 
 2. Authoritative check: the upstream MCP tool `validate_chart` on the JSON (vegalite, echarts and chartjs); `render_chart` on the same server shows the result. Setup: https://github.com/graspea/flint-chart-dotnet#with-the-upstream-mcp-server
 
 <!-- flint:generated:agent-identifiers start -->
-### Identifiers (flint-chart 1.0.0)
+### Identifiers (flint-chart 1.0.1)
 
 - Backends: `FlintBackend.VegaLite`, `FlintBackend.ECharts`, `FlintBackend.ChartJs`, `FlintBackend.Plotly`, `FlintBackend.Excel`.
 - Chart types: 51 `ChartType` constants, each with a fluent entry (`ChartType.LineChart` and `Chart.Line(rows)`); see the chart catalog.
 - Channels: `Channel.X`, `Channel.Y`, `Channel.X2`, `Channel.Y2`, `Channel.Id`, `Channel.Color`, `Channel.Opacity`, `Channel.Size`, `Channel.Shape`, `Channel.StrokeDash`, `Channel.Column`, `Channel.Row`, `Channel.Latitude`, `Channel.Longitude`, `Channel.Radius`, `Channel.Detail`, `Channel.Group`, `Channel.Open`, `Channel.High`, `Channel.Low`, `Channel.Close`, `Channel.Angle`, `Channel.Order`, `Channel.Metric`, `Channel.Value`, `Channel.Goal`, `Channel.Theta`.
 - Semantic types: 44 `SemanticType` constants (`SemanticType.YearMonth`); see the semantic types.
 - Theme presets: `ThemePreset.Apple`, `ThemePreset.Bbc`, `ThemePreset.Cartoon`, `ThemePreset.Datawrapper`, `ThemePreset.DeStijl`, `ThemePreset.Economist`, `ThemePreset.Material`, `ThemePreset.Mckinsey`, `ThemePreset.Nature`, `ThemePreset.Nyt`, `ThemePreset.Pop`, `ThemePreset.PowerBi`, `ThemePreset.PowerBiLight`, `ThemePreset.Swiss`.
-- Upstream MCP server: `npx -y flint-chart-mcp@1.0.0`, tool `validate_chart` (vegalite, echarts and chartjs).
-- Upstream skill for the JSON format: https://github.com/microsoft/flint-chart/blob/60324d2fa31acd46bb2e79bc4503930da69f2619/agent-skills/flint-chart-author/SKILL.md
+- Upstream MCP server: `npx -y flint-chart-mcp@1.0.1`, tool `validate_chart` (vegalite, echarts and chartjs).
+- Upstream skill for the JSON format: https://github.com/microsoft/flint-chart/blob/f098e497f27a2b36daabc33b659c0988c17ac0f2/agent-skills/flint-chart-author/SKILL.md
 - Machine-readable catalog: `catalog/catalog.json` in the package, generated from the same data.
 <!-- flint:generated:agent-identifiers end -->
 

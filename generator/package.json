@@ -21,7 +21,7 @@
     "typecheck": "tsc -p ."
   },
   "dependencies": {
-    "flint-chart": "1.0.0"
+    "flint-chart": "1.0.1"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
