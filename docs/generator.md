@@ -21,14 +21,24 @@ cd .. && dotnet build -warnaserror && dotnet test -f net10.0
 | Step | What it does |
 |---|---|
 | `extract` | Sets `TZ=UTC` and loads `overrides.json`. Builds `IR.types` with the TypeScript checker, starting from `package.json` `types`, and `IR.catalog` from the runtime registries. Diffs the result against the committed IR and appends each removal to `retired.json`. Writes `ir/flint-ir.json` canonically: sorted keys, two-space indent, LF, trailing newline. |
-| `emit` | Reads only the IR and `overrides.json`. Checks property kinds and the entry, builder, enum, channel and property names (design §7.6), then writes `Generated/Constants`, `Generated/Options`, `Generated/Theming`, `Generated/Json`, `Generated/Tables`, the fluent facades `Generated/Builders`, `Generated/Enums` and `Generated/Entries`, and `Generated/catalog.json` (the IR `catalog` node, canonical JSON, packed as `catalog/catalog.json`). Removes stale `*.g.cs` files and rewrites `PublicAPI.Unshipped.txt` (hand-written lines are kept; generated lines are owned by the generator). Rewrites the marked sections of `README.md` and writes `docs/package/AGENTS.md` (see [Documentation](#documentation)). Writes the spec-to-C# name tables `src/Graspea.Flint.CSharp/Generated/NameTables.g.cs` and `Catalog.g.cs` (see [Spec-to-C# name tables](#spec-to-c-name-tables)). |
+| `emit` | Reads only the IR and `overrides.json`. Checks property kinds and the entry, builder, enum, channel and property names (design §7.6), then writes `Generated/Constants`, `Generated/Options`, `Generated/Theming`, `Generated/Json`, `Generated/Tables`, the fluent facades `Generated/Builders`, `Generated/Enums` and `Generated/Entries`, and `Generated/catalog.json` (the IR `catalog` node, canonical JSON, packed as `catalog/catalog.json`). Removes stale `*.g.cs` files and rewrites `PublicAPI.Unshipped.txt` (hand-written lines are kept; generated lines are owned by the generator, including the `*REMOVED*` lines of [Removed public API](#removed-public-api)). Rewrites the marked sections of `README.md` and writes `docs/package/AGENTS.md` (see [Documentation](#documentation)). Writes the spec-to-C# name tables `src/Graspea.Flint.CSharp/Generated/NameTables.g.cs` and `Catalog.g.cs` (see [Spec-to-C# name tables](#spec-to-c-name-tables)). |
 | `fixtures` | Runs in a process of its own (the seed and `TZ` are process-wide): `TZ=UTC`, Park-Miller seed 42 in place of `Math.random`, then `flint-chart/test-data`. Writes `cases.jsonl`, `expectations.jsonl` and `manifest.json` to `tests/fixtures/flint-chart@<version>/`, and an empty `known-failures.txt` when there is none ([fixtures.md](fixtures.md)). |
 
 `npm run generate` is deterministic: a second run, or a run from an empty `Generated/` and `ir/`, leaves `git status` clean. `generate -- --check` runs the same steps without writing: it fails when the IR, `retired.json`, a generated file (including a stale `*.g.cs`, and the files under `src/Graspea.Flint.CSharp/Generated/` written by the csharp-names emitter of [design part 7](design/07-spec-to-csharp-tool-and-generator.md) §12.7), `PublicAPI.Unshipped.txt`, a marked `README.md` section, `docs/package/AGENTS.md` or a fixture file would change, or when the `generator/package.json` pin differs from the installed version.
 
 `npm run probes` records the runtime facts the design cites as probed (null handling, the backends that apply the theme, the inference of the values .NET writes, and the `Date.parse` results the validator relies on) in `generator/verify/probes.json`; `test/probes.test.ts` keeps the record equal to a fresh run.
 
-Not implemented yet: the `[Obsolete]` emission of retired members.
+Not implemented yet: the `[Obsolete]` emission of retired members (design §7.8); until it is, a retired member is dropped and leaves a `*REMOVED*` line (below).
+
+### Removed public API
+
+When a fresh run no longer emits a line of `PublicAPI.Shipped.txt` that the generator owns, `emit` writes that line with the `*REMOVED*` prefix of the PublicAPI analyzers into `PublicAPI.Unshipped.txt`, so the build reports no RS0017 for it. A line is the generator's when it belongs to a generated type (including the types of the generated files `emit` removes), a generated member of a hand-written type (`Chart.Line`) or a generated constant of a hand-written struct. This covers:
+
+- a member or type dropped by the new IR (a retired template property, a theme member upstream removed);
+- a retyped member: the shipped line with the old type is `*REMOVED*`, the new line is added;
+- `FlintUpstream.Version` on every pin change, because its line carries the version.
+
+Hand-written shipped API is never marked; a hand-written `*REMOVED*` line stays as it is. A `*REMOVED*` line of a generated symbol goes again when the symbol is emitted again. One whose type file is already gone (a second run) is no longer attributable and stays, so `generate` stays idempotent. At release the maintainer removes the `*REMOVED*` lines together with their shipped lines (`docs/maintainers.md`). A `*REMOVED*` line in a sync pull request is a breaking change: expected in a breaking window (design §8.4), a reason to stop and add `[Obsolete]` outside one.
 
 ## A new flint-chart version
 

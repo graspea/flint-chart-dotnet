@@ -118,7 +118,7 @@ A fork or an unpublished build: `"flint-chart": "file:../flint-chart-0.6.0.tgz"`
 | `CatalogCrossCheckTests` | emitter bug (both sides come from the IR) | golden emitter test first, then fix |
 | `FixtureRoundTripTests` on the new set | a wire shape the model cannot represent | reduce one fixture to an inline unit test; fix model or converter |
 | `FixtureExpectationTests` on the new set | upstream throws where no Error is reported, or stopped throwing | add or demote the rule, unit test first; a new Error is allowed in an upstream-version release |
-| RS0017 | an emitter dropped a retired member | emitter bug; never inside a line |
+| RS0017 | a hand-written line names a symbol that is gone (the generator writes `*REMOVED*` for its own lines, `docs/generator.md`) | fix the hand-written line |
 | Package validation | a breaking change against the baseline | only in a breaking window with a suppression entry |
 | A unit test pinned to a probe fact | upstream behaviour changed | re-run `probes.ts`, update the `// source:` comment and the expectation in one commit |
 | `samples/` build | a facade renamed by an override | update the sample; if the old name shipped in a previous line, the override must set `keepObsolete: true` |
@@ -150,7 +150,7 @@ Upstream prereleases (none published so far): the bot ignores them (companion, "
 #### 9.5 Reviewing a sync PR
 
 1. `retired.json` additions: confirm the class (Warning vs throw), add `renamedTo` when the IR diff shows a matching addition, read the Obsolete text.
-2. `PublicAPI.Unshipped.txt`: only additions; any `*REMOVED*` line is an emitter bug; names that read badly (`N0`, `_3d`, a wrongly split acronym) are renamed now through `overrides.json`, because once shipped they stay.
+2. `PublicAPI.Unshipped.txt`: additions, and `*REMOVED*` lines only for generated symbols upstream dropped or retyped (`FlintUpstream.Version` on every pin change); outside a breaking window any other `*REMOVED*` line needs `[Obsolete]` instead; names that read badly (`N0`, `_3d`, a wrongly split acronym) are renamed now through `overrides.json`, because once shipped they stay.
 3. `expectations.jsonl` diff: new `throws: true` entries need an Error rule.
 4. The IR diff table; spot-check the research-derived annotations in `overrides.json` when the affected nodes changed.
 5. `Generated/**`, the README sections and `docs/package/AGENTS.md`: shape only; the drift job proves they are the emitter's output. The NuGet badge kind and the install line are not part of a sync PR; they belong to the release PR (§9.6 step 2).
