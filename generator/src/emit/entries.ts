@@ -5,6 +5,7 @@ import type { Ir } from '../ir.ts';
 import type { Overrides } from '../overrides.ts';
 import { csString, docComment, emptyResult, header, xmlText, type EmitResult } from './common.ts';
 import { fluentModel } from './fluent.ts';
+import { obsoleteAttribute } from '../retired.ts';
 
 const INDENT = '    ';
 /** The JsonTypeInfo overload bypasses the library's enum and non-finite converters (review R1-1). */
@@ -23,7 +24,9 @@ export function emitEntries(ir: Ir, overrides: Overrides): EmitResult {
     const returns = tag('returns', '', 'The builder.');
     const optionsParam = tag('param', ' name="options"', 'Key naming; `RowOptions.Default` when omitted. A literal `null` here does not compile (ambiguous with the `JsonTypeInfo` overload); omit the argument.');
     const typeInfoParam = tag('param', ' name="typeInfo"', 'A `JsonTypeInfo<TRow>`, typically from a source-generated `JsonSerializerContext`, whose null members are written rather than omitted (trimming- and AOT-safe).');
-    const reflection = `${INDENT}[RequiresUnreferencedCode(RowMaterializer.ReflectionMessage)]\n${INDENT}[RequiresDynamicCode(RowMaterializer.ReflectionMessage)]\n`;
+    // A retired template keeps its entries under [Obsolete] (design §7.8); the string overload is an error already.
+    const obsolete = t.obsoleteIn ? obsoleteAttribute(INDENT, t.obsoleteIn) : '';
+    const reflection = `${INDENT}[RequiresUnreferencedCode(RowMaterializer.ReflectionMessage)]\n${INDENT}[RequiresDynamicCode(RowMaterializer.ReflectionMessage)]\n${obsolete}`;
     const content =
       `${header(ir)}\nusing System.Diagnostics.CodeAnalysis;\nusing System.Text.Json.Serialization.Metadata;\nusing Graspea.Flint.Serialization;\n\n` +
       'namespace Graspea.Flint;\n\npublic static partial class Chart\n{\n' +
@@ -40,6 +43,7 @@ export function emitEntries(ir: Ir, overrides: Overrides): EmitResult {
       typeInfoParam +
       returns +
       tag('remarks', '', TYPE_INFO_REMARKS) +
+      obsolete +
       `${INDENT}public static ${b}<TRow> ${e}<TRow>(IEnumerable<TRow> rows, JsonTypeInfo<TRow> typeInfo) => new(ChartRows.Of(rows, typeInfo));\n\n` +
       docComment(INDENT, `Starts a \`${t.name}\` document without rows, written later by reflection (camelCase keys by default): bind them through \`ToTemplate()\`.`) +
       typeParam +
@@ -52,10 +56,12 @@ export function emitEntries(ir: Ir, overrides: Overrides): EmitResult {
       typeInfoParam +
       returns +
       tag('remarks', '', TYPE_INFO_REMARKS) +
+      obsolete +
       `${INDENT}public static ${b}<TRow> ${e}<TRow>(JsonTypeInfo<TRow> typeInfo) => new(ChartRows.Deferred(typeInfo));\n\n` +
       docComment(INDENT, `Starts a \`${t.name}\` document over data that is already built (JSON rows or a URL); bind fields by name.`) +
       tag('param', ' name="data"', 'The data.') +
       returns +
+      obsolete +
       `${INDENT}public static ${b}<object> ${e}(ChartData data) => new(ChartRows.Of(data));\n\n` +
       docComment(INDENT, `Not row data: a string is \`IEnumerable<char>\`. Use \`Chart.${e}(ChartData.FromUrl(url))\`.`) +
       tag('param', ' name="url"', 'The URL.') +

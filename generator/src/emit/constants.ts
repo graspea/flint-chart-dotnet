@@ -3,6 +3,7 @@
 import { ordinal, type Ir, type IrType } from '../ir.ts';
 import { pascal } from '../naming.ts';
 import { emptyOverrides, OverrideUse, type Overrides } from '../overrides.ts';
+import { facadeCatalog, obsoleteAttribute } from '../retired.ts';
 import { csString, docComment, emptyResult, header, type EmitResult } from './common.ts';
 
 interface Constant {
@@ -12,6 +13,8 @@ interface Constant {
   path: string;
   /** From a string-literal union: the struct also gets the internal `Literals` set the validator checks against. */
   literal?: true;
+  /** Retired upstream in this version and kept under `[Obsolete]` (design §7.8). */
+  obsoleteIn?: string;
 }
 
 /** Members of the hand-written structs that a constant must not take. */
@@ -34,8 +37,12 @@ function literal(ir: Ir, path: string, pick: (t: IrType) => IrType | undefined):
 
 /** The catalog structs (ChartType, Channel, SemanticType, ThemePreset) with their rule-1 member names, before renames. */
 function catalogStructs(ir: Ir): Array<[string, Constant[]]> {
-  const c = ir.catalog;
-  return [
+  const { catalog: c, obsolete } = facadeCatalog(ir);
+  const mark = (constant: Constant): Constant => {
+    const version = obsolete.get(constant.path);
+    return version ? { ...constant, doc: `${constant.doc} Removed in flint-chart ${version}.`, obsoleteIn: version } : constant;
+  };
+  return ([
     [
       'ChartType',
       c.chartTypes.map((t) => ({
@@ -64,7 +71,7 @@ function catalogStructs(ir: Ir): Array<[string, Constant[]]> {
         path: `catalog.themePresets[${p.id}]`,
       })),
     ],
-  ];
+  ] satisfies Array<[string, Constant[]]>).map(([struct, constants]) => [struct, constants.map(mark)]);
 }
 
 /** Struct name -> wire value -> C# member of the catalog structs, with the overrides.json renames applied. */
@@ -113,7 +120,7 @@ export function emitConstants(ir: Ir, overrides: Overrides = emptyOverrides()): 
       owner.set(c.member, c.path);
     }
     let body = constants
-      .map((c) => `${docComment('    ', c.doc)}    public static readonly ${struct} ${c.member} = new(${csString(c.value)});\n`)
+      .map((c) => `${docComment('    ', c.doc)}${c.obsoleteIn ? obsoleteAttribute('    ', c.obsoleteIn) : ''}    public static readonly ${struct} ${c.member} = new(${csString(c.value)});\n`)
       .join('\n');
     if (constants.length > 0 && constants.every((c) => c.literal)) {
       const values = constants.map((c) => csString(c.value)).join(', ');

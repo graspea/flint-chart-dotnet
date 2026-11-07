@@ -1,5 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { emitBuilders } from '../src/emit/builders.ts';
 import { emitEntries } from '../src/emit/entries.ts';
 import { emptyOverrides } from '../src/overrides.ts';
 import { syntheticIr } from './support/synthetic-ir.ts';
@@ -92,5 +93,17 @@ public static partial class Chart
     const ir = syntheticIr();
     ir.catalog.chartTypes[0].name = 'Of Chart';
     assert.throws(() => emitEntries(ir, emptyOverrides()), /"Of".*catalog\.chartTypes\[Of Chart\].*Chart\.Of/);
+  });
+
+  // source: design §7.8 and part 3 §7 table (a retired template keeps its facade under [Obsolete] FLINT0001)
+  it('keeps the entries of a retired template under [Obsolete], except the string overload', () => {
+    const ir = syntheticIr();
+    const pie = { name: 'Pie Chart', backends: { vegalite: { channels: ['x'], properties: [] } } };
+    ir.retired = [{ path: 'catalog.chartTypes[Pie Chart]', lastSeenIn: '0.5.0', retiredIn: '0.5.1', was: pie }];
+    const file = emitEntries(ir, emptyOverrides()).files.find((f) => f.path === 'Entries/Chart.Pie.g.cs')!.content;
+    assert.equal(file.split('DiagnosticId = "FLINT0001"').length - 1, 5);
+    assert.ok(file.includes('[Obsolete("A string is IEnumerable<char>; use Chart.Pie(ChartData.FromUrl(url)).", error: true)]'));
+    const builder = emitBuilders(ir, emptyOverrides()).files.find((f) => f.path === 'Builders/PieChartBuilder.g.cs')!.content;
+    assert.ok(builder.includes('DiagnosticId = "FLINT0001", UrlFormat = "https://github.com/graspea/flint-chart-dotnet/blob/main/docs/deprecations.md#{0}")]\npublic sealed partial class PieChartBuilder<TRow>'));
   });
 });

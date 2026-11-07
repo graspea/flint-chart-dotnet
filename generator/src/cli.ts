@@ -6,7 +6,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { diffIr, diffMarkdown, retiredEntries, type RetiredEntry } from './diff.ts';
+import { diffIr, diffMarkdown, flattenIr, retiredEntries, type RetiredEntry } from './diff.ts';
 import { emitBuilders } from './emit/builders.ts';
 import { mergeResults } from './emit/common.ts';
 import { emitConstants } from './emit/constants.ts';
@@ -78,7 +78,7 @@ async function extract(): Promise<Ir> {
   if (existsSync(IR_FILE)) {
     const previous = readJson<Ir>(IR_FILE);
     const rows = diffIr(previous, ir);
-    const retired = retiredEntries(rows, previous.upstream.version, ir.upstream.version);
+    const retired = retiredEntries(rows, previous.upstream.version, ir.upstream.version, previous);
     if (retired.length > 0) {
       const ledger = existsSync(RETIRED_FILE) ? readJson<RetiredEntry[]>(RETIRED_FILE) : [];
       const known = new Set(ledger.map((e) => e.path));
@@ -111,8 +111,13 @@ function removeStale(dir: string, keep: Set<string>): string[] {
   return types;
 }
 
-function emit(ir: Ir = readJson<Ir>(IR_FILE)): void {
+function emit(current: Ir = readJson<Ir>(IR_FILE)): void {
   const overrides = loadOverrides(OVERRIDES_FILE);
+  // The ledger entries the IR no longer has: the facades keep the obsolete ones, the validator tables list them all.
+  const present = flattenIr(current);
+  const ledger = existsSync(RETIRED_FILE) ? readJson<RetiredEntry[]>(RETIRED_FILE) : [];
+  const ir: Ir = { ...current, retired: ledger.filter((e) => !present.has(e.path)) };
+  const docsIr: Ir = { ...current, retired: undefined };
   checkPropertyKinds(ir, overrides);
   const shipped = readFileSync(join(LIBRARY_DIR, 'PublicAPI.Shipped.txt'), 'utf8');
   const result = mergeResults([
@@ -122,7 +127,7 @@ function emit(ir: Ir = readJson<Ir>(IR_FILE)): void {
     emitBuilders(ir, overrides),
     emitEnums(ir, overrides, shipped),
     emitEntries(ir, overrides),
-    emitDocs(ir),
+    emitDocs(docsIr),
   ]);
 
   result.ownedTypes.push(...removeStale(GENERATED_DIR, new Set(result.files.map((f) => join(GENERATED_DIR, f.path)))));
@@ -136,9 +141,9 @@ function emit(ir: Ir = readJson<Ir>(IR_FILE)): void {
   writeText(unshippedFile, unshippedText(shipped, readFileSync(unshippedFile, 'utf8'), result));
 
   const mcpPin = readJson<McpPin>(MCP_PIN_FILE);
-  const readme = spliceSections(readFileSync(README_FILE, 'utf8'), readmeSections(ir, overrides, mcpPin), 'README.md');
+  const readme = spliceSections(readFileSync(README_FILE, 'utf8'), readmeSections(docsIr, overrides, mcpPin), 'README.md');
   writeText(README_FILE, readme);
-  writeText(PACKAGE_AGENTS_FILE, packageAgents(readme, ir, overrides, mcpPin));
+  writeText(PACKAGE_AGENTS_FILE, packageAgents(readme, docsIr, overrides, mcpPin));
   console.log(`emit: ${wrote} ${result.files.length} files, ${result.apiLines.length} API lines, ${names.length} name table file(s), README.md sections and docs/package/AGENTS.md`);
 }
 

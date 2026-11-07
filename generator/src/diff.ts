@@ -1,6 +1,7 @@
 // ir-diff (design §7.2): two IR files -> added / removed / changed rows with IR paths; feeds the sync PR body and
 // the retirement ledger (design §7.8).
 import { ordinal } from './ir.ts';
+import type { RetiredEntry } from './retired.ts';
 
 export interface DiffRow {
   change: 'added' | 'removed' | 'changed';
@@ -9,15 +10,12 @@ export interface DiffRow {
   after?: string;
 }
 
-export interface RetiredEntry {
-  path: string;
-  lastSeenIn: string;
-  retiredIn: string;
-}
+export type { RetiredEntry };
 
 interface Node {
   value: string;
   parent: string | undefined;
+  raw: unknown;
 }
 
 /** Array elements are identified by name, key or id (or option value), so reordering is not a change. */
@@ -39,7 +37,7 @@ function display(value: unknown): string {
 }
 
 function flatten(value: unknown, path: string, parent: string | undefined, out: Map<string, Node>): void {
-  out.set(path, { value: display(value), parent });
+  out.set(path, { value: display(value), parent, raw: value });
   if (Array.isArray(value)) {
     const seen = new Map<string, number>();
     value.forEach((el, i) => {
@@ -97,9 +95,14 @@ const RETIRABLE = [
   /^catalog\.(channels|semanticTypes|themePresets)\[[^\]]+\]$/,
 ];
 
-/** Removed catalog members, keyed by their IR path (which carries template and backend). */
-export function retiredEntries(rows: DiffRow[], lastSeenIn: string, retiredIn: string): RetiredEntry[] {
+/**
+ * Removed catalog members, keyed by their IR path (which carries template and backend). With `before` (the IR the rows
+ * were diffed from), each entry also keeps the removed node as `was`, from which the facades re-emit it (src/retired.ts).
+ */
+export function retiredEntries(rows: DiffRow[], lastSeenIn: string, retiredIn: string, before?: unknown): RetiredEntry[] {
+  const nodes = new Map<string, Node>();
+  if (before !== undefined) flatten(before, '', undefined, nodes);
   return rows
     .filter((r) => r.change === 'removed' && RETIRABLE.some((re) => re.test(r.path)))
-    .map((r) => ({ path: r.path, lastSeenIn, retiredIn }));
+    .map((r) => (before === undefined ? { path: r.path, lastSeenIn, retiredIn } : { path: r.path, lastSeenIn, retiredIn, was: nodes.get(r.path)?.raw }));
 }

@@ -25,9 +25,17 @@ public sealed partial class FacadeSweepTests
 
     private static readonly Assembly Library = typeof(ChartBuilder<,>).Assembly;
 
-    /// <summary>One template of the committed IR with its union of channels and properties across backends.</summary>
+    /// <summary>
+    /// One template of the facade catalog (the committed IR with the obsolete generator/retired.json entries put back) with
+    /// its union of channels and properties across backends, and the channels, keys and option values (JSON text) that
+    /// every declaring backend retired, which carry <c>[Obsolete]</c> FLINT0001.
+    /// </summary>
     public sealed record Template(string Name, string[] Backends, string[] Channels, Property[] Properties)
     {
+        public bool Obsolete { get; init; }
+
+        public HashSet<string> ObsoleteMembers { get; init; } = [];
+
         public override string ToString() => Name;
     }
 
@@ -39,7 +47,7 @@ public sealed partial class FacadeSweepTests
     public static IEnumerable<Template> Templates()
     {
         var backends = CommittedIr.Strings(CommittedIr.Catalog["backends"]);
-        foreach (var t in CommittedIr.Catalog["chartTypes"]!.AsArray())
+        foreach (var t in CommittedIr.FacadeCatalog["chartTypes"]!.AsArray())
         {
             var declared = t!["backends"]!.AsObject();
             var present = backends.Where(declared.ContainsKey).ToArray();
@@ -52,7 +60,31 @@ public sealed partial class FacadeSweepTests
                     g.Select(p => p["type"]!.GetValue<string>()).Distinct().ToArray(),
                     DistinctOptions(g.SelectMany(p => p["options"]?.AsArray() ?? []))))
                 .ToArray();
-            yield return new Template(t["name"]!.GetValue<string>(), present, channels, properties);
+            var name = t["name"]!.GetValue<string>();
+            bool Retired(IEnumerable<string> on, string member) => on.All(b => CommittedIr.ObsoleteIn(name, b, member) is not null);
+            var obsolete = new HashSet<string>(StringComparer.Ordinal);
+            obsolete.UnionWith(channels.Where(c => Retired(present.Where(b => CommittedIr.Strings(declared[b]!["channels"]).Contains(c)), $"channels[{c}]")).Select(c => $"channels[{c}]"));
+            foreach (var p in properties)
+            {
+                var on = present.Where(b => declared[b]!["properties"]!.AsArray().Any(d => d!["key"]!.GetValue<string>() == p.Key)).ToArray();
+                if (Retired(on, $"properties[{p.Key}]"))
+                {
+                    obsolete.Add($"properties[{p.Key}]");
+                }
+
+                foreach (var o in p.DiscreteOptions)
+                {
+                    var option = $"properties[{p.Key}].options[={o.Value.ToJsonString()}]";
+                    var offering = on.Where(b => declared[b]!["properties"]!.AsArray().Single(d => d!["key"]!.GetValue<string>() == p.Key)!["options"]?.AsArray()
+                        .Any(d => d!["value"] is { } v && JsonNode.DeepEquals(v, o.Value)) == true);
+                    if (Retired(offering, option))
+                    {
+                        obsolete.Add(option);
+                    }
+                }
+            }
+
+            yield return new Template(name, present, channels, properties) { Obsolete = CommittedIr.ObsoleteIn(name) is not null, ObsoleteMembers = obsolete };
         }
     }
 
@@ -159,7 +191,15 @@ public sealed partial class FacadeSweepTests
         var methods = builder.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
         Assert.That(methods.Select(m => $"{m.Name}{Parameters(m)}"), Is.EquivalentTo(expected));
         Assert.That(methods.Where(m => m.ReturnType != builder.MakeGenericType(row)), Is.Empty);
+
+        // source: design §7.8 and part 3 §8.4 (a member every declaring backend retired is kept under [Obsolete] FLINT0001)
+        var obsolete = template.Channels.Where(c => template.ObsoleteMembers.Contains($"channels[{c}]")).Select(c => channels[c])
+            .Concat(template.Properties.Where(p => template.ObsoleteMembers.Contains($"properties[{p.Key}]")).Select(p => properties[p.Key]));
+        Assert.That(methods.Where(Flint0001).Select(m => m.Name).Distinct(), Is.EquivalentTo(obsolete));
+        Assert.That(Flint0001(builder), Is.EqualTo(template.Obsolete));
     }
+
+    private static bool Flint0001(MemberInfo member) => member.GetCustomAttribute<ObsoleteAttribute>() is { DiagnosticId: "FLINT0001", IsError: false };
 
     // source: design §4.2 (every facade method is a one-liner over a core method: a channel writes {"field":…} under its
     // wire name; binary -> bool, continuous -> double; the enum's members are the union of the option values across
@@ -193,6 +233,10 @@ public sealed partial class FacadeSweepTests
                 Assert.That(Convert.ToInt32(Enum.Parse(parameter, "Default")), Is.Zero, $"{template.Name} {property.Key}");
                 Assert.That(Enum.GetNames(parameter), Is.EquivalentTo(property.DiscreteOptions.Select(o => MemberName(template, property, o)).Prepend("Default")), $"{template.Name} {property.Key}");
                 Assert.That(Enum.GetValues(parameter).Cast<object>().Select(Convert.ToInt32), Is.Unique, $"{template.Name} {property.Key}");
+                Assert.That(
+                    parameter.GetFields(BindingFlags.Public | BindingFlags.Static).Where(Flint0001).Select(f => f.Name),
+                    Is.EquivalentTo(property.DiscreteOptions.Where(o => template.ObsoleteMembers.Contains($"properties[{property.Key}].options[={o.Value.ToJsonString()}]")).Select(o => MemberName(template, property, o))),
+                    $"{template.Name} {property.Key}: obsolete members");
                 foreach (var option in property.DiscreteOptions)
                 {
                     var member = Enum.Parse(parameter, MemberName(template, property, option));

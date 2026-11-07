@@ -60,4 +60,18 @@ describe('diff', () => {
       { path: 'catalog.semanticTypes[YearMonth]', lastSeenIn: '0.5.1', retiredIn: '0.6.0' },
     ]);
   });
+
+  // source: design §7.8 (emitters keep emitting retired members, so the ledger keeps what they need)
+  it('keeps the removed node as the snapshot when given the IR it diffed from', () => {
+    const { before, after } = pair();
+    after.catalog.chartTypes[0].backends.vegalite.properties.splice(1, 1);
+    assert.deepEqual(retiredEntries(diffIr(before, after), '0.5.1', '0.6.0', before), [
+      {
+        path: 'catalog.chartTypes[Line Chart].backends.vegalite.properties[showPoints]',
+        lastSeenIn: '0.5.1',
+        retiredIn: '0.6.0',
+        was: { key: 'showPoints', label: 'Points', type: 'binary' },
+      },
+    ]);
+  });
 });

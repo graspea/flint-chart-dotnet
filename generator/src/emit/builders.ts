@@ -6,6 +6,7 @@ import { csNumber, csString, docComment, emptyResult, header, xmlText, type Emit
 import { declaredBy, fluentModel, type FluentProperty, type FluentTemplate } from './fluent.ts';
 import type { Ir } from '../ir.ts';
 import type { Overrides } from '../overrides.ts';
+import { obsoleteAttribute } from '../retired.ts';
 
 const INDENT = '    ';
 const param = (name: string, text: string) => `${INDENT}/// <param name="${name}">${xmlText(text)}</param>\n`;
@@ -46,22 +47,30 @@ function channelMethods(t: FluentTemplate, self: string): { code: string; api: s
   const apiSelf = `Graspea.Flint.${t.builder}<TRow>`;
   for (const c of t.channels) {
     const support = declaredBy(t.backends, c.backends);
-    const tail = support.all ? `${support.text}.` : `${support.text}, where \`Validate(backend)\` reports \`unsupported_channel\`.`;
+    const tail = c.obsoleteIn
+      ? retiredText(c.obsoleteIn, 'channel')
+      : support.all
+        ? `${support.text}.`
+        : `${support.text}, where \`Validate(backend)\` reports \`unsupported_channel\`.`;
     const call = `Channel.${c.constant}`;
+    const obsolete = c.obsoleteIn ? obsoleteAttribute(INDENT, c.obsoleteIn) : '';
     code +=
       `\n${docComment(INDENT, `Binds the \`${c.channel}\` channel to a field. ${tail}`)}` +
       param('field', 'The field: a key of the rows, used verbatim.') +
       SEMANTIC_TYPE +
       RETURNS +
+      obsolete +
       `${INDENT}public ${self} ${c.method}(string field, SemanticType? semanticType = null) => Encode(${call}, field, semanticType);\n` +
       `\n${docComment(INDENT, `Binds the \`${c.channel}\` channel to the field a row member is written as. ${tail}`)}` +
       param('selector', 'A property or field of the row, such as `r => r.Month`.') +
       SEMANTIC_TYPE +
       RETURNS +
+      obsolete +
       `${INDENT}public ${self} ${c.method}(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(${call}, selector, semanticType);\n` +
       `\n${docComment(INDENT, `Binds the \`${c.channel}\` channel to an encoding with any of its members. ${tail}`)}` +
       param('encoding', 'The encoding; the builder keeps a copy.') +
       RETURNS +
+      obsolete +
       `${INDENT}public ${self} ${c.method}(ChartEncoding encoding) => Encode(${call}, encoding);\n`;
     api.push(
       `${apiSelf}.${c.method}(string! field, Graspea.Flint.SemanticType? semanticType = null) -> ${apiSelf}!`,
@@ -79,11 +88,13 @@ function propertyMethods(t: FluentTemplate, self: string, hostStateKeys: Readonl
   for (const p of t.properties) {
     const support = declaredBy(t.backends, p.backends);
     // Validate(backend) reports an undeclared key as unknown_chart_property, except a host-state key (upstream reads it anyway).
-    const tail = support.all
-      ? `${support.text}.`
-      : hostStateKeys.has(p.key)
-        ? `${support.text}. It is a host-state key, read even where undeclared, so \`Validate(backend)\` does not report it.`
-        : `${support.text}, where \`Validate(backend)\` reports \`unknown_chart_property\`.`;
+    const tail = p.obsoleteIn
+      ? retiredText(p.obsoleteIn, 'key')
+      : support.all
+        ? `${support.text}.`
+        : hostStateKeys.has(p.key)
+          ? `${support.text}. It is a host-state key, read even where undeclared, so \`Validate(backend)\` does not report it.`
+          : `${support.text}, where \`Validate(backend)\` reports \`unknown_chart_property\`.`;
     let summary = `Sets the \`${p.key}\` chart property ("${p.label}"). ${tail}`;
     const key = csString(p.key);
     let valueDoc = 'The value.';
@@ -118,11 +129,16 @@ function propertyMethods(t: FluentTemplate, self: string, hostStateKeys: Readonl
         apiType = 'System.Text.Json.Nodes.JsonNode? value';
         break;
     }
-    code += `\n${docComment(INDENT, summary)}${param('value', valueDoc)}${RETURNS}${INDENT}public ${self} ${p.method}(${signature}) => ${body};\n`;
+    const obsolete = p.obsoleteIn ? obsoleteAttribute(INDENT, p.obsoleteIn) : '';
+    code += `\n${docComment(INDENT, summary)}${param('value', valueDoc)}${RETURNS}${obsolete}${INDENT}public ${self} ${p.method}(${signature}) => ${body};\n`;
     api.push(`${apiSelf}.${p.method}(${apiType}) -> ${apiSelf}!`);
   }
   return { code, api };
 }
+
+/** The summary tail of a member retired upstream (design §7.8). */
+const retiredText = (version: string, what: string) =>
+  `Removed in flint-chart ${version}, which ignores the ${what}; \`Validate(backend)\` reports \`retired_member\`. Kept until the next breaking window (FLINT0001).`;
 
 /** Facet channels split the chart into panels; the example binds the channels that draw it. */
 const FACETS = new Set(['column', 'row']);
@@ -154,6 +170,7 @@ export function emitBuilders(ir: Ir, overrides: Overrides): EmitResult {
       docComment('', `Builds a \`${t.name}\` document; backends: ${t.backends.join(', ')}. Start with \`Chart.${t.entry}(rows)\`.`) +
       '/// <typeparam name="TRow">The row type.</typeparam>\n' +
       example(t) +
+      (t.obsoleteIn ? obsoleteAttribute('', t.obsoleteIn) : '') +
       `public sealed partial class ${self} : ChartBuilder<${self}, TRow>\n{\n` +
       `${INDENT}internal ${t.builder}(ChartRows<TRow> rows)\n${INDENT}    : base(ChartType.${t.constant}, rows.Data, rows.TypeInfo)\n${INDENT}{\n${INDENT}}\n` +
       channels.code +

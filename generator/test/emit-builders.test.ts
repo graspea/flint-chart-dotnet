@@ -250,4 +250,33 @@ public sealed partial class LineChartBuilder<TRow> : ChartBuilder<LineChartBuild
     const content = emitBuilders(ir, overrides()).files[0].content;
     assert.match(content, /\/\/\/ var rows = new\[\] \{ new \{ Size = 1\.0 \}, new \{ Size = 2\.0 \} \};\n\/\/\/ string json = Chart\.Line\(rows\)\.Size\(r =&gt; r\.Size\)\.ToJson\(\);\n/);
   });
+
+  // source: design §7.8 and part 3 §8.4 (a retired member is kept with [Obsolete(..., DiagnosticId = "FLINT0001")] and still
+  // writes its key; the message text of §8.4)
+  it('keeps a retired channel and property under [Obsolete] FLINT0001', () => {
+    const ir = syntheticIr();
+    const base = 'catalog.chartTypes[Line Chart].backends.vegalite';
+    ir.retired = [
+      { path: `${base}.channels[size]`, lastSeenIn: '0.5.0', retiredIn: '0.5.1', was: 'size' },
+      { path: `${base}.properties[smooth]`, lastSeenIn: '0.5.0', retiredIn: '0.5.1', was: { key: 'smooth', label: 'Smooth', type: 'binary' } },
+    ];
+    const content = emitBuilders(ir, overrides()).files[0].content;
+    const obsolete =
+      '    [Obsolete("Removed in flint-chart 0.5.1; ignored upstream. Deleted in the next breaking window.", DiagnosticId = "FLINT0001", UrlFormat = "https://github.com/graspea/flint-chart-dotnet/blob/main/docs/deprecations.md#{0}")]\n';
+    assert.ok(content.includes(`${obsolete}    public LineChartBuilder<TRow> Smooth(bool value) => Property("smooth", value);\n`), content);
+    assert.ok(content.includes(`${obsolete}    public LineChartBuilder<TRow> Size(string field, SemanticType? semanticType = null) => Encode(Channel.Size, field, semanticType);\n`));
+    assert.ok(content.includes(`${obsolete}    public LineChartBuilder<TRow> Size(ChartEncoding encoding) => Encode(Channel.Size, encoding);\n`));
+    assert.ok(content.includes('<summary>Sets the <c>smooth</c> chart property ("Smooth"). Removed in flint-chart 0.5.1'));
+    assert.equal(content.split('[Obsolete(').length - 1, 4);
+    const api = emitBuilders(ir, overrides()).apiLines;
+    assert.ok(api.includes('Graspea.Flint.LineChartBuilder<TRow>.Smooth(bool value) -> Graspea.Flint.LineChartBuilder<TRow>!'));
+  });
+
+  // source: design §7.8 (a member some backend still declares is not retired)
+  it('does not mark a member that another backend still declares', () => {
+    const ir = syntheticIr();
+    ir.retired = [{ path: 'catalog.chartTypes[Line Chart].backends.excel.channels[color]', lastSeenIn: '0.5.0', retiredIn: '0.5.1', was: 'color' }];
+    const content = emitBuilders(ir, overrides()).files[0].content;
+    assert.ok(!content.includes('[Obsolete('));
+  });
 });

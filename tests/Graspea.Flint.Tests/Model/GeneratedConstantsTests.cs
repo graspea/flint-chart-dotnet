@@ -18,27 +18,30 @@ public sealed class GeneratedConstantsTests
     }
 
     // source: ir/flint-ir.json catalog.chartTypes (51 on 1.0.0, counted from the IR, not assumed)
+    // (with the obsolete generator/retired.json entries, which keep their constant: design §7.8)
     [Test]
     public void ChartType_HasOneConstantPerIrChartType()
     {
-        var names = CommittedIr.Catalog["chartTypes"]!.AsArray().Select(t => t!["name"]!.GetValue<string>()).ToArray();
+        var names = CommittedIr.FacadeCatalog["chartTypes"]!.AsArray().Select(t => t!["name"]!.GetValue<string>()).ToArray();
         Assert.That(StaticValues<ChartType>().Select(v => v.Name), Is.EquivalentTo(names));
     }
 
     // source: ir/flint-ir.json catalog.channels (the union includes theta and not text)
+    // (with the obsolete generator/retired.json entries, which keep their constant: design §7.8)
     [Test]
     public void Channel_ConstantsEqualTheIrChannelUnion()
     {
-        Assert.That(StaticValues<Channel>().Select(v => v.Name), Is.EquivalentTo(CommittedIr.Strings(CommittedIr.Catalog["channels"])));
+        Assert.That(StaticValues<Channel>().Select(v => v.Name), Is.EquivalentTo(CommittedIr.Strings(CommittedIr.FacadeCatalog["channels"])));
         Assert.That(Channel.Theta.Name, Is.EqualTo("theta"));
         Assert.That(typeof(Channel).GetField("Text"), Is.Null);
     }
 
     // source: ir/flint-ir.json catalog.semanticTypes (verbatim names) and generator/overrides.json renames (Name -> NameType)
+    // (with the obsolete generator/retired.json entries, which keep their constant: design §7.8)
     [Test]
     public void SemanticType_ConstantsAreVerbatimExceptTheReviewedRename()
     {
-        var names = CommittedIr.Catalog["semanticTypes"]!.AsArray().Select(t => t!["name"]!.GetValue<string>()).ToArray();
+        var names = CommittedIr.FacadeCatalog["semanticTypes"]!.AsArray().Select(t => t!["name"]!.GetValue<string>()).ToArray();
         Assert.That(StaticValues<SemanticType>().Select(v => v.Name), Is.EquivalentTo(names));
         Assert.That(SemanticType.YearMonth.Name, Is.EqualTo("YearMonth"));
         Assert.That(SemanticType.ID.Name, Is.EqualTo("ID"));
@@ -55,11 +58,12 @@ public sealed class GeneratedConstantsTests
     }
 
     // source: ir/flint-ir.json catalog.themePresets (ids; Pascal names per design §7.6 rule 5) and generator/overrides.json
+    // (with the obsolete generator/retired.json entries, which keep their constant: design §7.8)
     // renames (owner decision 2026-10-17: powerbi -> PowerBi, powerbi-light -> PowerBiLight)
     [Test]
     public void ThemePreset_ConstantsEqualTheIrPresets()
     {
-        var ids = CommittedIr.Catalog["themePresets"]!.AsArray().Select(t => t!["id"]!.GetValue<string>()).ToArray();
+        var ids = CommittedIr.FacadeCatalog["themePresets"]!.AsArray().Select(t => t!["id"]!.GetValue<string>()).ToArray();
         Assert.That(StaticValues<ThemePreset>().Select(v => v.Name), Is.EquivalentTo(ids));
         Assert.That(ThemePreset.PowerBi.Name, Is.EqualTo("powerbi"));
         Assert.That(ThemePreset.PowerBiLight.Name, Is.EqualTo("powerbi-light"));

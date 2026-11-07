@@ -1,4 +1,5 @@
 // IR types (design §7.3) and the canonical writer: sorted keys, two-space indent, LF, trailing newline.
+import type { RetiredEntry } from './retired.ts';
 
 export type IrType =
   | { kind: 'string' }
@@ -94,6 +95,11 @@ export interface Ir {
   upstream: { package: string; version: string; integrity: string };
   types: Record<string, IrNamedType>;
   catalog: IrCatalog;
+  /**
+   * The entries of generator/retired.json whose path the IR no longer has; set by `emit`, never written to the IR file.
+   * The facades keep the obsolete ones (src/retired.ts), the validator tables carry all of them.
+   */
+  retired?: RetiredEntry[];
 }
 
 /** Ordinal string comparison, independent of the host locale. */

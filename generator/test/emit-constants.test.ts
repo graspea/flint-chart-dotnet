@@ -161,4 +161,13 @@ public readonly partial record struct ChartType
       /catalog\.themePresets\[powerbi\]/,
     );
   });
+
+  // source: design §7.8 (retired semantic types, presets and channels keep their constant under [Obsolete] FLINT0001)
+  it('keeps a retired catalog constant under [Obsolete]', () => {
+    const ir = irWithLiterals();
+    ir.retired = [{ path: 'catalog.themePresets[dark]', lastSeenIn: '0.5.0', retiredIn: '0.5.1', was: { id: 'dark', label: 'Dark', description: 'Night.' } }];
+    const preset = emitConstants(ir).files.find((f) => f.path === 'Constants/ThemePreset.g.cs')!.content;
+    assert.ok(preset.includes('    /// <summary>The <c>dark</c> preset (Dark): Night. Removed in flint-chart 0.5.1.</summary>\n    [Obsolete("Removed in flint-chart 0.5.1; ignored upstream. Deleted in the next breaking window.", DiagnosticId = "FLINT0001", UrlFormat = "https://github.com/graspea/flint-chart-dotnet/blob/main/docs/deprecations.md#{0}")]\n    public static readonly ThemePreset Dark = new("dark");\n'), preset);
+    assert.ok(emitConstants(ir).apiLines.includes('static readonly Graspea.Flint.ThemePreset.Dark -> Graspea.Flint.ThemePreset'));
+  });
 });

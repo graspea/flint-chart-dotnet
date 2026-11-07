@@ -7,6 +7,7 @@ import type { Ir } from '../ir.ts';
 import type { Overrides } from '../overrides.ts';
 import { csNumber, csString, docComment, emptyResult, header, type EmitResult } from './common.ts';
 import { fluentModel, type FluentEnum } from './fluent.ts';
+import { obsoleteAttribute } from '../retired.ts';
 
 type WireValue = string | number | boolean;
 
@@ -36,7 +37,11 @@ function memberDoc(e: FluentEnum, m: FluentEnum['members'][number]): string {
     return `Omits the key, so the backend applies its default${labels.length > 0 ? ` (${labels.join(', ')})` : ''}.`;
   }
   const missing = e.backends.filter((b) => !m.backends.includes(b));
-  const note = missing.length > 0 ? ` Not offered by ${missing.join(', ')} (\`invalid_option_value\`).` : '';
+  const note = m.obsoleteIn
+    ? ` Removed in flint-chart ${m.obsoleteIn}, which drops the value (\`retired_member\`).`
+    : missing.length > 0
+      ? ` Not offered by ${missing.join(', ')} (\`invalid_option_value\`).`
+      : '';
   const label = m.options[0].label;
   const written = Array.isArray(m.value)
     ? `Writes the label \`${JSON.stringify(label)}\`, which flint-chart maps to \`${JSON.stringify(m.value)}\`.`
@@ -84,11 +89,16 @@ export function emitEnums(ir: Ir, overrides: Overrides, shippedApi = ''): EmitRe
   const enums = fluentModel(ir, overrides).flatMap((t) => t.properties.flatMap((p) => (p.enum ? [p.enum] : [])));
   for (const e of enums) {
     const numbers = memberNumbers(e, shipped.get(e.name) ?? new Map());
-    const members = e.members.map((m) => `${docComment('    ', memberDoc(e, m))}    ${m.name} = ${numbers.get(m.name)},\n`).join('\n');
+    const members = e.members
+      .map((m) => `${docComment('    ', memberDoc(e, m))}${m.obsoleteIn ? obsoleteAttribute('    ', m.obsoleteIn) : ''}    ${m.name} = ${numbers.get(m.name)},\n`)
+      .join('\n');
+    // The value table writes every member, the obsolete ones too.
+    const silence = e.obsoleteIn || e.members.some((m) => m.obsoleteIn) ? '#pragma warning disable FLINT0001\n' : '';
     const arms = e.members.map((m) => `        ${e.name}.${m.name} => ${wireExpression(m)},\n`).join('');
     const content =
-      `${header(ir)}\nusing System.Text.Json.Nodes;\n\nnamespace Graspea.Flint;\n\n` +
+      `${header(ir)}${silence}\nusing System.Text.Json.Nodes;\n\nnamespace Graspea.Flint;\n\n` +
       docComment('', `The values of the \`${e.key}\` property ("${e.label}") of the \`${e.chartType}\` template.`) +
+      (e.obsoleteIn ? obsoleteAttribute('', e.obsoleteIn) : '') +
       `public enum ${e.name}\n{\n${members}}\n\n` +
       `internal static class ${e.name}Values\n{\n` +
       `    internal static JsonNode? ToJson(${e.name} value) => value switch\n    {\n${arms}` +
