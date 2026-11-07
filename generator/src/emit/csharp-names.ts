@@ -9,7 +9,7 @@ import { csNumber, csString, header, type EmittedFile } from './common.ts';
 import { constantNames } from './constants.ts';
 import { wireValue } from './enums.ts';
 import { fluentModel, type FluentProperty } from './fluent.ts';
-import { optionClasses } from './options.ts';
+import { openStructs, optionClasses } from './options.ts';
 
 const KINDS: Readonly<Record<FluentProperty['kind'], string>> = {
   binary: 'PropertyKind.Bool',
@@ -99,6 +99,8 @@ export function emitCSharpNames(ir: Ir, overrides: Overrides): EmittedFile[] {
     (c) => `new(${csString(c.name)},\n        [\n${c.members.map((m) => `            new(${csString(m.wire)}, ${csString(m.name)}, ${csString(m.type)}),\n`).join('')}        ])`,
   );
 
+  const unions = openStructs(ir, overrides).map((u) => `new(${csString(u.name)}, [${u.literals.map((l) => pair(l.wire, l.member)).join(', ')}])`);
+
   const content =
     `${header(ir)}\nnamespace Graspea.Flint.CSharp;\n\ninternal static partial class NameTables\n{\n` +
     [
@@ -111,6 +113,7 @@ export function emitCSharpNames(ir: Ir, overrides: Overrides): EmittedFile[] {
       list('SortOrders', 'ConstantName', struct('SortOrder')),
       list('SeriesCountAxes', 'ConstantName', struct('SeriesCountAxis')),
       list('Classes', 'ClassNames', classes),
+      list('StringUnions', 'StringUnionNames', unions),
     ].join('\n') +
     '}\n';
   return [{ path: 'NameTables.g.cs', content }, emitCatalog(ir)];

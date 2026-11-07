@@ -1019,4 +1019,8 @@ internal static partial class NameTables
             new("weight", "Weight", "string"),
         ]),
     ];
+
+    internal static readonly StringUnionNames[] StringUnions =
+    [
+    ];
 }

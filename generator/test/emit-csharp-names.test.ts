@@ -105,9 +105,30 @@ internal static partial class NameTables
             new("targetBandAR", "TargetBandAr", "double"),
         ]),
     ];
+
+    internal static readonly StringUnionNames[] StringUnions =
+    [
+    ];
 }
 `,
     );
+  });
+
+  // source: the options emitter (an open literal union is a string-backed struct with a property per literal; a
+  // number-keyed record is Dictionary<int, T>); the core writes `PointInk.Series` from this table
+  it('writes the open literal union structs with their literals and the int-keyed map member types', () => {
+    const ir = irWithTypes();
+    ir.types.ThemeSpec = {
+      kind: 'object',
+      props: [
+        { name: 'counts', optional: true, type: { kind: 'record', key: 'number', value: { kind: 'number' } } },
+        { name: 'point', optional: true, type: { kind: 'object', props: [{ name: 'ink', optional: true, type: { kind: 'literalUnion', values: ['series', 'text'], open: true } }] } },
+      ],
+    };
+    const content = emitCSharpNames(ir, emptyOverrides())[0].content;
+    assert.match(content, /new\("counts", "Counts", "Dictionary<int, double>"\)/);
+    assert.match(content, /new\("ink", "Ink", "PointInk"\)/);
+    assert.match(content, /    internal static readonly StringUnionNames\[\] StringUnions =\n    \[\n        new\("Graspea\.Flint\.Theming\.PointInk", \[new\("series", "Series"\), new\("text", "Text"\)\]\),\n    \];/);
   });
 
   // source: design §12.7 (Catalog.g.cs: what the catalog checks need: templates per backend with channels and properties

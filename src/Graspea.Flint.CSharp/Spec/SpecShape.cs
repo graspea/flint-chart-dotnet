@@ -231,8 +231,8 @@ internal static class SpecShape
     }
 
     /// <summary>A value of a model or name-table type: <c>string</c>, <c>double</c>, <c>bool</c>, <c>JsonNode</c>, arrays,
-    /// string-keyed maps, <c>ChartSize</c>, <c>ContinuousMarkCrossSection</c>, a theme union, a string-backed literal or a
-    /// generated class. Every type is nullable except the <c>!</c> forms.</summary>
+    /// string- and integer-keyed maps, <c>ChartSize</c>, <c>ContinuousMarkCrossSection</c>, a theme union, a string-backed
+    /// literal, an open literal union struct or a generated class. Every type is nullable except the <c>!</c> forms.</summary>
     internal static void Typed(JsonItem value, string type, string path)
     {
         if (type is "JsonNode" or "JsonNode?")
@@ -293,11 +293,20 @@ internal static class SpecShape
             return;
         }
 
-        const string map = "Dictionary<string, ";
-        if (type.StartsWith(map, StringComparison.Ordinal))
+        if (ValueWriter.MapValueType(type) is (var intKeys, var valueType))
         {
-            var valueType = type.Substring(map.Length, type.Length - map.Length - 1);
             Map(value, path, (entry, at) => Typed(entry, valueType, at));
+            foreach (var member in value.Members.Where(m => intKeys && ValueWriter.IntKey(m.Key) is null))
+            {
+                Require(false, value, path, $"{path} has the key \"{member.Key}\", which is not an integer.");
+            }
+
+            return;
+        }
+
+        if (NameTables.StringUnion(type) is not null)
+        {
+            Require(value.IsString, value, path, $"{path} must be a string.");
             return;
         }
 

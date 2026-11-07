@@ -38,6 +38,10 @@ internal sealed record MemberName(string Wire, string Name, string Type);
 /// <summary>A generated options or theming class, namespace-qualified, and its members.</summary>
 internal sealed record ClassNames(string Name, MemberName[] Members);
 
+/// <summary>A generated open literal union struct (<c>'a' | 'b' | string</c>), namespace-qualified, and its literals with the
+/// static property of each.</summary>
+internal sealed record StringUnionNames(string Name, ConstantName[] Literals);
+
 /// <summary>
 /// The C# names of the catalog (design §12.7). The arrays are written by the csharp-names emitter
 /// (<c>Generated/NameTables.g.cs</c>); the lookups are built from them on first use.
@@ -53,6 +57,7 @@ internal static partial class NameTables
     private static Dictionary<string, string>? _sortOrders;
     private static Dictionary<string, string>? _seriesCountAxes;
     private static Dictionary<string, ClassNames>? _classes;
+    private static Dictionary<string, StringUnionNames>? _stringUnions;
 
     public static TemplateNames? Template(string chartType) => Find(ref _templates, Templates, t => t.Name, chartType);
 
@@ -87,6 +92,25 @@ internal static partial class NameTables
         }
 
         return classes.TryGetValue(name, out var found) ? found : null;
+    }
+
+    /// <summary>A generated open literal union struct by its simple name (<c>PointInk</c>) or namespace-qualified name.</summary>
+    public static StringUnionNames? StringUnion(string name)
+    {
+        var unions = _stringUnions;
+        if (unions is null)
+        {
+            unions = new Dictionary<string, StringUnionNames>(StringComparer.Ordinal);
+            foreach (var u in StringUnions)
+            {
+                unions[u.Name] = u;
+                unions[SimpleName(u.Name)] = u;
+            }
+
+            _stringUnions = unions;
+        }
+
+        return unions.TryGetValue(name, out var found) ? found : null;
     }
 
     /// <summary>The object forms of the hand-written theme unions, written and checked as classes; their string forms are

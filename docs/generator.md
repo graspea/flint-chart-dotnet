@@ -343,8 +343,10 @@ The csharp-names emitter (`src/emit/csharp-names.ts`, design §12.7) writes `src
 for the conversion core of the `flint-cs` tool and the source generator: per chart type its `ChartType` constant, `Chart` entry, facade channel
 methods and property methods (kind `Bool`, `Double`, `Enum` or `Json`; for an enum its type and, per member, the JSON value
 the member writes, which is the label for an array option), the `Channel`, `SemanticType` (with the first `visEncodings`
-entry), `ThemePreset`, `EncodingType`, `Aggregate`, `SortOrder` and `SeriesCountAxis` constants, and every generated options
-and theming class with its members (wire name, C# property, declared type). It reads the shared fluent model, the
+entry), `ThemePreset`, `EncodingType`, `Aggregate`, `SortOrder` and `SeriesCountAxis` constants, every generated options
+and theming class with its members (wire name, C# property, declared type, such as `Dictionary<int, string[]>` or `PointInk`),
+and every open literal union struct with its literals (`StringUnions`), so the core writes a known literal as its property
+(`PointInk.Series`), any other string as a string, and an integer-keyed map as `new() { [2] = … }`. It reads the shared fluent model, the
 constants emitter and the options emitter, so the overrides.json renames apply and its names cannot differ from the
 compiled facades. The file is plain arrays that compile for `netstandard2.0` and `net8.0`; the library gains no public
 type. `tests/Graspea.Flint.CSharp.Tests` (`NameTablesCrossCheckTests`) loads `Graspea.Flint` by reflection and checks

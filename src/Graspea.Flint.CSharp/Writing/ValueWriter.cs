@@ -153,28 +153,35 @@ internal sealed class ValueWriter
             return $"[{string.Join(", ", items)}]";
         }
 
-        const string map = "Dictionary<string, ";
-        if (type.StartsWith(map, StringComparison.Ordinal) && type.EndsWith(">", StringComparison.Ordinal))
+        if (MapValueType(type) is (var intKeys, var valueType))
         {
             if (!item.IsObject)
             {
                 return null;
             }
 
-            var valueType = type.Substring(map.Length, type.Length - map.Length - 1);
             var entries = new List<string>();
             foreach (var member in item.Members)
             {
+                var key = intKeys ? (IntKey(member.Key) is { } k ? Invariant(k) : null) : CSharpText.StringLiteral(member.Key);
                 var value = member.Value.IsNull ? (valueType == "JsonNode?" ? "null" : IsReference(valueType) ? "null!" : null) : Typed(member.Value, valueType);
-                if (value is null)
+                if (key is null || value is null)
                 {
                     return null;
                 }
 
-                entries.Add($"[{CSharpText.StringLiteral(member.Key)}] = {value}");
+                entries.Add($"[{key}] = {value}");
             }
 
             return entries.Count == 0 ? "new()" : $"new() {{ {string.Join(", ", entries)} }}";
+        }
+
+        if (NameTables.StringUnion(type) is { } union)
+        {
+            // A literal is its static property; any other string converts implicitly.
+            return !item.IsString ? null
+                : union.Literals.FirstOrDefault(l => l.Wire == item.Value) is { } literal ? $"{TypeName(union.Name)}.{literal.Member}"
+                : CSharpText.StringLiteral(item.Value!);
         }
 
         return NameTables.Class(type) is { } names && item.IsObject ? Object(names, item) : null;
@@ -366,6 +373,26 @@ internal sealed class ValueWriter
 
         return $"new {Flint("SemanticAnnotation")} {{ {string.Join(", ", assignments)} }}";
     }
+
+    /// <summary>For <c>Dictionary&lt;string, T&gt;</c> or <c>Dictionary&lt;int, T&gt;</c>: whether the keys are integers, and
+    /// <c>T</c>; null for any other type.</summary>
+    internal static (bool IntKeys, string ValueType)? MapValueType(string type)
+    {
+        foreach (var (prefix, intKeys) in new[] { ("Dictionary<string, ", false), ("Dictionary<int, ", true) })
+        {
+            if (type.StartsWith(prefix, StringComparison.Ordinal) && type.EndsWith(">", StringComparison.Ordinal))
+            {
+                return (intKeys, type.Substring(prefix.Length, type.Length - prefix.Length - 1));
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>The integer of a key in its invariant form (<c>"3"</c>, <c>"-1"</c>), as <c>IntKeyDictionaryConverter</c>
+    /// reads it; null for any other key (<c>"03"</c>, <c>"2.5"</c>), which would not write back as itself.</summary>
+    internal static int? IntKey(string key) =>
+        int.TryParse(key, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var value) && Invariant(value) == key ? value : null;
 
     private static bool IsReference(string type) =>
         type is "string" || type.EndsWith("[]", StringComparison.Ordinal) || type.StartsWith("Dictionary<", StringComparison.Ordinal) || NameTables.Class(type) is not null;

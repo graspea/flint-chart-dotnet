@@ -109,6 +109,23 @@ public sealed class NameTablesCrossCheckTests
         }
     }
 
+    public static IEnumerable<TestCaseData> StringUnions() =>
+        NameTables.StringUnions.Select(u => new TestCaseData(u.Name).SetName($"StringUnion_MatchesTheLibrary({u.Name})"));
+
+    // source: the compiled Graspea.Flint (a generated open literal union struct: a static property per literal whose value
+    // is the literal, and a converter that writes it as the plain string)
+    [TestCaseSource(nameof(StringUnions))]
+    public void StringUnion_MatchesTheLibrary(string name)
+    {
+        var type = Library.GetType(name, throwOnError: true)!;
+        foreach (var literal in NameTables.StringUnion(name)!.Literals)
+        {
+            var value = type.GetProperty(literal.Member, BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
+            Assert.That(value?.ToString(), Is.EqualTo(literal.Wire), $"{name}.{literal.Member}");
+            Assert.That(System.Text.Json.JsonSerializer.Serialize(value, type), Is.EqualTo(System.Text.Json.JsonSerializer.Serialize(literal.Wire)), $"{name}.{literal.Member}");
+        }
+    }
+
     private static T Constant<T>(string member) => (T)typeof(T).GetField(member, BindingFlags.Public | BindingFlags.Static)!.GetValue(null)!;
 
     private static ChartAssemblyInput Build(string entry, Action<object> configure)
@@ -127,9 +144,12 @@ public sealed class NameTablesCrossCheckTests
         if (type == typeof(bool)) return "bool";
         if (type == typeof(JsonNode)) return "JsonNode";
         if (type.IsArray) return TypeText(type.GetElementType()!) + "[]";
-        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>)) return $"Dictionary<string, {TypeText(type.GetGenericArguments()[1])}>";
-        // Hand-written types that overrides.json names are written by their full name.
-        return type == typeof(ChartSize) || type == typeof(ContinuousMarkCrossSection) || type.GetCustomAttribute<JsonConverterAttribute>() is not null
+        if (type == typeof(int)) return "int";
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>)) return $"Dictionary<{TypeText(type.GetGenericArguments()[0])}, {TypeText(type.GetGenericArguments()[1])}>";
+        // Hand-written types that overrides.json names are written by their full name; generated ones (classes and the
+        // open literal union structs) by their simple name.
+        return type == typeof(ChartSize) || type == typeof(ContinuousMarkCrossSection)
+            || (type.GetCustomAttribute<JsonConverterAttribute>() is not null && NameTables.StringUnion(type.FullName!) is null)
             ? type.FullName!
             : type.Name;
     }
