@@ -14,6 +14,8 @@ namespace Graspea.Flint.Serialization;
 [JsonSerializable(typeof(ChartEncoding))]
 [JsonSerializable(typeof(EncodingValue))]
 [JsonSerializable(typeof(ContinuousMarkCrossSectionDto))]
+[JsonSerializable(typeof(MinorGridSpecDto))]
+[JsonSerializable(typeof(RuleSpecDto))]
 [JsonSerializable(typeof(SemanticAnnotation))]
 [JsonSerializable(typeof(SemanticAnnotationDto))]
 [JsonSerializable(typeof(Theming.ThemeSpec))]

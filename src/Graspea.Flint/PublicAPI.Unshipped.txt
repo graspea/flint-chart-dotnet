@@ -1,1 +1,74 @@
 #nullable enable
+Graspea.Flint.Serialization.LabelOverflowConverter
+Graspea.Flint.Serialization.LabelOverflowConverter.LabelOverflowConverter() -> void
+Graspea.Flint.Serialization.MinorGridSpecConverter
+Graspea.Flint.Serialization.MinorGridSpecConverter.MinorGridSpecConverter() -> void
+Graspea.Flint.Serialization.RuleSpecConverter
+Graspea.Flint.Serialization.RuleSpecConverter.RuleSpecConverter() -> void
+Graspea.Flint.Serialization.ThemeLengthConverter
+Graspea.Flint.Serialization.ThemeLengthConverter.ThemeLengthConverter() -> void
+Graspea.Flint.Serialization.TypeWeightConverter
+Graspea.Flint.Serialization.TypeWeightConverter.TypeWeightConverter() -> void
+Graspea.Flint.Theming.LabelOverflow
+Graspea.Flint.Theming.LabelOverflow.Step.get -> string?
+Graspea.Flint.Theming.LabelOverflow.Steps.get -> string![]?
+Graspea.Flint.Theming.MinorGridSpec
+Graspea.Flint.Theming.MinorGridSpec.Color.get -> string?
+Graspea.Flint.Theming.MinorGridSpec.Color.init -> void
+Graspea.Flint.Theming.MinorGridSpec.Dash.get -> double[]?
+Graspea.Flint.Theming.MinorGridSpec.Dash.init -> void
+Graspea.Flint.Theming.MinorGridSpec.Divisions.get -> double?
+Graspea.Flint.Theming.MinorGridSpec.Divisions.init -> void
+Graspea.Flint.Theming.MinorGridSpec.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.MinorGridSpec.Extensions.set -> void
+Graspea.Flint.Theming.MinorGridSpec.Layer.get -> string?
+Graspea.Flint.Theming.MinorGridSpec.Layer.init -> void
+Graspea.Flint.Theming.MinorGridSpec.MinorGridSpec() -> void
+Graspea.Flint.Theming.MinorGridSpec.On.get -> string![]?
+Graspea.Flint.Theming.MinorGridSpec.On.init -> void
+Graspea.Flint.Theming.MinorGridSpec.Presence.get -> string?
+Graspea.Flint.Theming.MinorGridSpec.Presence.init -> void
+Graspea.Flint.Theming.MinorGridSpec.Style.get -> string?
+Graspea.Flint.Theming.MinorGridSpec.Style.init -> void
+Graspea.Flint.Theming.MinorGridSpec.Weight.get -> double?
+Graspea.Flint.Theming.MinorGridSpec.Weight.init -> void
+Graspea.Flint.Theming.RuleSpec
+Graspea.Flint.Theming.RuleSpec.Color.get -> string?
+Graspea.Flint.Theming.RuleSpec.Color.init -> void
+Graspea.Flint.Theming.RuleSpec.Dash.get -> double[]?
+Graspea.Flint.Theming.RuleSpec.Dash.init -> void
+Graspea.Flint.Theming.RuleSpec.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.RuleSpec.Extensions.set -> void
+Graspea.Flint.Theming.RuleSpec.Layer.get -> string?
+Graspea.Flint.Theming.RuleSpec.Layer.init -> void
+Graspea.Flint.Theming.RuleSpec.Presence.get -> string?
+Graspea.Flint.Theming.RuleSpec.Presence.init -> void
+Graspea.Flint.Theming.RuleSpec.RuleSpec() -> void
+Graspea.Flint.Theming.RuleSpec.Style.get -> string?
+Graspea.Flint.Theming.RuleSpec.Style.init -> void
+Graspea.Flint.Theming.RuleSpec.Weight.get -> double?
+Graspea.Flint.Theming.RuleSpec.Weight.init -> void
+Graspea.Flint.Theming.ThemeLength
+Graspea.Flint.Theming.ThemeLength.Number.get -> double?
+Graspea.Flint.Theming.ThemeLength.Text.get -> string?
+Graspea.Flint.Theming.TypeWeight
+Graspea.Flint.Theming.TypeWeight.Keyword.get -> string?
+Graspea.Flint.Theming.TypeWeight.Number.get -> double?
+override Graspea.Flint.Serialization.LabelOverflowConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.LabelOverflow!
+override Graspea.Flint.Serialization.LabelOverflowConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.LabelOverflow! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.MinorGridSpecConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.MinorGridSpec!
+override Graspea.Flint.Serialization.MinorGridSpecConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.MinorGridSpec! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.RuleSpecConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.RuleSpec!
+override Graspea.Flint.Serialization.RuleSpecConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.RuleSpec! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.ThemeLengthConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.ThemeLength!
+override Graspea.Flint.Serialization.ThemeLengthConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.ThemeLength! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.TypeWeightConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.TypeWeight!
+override Graspea.Flint.Serialization.TypeWeightConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.TypeWeight! value, System.Text.Json.JsonSerializerOptions! options) -> void
+static Graspea.Flint.Theming.LabelOverflow.implicit operator Graspea.Flint.Theming.LabelOverflow?(string![]? steps) -> Graspea.Flint.Theming.LabelOverflow?
+static Graspea.Flint.Theming.LabelOverflow.implicit operator Graspea.Flint.Theming.LabelOverflow?(string? step) -> Graspea.Flint.Theming.LabelOverflow?
+static Graspea.Flint.Theming.MinorGridSpec.implicit operator Graspea.Flint.Theming.MinorGridSpec?(string? presence) -> Graspea.Flint.Theming.MinorGridSpec?
+static Graspea.Flint.Theming.RuleSpec.implicit operator Graspea.Flint.Theming.RuleSpec?(string? presence) -> Graspea.Flint.Theming.RuleSpec?
+static Graspea.Flint.Theming.ThemeLength.implicit operator Graspea.Flint.Theming.ThemeLength!(double number) -> Graspea.Flint.Theming.ThemeLength!
+static Graspea.Flint.Theming.ThemeLength.implicit operator Graspea.Flint.Theming.ThemeLength?(string? text) -> Graspea.Flint.Theming.ThemeLength?
+static Graspea.Flint.Theming.TypeWeight.implicit operator Graspea.Flint.Theming.TypeWeight!(double number) -> Graspea.Flint.Theming.TypeWeight!
+static Graspea.Flint.Theming.TypeWeight.implicit operator Graspea.Flint.Theming.TypeWeight?(string? keyword) -> Graspea.Flint.Theming.TypeWeight?
