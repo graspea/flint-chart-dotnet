@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { diffIr } from '../src/diff.ts';
 import type { Ir } from '../src/ir.ts';
-import { classifyIrDiff, gitBlobSha, labelsFor, renderReport, suggestTag, trxCounts } from '../scripts/upstream-report.mjs';
+import { assess, classifyIrDiff, classifyProbeDiff, gitBlobSha, labelsFor, removedApiLines, renderReport, suggestTag, trxCounts } from '../scripts/upstream-report.mjs';
 import { syntheticIr } from './support/synthetic-ir.ts';
 
 function pair() {
@@ -100,6 +100,55 @@ describe('upstream-report: severity', () => {
   });
 });
 
+describe('upstream-report: probe facts', () => {
+  // source: docs/generator.md "Probes" (each changed fact of tests/fixtures/flint-chart@<version>/probes.json against the
+  // pin's record is a behavioural row)
+  it('lists every changed probe fact as a behavioural row', () => {
+    const before = { valueInference: { 'TimeSpan "1.02:03:04"': 'temporal', bool: 'nominal' }, themeBackends: { unknownPresetThrows: ['vegalite', 'plotly'] } };
+    const after = { valueInference: { 'TimeSpan "1.02:03:04"': 'nominal', bool: 'nominal' }, themeBackends: { unknownPresetThrows: ['vegalite'] } };
+    assert.deepEqual(classifyProbeDiff(before, after), [
+      { change: 'removed', path: 'probes.themeBackends.unknownPresetThrows[plotly]', before: '"plotly"', severity: 'behavioural' },
+      { change: 'changed', path: 'probes.valueInference.TimeSpan "1.02:03:04"', before: '"temporal"', after: '"nominal"', severity: 'behavioural' },
+    ]);
+  });
+
+  // source: docs/generator.md "Probes" (no record on one side, such as after a failed generation: nothing to compare)
+  it('compares nothing when a record is missing', () => {
+    assert.deepEqual(classifyProbeDiff(undefined, { dateParse: { '1': 'parses' } }), []);
+    assert.deepEqual(classifyProbeDiff({ dateParse: { '1': 'parses' } }, undefined), []);
+  });
+});
+
+describe('upstream-report: removed public API', () => {
+  const head = '#nullable enable\nGraspea.Flint.A.B.get -> string?\n*REMOVED*Graspea.Flint.Old.get -> int\n';
+
+  // source: docs/generator.md "Removed public API" (generate writes *REMOVED* lines; the FlintUpstream.Version line goes
+  // on every pin change and is not a removal); lines already on the base branch are not new
+  it('lists the *REMOVED* lines the regeneration added', () => {
+    const fresh =
+      head +
+      '*REMOVED*Graspea.Flint.Theming.Axis.Width.get -> double?\n' +
+      '*REMOVED*const Graspea.Flint.FlintUpstream.Version = "0.5.1" -> string!\n' +
+      'const Graspea.Flint.FlintUpstream.Version = "0.5.2" -> string!\n';
+    assert.deepEqual(removedApiLines(head, fresh), ['Graspea.Flint.Theming.Axis.Width.get -> double?']);
+    assert.deepEqual(removedApiLines(head, head), []);
+  });
+
+  // source: maintainer decision on *REMOVED* gating (outside a breaking window: breaking, needs-attention and a draft;
+  // design part 3 §8.4 allows removals in a breaking window); docs/generator.md "Probes" (a changed fact needs attention)
+  it('gates removed API outside a breaking window and flags changed probe facts', () => {
+    const removedRow = { change: 'removed' as const, path: 'catalog.semanticTypes[YearMonth]', severity: 'BREAKING' as const };
+    const probeRow = { change: 'changed' as const, path: 'probes.valueInference.bool', severity: 'behavioural' as const };
+    const irRow = { change: 'changed' as const, path: 'catalog.chartTypes[Line Chart].backends.vegalite.properties[strokeWidth].max', severity: 'behavioural' as const };
+    const line = ['Graspea.Flint.Theming.Axis.Width.get -> double?'];
+    assert.deepEqual(assess({ rows: [], removedApi: line, window: false }), { breaking: true, attention: true, draft: true });
+    assert.deepEqual(assess({ rows: [], removedApi: line, window: true }), { breaking: true, attention: false, draft: false });
+    assert.deepEqual(assess({ rows: [removedRow], removedApi: [], window: false }), { breaking: true, attention: false, draft: false });
+    assert.deepEqual(assess({ rows: [probeRow], removedApi: [], window: false }), { breaking: false, attention: true, draft: false });
+    assert.deepEqual(assess({ rows: [irRow], removedApi: [], window: false }), { breaking: false, attention: false, draft: false });
+  });
+});
+
 describe('upstream-report: suggested tag', () => {
   const base = { prefix: 'v', version: '0.6.0', stableExists: false, breaking: false, m2Done: true, cleanSyncStreak: 0 };
 
@@ -131,6 +180,8 @@ describe('upstream-report: labels and inputs', () => {
     ]);
     assert.deepEqual(labelsFor({ breaking: false, tests: 'success', generation: 'failed', mcpFallback: false, bump: 'major' }), ['upstream', 'needs-attention', 'upstream-major']);
     assert.deepEqual(labelsFor({ breaking: false, tests: 'success', generation: 'ok', mcpFallback: true, bump: 'patch' }), ['upstream', 'needs-attention', 'upstream-patch']);
+    // source: assess() (a changed probe fact, removed API outside a breaking window)
+    assert.deepEqual(labelsFor({ breaking: false, tests: 'success', generation: 'ok', mcpFallback: false, bump: 'patch', attention: true }), ['upstream', 'needs-attention', 'upstream-patch']);
   });
 
   // source: VSTest TRX format (ResultSummary/Counters attributes)
@@ -175,6 +226,8 @@ describe('upstream-report: body', () => {
     ],
     retired: [{ path: 'catalog.chartTypes[Line Chart].backends.vegalite.channels[color]', lastSeenIn: '0.5.1', retiredIn: '0.6.0' }],
     stats: 'tests/fixtures: 3 files changed, 950 insertions(+)',
+    removedApi: [] as string[],
+    breakingWindow: true,
     changelog: '## 0.6.0\n\n- Thanks @someone for `x` and ```fenced``` text.' as string | undefined,
   });
 
@@ -206,6 +259,34 @@ describe('upstream-report: body', () => {
     }
     assert.ok(!body.includes('### Generation log'));
     assert.ok(!body.includes('### Input types'));
+    assert.ok(!body.includes('### Removed public API'));
+  });
+
+  // source: docs/generator.md "Probes" (changed facts are listed as behavioural rows in their own area)
+  it('renders the changed probe facts', () => {
+    const body = renderReport({
+      ...model(),
+      rows: [{ change: 'changed' as const, path: 'probes.valueInference.TimeSpan "1.02:03:04"', before: '"temporal"', after: '"nominal"', severity: 'behavioural' as const }],
+    });
+    assert.ok(
+      body.includes(
+        '### Behaviour probes\n| Change | IR path | Before | After | Severity |\n|---|---|---|---|---|\n| changed | `probes.valueInference.TimeSpan "1.02:03:04"` | `"temporal"` | `"nominal"` | behavioural |\n',
+      ),
+      body,
+    );
+  });
+
+  // source: maintainer decision on *REMOVED* gating (own section; outside a breaking window the pull request stays a draft)
+  it('renders the removed public API in its own section', () => {
+    const removedApi = ['Graspea.Flint.Theming.Axis.Width.get -> double?'];
+    const outside = renderReport({ ...model(), version: '0.5.2', removedApi, breakingWindow: false });
+    assert.ok(outside.includes('### Removed public API\n'), outside);
+    assert.ok(outside.includes('```text\nGraspea.Flint.Theming.Axis.Width.get -> double?\n```\n'), outside);
+    assert.ok(outside.includes('0.5.1 -> 0.5.2 is not a breaking window'), outside);
+    assert.ok(outside.includes('stays a draft'), outside);
+    const inside = renderReport({ ...model(), removedApi, breakingWindow: true });
+    assert.ok(inside.includes('0.5.1 -> 0.6.0 is a breaking window'), inside);
+    assert.ok(!inside.includes('stays a draft'), inside);
   });
 
   // source: GitHub Flavored Markdown code spans (a backtick inside needs a longer delimiter; a pipe needs escaping);

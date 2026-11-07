@@ -33,6 +33,12 @@ export function bumpKind(from, to) {
   return a[1] !== b[1] ? 'minor' : 'patch';
 }
 
+/** A breaking window (design part 3 §8.4): an upstream minor before 1.0, an upstream major after it. @param {string} from @param {string} to */
+export function isBreakingWindow(from, to) {
+  const bump = bumpKind(from, to);
+  return bump === 'major' || (bump === 'minor' && parts(from)[0] === 0);
+}
+
 /**
  * @typedef {{ version: string, upstream: string, ours: number, preview: number | null, prerelease: boolean }} ReleaseTag
  * @param {string} tag

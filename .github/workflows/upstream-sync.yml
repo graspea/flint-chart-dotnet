@@ -179,7 +179,7 @@ jobs:
           path: ${{ runner.temp }}/out
       - id: meta
         run: |
-          echo "draft=$(jq -r '(.tests != "success") or (.generation != "ok")' "$RUNNER_TEMP/out/result.json")" >> "$GITHUB_OUTPUT"
+          echo "draft=$(jq -r '.draft' "$RUNNER_TEMP/out/result.json")" >> "$GITHUB_OUTPUT"
           echo "labels=$(jq -r '.labels | join(",")' "$RUNNER_TEMP/out/result.json")" >> "$GITHUB_OUTPUT"
       # Working tree only, not the index: create-pull-request commits the whole index after adding add-paths, so a staged
       # path outside the allowlist would be committed. The check refuses such a patch outright.

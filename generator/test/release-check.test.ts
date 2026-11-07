@@ -9,7 +9,7 @@ import {
   readTagPrefix,
   releaseNotes,
 } from '../scripts/release-check.mjs';
-import { bumpKind, compareVersions, parseReleaseTag } from '../scripts/versions.mjs';
+import { bumpKind, compareVersions, isBreakingWindow, parseReleaseTag } from '../scripts/versions.mjs';
 
 describe('versions', () => {
   // source: design §8.1 (FLINT.MAJOR.FLINT.MINOR.FLINT.PATCH.OURS[-preview.N]; OURS starts at 1; tag prefix v)
@@ -72,6 +72,16 @@ describe('versions', () => {
     assert.equal(bumpKind('0.5.1', '0.5.2'), 'patch');
     assert.equal(bumpKind('0.5.1', '0.6.0'), 'minor');
     assert.equal(bumpKind('0.5.1', '1.0.0'), 'major');
+  });
+
+  // source: design part 3 §8.4 (breaking windows: pre-1.0 upstream minors, post-1.0 upstream majors)
+  it('finds the breaking windows', () => {
+    assert.equal(isBreakingWindow('0.5.1', '0.5.2'), false);
+    assert.equal(isBreakingWindow('0.5.1', '0.6.0'), true);
+    assert.equal(isBreakingWindow('0.5.1', '1.0.0'), true);
+    assert.equal(isBreakingWindow('1.0.0', '1.1.0'), false);
+    assert.equal(isBreakingWindow('1.0.0', '1.0.1'), false);
+    assert.equal(isBreakingWindow('1.4.2', '2.0.0'), true);
   });
 });
 

@@ -5,7 +5,9 @@
 //
 // Inputs from the environment: CONTEXT (the `context` JSON output of job detect), GENERATION (ok or failed),
 // FORWARD, TESTS_DOTNET, TESTS_GENERATOR (step outcomes), FLINT_M2_DONE (repository variable, optional).
-// Reads <out>/generate.log and <out>/forward/forward.trx when present. Writes <out>/pr-body.md and <out>/result.json.
+// Reads <out>/generate.log and <out>/forward/forward.trx when present, the probe records of the pin and the new version
+// (tests/fixtures/flint-chart@<version>/probes.json) and PublicAPI.Unshipped.txt against HEAD. Writes <out>/pr-body.md and
+// <out>/result.json (`draft`: tests or generation failed, or removed API outside a breaking window).
 // Upstream text (CHANGELOG, generation log) goes into the file quoted, never through a shell expression.
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -13,13 +15,13 @@ import { join } from 'node:path';
 import { diffIr, flattenIr, retiredEntries } from '../src/diff.ts';
 import { changelogSection } from './release-check.mjs';
 import { fetchTextOrUndefined, run, runMain } from './gha.mjs';
-import { bumpKind, isUpstreamVersion } from './versions.mjs';
+import { bumpKind, isBreakingWindow, isUpstreamVersion } from './versions.mjs';
 
 const UPSTREAM = 'https://github.com/microsoft/flint-chart';
 const RAW = 'https://raw.githubusercontent.com/microsoft/flint-chart';
 const SKILL_PATH = 'agent-skills/flint-chart-author/SKILL.md';
 const SEVERITIES = /** @type {const} */ (['BREAKING', 'behavioural', 'additive', 'cosmetic']);
-const AREAS = ['Chart types', 'Channels', 'Properties', 'Semantic types', 'Theme presets', 'Input types', 'Other catalog'];
+const AREAS = ['Chart types', 'Channels', 'Properties', 'Semantic types', 'Theme presets', 'Input types', 'Other catalog', 'Behaviour probes'];
 
 /**
  * @typedef {'BREAKING' | 'behavioural' | 'additive' | 'cosmetic'} Severity
@@ -58,8 +60,48 @@ export function classifyIrDiff(before, after) {
   return rows;
 }
 
+/**
+ * The changed facts of the probe record (tests/fixtures/flint-chart@<version>/probes.json) against the pin's record, each
+ * a behavioural row. Nothing when either record is missing (a failed generation writes none).
+ * @param {unknown} before @param {unknown} after @returns {ClassifiedRow[]}
+ */
+export function classifyProbeDiff(before, after) {
+  if (before === undefined || after === undefined) return [];
+  return diffIr({ probes: before }, { probes: after }).map((row) => ({ ...row, severity: /** @type {const} */ ('behavioural') }));
+}
+
+const REMOVED = '*REMOVED*';
+/** Its line carries the pinned version, so it is removed and added again on every pin change (docs/generator.md). */
+const VERSION_LINE = /^const Graspea\.Flint\.FlintUpstream\.Version = /;
+
+/**
+ * The `*REMOVED*` lines of PublicAPI.Unshipped.txt that the regeneration added, without the prefix.
+ * @param {string} before the base branch's file @param {string} after the regenerated file
+ */
+export function removedApiLines(before, after) {
+  const removed = (/** @type {string} */ text) => text.split('\n').filter((l) => l.startsWith(REMOVED)).map((l) => l.slice(REMOVED.length).trim());
+  const known = new Set(removed(before));
+  return removed(after).filter((l) => !known.has(l) && !VERSION_LINE.test(l));
+}
+
+/**
+ * What the rows and the removed API mean for the pull request: `breaking` (a BREAKING row or any removed API line),
+ * `attention` (a changed probe fact, or removed API outside a breaking window) and `draft` (removed API outside a
+ * breaking window: the removal needs `[Obsolete]` first, so the pull request must not be merged as it is).
+ * @param {{ rows: ClassifiedRow[], removedApi: string[], window: boolean }} input
+ */
+export function assess({ rows, removedApi, window }) {
+  const outside = removedApi.length > 0 && !window;
+  return {
+    breaking: removedApi.length > 0 || rows.some((r) => r.severity === 'BREAKING'),
+    attention: outside || rows.some((r) => r.path.startsWith('probes.')),
+    draft: outside,
+  };
+}
+
 /** @param {string} path */
 function areaOf(path) {
+  if (path.startsWith('probes.')) return 'Behaviour probes';
   if (path.startsWith('types.')) return 'Input types';
   if (/^catalog\.chartTypes\[[^\]]+\](\.backends\.[a-z]+)?$/.test(path)) return 'Chart types';
   if (path.includes('.channels[') || path.startsWith('catalog.channels[')) return 'Channels';
@@ -78,11 +120,11 @@ export function suggestTag({ prefix, version, stableExists, breaking, m2Done, cl
   return `${prefix}${version}.1${stable ? '' : '-preview.1'}`;
 }
 
-/** @param {{ breaking: boolean, tests: string, generation: string, mcpFallback: boolean, bump: string }} input */
-export function labelsFor({ breaking, tests, generation, mcpFallback, bump }) {
+/** @param {{ breaking: boolean, tests: string, generation: string, mcpFallback: boolean, bump: string, attention?: boolean }} input */
+export function labelsFor({ breaking, tests, generation, mcpFallback, bump, attention = false }) {
   const labels = ['upstream'];
   if (breaking) labels.push('breaking');
-  if (tests !== 'success' || generation !== 'ok' || mcpFallback) labels.push('needs-attention');
+  if (tests !== 'success' || generation !== 'ok' || mcpFallback || attention) labels.push('needs-attention');
   labels.push(`upstream-${bump}`);
   return labels;
 }
@@ -138,7 +180,8 @@ const short = (/** @type {string} */ sha) => sha.slice(0, 8);
  *   upstreamRef: string, mcp: { version: string }, releaseNotes: boolean, skill: { old: string, new: string } | null,
  *   generation: string, generateLog: string, forward: { outcome: string, counts: { total: number, passed: number, failed: number } | null },
  *   tests: { dotnet: string, generator: string }, queued: string[], suggestedTag: string, stableTagForPin: string | null,
- *   rows: ClassifiedRow[], retired: { path: string, lastSeenIn: string, retiredIn: string }[], stats: string, changelog: string | undefined }} ReportModel
+ *   rows: ClassifiedRow[], retired: { path: string, lastSeenIn: string, retiredIn: string }[], stats: string, changelog: string | undefined,
+ *   removedApi: string[], breakingWindow: boolean }} ReportModel
  * @param {ReportModel} m
  */
 export function renderReport(m) {
@@ -172,6 +215,16 @@ export function renderReport(m) {
       : '### Retired (retired.json additions)\n| Entry | Vanished in | Last seen in |\n|---|---|---|\n' +
         m.retired.map((e) => `| ${cell(e.path)} | ${e.retiredIn} | ${e.lastSeenIn} |\n`).join('') +
         '\n';
+  const removedApi =
+    m.removedApi.length === 0
+      ? ''
+      : '### Removed public API\n' +
+        'Lines the regeneration marked `*REMOVED*` in `src/Graspea.Flint/PublicAPI.Unshipped.txt` (the `FlintUpstream.Version` line of every pin change is left out).\n' +
+        (m.breakingWindow
+          ? `flint-chart ${m.pin} -> ${m.version} is a breaking window (design part 3 §8.4): the removals may ship; check them against \`docs/deprecations.md\`.\n`
+          : `flint-chart ${m.pin} -> ${m.version} is not a breaking window (design part 3 §8.4): each removal ships as \`[Obsolete]\` first, so this pull request stays a draft until the maintainer resolves them.\n`) +
+        fenced(m.removedApi.join('\n'), 'text') +
+        '\n';
 
   return (
     `## flint-chart ${m.pin} -> ${m.version}\n\n` +
@@ -192,6 +245,7 @@ export function renderReport(m) {
     `### Severity summary\n${counts}\n\n` +
     (m.rows.length === 0 ? 'No IR changes besides the version.\n\n' : areas) +
     retired +
+    removedApi +
     `### Fixtures and generated files\n${m.stats || 'no changes'}\n\n` +
     `### Upstream CHANGELOG ${m.version}\n${m.changelog === undefined ? 'Not found at the new gitHead.\n' : fenced(m.changelog, 'markdown')}\n` +
     '### After merge\n' +
@@ -221,7 +275,14 @@ async function main() {
   const read = (/** @type {string} */ path) => readFileSync(new URL(path, root), 'utf8');
   const oldIr = JSON.parse(readFileSync(arg('--old-ir'), 'utf8'));
   const newIr = JSON.parse(read('generator/ir/flint-ir.json'));
-  const rows = classifyIrDiff(oldIr, newIr);
+  const probes = (/** @type {string} */ v) => {
+    const file = new URL(`tests/fixtures/flint-chart@${v}/probes.json`, root);
+    return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')) : undefined;
+  };
+  const rows = [...classifyIrDiff(oldIr, newIr), ...classifyProbeDiff(probes(pin), probes(version))];
+  const unshipped = 'src/Graspea.Flint/PublicAPI.Unshipped.txt';
+  const removedApi = removedApiLines(run('git', ['show', `HEAD:${unshipped}`], { cwd: root }), read(unshipped));
+  const breakingWindow = isBreakingWindow(pin, version);
   const known = new Set(JSON.parse(readFileSync(arg('--old-retired'), 'utf8')).map((/** @type {{ path: string }} */ e) => e.path));
   const retired = JSON.parse(read('generator/retired.json')).filter((/** @type {{ path: string }} */ e) => !known.has(e.path));
   const mcpPin = JSON.parse(read('generator/mcp-pin.json'));
@@ -247,7 +308,7 @@ async function main() {
     changelog = undefined;
   }
 
-  const breaking = rows.some((r) => r.severity === 'BREAKING');
+  const { breaking, attention, draft } = assess({ rows, removedApi, window: breakingWindow });
   const m2Done = process.env.FLINT_M2_DONE === 'true';
   const suggestedTag = suggestTag({
     prefix: context.tagPrefix,
@@ -288,12 +349,16 @@ async function main() {
     retired,
     stats,
     changelog,
+    removedApi,
+    breakingWindow,
   };
-  const labels = labelsFor({ breaking, tests: testsOutcome, generation, mcpFallback: model.mcp.version !== version, bump: bumpKind(pin, version) });
+  const labels = labelsFor({ breaking, tests: testsOutcome, generation, mcpFallback: model.mcp.version !== version, bump: bumpKind(pin, version), attention });
   writeFileSync(join(out, 'pr-body.md'), renderReport(model));
   const result = {
     tests: testsOutcome,
     generation,
+    draft: draft || testsOutcome !== 'success' || generation !== 'ok',
+    removed_api: removedApi,
     forward,
     mcp: { version: model.mcp.version, equalsPin: model.mcp.version === version },
     labels,
