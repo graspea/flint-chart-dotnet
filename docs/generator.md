@@ -181,6 +181,18 @@ Required upstream members are nullable too, because "omitted" and "null" are one
 | `hostStateKeys` | the ten keys read even where undeclared (design §2); the list is not provably closed |
 | `ignoredOptions` | `maxStretchX/Y`, `bandStepFitCapacityX/Y` and `facetColumns` are overwritten by the four layout backends. The member docs of `AssembleOptions` and `ThemeCompileDefaults` say so, and the IR carries the list for the validator |
 
+## `overrides.json` entries written ahead for 1.0.0
+
+These `unions` entries are listed in `pending`: on 0.5.1 their paths are absent or string-literal unions (`TypeRole.weight`, `ThemeStructure.frame`, `baseline` and `grid.category/measure/zero`), which keep `string?`. The hand-written types live in `Graspea.Flint.Theming`; each has implicit conversions from its JSON forms, so `Weight = "bold"` and `Frame = "quiet"` still compile, and a converter that owns the wire shape (unknown object members go to `Extensions`).
+
+| Entry | Type | 1.0.0 construct |
+|---|---|---|
+| `ThemeStructure.frame`, `.baseline`, `.grid.category`, `.grid.measure`, `.grid.zero` | `RuleSpec` | `RuleSpec = Presence \| {presence?, style?, dash?, weight?, color?, layer?}` |
+| `ThemeStructure.grid.minor` | `MinorGridSpec` | `Presence \| (Exclude<RuleSpec, Presence> & {divisions?, on?})` |
+| `TypeRole.weight`, `ThemeSource.leadInWeight`, `ThemeSource.credit.weight` | `TypeWeight` | `TypeWeight`: nine keywords or the numbers 100 to 900 |
+| `ThemeMarks.group.gap/spacing`, `BandGeometry.group.gap/spacing`, `ThemeLabelFit.rowLimit/turnedLimit` | `ThemeLength` | ``number \| `${number}px` `` (`GapSize`) and ``number \| `${number}%` `` |
+| `ThemeLabels.overflow` | `LabelOverflow` | `LabelFitStep \| LabelFitStep[]` |
+
 ## Naming results on the 0.5.1 IR
 
 - **Entry names:** the 48 entry names (rule 2) are unique. Examples: `Line`, `KpiCard`, `Ecdf`, `RangedDot`, `SankeyDiagram`, `Boxplot`, `Donut` and `Doughnut`.

@@ -2,10 +2,26 @@
   "$schema": "./overrides.schema.json",
   "unions": {
     "AssembleOptions.continuousMarkCrossSection": "Graspea.Flint.ContinuousMarkCrossSection",
+    "BandGeometry.group.gap": "Graspea.Flint.Theming.ThemeLength",
+    "BandGeometry.group.spacing": "Graspea.Flint.Theming.ThemeLength",
     "Radar Chart/property/filled": "JsonNode",
     "ThemeChartDefaults{*}{*}": "JsonNode",
     "ThemeCompileDefaults.continuousMarkCrossSection": "Graspea.Flint.ContinuousMarkCrossSection",
-    "TypeRole.size": "JsonNode"
+    "ThemeLabelFit.rowLimit": "Graspea.Flint.Theming.ThemeLength",
+    "ThemeLabelFit.turnedLimit": "Graspea.Flint.Theming.ThemeLength",
+    "ThemeLabels.overflow": "Graspea.Flint.Theming.LabelOverflow",
+    "ThemeMarks.group.gap": "Graspea.Flint.Theming.ThemeLength",
+    "ThemeMarks.group.spacing": "Graspea.Flint.Theming.ThemeLength",
+    "ThemeSource.credit.weight": "Graspea.Flint.Theming.TypeWeight",
+    "ThemeSource.leadInWeight": "Graspea.Flint.Theming.TypeWeight",
+    "ThemeStructure.baseline": "Graspea.Flint.Theming.RuleSpec",
+    "ThemeStructure.frame": "Graspea.Flint.Theming.RuleSpec",
+    "ThemeStructure.grid.category": "Graspea.Flint.Theming.RuleSpec",
+    "ThemeStructure.grid.measure": "Graspea.Flint.Theming.RuleSpec",
+    "ThemeStructure.grid.minor": "Graspea.Flint.Theming.MinorGridSpec",
+    "ThemeStructure.grid.zero": "Graspea.Flint.Theming.RuleSpec",
+    "TypeRole.size": "JsonNode",
+    "TypeRole.weight": "Graspea.Flint.Theming.TypeWeight"
   },
   "flatten": [
     "ThemeVariant.then"
@@ -80,5 +96,23 @@
       "chartjs",
       "plotly"
     ]
-  }
+  },
+  "pending": [
+    "BandGeometry.group.gap",
+    "BandGeometry.group.spacing",
+    "ThemeLabelFit.rowLimit",
+    "ThemeLabelFit.turnedLimit",
+    "ThemeLabels.overflow",
+    "ThemeMarks.group.gap",
+    "ThemeMarks.group.spacing",
+    "ThemeSource.credit.weight",
+    "ThemeSource.leadInWeight",
+    "ThemeStructure.baseline",
+    "ThemeStructure.frame",
+    "ThemeStructure.grid.category",
+    "ThemeStructure.grid.measure",
+    "ThemeStructure.grid.minor",
+    "ThemeStructure.grid.zero",
+    "TypeRole.weight"
+  ]
 }
