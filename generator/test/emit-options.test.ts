@@ -396,7 +396,7 @@ internal sealed partial class FlintMapJsonContext : JsonSerializerContext;
   });
 
   // source: flint-chart 1.0.0 d.ts PointGeometry.ink and ThemeMarks.point.ink (both `'series' | 'text' | string`);
-  // maintainer decision on the flint-chart 1.0.0 sync: an extensible string struct with a static property per literal,
+  // maintainer decision on the flint-chart 1.0.0 sync: an extensible string struct with a static readonly field per literal (like the constant structs),
   // an implicit conversion from string (null stays null) and a converter writing the plain string; identical literal sets
   // share one struct, named from the member and its owner's last path segment, the shortest name winning
   it('emits identical open literal unions as one string-backed struct named from the shortest owner and member', () => {
@@ -423,8 +423,8 @@ internal sealed partial class FlintMapJsonContext : JsonSerializerContext;
     const struct = fileContent(result, 'Theming/PointInk.g.cs');
     assert.match(struct, /^namespace Graspea\.Flint\.Theming;$/m);
     assert.match(struct, /\[JsonConverter\(typeof\(PointInkConverter\)\)\]\npublic readonly partial record struct PointInk\n/);
-    assert.match(struct, /public static PointInk Series \{ get; \} = new\("series"\);/);
-    assert.match(struct, /public static PointInk Text \{ get; \} = new\("text"\);/);
+    assert.match(struct, /public static readonly PointInk Series = new\("series"\);/);
+    assert.match(struct, /public static readonly PointInk Text = new\("text"\);/);
     assert.match(struct, /public static implicit operator PointInk\(string value\) => new\(value\);/);
     // a bare `null` here would bind to the string operator and throw (CS8625 under nullable)
     assert.match(struct, /public static implicit operator PointInk\?\(string\? value\) => value is null \? default\(PointInk\?\) : new PointInk\(value\);/);
@@ -437,7 +437,7 @@ internal sealed partial class FlintMapJsonContext : JsonSerializerContext;
       'Graspea.Flint.Theming.ThemeSpecMarksPoint.Ink.get -> Graspea.Flint.Theming.PointInk?',
       'Graspea.Flint.Theming.PointInk',
       'Graspea.Flint.Theming.PointInk.PointInk(string! value) -> void',
-      'static Graspea.Flint.Theming.PointInk.Series.get -> Graspea.Flint.Theming.PointInk',
+      'static readonly Graspea.Flint.Theming.PointInk.Series -> Graspea.Flint.Theming.PointInk',
       'static Graspea.Flint.Theming.PointInk.implicit operator Graspea.Flint.Theming.PointInk(string! value) -> Graspea.Flint.Theming.PointInk',
       'static Graspea.Flint.Theming.PointInk.implicit operator Graspea.Flint.Theming.PointInk?(string? value) -> Graspea.Flint.Theming.PointInk?',
       'Graspea.Flint.Serialization.PointInkConverter',

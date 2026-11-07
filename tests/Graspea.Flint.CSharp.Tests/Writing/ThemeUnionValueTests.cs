@@ -92,7 +92,7 @@ public sealed class ThemeUnionValueTests
         NameTables.StringUnions.SelectMany(u => u.Literals.Select(l =>
             new TestCaseData(u.Name, l.Wire, l.Member).SetName($"Typed_OpenUnion_KnownLiteral_IsItsProperty({u.Name}, {l.Wire})")));
 
-    // source: the generated struct's static property per d.ts literal (maintainer decision on the flint-chart 1.0.0 sync)
+    // source: the generated struct's static readonly field per d.ts literal (maintainer decision on the flint-chart 1.0.0 sync)
     [TestCaseSource(nameof(OpenUnionLiterals))]
     public void Typed_OpenUnion_KnownLiteral_IsItsProperty(string type, string wire, string member)
     {

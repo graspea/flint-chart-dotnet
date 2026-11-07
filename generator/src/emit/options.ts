@@ -426,7 +426,7 @@ function openStruct(
   const { name, namespace } = named;
   const full = `${namespace}.${name}`;
   const statics = [...members].map(
-    ([member, value]) => `${docComment('    ', `The \`${value}\` value.`)}    public static ${name} ${member} { get; } = new(${csString(value)});\n`,
+    ([member, value]) => `${docComment('    ', `The \`${value}\` value.`)}    public static readonly ${name} ${member} = new(${csString(value)});\n`,
   );
   const type =
     `${header(ir)}\nusing System.Text.Json.Serialization;\nusing Graspea.Flint.Serialization;\n\nnamespace ${namespace};\n\n` +
@@ -465,7 +465,7 @@ function openStruct(
     `static ${full}.operator ==(${full} left, ${full} right) -> bool`,
     `static ${full}.implicit operator ${full}(string! value) -> ${full}`,
     `static ${full}.implicit operator ${full}?(string? value) -> ${full}?`,
-    ...[...members.keys()].map((m) => `static ${full}.${m}.get -> ${full}`),
+    ...[...members.keys()].map((m) => `static readonly ${full}.${m} -> ${full}`),
     `~override ${full}.Equals(object obj) -> bool`,
   ];
   const conv = `Graspea.Flint.Serialization.${name}Converter`;

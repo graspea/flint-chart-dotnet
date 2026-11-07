@@ -178,7 +178,7 @@ internal sealed class ValueWriter
 
         if (NameTables.StringUnion(type) is { } union)
         {
-            // A literal is its static property; any other string converts implicitly.
+            // A literal is its static readonly field; any other string converts implicitly.
             return !item.IsString ? null
                 : union.Literals.FirstOrDefault(l => l.Wire == item.Value) is { } literal ? $"{TypeName(union.Name)}.{literal.Member}"
                 : CSharpText.StringLiteral(item.Value!);

@@ -112,7 +112,7 @@ public sealed class NameTablesCrossCheckTests
     public static IEnumerable<TestCaseData> StringUnions() =>
         NameTables.StringUnions.Select(u => new TestCaseData(u.Name).SetName($"StringUnion_MatchesTheLibrary({u.Name})"));
 
-    // source: the compiled Graspea.Flint (a generated open literal union struct: a static property per literal whose value
+    // source: the compiled Graspea.Flint (a generated open literal union struct: a static readonly field per literal whose value
     // is the literal, and a converter that writes it as the plain string)
     [TestCaseSource(nameof(StringUnions))]
     public void StringUnion_MatchesTheLibrary(string name)
@@ -120,7 +120,7 @@ public sealed class NameTablesCrossCheckTests
         var type = Library.GetType(name, throwOnError: true)!;
         foreach (var literal in NameTables.StringUnion(name)!.Literals)
         {
-            var value = type.GetProperty(literal.Member, BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
+            var value = type.GetField(literal.Member, BindingFlags.Public | BindingFlags.Static)?.GetValue(null);
             Assert.That(value?.ToString(), Is.EqualTo(literal.Wire), $"{name}.{literal.Member}");
             Assert.That(System.Text.Json.JsonSerializer.Serialize(value, type), Is.EqualTo(System.Text.Json.JsonSerializer.Serialize(literal.Wire)), $"{name}.{literal.Member}");
         }

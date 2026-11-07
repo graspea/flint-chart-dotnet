@@ -39,7 +39,7 @@ internal sealed record MemberName(string Wire, string Name, string Type);
 internal sealed record ClassNames(string Name, MemberName[] Members);
 
 /// <summary>A generated open literal union struct (<c>'a' | 'b' | string</c>), namespace-qualified, and its literals with the
-/// static property of each.</summary>
+/// static readonly field of each.</summary>
 internal sealed record StringUnionNames(string Name, ConstantName[] Literals);
 
 /// <summary>
