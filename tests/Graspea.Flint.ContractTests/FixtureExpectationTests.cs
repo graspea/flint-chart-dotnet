@@ -45,6 +45,8 @@ public sealed class FixtureExpectationTests
         (new(@"^Cannot read properties of null \(reading |^Cannot create property "), ["row_not_object"]),
         (new("^Cannot convert undefined or null to object"), ["missing_encodings", "row_not_object"]),
         (new(@"^Cannot read properties of undefined \(reading '0'\)"), ["reserved_semantic_type"]),
+        // flint-chart 1.0.0 vegalite: the same registry miss, met first by the temporal parser lookup
+        (new("^parsers is not iterable"), ["reserved_semantic_type"]),
         (new("^Excel backend "), ["excel_unsupported", "data_empty", "data_url_only", "encodings_empty", "missing_encodings"]),
     ];
 
