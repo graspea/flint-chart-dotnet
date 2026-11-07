@@ -195,7 +195,7 @@ The options emitter places every named object type before it emits anything: it 
 | `renames["Boxplot/enum/whiskerMethod/minmax"]` = `MinMax` | rule 4 gives `Minmax`, which hides the two words of "Min–Max"; the wire value stays `"minmax"` (owner decision, 2026-10-17) |
 | `renames["catalog.semanticTypes[Name]"]` = `NameType` | the semantic type `Name` would collide with the `Name` property of the `SemanticType` struct (design §7.6 rule 6) |
 | `renames["catalog.themePresets[powerbi]"]` = `PowerBi`, `renames["catalog.themePresets[powerbi-light]"]` = `PowerBiLight` | rule 5 gives `Powerbi` and `PowerbiLight`, which do not spell the product name; the wire ids stay `"powerbi"` and `"powerbi-light"` (owner decision, 2026-10-17) |
-| `docs["AssembleOptions.maxStretch"]`, `docs["ThemeCompileDefaults.maxStretch"]` | the real default is 1.5 (`src/core/compute-layout.ts:178`); the d.ts says 2 |
+| `docs["AssembleOptions.maxStretch"]`, `docs["ThemeCompileDefaults.maxStretch"]` | the real default is 1.5 (`src/core/compute-layout.ts:178` on 0.5.1, `:180` on 1.0.0); the d.ts says 2 |
 | `docs["AssembleOptions"]` | Excel reads no `options` |
 | `docs["ThemeSpec"]` | the theme is applied by Vega-Lite and Plotly only (recorded probe); `T:3013` says Vega-Lite only |
 | `backendsApplyingTheme` = vegalite, plotly | recorded probe: an unknown preset throws only there, and output changes only there |

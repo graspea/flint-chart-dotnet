@@ -47,9 +47,9 @@
   },
   "docs": {
     "AssembleOptions": "The Excel backend reads no member of these options.",
-    "AssembleOptions.maxStretch": "When this member is absent, the flint-chart 0.5.1 layout uses 1.5 (src/core/compute-layout.ts:178), not the 2 stated above.",
-    "ThemeCompileDefaults.maxStretch": "When this member is absent, the flint-chart 0.5.1 layout uses 1.5 (src/core/compute-layout.ts:178), not the 2 stated above.",
-    "ThemeSpec": "Applied by the Vega-Lite and Plotly backends; the ECharts, Chart.js and Excel backends ignore theme_spec (recorded probe against flint-chart 0.5.1)."
+    "AssembleOptions.maxStretch": "When this member is absent, the flint-chart 1.0.0 layout uses 1.5 (DEFAULT_MAX_STRETCH, src/core/compute-layout.ts:180), not the 2 stated above.",
+    "ThemeCompileDefaults.maxStretch": "When this member is absent, the flint-chart 1.0.0 layout uses 1.5 (DEFAULT_MAX_STRETCH, src/core/compute-layout.ts:180), not the 2 stated above.",
+    "ThemeSpec": "Applied by the Vega-Lite and Plotly backends; the ECharts, Chart.js and Excel backends ignore theme_spec (recorded probe against flint-chart 1.0.0)."
   },
   "backendsApplyingTheme": [
     "vegalite",

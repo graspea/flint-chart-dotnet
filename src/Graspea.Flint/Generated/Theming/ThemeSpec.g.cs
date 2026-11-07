@@ -19,7 +19,7 @@ namespace Graspea.Flint.Theming;
 /// density?) when the caller named no house at all, without having to invent a
 /// second, parallel set of rules for the untheme'd case.
 /// </summary>
-/// <remarks>Applied by the Vega-Lite and Plotly backends; the ECharts, Chart.js and Excel backends ignore theme_spec (recorded probe against flint-chart 0.5.1).</remarks>
+/// <remarks>Applied by the Vega-Lite and Plotly backends; the ECharts, Chart.js and Excel backends ignore theme_spec (recorded probe against flint-chart 1.0.0).</remarks>
 [JsonNumberHandling(JsonNumberHandling.Strict)]
 public sealed partial class ThemeSpec
 {

@@ -358,7 +358,7 @@ public sealed partial class ThemeCompileDefaults
     /// <c>maxStretchX</c>/<c>maxStretchY</c> are derived from <c>canvasSize / baseSize</c>
     /// instead and this scalar is ignored.
     /// </summary>
-    /// <remarks>When this member is absent, the flint-chart 0.5.1 layout uses 1.5 (src/core/compute-layout.ts:178), not the 2 stated above.</remarks>
+    /// <remarks>When this member is absent, the flint-chart 1.0.0 layout uses 1.5 (DEFAULT_MAX_STRETCH, src/core/compute-layout.ts:180), not the 2 stated above.</remarks>
     [JsonPropertyName("maxStretch")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public double? MaxStretch { get; set; }
