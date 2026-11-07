@@ -8353,8 +8353,32 @@
           "name": "type",
           "optional": false,
           "type": {
-            "kind": "unsupported",
-            "text": "(typeof INTERACTION_PRESET_TYPES)[number]"
+            "kind": "literalUnion",
+            "values": [
+              "click-highlight",
+              "axis-highlight",
+              "click-group-focus",
+              "hover-group-focus",
+              "click-annotate",
+              "select",
+              "lasso-select",
+              "brush-x",
+              "brush-y",
+              "brush-angle",
+              "brush-zoom",
+              "linked-brush",
+              "legend-toggle",
+              "context-activate",
+              "long-press",
+              "double-activate",
+              "inspect",
+              "inspect-index",
+              "navigate",
+              "drag-reorder",
+              "accessible-navigation",
+              "filter-controls",
+              "context-menu"
+            ]
           }
         }
       ]

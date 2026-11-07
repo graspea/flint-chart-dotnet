@@ -129,6 +129,14 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
     }
     if (ts.isTypeLiteralNode(node)) return mapObjectType(checker.getTypeFromTypeNode(node), node.members, path);
     if (ts.isTypeReferenceNode(node)) return mapReference(node, path);
+    if (ts.isIndexedAccessTypeNode(node)) {
+      // `(typeof NAMES)[number]` over a `readonly [...]` tuple: the checker's literals, a closed set.
+      const resolved = checker.getTypeFromTypeNode(node);
+      const parts = resolved.isUnion() ? resolved.types : [resolved];
+      if (parts.length > 1 && parts.every((p) => p.isStringLiteral())) {
+        return { kind: 'literalUnion', values: parts.map((p) => (p as ts.StringLiteralType).value) };
+      }
+    }
     return { kind: 'unsupported', text: node.getText() };
   }
 

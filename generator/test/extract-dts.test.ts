@@ -275,4 +275,21 @@ describe('extract/dts on a synthetic d.ts', () => {
     const types = extractTheme("ink?: 'series' | 'text' | string;");
     assert.deepEqual(member(types, 'ink'), { kind: 'literalUnion', values: ['series', 'text'], open: true });
   });
+
+  // source: flint-chart 1.0.0 d.ts InteractionEntry.type (`InteractionPresetType = (typeof INTERACTION_PRESET_TYPES)[number]`,
+  // a `readonly [...]` tuple of string literals): the checker resolves it to those literals, a closed set in tuple order
+  it('records an indexed access of a readonly string tuple as a closed literal union', () => {
+    const types = extractTheme(
+      'preset?: Preset;',
+      "declare const PRESETS: readonly ['brush-x', 'select'];",
+      'type Preset = (typeof PRESETS)[number];',
+    );
+    assert.deepEqual(member(types, 'preset'), { kind: 'literalUnion', values: ['brush-x', 'select'] });
+  });
+
+  // source: extract/dts mapNode (a construct it cannot map is recorded with its text, so emit fails naming the path)
+  it('keeps an indexed access that is not a set of string literals unsupported', () => {
+    const types = extractTheme('size?: Sizes[number];', 'type Sizes = readonly [1, 2];');
+    assert.deepEqual(member(types, 'size'), { kind: 'unsupported', text: 'Sizes[number]' });
+  });
 });
