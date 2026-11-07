@@ -1190,6 +1190,212 @@
           ],
           "properties": [
             {
+              "key": "level",
+              "label": "Level",
+              "options": [
+                {
+                  "label": "States",
+                  "value": "state"
+                },
+                {
+                  "label": "Counties (FIPS ids)",
+                  "value": "county"
+                },
+                {
+                  "label": "Zoom: states, then counties",
+                  "value": "auto"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "projection",
+              "label": "Projection",
+              "options": [
+                {
+                  "label": "Default",
+                  "value": "default"
+                },
+                {
+                  "label": "Mercator",
+                  "value": "mercator"
+                },
+                {
+                  "label": "Equal Earth",
+                  "value": "equalEarth"
+                },
+                {
+                  "label": "Orthographic (Globe)",
+                  "value": "orthographic"
+                },
+                {
+                  "label": "Stereographic",
+                  "value": "stereographic"
+                },
+                {
+                  "label": "Conic Equal Area",
+                  "value": "conicEqualArea"
+                },
+                {
+                  "label": "Conic Equidistant",
+                  "value": "conicEquidistant"
+                },
+                {
+                  "label": "Azimuthal Equidistant",
+                  "value": "azimuthalEquidistant"
+                },
+                {
+                  "label": "Mollweide",
+                  "value": "mollweide"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "projectionCenter",
+              "label": "Center",
+              "options": [
+                {
+                  "label": "Default",
+                  "omitted": true
+                },
+                {
+                  "label": "World (Atlantic) [0, 0]",
+                  "value": [
+                    0,
+                    0
+                  ]
+                },
+                {
+                  "label": "World (Pacific) [150, 0]",
+                  "value": [
+                    150,
+                    0
+                  ]
+                },
+                {
+                  "label": "China [105, 35]",
+                  "value": [
+                    105,
+                    35
+                  ]
+                },
+                {
+                  "label": "USA [-98, 39]",
+                  "value": [
+                    -98,
+                    39
+                  ]
+                },
+                {
+                  "label": "Europe [10, 50]",
+                  "value": [
+                    10,
+                    50
+                  ]
+                },
+                {
+                  "label": "Japan [138, 36]",
+                  "value": [
+                    138,
+                    36
+                  ]
+                },
+                {
+                  "label": "India [78, 22]",
+                  "value": [
+                    78,
+                    22
+                  ]
+                },
+                {
+                  "label": "Brazil [-52, -14]",
+                  "value": [
+                    -52,
+                    -14
+                  ]
+                },
+                {
+                  "label": "Australia [134, -25]",
+                  "value": [
+                    134,
+                    -25
+                  ]
+                },
+                {
+                  "label": "Russia [100, 60]",
+                  "value": [
+                    100,
+                    60
+                  ]
+                },
+                {
+                  "label": "Africa [20, 0]",
+                  "value": [
+                    20,
+                    0
+                  ]
+                },
+                {
+                  "label": "Middle East [45, 28]",
+                  "value": [
+                    45,
+                    28
+                  ]
+                },
+                {
+                  "label": "Southeast Asia [115, 5]",
+                  "value": [
+                    115,
+                    5
+                  ]
+                },
+                {
+                  "label": "South America [-60, -15]",
+                  "value": [
+                    -60,
+                    -15
+                  ]
+                },
+                {
+                  "label": "North America [-100, 45]",
+                  "value": [
+                    -100,
+                    45
+                  ]
+                },
+                {
+                  "label": "UK [-2, 54]",
+                  "value": [
+                    -2,
+                    54
+                  ]
+                },
+                {
+                  "label": "Germany [10, 51]",
+                  "value": [
+                    10,
+                    51
+                  ]
+                },
+                {
+                  "label": "France [2, 47]",
+                  "value": [
+                    2,
+                    47
+                  ]
+                },
+                {
+                  "label": "Korea [128, 36]",
+                  "value": [
+                    128,
+                    36
+                  ]
+                }
+              ],
+              "type": "discrete"
+            },
+            {
               "key": "region",
               "label": "Region",
               "options": [
@@ -1426,6 +1632,33 @@
               "key": "independentYAxis",
               "label": "Independent Y",
               "type": "binary"
+            },
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.1,
+              "type": "continuous"
+            },
+            {
+              "key": "stackMode",
+              "label": "Stack",
+              "options": [
+                {
+                  "label": "Stacked (default)",
+                  "omitted": true
+                },
+                {
+                  "label": "Normalize (100%)",
+                  "value": "normalize"
+                },
+                {
+                  "label": "Layered (overlap)",
+                  "value": "layered"
+                }
+              ],
+              "type": "discrete"
             }
           ]
         }
@@ -2137,6 +2370,7 @@
             "x",
             "y",
             "group",
+            "color",
             "column",
             "row"
           ],
@@ -2400,16 +2634,6 @@
               "type": "continuous"
             },
             {
-              "key": "includeZero_x",
-              "label": "Zero X",
-              "type": "binary"
-            },
-            {
-              "key": "includeZero_y",
-              "label": "Zero Y",
-              "type": "binary"
-            },
-            {
               "key": "layout",
               "label": "Layout",
               "options": [
@@ -2427,16 +2651,6 @@
                 }
               ],
               "type": "discrete"
-            },
-            {
-              "key": "logScale_x",
-              "label": "Log X",
-              "type": "binary"
-            },
-            {
-              "key": "logScale_y",
-              "label": "Log Y",
-              "type": "binary"
             },
             {
               "key": "style",
@@ -2512,6 +2726,7 @@
             "x",
             "y",
             "color",
+            "strokeDash",
             "opacity",
             "column",
             "row"
@@ -3120,26 +3335,6 @@
           ],
           "properties": [
             {
-              "key": "includeZero_x",
-              "label": "Zero X",
-              "type": "binary"
-            },
-            {
-              "key": "includeZero_y",
-              "label": "Zero Y",
-              "type": "binary"
-            },
-            {
-              "key": "logScale_x",
-              "label": "Log X",
-              "type": "binary"
-            },
-            {
-              "key": "logScale_y",
-              "label": "Log Y",
-              "type": "binary"
-            },
-            {
               "key": "projection",
               "label": "Projection",
               "options": [
@@ -3349,6 +3544,122 @@
         }
       },
       "name": "Map"
+    },
+    {
+      "backends": {
+        "vegalite": {
+          "category": "Points",
+          "channels": [
+            "x",
+            "y",
+            "color",
+            "size",
+            "shape",
+            "opacity"
+          ],
+          "properties": [
+            {
+              "key": "bandwidth",
+              "label": "Bandwidth",
+              "max": 2,
+              "min": 0.05,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "binCount",
+              "label": "Max Bins",
+              "max": 50,
+              "min": 5,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "includeZero_x",
+              "label": "Zero X",
+              "type": "binary"
+            },
+            {
+              "key": "includeZero_y",
+              "label": "Zero Y",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_x",
+              "label": "Log X",
+              "type": "binary"
+            },
+            {
+              "key": "logScale_y",
+              "label": "Log Y",
+              "type": "binary"
+            },
+            {
+              "key": "marginal",
+              "label": "Margins",
+              "options": [
+                {
+                  "label": "Density",
+                  "omitted": true
+                },
+                {
+                  "label": "Histogram",
+                  "value": "histogram"
+                },
+                {
+                  "label": "Boxplot",
+                  "value": "boxplot"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.1,
+              "type": "continuous"
+            },
+            {
+              "key": "showOutliers",
+              "label": "Outliers",
+              "type": "binary"
+            },
+            {
+              "key": "stackMode",
+              "label": "Stack",
+              "options": [
+                {
+                  "label": "Layered (default)",
+                  "omitted": true
+                },
+                {
+                  "label": "Stacked",
+                  "value": "stacked"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "whiskerMethod",
+              "label": "Whiskers",
+              "options": [
+                {
+                  "label": "Tukey (1.5 × IQR)",
+                  "value": "iqr"
+                },
+                {
+                  "label": "Min–Max",
+                  "value": "minmax"
+                }
+              ],
+              "type": "discrete"
+            }
+          ]
+        }
+      },
+      "name": "Marginal Plot"
     },
     {
       "backends": {
@@ -4234,6 +4545,160 @@
     },
     {
       "backends": {
+        "vegalite": {
+          "category": "Distributions",
+          "channels": [
+            "x",
+            "y",
+            "color"
+          ],
+          "properties": [
+            {
+              "key": "bandwidth",
+              "label": "Bandwidth",
+              "max": 2,
+              "min": 0.05,
+              "step": 0.05,
+              "type": "continuous"
+            },
+            {
+              "key": "colorBy",
+              "label": "Fill",
+              "options": [
+                {
+                  "label": "One colour",
+                  "omitted": true
+                },
+                {
+                  "label": "By series",
+                  "value": "series"
+                },
+                {
+                  "label": "By x value",
+                  "value": "x"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "interpolate",
+              "label": "Curve",
+              "options": [
+                {
+                  "label": "Default (linear)",
+                  "omitted": true
+                },
+                {
+                  "label": "Linear",
+                  "value": "linear"
+                },
+                {
+                  "label": "Monotone (smooth)",
+                  "value": "monotone"
+                },
+                {
+                  "label": "Step",
+                  "value": "step"
+                },
+                {
+                  "label": "Step Before",
+                  "value": "step-before"
+                },
+                {
+                  "label": "Step After",
+                  "value": "step-after"
+                },
+                {
+                  "label": "Basis (smooth)",
+                  "value": "basis"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "markAt",
+              "label": "Mark values",
+              "type": "binary"
+            },
+            {
+              "key": "opacity",
+              "label": "Opacity",
+              "max": 1,
+              "min": 0.1,
+              "step": 0.1,
+              "type": "continuous"
+            },
+            {
+              "key": "order",
+              "label": "Order",
+              "options": [
+                {
+                  "label": "As given",
+                  "omitted": true
+                },
+                {
+                  "label": "By mean (highest on top)",
+                  "value": "mean"
+                },
+                {
+                  "label": "Reversed",
+                  "value": "reverse"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "overlap",
+              "label": "Overlap",
+              "max": 4,
+              "min": 0.5,
+              "step": 0.1,
+              "type": "continuous"
+            },
+            {
+              "key": "perspective",
+              "label": "Perspective",
+              "type": "binary"
+            },
+            {
+              "key": "skew",
+              "label": "Skew",
+              "max": 0.4,
+              "min": 0,
+              "step": 0.01,
+              "type": "continuous"
+            },
+            {
+              "key": "tailCut",
+              "label": "Trim tails",
+              "max": 0.2,
+              "min": 0,
+              "step": 0.01,
+              "type": "continuous"
+            },
+            {
+              "key": "tilt",
+              "label": "Tilt",
+              "max": 6,
+              "min": 0,
+              "step": 0.1,
+              "type": "continuous"
+            },
+            {
+              "key": "valueMax",
+              "label": "Value max",
+              "max": 1000,
+              "min": 0,
+              "step": 0.1,
+              "type": "continuous"
+            }
+          ]
+        }
+      },
+      "name": "Ridgeline Plot"
+    },
+    {
+      "backends": {
         "chartjs": {
           "category": "Polar",
           "channels": [
@@ -4560,6 +5025,7 @@
             "color",
             "size",
             "shape",
+            "detail",
             "opacity",
             "column",
             "row"
@@ -5246,6 +5712,16 @@
     },
     {
       "backends": {
+        "vegalite": {
+          "category": "Tables & Maps",
+          "channels": [],
+          "properties": []
+        }
+      },
+      "name": "Table"
+    },
+    {
+      "backends": {
         "echarts": {
           "category": "Part-to-Whole",
           "channels": [
@@ -5386,6 +5862,25 @@
               "key": "showPoints",
               "label": "Observations",
               "type": "binary"
+            },
+            {
+              "key": "widths",
+              "label": "Widths",
+              "options": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "Equal area",
+                  "value": "area"
+                },
+                {
+                  "label": "Fill band",
+                  "value": "band"
+                }
+              ],
+              "type": "discrete"
             }
           ]
         }
@@ -5987,19 +6482,39 @@
   ],
   "themePresets": [
     {
+      "description": "Quiet app-interface chart: system colours, value axis on the trailing edge, light labels, symbols beside colour, rounded bars.",
+      "id": "apple",
+      "label": "Apple"
+    },
+    {
+      "description": "BBC News graphics (bbplot): Reith Sans, a large bold headline, light horizontal gridlines with no axis lines or titles, a heavy rule at zero, and a footer rule closing every chart.",
+      "id": "bbc",
+      "label": "BBC News"
+    },
+    {
       "description": "A playful comic house: warm cream paper, a rounded comic typeface, fat dark \"sticker\" outlines around bright crayon-coloured bars, wedges and dots, rounded corners, chunky round-capped lines, and a soft dashed grid.",
       "id": "cartoon",
       "label": "Cartoon"
     },
     {
-      "description": "Embedded web chart: narrow column, plain headline and deck, a rule under the footer.",
+      "description": "Embedded web chart: Roboto, a plain headline and description, values on bars and no value axis.",
       "id": "datawrapper",
       "label": "Datawrapper"
+    },
+    {
+      "description": "De Stijl (Neo-Plasticism): red, yellow and blue planes bounded by heavy black lines on off-white, only horizontals and verticals, and the title set under the picture like a museum label.",
+      "id": "de-stijl",
+      "label": "De Stijl"
     },
     {
       "description": "Print weekly: compact, flat headline over a deck that names the measure, units repeated down the ruler.",
       "id": "economist",
       "label": "The Economist"
+    },
+    {
+      "description": "Material Design 3: the baseline purple-led tonal palette, Google Sans and Roboto type with a medium-weight title, light outline-variant gridlines, no axis lines, and bars rounded to the M3 shape scale.",
+      "id": "material",
+      "label": "Material"
     },
     {
       "description": "Consulting deck: wide bands, every value printed in a column, a headline that states the takeaway.",

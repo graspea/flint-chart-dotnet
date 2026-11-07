@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "lastSeenIn": "0.5.1",
+    "path": "catalog.chartTypes[KPI Card].backends.vegalite.properties[includeZero_x]",
+    "retiredIn": "1.0.0"
+  },
+  {
+    "lastSeenIn": "0.5.1",
+    "path": "catalog.chartTypes[KPI Card].backends.vegalite.properties[includeZero_y]",
+    "retiredIn": "1.0.0"
+  },
+  {
+    "lastSeenIn": "0.5.1",
+    "path": "catalog.chartTypes[KPI Card].backends.vegalite.properties[logScale_x]",
+    "retiredIn": "1.0.0"
+  },
+  {
+    "lastSeenIn": "0.5.1",
+    "path": "catalog.chartTypes[KPI Card].backends.vegalite.properties[logScale_y]",
+    "retiredIn": "1.0.0"
+  },
+  {
+    "lastSeenIn": "0.5.1",
+    "path": "catalog.chartTypes[Map].backends.vegalite.properties[includeZero_x]",
+    "retiredIn": "1.0.0"
+  },
+  {
+    "lastSeenIn": "0.5.1",
+    "path": "catalog.chartTypes[Map].backends.vegalite.properties[includeZero_y]",
+    "retiredIn": "1.0.0"
+  },
+  {
+    "lastSeenIn": "0.5.1",
+    "path": "catalog.chartTypes[Map].backends.vegalite.properties[logScale_x]",
+    "retiredIn": "1.0.0"
+  },
+  {
+    "lastSeenIn": "0.5.1",
+    "path": "catalog.chartTypes[Map].backends.vegalite.properties[logScale_y]",
+    "retiredIn": "1.0.0"
+  }
+]

@@ -1,19 +1,295 @@
 #nullable enable
+*REMOVED*Graspea.Flint.KpiCardBuilder<TRow>.IncludeZeroX(bool value) -> Graspea.Flint.KpiCardBuilder<TRow>!
+*REMOVED*Graspea.Flint.KpiCardBuilder<TRow>.IncludeZeroY(bool value) -> Graspea.Flint.KpiCardBuilder<TRow>!
+*REMOVED*Graspea.Flint.KpiCardBuilder<TRow>.LogScaleX(bool value) -> Graspea.Flint.KpiCardBuilder<TRow>!
+*REMOVED*Graspea.Flint.KpiCardBuilder<TRow>.LogScaleY(bool value) -> Graspea.Flint.KpiCardBuilder<TRow>!
+*REMOVED*Graspea.Flint.MapBuilder<TRow>.IncludeZeroX(bool value) -> Graspea.Flint.MapBuilder<TRow>!
+*REMOVED*Graspea.Flint.MapBuilder<TRow>.IncludeZeroY(bool value) -> Graspea.Flint.MapBuilder<TRow>!
+*REMOVED*Graspea.Flint.MapBuilder<TRow>.LogScaleX(bool value) -> Graspea.Flint.MapBuilder<TRow>!
+*REMOVED*Graspea.Flint.MapBuilder<TRow>.LogScaleY(bool value) -> Graspea.Flint.MapBuilder<TRow>!
+*REMOVED*Graspea.Flint.Theming.ThemeLabels.Angle.get -> string?
+*REMOVED*Graspea.Flint.Theming.ThemeLabels.Angle.set -> void
+*REMOVED*Graspea.Flint.Theming.ThemeSpec.Interaction.get -> Graspea.Flint.Theming.ThemeSpecInteraction?
+*REMOVED*Graspea.Flint.Theming.ThemeSpecInteraction
+*REMOVED*Graspea.Flint.Theming.ThemeSpecInteraction.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+*REMOVED*Graspea.Flint.Theming.ThemeSpecInteraction.Extensions.set -> void
+*REMOVED*Graspea.Flint.Theming.ThemeSpecInteraction.ThemeSpecInteraction() -> void
+*REMOVED*Graspea.Flint.Theming.ThemeSpecInteraction.TooltipFormat.get -> string?
+*REMOVED*Graspea.Flint.Theming.ThemeSpecInteraction.TooltipFormat.set -> void
+*REMOVED*Graspea.Flint.Theming.ThemeStructure.Baseline.get -> string?
+*REMOVED*Graspea.Flint.Theming.ThemeStructure.Frame.get -> string?
+*REMOVED*Graspea.Flint.Theming.ThemeStructureGrid.Category.get -> string?
+*REMOVED*Graspea.Flint.Theming.ThemeStructureGrid.Measure.get -> string?
+*REMOVED*Graspea.Flint.Theming.ThemeStructureGrid.Zero.get -> string?
+*REMOVED*Graspea.Flint.Theming.ThemeVariantThen.Interaction.get -> Graspea.Flint.Theming.ThemeVariantThenInteraction?
+*REMOVED*Graspea.Flint.Theming.ThemeVariantThenInteraction
+*REMOVED*Graspea.Flint.Theming.ThemeVariantThenInteraction.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+*REMOVED*Graspea.Flint.Theming.ThemeVariantThenInteraction.Extensions.set -> void
+*REMOVED*Graspea.Flint.Theming.ThemeVariantThenInteraction.ThemeVariantThenInteraction() -> void
+*REMOVED*Graspea.Flint.Theming.ThemeVariantThenInteraction.TooltipFormat.get -> string?
+*REMOVED*Graspea.Flint.Theming.ThemeVariantThenInteraction.TooltipFormat.set -> void
+*REMOVED*Graspea.Flint.Theming.TypeRole.Weight.get -> string?
+*REMOVED*const Graspea.Flint.FlintUpstream.Version = "0.5.1" -> string!
+Graspea.Flint.AssembleOptions.AspectTolerance.get -> double?
+Graspea.Flint.AssembleOptions.AspectTolerance.set -> void
+Graspea.Flint.AssembleOptions.BandBalance.get -> bool?
+Graspea.Flint.AssembleOptions.BandBalance.set -> void
+Graspea.Flint.AssembleOptions.CanvasFit.get -> string?
+Graspea.Flint.AssembleOptions.CanvasFit.set -> void
+Graspea.Flint.AssembleOptions.CanvasRefit.get -> bool?
+Graspea.Flint.AssembleOptions.CanvasRefit.set -> void
+Graspea.Flint.AssembleOptions.CanvasTreatment.get -> Graspea.Flint.CanvasTreatment?
+Graspea.Flint.AssembleOptions.CanvasTreatment.set -> void
+Graspea.Flint.AssembleOptions.CellGrowth.get -> double?
+Graspea.Flint.AssembleOptions.CellGrowth.set -> void
+Graspea.Flint.AssembleOptions.FacetGapColumn.get -> double?
+Graspea.Flint.AssembleOptions.FacetGapColumn.set -> void
+Graspea.Flint.AssembleOptions.FacetGapRow.get -> double?
+Graspea.Flint.AssembleOptions.FacetGapRow.set -> void
+Graspea.Flint.AssembleOptions.LabelStep.get -> Graspea.Flint.AssembleOptionsLabelStep?
+Graspea.Flint.AssembleOptions.LabelStep.set -> void
+Graspea.Flint.AssembleOptions.LiveLayoutSignal.get -> string?
+Graspea.Flint.AssembleOptions.LiveLayoutSignal.set -> void
+Graspea.Flint.AssembleOptions.MinLabelFontSize.get -> double?
+Graspea.Flint.AssembleOptions.MinLabelFontSize.set -> void
+Graspea.Flint.AssembleOptions.RowNamesAbove.get -> Graspea.Flint.AssembleOptionsRowNamesAbove?
+Graspea.Flint.AssembleOptions.RowNamesAbove.set -> void
+Graspea.Flint.AssembleOptions.TargetAspect.get -> double?
+Graspea.Flint.AssembleOptions.TargetAspect.set -> void
+Graspea.Flint.AssembleOptions.ThemeDecisions.get -> bool?
+Graspea.Flint.AssembleOptions.ThemeDecisions.set -> void
+Graspea.Flint.AssembleOptionsLabelStep
+Graspea.Flint.AssembleOptionsLabelStep.AssembleOptionsLabelStep() -> void
+Graspea.Flint.AssembleOptionsLabelStep.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AssembleOptionsLabelStep.Extensions.set -> void
+Graspea.Flint.AssembleOptionsLabelStep.X.get -> double?
+Graspea.Flint.AssembleOptionsLabelStep.X.set -> void
+Graspea.Flint.AssembleOptionsLabelStep.Y.get -> double?
+Graspea.Flint.AssembleOptionsLabelStep.Y.set -> void
+Graspea.Flint.AssembleOptionsRowNamesAbove
+Graspea.Flint.AssembleOptionsRowNamesAbove.AssembleOptionsRowNamesAbove() -> void
+Graspea.Flint.AssembleOptionsRowNamesAbove.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AssembleOptionsRowNamesAbove.Extensions.set -> void
+Graspea.Flint.AssembleOptionsRowNamesAbove.MinStep.get -> double?
+Graspea.Flint.AssembleOptionsRowNamesAbove.MinStep.set -> void
+Graspea.Flint.AssembleOptionsRowNamesAbove.Scale.get -> double?
+Graspea.Flint.AssembleOptionsRowNamesAbove.Scale.set -> void
+Graspea.Flint.CanvasTreatment
+Graspea.Flint.CanvasTreatment.CanvasTreatment() -> void
+Graspea.Flint.CanvasTreatment.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.CanvasTreatment.Extensions.set -> void
+Graspea.Flint.CanvasTreatment.Keys.get -> string?
+Graspea.Flint.CanvasTreatment.Keys.set -> void
+Graspea.Flint.CanvasTreatment.Names.get -> Graspea.Flint.CanvasTreatmentNames?
+Graspea.Flint.CanvasTreatment.Names.set -> void
+Graspea.Flint.CanvasTreatment.OneKey.get -> Graspea.Flint.CanvasTreatmentOneKey?
+Graspea.Flint.CanvasTreatment.OneKey.set -> void
+Graspea.Flint.CanvasTreatment.PlotScale.get -> double?
+Graspea.Flint.CanvasTreatment.PlotScale.set -> void
+Graspea.Flint.CanvasTreatment.PlotSpace.get -> Graspea.Flint.CanvasTreatmentPlotSpace?
+Graspea.Flint.CanvasTreatment.PlotSpace.set -> void
+Graspea.Flint.CanvasTreatment.RowNames.get -> double?
+Graspea.Flint.CanvasTreatment.RowNames.set -> void
+Graspea.Flint.CanvasTreatment.TitleScale.get -> double?
+Graspea.Flint.CanvasTreatment.TitleScale.set -> void
+Graspea.Flint.CanvasTreatmentNames
+Graspea.Flint.CanvasTreatmentNames.CanvasTreatmentNames() -> void
+Graspea.Flint.CanvasTreatmentNames.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.CanvasTreatmentNames.Extensions.set -> void
+Graspea.Flint.CanvasTreatmentNames.KeyWidth.get -> double?
+Graspea.Flint.CanvasTreatmentNames.KeyWidth.set -> void
+Graspea.Flint.CanvasTreatmentOneKey
+Graspea.Flint.CanvasTreatmentOneKey.CanvasTreatmentOneKey() -> void
+Graspea.Flint.CanvasTreatmentOneKey.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.CanvasTreatmentOneKey.Extensions.set -> void
+Graspea.Flint.CanvasTreatmentOneKey.Index.get -> double?
+Graspea.Flint.CanvasTreatmentOneKey.Index.set -> void
+Graspea.Flint.CanvasTreatmentOneKey.Title.get -> string?
+Graspea.Flint.CanvasTreatmentOneKey.Title.set -> void
+Graspea.Flint.CanvasTreatmentOneKey.To.get -> string?
+Graspea.Flint.CanvasTreatmentOneKey.To.set -> void
+Graspea.Flint.CanvasTreatmentPlotSpace
+Graspea.Flint.CanvasTreatmentPlotSpace.CanvasTreatmentPlotSpace() -> void
+Graspea.Flint.CanvasTreatmentPlotSpace.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.CanvasTreatmentPlotSpace.Extensions.set -> void
+Graspea.Flint.CanvasTreatmentPlotSpace.Height.get -> double?
+Graspea.Flint.CanvasTreatmentPlotSpace.Height.set -> void
+Graspea.Flint.CanvasTreatmentPlotSpace.Width.get -> double?
+Graspea.Flint.CanvasTreatmentPlotSpace.Width.set -> void
+Graspea.Flint.ChoroplethBuilder<TRow>.Level(Graspea.Flint.ChoroplethLevel value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.Projection(Graspea.Flint.ChoroplethProjection value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.ProjectionCenter(Graspea.Flint.ChoroplethProjectionCenter value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethLevel
+Graspea.Flint.ChoroplethLevel.Auto = 3 -> Graspea.Flint.ChoroplethLevel
+Graspea.Flint.ChoroplethLevel.County = 2 -> Graspea.Flint.ChoroplethLevel
+Graspea.Flint.ChoroplethLevel.Default = 0 -> Graspea.Flint.ChoroplethLevel
+Graspea.Flint.ChoroplethLevel.State = 1 -> Graspea.Flint.ChoroplethLevel
+Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjection.AzimuthalEquidistant = 8 -> Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjection.ConicEqualArea = 6 -> Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjection.ConicEquidistant = 7 -> Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjection.Default = 0 -> Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjection.DefaultLiteral = 1 -> Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjection.EqualEarth = 3 -> Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjection.Mercator = 2 -> Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjection.Mollweide = 9 -> Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjection.Orthographic = 4 -> Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjection.Stereographic = 5 -> Graspea.Flint.ChoroplethProjection
+Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Africa = 11 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Australia = 9 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Brazil = 8 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.China = 3 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Default = 0 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Europe = 5 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.France = 18 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Germany = 17 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.India = 7 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Japan = 6 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Korea = 19 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.MiddleEast = 12 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.NorthAmerica = 15 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Russia = 10 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.SouthAmerica = 14 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.SoutheastAsia = 13 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Uk = 16 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.Usa = 4 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.WorldAtlantic = 1 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ChoroplethProjectionCenter.WorldPacific = 2 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.DensityPlotBuilder<TRow>.Opacity(double value) -> Graspea.Flint.DensityPlotBuilder<TRow>!
+Graspea.Flint.DensityPlotBuilder<TRow>.StackMode(Graspea.Flint.DensityPlotStackMode value) -> Graspea.Flint.DensityPlotBuilder<TRow>!
+Graspea.Flint.DensityPlotStackMode
+Graspea.Flint.DensityPlotStackMode.Default = 0 -> Graspea.Flint.DensityPlotStackMode
+Graspea.Flint.DensityPlotStackMode.Layered = 2 -> Graspea.Flint.DensityPlotStackMode
+Graspea.Flint.DensityPlotStackMode.Normalize = 1 -> Graspea.Flint.DensityPlotStackMode
+Graspea.Flint.MarginalPlotBuilder<TRow>
+Graspea.Flint.MarginalPlotBuilder<TRow>.Bandwidth(double value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.BinCount(double value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Color(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.IncludeZeroX(bool value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.IncludeZeroY(bool value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.LogScaleX(bool value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.LogScaleY(bool value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Marginal(Graspea.Flint.MarginalPlotMarginal value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Opacity(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Opacity(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Opacity(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.OpacityValue(double value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Shape(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Shape(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Shape(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.ShowOutliers(bool value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Size(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Size(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Size(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.StackMode(Graspea.Flint.MarginalPlotStackMode value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.WhiskerMethod(Graspea.Flint.MarginalPlotWhiskerMethod value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.X(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.X(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.X(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Y(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Y(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotBuilder<TRow>.Y(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+Graspea.Flint.MarginalPlotMarginal
+Graspea.Flint.MarginalPlotMarginal.Boxplot = 2 -> Graspea.Flint.MarginalPlotMarginal
+Graspea.Flint.MarginalPlotMarginal.Default = 0 -> Graspea.Flint.MarginalPlotMarginal
+Graspea.Flint.MarginalPlotMarginal.Histogram = 1 -> Graspea.Flint.MarginalPlotMarginal
+Graspea.Flint.MarginalPlotStackMode
+Graspea.Flint.MarginalPlotStackMode.Default = 0 -> Graspea.Flint.MarginalPlotStackMode
+Graspea.Flint.MarginalPlotStackMode.Stacked = 1 -> Graspea.Flint.MarginalPlotStackMode
+Graspea.Flint.MarginalPlotWhiskerMethod
+Graspea.Flint.MarginalPlotWhiskerMethod.Default = 0 -> Graspea.Flint.MarginalPlotWhiskerMethod
+Graspea.Flint.MarginalPlotWhiskerMethod.Iqr = 1 -> Graspea.Flint.MarginalPlotWhiskerMethod
+Graspea.Flint.MarginalPlotWhiskerMethod.Minmax = 2 -> Graspea.Flint.MarginalPlotWhiskerMethod
+Graspea.Flint.RidgelinePlotBuilder<TRow>
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Bandwidth(double value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Color(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.ColorBy(Graspea.Flint.RidgelinePlotColorBy value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Interpolate(Graspea.Flint.RidgelinePlotInterpolate value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.MarkAt(bool value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Opacity(double value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Order(Graspea.Flint.RidgelinePlotOrder value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Overlap(double value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Perspective(bool value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Skew(double value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.TailCut(double value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Tilt(double value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.ValueMax(double value) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.X(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.X(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.X(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Y(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Y(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotBuilder<TRow>.Y(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+Graspea.Flint.RidgelinePlotColorBy
+Graspea.Flint.RidgelinePlotColorBy.Default = 0 -> Graspea.Flint.RidgelinePlotColorBy
+Graspea.Flint.RidgelinePlotColorBy.Series = 1 -> Graspea.Flint.RidgelinePlotColorBy
+Graspea.Flint.RidgelinePlotColorBy.X = 2 -> Graspea.Flint.RidgelinePlotColorBy
+Graspea.Flint.RidgelinePlotInterpolate
+Graspea.Flint.RidgelinePlotInterpolate.Basis = 6 -> Graspea.Flint.RidgelinePlotInterpolate
+Graspea.Flint.RidgelinePlotInterpolate.Default = 0 -> Graspea.Flint.RidgelinePlotInterpolate
+Graspea.Flint.RidgelinePlotInterpolate.Linear = 1 -> Graspea.Flint.RidgelinePlotInterpolate
+Graspea.Flint.RidgelinePlotInterpolate.Monotone = 2 -> Graspea.Flint.RidgelinePlotInterpolate
+Graspea.Flint.RidgelinePlotInterpolate.Step = 3 -> Graspea.Flint.RidgelinePlotInterpolate
+Graspea.Flint.RidgelinePlotInterpolate.StepAfter = 5 -> Graspea.Flint.RidgelinePlotInterpolate
+Graspea.Flint.RidgelinePlotInterpolate.StepBefore = 4 -> Graspea.Flint.RidgelinePlotInterpolate
+Graspea.Flint.RidgelinePlotOrder
+Graspea.Flint.RidgelinePlotOrder.Default = 0 -> Graspea.Flint.RidgelinePlotOrder
+Graspea.Flint.RidgelinePlotOrder.Mean = 1 -> Graspea.Flint.RidgelinePlotOrder
+Graspea.Flint.RidgelinePlotOrder.Reverse = 2 -> Graspea.Flint.RidgelinePlotOrder
+Graspea.Flint.ScatterPlotBuilder<TRow>.Detail(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.ScatterPlotBuilder<TRow>!
+Graspea.Flint.ScatterPlotBuilder<TRow>.Detail(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ScatterPlotBuilder<TRow>!
+Graspea.Flint.ScatterPlotBuilder<TRow>.Detail(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ScatterPlotBuilder<TRow>!
 Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>
 Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>.IntKeyDictionaryConverter() -> void
 Graspea.Flint.Serialization.LabelOverflowConverter
 Graspea.Flint.Serialization.LabelOverflowConverter.LabelOverflowConverter() -> void
 Graspea.Flint.Serialization.MinorGridSpecConverter
 Graspea.Flint.Serialization.MinorGridSpecConverter.MinorGridSpecConverter() -> void
+Graspea.Flint.Serialization.PointInkConverter
+Graspea.Flint.Serialization.PointInkConverter.PointInkConverter() -> void
 Graspea.Flint.Serialization.RuleSpecConverter
 Graspea.Flint.Serialization.RuleSpecConverter.RuleSpecConverter() -> void
 Graspea.Flint.Serialization.ThemeLengthConverter
 Graspea.Flint.Serialization.ThemeLengthConverter.ThemeLengthConverter() -> void
 Graspea.Flint.Serialization.TypeWeightConverter
 Graspea.Flint.Serialization.TypeWeightConverter.TypeWeightConverter() -> void
+Graspea.Flint.TableBuilder<TRow>
+Graspea.Flint.Theming.ArcGeometry.Hole.get -> double?
+Graspea.Flint.Theming.ArcGeometry.Hole.set -> void
+Graspea.Flint.Theming.ArcGeometry.Order.get -> string?
+Graspea.Flint.Theming.ArcGeometry.Order.set -> void
+Graspea.Flint.Theming.ArcGeometry.StartAngle.get -> double?
+Graspea.Flint.Theming.ArcGeometry.StartAngle.set -> void
+Graspea.Flint.Theming.AreaGeometry.Fill.get -> string?
+Graspea.Flint.Theming.AreaGeometry.Fill.set -> void
+Graspea.Flint.Theming.AxisRole.Color.get -> string?
+Graspea.Flint.Theming.AxisRole.Color.set -> void
+Graspea.Flint.Theming.BandGeometry.Group.get -> Graspea.Flint.Theming.BandGeometryGroup?
+Graspea.Flint.Theming.BandGeometry.Group.set -> void
+Graspea.Flint.Theming.BandGeometry.MinLength.get -> double?
+Graspea.Flint.Theming.BandGeometry.MinLength.set -> void
+Graspea.Flint.Theming.BandGeometry.OutlineInk.get -> string?
+Graspea.Flint.Theming.BandGeometry.OutlineInk.set -> void
+Graspea.Flint.Theming.BandGeometryGroup
+Graspea.Flint.Theming.BandGeometryGroup.BandGeometryGroup() -> void
+Graspea.Flint.Theming.BandGeometryGroup.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.BandGeometryGroup.Extensions.set -> void
+Graspea.Flint.Theming.BandGeometryGroup.Gap.get -> Graspea.Flint.Theming.ThemeLength?
+Graspea.Flint.Theming.BandGeometryGroup.Gap.set -> void
+Graspea.Flint.Theming.BandGeometryGroup.Spacing.get -> Graspea.Flint.Theming.ThemeLength?
+Graspea.Flint.Theming.BandGeometryGroup.Spacing.set -> void
 Graspea.Flint.Theming.LabelOverflow
 Graspea.Flint.Theming.LabelOverflow.Step.get -> string?
 Graspea.Flint.Theming.LabelOverflow.Steps.get -> string![]?
+Graspea.Flint.Theming.LineGeometry.Wash.get -> string?
+Graspea.Flint.Theming.LineGeometry.Wash.set -> void
+Graspea.Flint.Theming.LineGeometry.WashOpacity.get -> double?
+Graspea.Flint.Theming.LineGeometry.WashOpacity.set -> void
 Graspea.Flint.Theming.MinorGridSpec
 Graspea.Flint.Theming.MinorGridSpec.Color.get -> string?
 Graspea.Flint.Theming.MinorGridSpec.Color.init -> void
@@ -34,6 +310,29 @@ Graspea.Flint.Theming.MinorGridSpec.Style.get -> string?
 Graspea.Flint.Theming.MinorGridSpec.Style.init -> void
 Graspea.Flint.Theming.MinorGridSpec.Weight.get -> double?
 Graspea.Flint.Theming.MinorGridSpec.Weight.init -> void
+Graspea.Flint.Theming.PointGeometry.Density.get -> string?
+Graspea.Flint.Theming.PointGeometry.Density.set -> void
+Graspea.Flint.Theming.PointGeometry.Halo.get -> Graspea.Flint.Theming.PointGeometryHalo?
+Graspea.Flint.Theming.PointGeometry.Halo.set -> void
+Graspea.Flint.Theming.PointGeometry.Ink.get -> Graspea.Flint.Theming.PointInk?
+Graspea.Flint.Theming.PointGeometry.Ink.set -> void
+Graspea.Flint.Theming.PointGeometry.Opacity.get -> double?
+Graspea.Flint.Theming.PointGeometry.Opacity.set -> void
+Graspea.Flint.Theming.PointGeometry.Shape.get -> string?
+Graspea.Flint.Theming.PointGeometry.Shape.set -> void
+Graspea.Flint.Theming.PointGeometryHalo
+Graspea.Flint.Theming.PointGeometryHalo.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.PointGeometryHalo.Extensions.set -> void
+Graspea.Flint.Theming.PointGeometryHalo.PointGeometryHalo() -> void
+Graspea.Flint.Theming.PointGeometryHalo.Presence.get -> string?
+Graspea.Flint.Theming.PointGeometryHalo.Presence.set -> void
+Graspea.Flint.Theming.PointGeometryHalo.Width.get -> double?
+Graspea.Flint.Theming.PointGeometryHalo.Width.set -> void
+Graspea.Flint.Theming.PointInk
+Graspea.Flint.Theming.PointInk.Equals(Graspea.Flint.Theming.PointInk other) -> bool
+Graspea.Flint.Theming.PointInk.PointInk() -> void
+Graspea.Flint.Theming.PointInk.PointInk(string! value) -> void
+Graspea.Flint.Theming.PointInk.Value.get -> string!
 Graspea.Flint.Theming.RuleSpec
 Graspea.Flint.Theming.RuleSpec.Color.get -> string?
 Graspea.Flint.Theming.RuleSpec.Color.init -> void
@@ -50,29 +349,438 @@ Graspea.Flint.Theming.RuleSpec.Style.get -> string?
 Graspea.Flint.Theming.RuleSpec.Style.init -> void
 Graspea.Flint.Theming.RuleSpec.Weight.get -> double?
 Graspea.Flint.Theming.RuleSpec.Weight.init -> void
+Graspea.Flint.Theming.ThemeAnnotationNumberFormat.Compact.get -> Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact?
+Graspea.Flint.Theming.ThemeAnnotationNumberFormat.Compact.set -> void
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Extensions.set -> void
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.On.get -> string![]?
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.On.set -> void
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Per.get -> string?
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Per.set -> void
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Show.get -> string?
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Show.set -> void
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Style.get -> string?
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Style.set -> void
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.ThemeAnnotationNumberFormatCompact() -> void
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Threshold.get -> double?
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Threshold.set -> void
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Types.get -> string![]?
+Graspea.Flint.Theming.ThemeAnnotationNumberFormatCompact.Types.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.AspectTolerance.get -> double?
+Graspea.Flint.Theming.ThemeCompileDefaults.AspectTolerance.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.BandBalance.get -> bool?
+Graspea.Flint.Theming.ThemeCompileDefaults.BandBalance.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.CanvasFit.get -> string?
+Graspea.Flint.Theming.ThemeCompileDefaults.CanvasFit.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.CanvasRefit.get -> bool?
+Graspea.Flint.Theming.ThemeCompileDefaults.CanvasRefit.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.CanvasTreatment.get -> Graspea.Flint.CanvasTreatment?
+Graspea.Flint.Theming.ThemeCompileDefaults.CanvasTreatment.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.CellGrowth.get -> double?
+Graspea.Flint.Theming.ThemeCompileDefaults.CellGrowth.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.FacetGapColumn.get -> double?
+Graspea.Flint.Theming.ThemeCompileDefaults.FacetGapColumn.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.FacetGapRow.get -> double?
+Graspea.Flint.Theming.ThemeCompileDefaults.FacetGapRow.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.LabelStep.get -> Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep?
+Graspea.Flint.Theming.ThemeCompileDefaults.LabelStep.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.LiveLayoutSignal.get -> string?
+Graspea.Flint.Theming.ThemeCompileDefaults.LiveLayoutSignal.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.MinLabelFontSize.get -> double?
+Graspea.Flint.Theming.ThemeCompileDefaults.MinLabelFontSize.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.RowNamesAbove.get -> Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove?
+Graspea.Flint.Theming.ThemeCompileDefaults.RowNamesAbove.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.TargetAspect.get -> double?
+Graspea.Flint.Theming.ThemeCompileDefaults.TargetAspect.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.ThemeDecisions.get -> bool?
+Graspea.Flint.Theming.ThemeCompileDefaults.ThemeDecisions.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep
+Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.Extensions.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.ThemeCompileDefaultsLabelStep() -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.X.get -> double?
+Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.X.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.Y.get -> double?
+Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.Y.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove
+Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove.Extensions.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove.MinStep.get -> double?
+Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove.MinStep.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove.Scale.get -> double?
+Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove.Scale.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove.ThemeCompileDefaultsRowNamesAbove() -> void
+Graspea.Flint.Theming.ThemeDataLabels.Anchor.get -> string?
+Graspea.Flint.Theming.ThemeDataLabels.Anchor.set -> void
+Graspea.Flint.Theming.ThemeDataLabels.Fallback.get -> string?
+Graspea.Flint.Theming.ThemeDataLabels.Fallback.set -> void
+Graspea.Flint.Theming.ThemeDataLabels.MinContrast.get -> double?
+Graspea.Flint.Theming.ThemeDataLabels.MinContrast.set -> void
+Graspea.Flint.Theming.ThemeFurniture.Align.get -> string?
+Graspea.Flint.Theming.ThemeFurniture.Align.set -> void
+Graspea.Flint.Theming.ThemeFurniture.Alt.get -> string?
+Graspea.Flint.Theming.ThemeFurniture.Alt.set -> void
+Graspea.Flint.Theming.ThemeFurniture.At.get -> string?
+Graspea.Flint.Theming.ThemeFurniture.At.set -> void
+Graspea.Flint.Theming.ThemeFurniture.Frame.get -> string?
+Graspea.Flint.Theming.ThemeFurniture.Frame.set -> void
+Graspea.Flint.Theming.ThemeFurniture.Href.get -> string?
+Graspea.Flint.Theming.ThemeFurniture.Href.set -> void
+Graspea.Flint.Theming.ThemeFurniture.Src.get -> string?
+Graspea.Flint.Theming.ThemeFurniture.Src.set -> void
+Graspea.Flint.Theming.ThemeFurniture.Svg.get -> string?
+Graspea.Flint.Theming.ThemeFurniture.Svg.set -> void
+Graspea.Flint.Theming.ThemeFurniture.Text.get -> string?
+Graspea.Flint.Theming.ThemeFurniture.Text.set -> void
+Graspea.Flint.Theming.ThemeFurniture.Type.get -> Graspea.Flint.Theming.TypeRole?
+Graspea.Flint.Theming.ThemeFurniture.Type.set -> void
+Graspea.Flint.Theming.ThemeInkSeries.ByMark.get -> Graspea.Flint.Theming.ThemeInkSeriesByMark?
+Graspea.Flint.Theming.ThemeInkSeries.ByMark.set -> void
+Graspea.Flint.Theming.ThemeInkSeries.CategoricalByCount.get -> System.Collections.Generic.Dictionary<int, string![]!>?
+Graspea.Flint.Theming.ThemeInkSeries.CategoricalByCount.set -> void
+Graspea.Flint.Theming.ThemeInkSeries.CategoricalText.get -> string![]?
+Graspea.Flint.Theming.ThemeInkSeries.CategoricalText.set -> void
+Graspea.Flint.Theming.ThemeInkSeries.MinContrast.get -> Graspea.Flint.Theming.ThemeInkSeriesMinContrast?
+Graspea.Flint.Theming.ThemeInkSeries.MinContrast.set -> void
+Graspea.Flint.Theming.ThemeInkSeries.Ordinal.get -> Graspea.Flint.Theming.Ramp?
+Graspea.Flint.Theming.ThemeInkSeries.Ordinal.set -> void
+Graspea.Flint.Theming.ThemeInkSeries.Repeat.get -> bool?
+Graspea.Flint.Theming.ThemeInkSeries.Repeat.set -> void
+Graspea.Flint.Theming.ThemeInkSeries.Roles.get -> Graspea.Flint.Theming.ThemeInkSeriesRoles?
+Graspea.Flint.Theming.ThemeInkSeries.Roles.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMark
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Arc.get -> Graspea.Flint.Theming.ThemeInkSeriesByMarkValue?
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Arc.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Area.get -> Graspea.Flint.Theming.ThemeInkSeriesByMarkValue?
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Area.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Bar.get -> Graspea.Flint.Theming.ThemeInkSeriesByMarkValue?
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Bar.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Extensions.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Line.get -> Graspea.Flint.Theming.ThemeInkSeriesByMarkValue?
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Line.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Point.get -> Graspea.Flint.Theming.ThemeInkSeriesByMarkValue?
+Graspea.Flint.Theming.ThemeInkSeriesByMark.Point.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMark.ThemeInkSeriesByMark() -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMarkValue
+Graspea.Flint.Theming.ThemeInkSeriesByMarkValue.Categorical.get -> string![]?
+Graspea.Flint.Theming.ThemeInkSeriesByMarkValue.Categorical.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMarkValue.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeInkSeriesByMarkValue.Extensions.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMarkValue.Single.get -> string?
+Graspea.Flint.Theming.ThemeInkSeriesByMarkValue.Single.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesByMarkValue.ThemeInkSeriesByMarkValue() -> void
+Graspea.Flint.Theming.ThemeInkSeriesMinContrast
+Graspea.Flint.Theming.ThemeInkSeriesMinContrast.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeInkSeriesMinContrast.Extensions.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesMinContrast.Fill.get -> double?
+Graspea.Flint.Theming.ThemeInkSeriesMinContrast.Fill.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesMinContrast.Stroke.get -> double?
+Graspea.Flint.Theming.ThemeInkSeriesMinContrast.Stroke.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesMinContrast.ThemeInkSeriesMinContrast() -> void
+Graspea.Flint.Theming.ThemeInkSeriesRoles
+Graspea.Flint.Theming.ThemeInkSeriesRoles.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeInkSeriesRoles.Extensions.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesRoles.Missing.get -> string?
+Graspea.Flint.Theming.ThemeInkSeriesRoles.Missing.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesRoles.Other.get -> string?
+Graspea.Flint.Theming.ThemeInkSeriesRoles.Other.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesRoles.ThemeInkSeriesRoles() -> void
+Graspea.Flint.Theming.ThemeInkSeriesRoles.Total.get -> string?
+Graspea.Flint.Theming.ThemeInkSeriesRoles.Total.set -> void
+Graspea.Flint.Theming.ThemeInkSeriesSelection.Ordered.get -> string?
+Graspea.Flint.Theming.ThemeInkSeriesSelection.Ordered.set -> void
+Graspea.Flint.Theming.ThemeInteraction
+Graspea.Flint.Theming.ThemeInteraction.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeInteraction.Extensions.set -> void
+Graspea.Flint.Theming.ThemeInteraction.SelectionBoundary.get -> Graspea.Flint.Theming.ThemeInteractionSelectionBoundary?
+Graspea.Flint.Theming.ThemeInteraction.SelectionBoundary.set -> void
+Graspea.Flint.Theming.ThemeInteraction.ThemeInteraction() -> void
+Graspea.Flint.Theming.ThemeInteraction.TooltipFormat.get -> string?
+Graspea.Flint.Theming.ThemeInteraction.TooltipFormat.set -> void
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.Color.get -> string?
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.Color.set -> void
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.Extensions.set -> void
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.HaloColor.get -> string?
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.HaloColor.set -> void
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.HaloOpacity.get -> double?
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.HaloOpacity.set -> void
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.HaloWidth.get -> double?
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.HaloWidth.set -> void
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.Opacity.get -> double?
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.Opacity.set -> void
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.ThemeInteractionSelectionBoundary() -> void
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.Width.get -> double?
+Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.Width.set -> void
+Graspea.Flint.Theming.ThemeLabelFit
+Graspea.Flint.Theming.ThemeLabelFit.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeLabelFit.Extensions.set -> void
+Graspea.Flint.Theming.ThemeLabelFit.Gap.get -> double?
+Graspea.Flint.Theming.ThemeLabelFit.Gap.set -> void
+Graspea.Flint.Theming.ThemeLabelFit.MinChars.get -> double?
+Graspea.Flint.Theming.ThemeLabelFit.MinChars.set -> void
+Graspea.Flint.Theming.ThemeLabelFit.RowLimit.get -> Graspea.Flint.Theming.ThemeLength?
+Graspea.Flint.Theming.ThemeLabelFit.RowLimit.set -> void
+Graspea.Flint.Theming.ThemeLabelFit.ThemeLabelFit() -> void
+Graspea.Flint.Theming.ThemeLabelFit.TurnedLimit.get -> Graspea.Flint.Theming.ThemeLength?
+Graspea.Flint.Theming.ThemeLabelFit.TurnedLimit.set -> void
+Graspea.Flint.Theming.ThemeLabels.Fit.get -> Graspea.Flint.Theming.ThemeLabelFit?
+Graspea.Flint.Theming.ThemeLabels.Fit.set -> void
+Graspea.Flint.Theming.ThemeLabels.Overflow.get -> Graspea.Flint.Theming.LabelOverflow?
+Graspea.Flint.Theming.ThemeLabels.Overflow.set -> void
+Graspea.Flint.Theming.ThemeLabels.RowNames.get -> string?
+Graspea.Flint.Theming.ThemeLabels.RowNames.set -> void
+Graspea.Flint.Theming.ThemeLayoutTitleBlock.Frame.get -> string?
+Graspea.Flint.Theming.ThemeLayoutTitleBlock.Frame.set -> void
+Graspea.Flint.Theming.ThemeLegend.Align.get -> string?
+Graspea.Flint.Theming.ThemeLegend.Align.set -> void
+Graspea.Flint.Theming.ThemeLegend.Arrangement.get -> string?
+Graspea.Flint.Theming.ThemeLegend.Arrangement.set -> void
+Graspea.Flint.Theming.ThemeLegend.EndValue.get -> bool?
+Graspea.Flint.Theming.ThemeLegend.EndValue.set -> void
+Graspea.Flint.Theming.ThemeLegend.Gaps.get -> Graspea.Flint.Theming.ThemeLegendGaps?
+Graspea.Flint.Theming.ThemeLegend.Gaps.set -> void
+Graspea.Flint.Theming.ThemeLegend.TitlePosition.get -> string?
+Graspea.Flint.Theming.ThemeLegend.TitlePosition.set -> void
+Graspea.Flint.Theming.ThemeLegendGaps
+Graspea.Flint.Theming.ThemeLegendGaps.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeLegendGaps.Extensions.set -> void
+Graspea.Flint.Theming.ThemeLegendGaps.Plot.get -> double?
+Graspea.Flint.Theming.ThemeLegendGaps.Plot.set -> void
+Graspea.Flint.Theming.ThemeLegendGaps.Row.get -> double?
+Graspea.Flint.Theming.ThemeLegendGaps.Row.set -> void
+Graspea.Flint.Theming.ThemeLegendGaps.Stack.get -> double?
+Graspea.Flint.Theming.ThemeLegendGaps.Stack.set -> void
+Graspea.Flint.Theming.ThemeLegendGaps.ThemeLegendGaps() -> void
+Graspea.Flint.Theming.ThemeLegendGaps.Title.get -> double?
+Graspea.Flint.Theming.ThemeLegendGaps.Title.set -> void
 Graspea.Flint.Theming.ThemeLength
 Graspea.Flint.Theming.ThemeLength.Number.get -> double?
 Graspea.Flint.Theming.ThemeLength.Text.get -> string?
+Graspea.Flint.Theming.ThemeMarks.Arc.get -> Graspea.Flint.Theming.ThemeMarksArc?
+Graspea.Flint.Theming.ThemeMarks.Arc.set -> void
+Graspea.Flint.Theming.ThemeMarks.AreaEdge.get -> Graspea.Flint.Theming.ThemeMarksAreaEdge?
+Graspea.Flint.Theming.ThemeMarks.AreaEdge.set -> void
+Graspea.Flint.Theming.ThemeMarks.BarMinLength.get -> double?
+Graspea.Flint.Theming.ThemeMarks.BarMinLength.set -> void
+Graspea.Flint.Theming.ThemeMarks.BarOpacity.get -> double?
+Graspea.Flint.Theming.ThemeMarks.BarOpacity.set -> void
+Graspea.Flint.Theming.ThemeMarks.Gradient.get -> Graspea.Flint.Theming.ThemeMarksGradient?
+Graspea.Flint.Theming.ThemeMarks.Gradient.set -> void
+Graspea.Flint.Theming.ThemeMarks.Group.get -> Graspea.Flint.Theming.ThemeMarksGroup?
+Graspea.Flint.Theming.ThemeMarks.Group.set -> void
+Graspea.Flint.Theming.ThemeMarks.Texture.get -> Graspea.Flint.Theming.ThemeMarksTexture?
+Graspea.Flint.Theming.ThemeMarks.Texture.set -> void
+Graspea.Flint.Theming.ThemeMarksArc
+Graspea.Flint.Theming.ThemeMarksArc.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeMarksArc.Extensions.set -> void
+Graspea.Flint.Theming.ThemeMarksArc.Hole.get -> double?
+Graspea.Flint.Theming.ThemeMarksArc.Hole.set -> void
+Graspea.Flint.Theming.ThemeMarksArc.Order.get -> string?
+Graspea.Flint.Theming.ThemeMarksArc.Order.set -> void
+Graspea.Flint.Theming.ThemeMarksArc.StartAngle.get -> double?
+Graspea.Flint.Theming.ThemeMarksArc.StartAngle.set -> void
+Graspea.Flint.Theming.ThemeMarksArc.ThemeMarksArc() -> void
+Graspea.Flint.Theming.ThemeMarksAreaEdge
+Graspea.Flint.Theming.ThemeMarksAreaEdge.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeMarksAreaEdge.Extensions.set -> void
+Graspea.Flint.Theming.ThemeMarksAreaEdge.Presence.get -> string?
+Graspea.Flint.Theming.ThemeMarksAreaEdge.Presence.set -> void
+Graspea.Flint.Theming.ThemeMarksAreaEdge.ThemeMarksAreaEdge() -> void
+Graspea.Flint.Theming.ThemeMarksAreaEdge.Width.get -> double?
+Graspea.Flint.Theming.ThemeMarksAreaEdge.Width.set -> void
+Graspea.Flint.Theming.ThemeMarksGradient
+Graspea.Flint.Theming.ThemeMarksGradient.Area.get -> string?
+Graspea.Flint.Theming.ThemeMarksGradient.Area.set -> void
+Graspea.Flint.Theming.ThemeMarksGradient.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeMarksGradient.Extensions.set -> void
+Graspea.Flint.Theming.ThemeMarksGradient.LineWash.get -> string?
+Graspea.Flint.Theming.ThemeMarksGradient.LineWash.set -> void
+Graspea.Flint.Theming.ThemeMarksGradient.ThemeMarksGradient() -> void
+Graspea.Flint.Theming.ThemeMarksGradient.WashOpacity.get -> double?
+Graspea.Flint.Theming.ThemeMarksGradient.WashOpacity.set -> void
+Graspea.Flint.Theming.ThemeMarksGroup
+Graspea.Flint.Theming.ThemeMarksGroup.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeMarksGroup.Extensions.set -> void
+Graspea.Flint.Theming.ThemeMarksGroup.Gap.get -> Graspea.Flint.Theming.ThemeLength?
+Graspea.Flint.Theming.ThemeMarksGroup.Gap.set -> void
+Graspea.Flint.Theming.ThemeMarksGroup.Spacing.get -> Graspea.Flint.Theming.ThemeLength?
+Graspea.Flint.Theming.ThemeMarksGroup.Spacing.set -> void
+Graspea.Flint.Theming.ThemeMarksGroup.ThemeMarksGroup() -> void
+Graspea.Flint.Theming.ThemeMarksPoint.Density.get -> string?
+Graspea.Flint.Theming.ThemeMarksPoint.Density.set -> void
+Graspea.Flint.Theming.ThemeMarksPoint.Ink.get -> Graspea.Flint.Theming.PointInk?
+Graspea.Flint.Theming.ThemeMarksPoint.Ink.set -> void
+Graspea.Flint.Theming.ThemeMarksPoint.Opacity.get -> double?
+Graspea.Flint.Theming.ThemeMarksPoint.Opacity.set -> void
+Graspea.Flint.Theming.ThemeMarksPoint.Shape.get -> string?
+Graspea.Flint.Theming.ThemeMarksPoint.Shape.set -> void
+Graspea.Flint.Theming.ThemeMarksTexture
+Graspea.Flint.Theming.ThemeMarksTexture.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeMarksTexture.Extensions.set -> void
+Graspea.Flint.Theming.ThemeMarksTexture.Ink.get -> string?
+Graspea.Flint.Theming.ThemeMarksTexture.Ink.set -> void
+Graspea.Flint.Theming.ThemeMarksTexture.Pattern.get -> string?
+Graspea.Flint.Theming.ThemeMarksTexture.Pattern.set -> void
+Graspea.Flint.Theming.ThemeMarksTexture.Patterns.get -> string![]?
+Graspea.Flint.Theming.ThemeMarksTexture.Patterns.set -> void
+Graspea.Flint.Theming.ThemeMarksTexture.Spacing.get -> double?
+Graspea.Flint.Theming.ThemeMarksTexture.Spacing.set -> void
+Graspea.Flint.Theming.ThemeMarksTexture.ThemeMarksTexture() -> void
+Graspea.Flint.Theming.ThemeSource
+Graspea.Flint.Theming.ThemeSource.Align.get -> string?
+Graspea.Flint.Theming.ThemeSource.Align.set -> void
+Graspea.Flint.Theming.ThemeSource.Credit.get -> Graspea.Flint.Theming.ThemeSourceCredit?
+Graspea.Flint.Theming.ThemeSource.Credit.set -> void
+Graspea.Flint.Theming.ThemeSource.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeSource.Extensions.set -> void
+Graspea.Flint.Theming.ThemeSource.Frame.get -> string?
+Graspea.Flint.Theming.ThemeSource.Frame.set -> void
+Graspea.Flint.Theming.ThemeSource.Gap.get -> double?
+Graspea.Flint.Theming.ThemeSource.Gap.set -> void
+Graspea.Flint.Theming.ThemeSource.LeadIn.get -> string?
+Graspea.Flint.Theming.ThemeSource.LeadIn.set -> void
+Graspea.Flint.Theming.ThemeSource.LeadInCase.get -> string?
+Graspea.Flint.Theming.ThemeSource.LeadInCase.set -> void
+Graspea.Flint.Theming.ThemeSource.LeadInStyle.get -> string?
+Graspea.Flint.Theming.ThemeSource.LeadInStyle.set -> void
+Graspea.Flint.Theming.ThemeSource.LeadInWeight.get -> Graspea.Flint.Theming.TypeWeight?
+Graspea.Flint.Theming.ThemeSource.LeadInWeight.set -> void
+Graspea.Flint.Theming.ThemeSource.Rule.get -> Graspea.Flint.Theming.ThemeSourceRule?
+Graspea.Flint.Theming.ThemeSource.Rule.set -> void
+Graspea.Flint.Theming.ThemeSource.Show.get -> string?
+Graspea.Flint.Theming.ThemeSource.Show.set -> void
+Graspea.Flint.Theming.ThemeSource.ThemeSource() -> void
+Graspea.Flint.Theming.ThemeSourceCredit
+Graspea.Flint.Theming.ThemeSourceCredit.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeSourceCredit.Extensions.set -> void
+Graspea.Flint.Theming.ThemeSourceCredit.Image.get -> Graspea.Flint.Theming.ThemeSourceCreditImage?
+Graspea.Flint.Theming.ThemeSourceCredit.Image.set -> void
+Graspea.Flint.Theming.ThemeSourceCredit.Placement.get -> string?
+Graspea.Flint.Theming.ThemeSourceCredit.Placement.set -> void
+Graspea.Flint.Theming.ThemeSourceCredit.Separator.get -> string?
+Graspea.Flint.Theming.ThemeSourceCredit.Separator.set -> void
+Graspea.Flint.Theming.ThemeSourceCredit.Text.get -> string?
+Graspea.Flint.Theming.ThemeSourceCredit.Text.set -> void
+Graspea.Flint.Theming.ThemeSourceCredit.ThemeSourceCredit() -> void
+Graspea.Flint.Theming.ThemeSourceCredit.Weight.get -> Graspea.Flint.Theming.TypeWeight?
+Graspea.Flint.Theming.ThemeSourceCredit.Weight.set -> void
+Graspea.Flint.Theming.ThemeSourceCreditImage
+Graspea.Flint.Theming.ThemeSourceCreditImage.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeSourceCreditImage.Extensions.set -> void
+Graspea.Flint.Theming.ThemeSourceCreditImage.Height.get -> double?
+Graspea.Flint.Theming.ThemeSourceCreditImage.Height.set -> void
+Graspea.Flint.Theming.ThemeSourceCreditImage.Src.get -> string?
+Graspea.Flint.Theming.ThemeSourceCreditImage.Src.set -> void
+Graspea.Flint.Theming.ThemeSourceCreditImage.Svg.get -> string?
+Graspea.Flint.Theming.ThemeSourceCreditImage.Svg.set -> void
+Graspea.Flint.Theming.ThemeSourceCreditImage.ThemeSourceCreditImage() -> void
+Graspea.Flint.Theming.ThemeSourceCreditImage.Width.get -> double?
+Graspea.Flint.Theming.ThemeSourceCreditImage.Width.set -> void
+Graspea.Flint.Theming.ThemeSourceRule
+Graspea.Flint.Theming.ThemeSourceRule.Color.get -> string?
+Graspea.Flint.Theming.ThemeSourceRule.Color.set -> void
+Graspea.Flint.Theming.ThemeSourceRule.Dash.get -> double[]?
+Graspea.Flint.Theming.ThemeSourceRule.Dash.set -> void
+Graspea.Flint.Theming.ThemeSourceRule.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeSourceRule.Extensions.set -> void
+Graspea.Flint.Theming.ThemeSourceRule.Presence.get -> string?
+Graspea.Flint.Theming.ThemeSourceRule.Presence.set -> void
+Graspea.Flint.Theming.ThemeSourceRule.ThemeSourceRule() -> void
+Graspea.Flint.Theming.ThemeSourceRule.Width.get -> double?
+Graspea.Flint.Theming.ThemeSourceRule.Width.set -> void
+Graspea.Flint.Theming.ThemeSpec.Interaction.get -> Graspea.Flint.Theming.ThemeInteraction?
+Graspea.Flint.Theming.ThemeSpec.Source.get -> Graspea.Flint.Theming.ThemeSource?
+Graspea.Flint.Theming.ThemeSpec.Source.set -> void
+Graspea.Flint.Theming.ThemeStructure.Baseline.get -> Graspea.Flint.Theming.RuleSpec?
+Graspea.Flint.Theming.ThemeStructure.Frame.get -> Graspea.Flint.Theming.RuleSpec?
+Graspea.Flint.Theming.ThemeStructureAxis.Floating.get -> string?
+Graspea.Flint.Theming.ThemeStructureAxis.Floating.set -> void
+Graspea.Flint.Theming.ThemeStructureAxis.X.get -> Graspea.Flint.Theming.AxisRole?
+Graspea.Flint.Theming.ThemeStructureAxis.X.set -> void
+Graspea.Flint.Theming.ThemeStructureAxis.Y.get -> Graspea.Flint.Theming.AxisRole?
+Graspea.Flint.Theming.ThemeStructureAxis.Y.set -> void
+Graspea.Flint.Theming.ThemeStructureGrid.Category.get -> Graspea.Flint.Theming.RuleSpec?
+Graspea.Flint.Theming.ThemeStructureGrid.Layer.get -> string?
+Graspea.Flint.Theming.ThemeStructureGrid.Layer.set -> void
+Graspea.Flint.Theming.ThemeStructureGrid.Measure.get -> Graspea.Flint.Theming.RuleSpec?
+Graspea.Flint.Theming.ThemeStructureGrid.Minor.get -> Graspea.Flint.Theming.MinorGridSpec?
+Graspea.Flint.Theming.ThemeStructureGrid.Minor.set -> void
+Graspea.Flint.Theming.ThemeStructureGrid.Zero.get -> Graspea.Flint.Theming.RuleSpec?
+Graspea.Flint.Theming.ThemeType.KeyTitle.get -> Graspea.Flint.Theming.TypeRole?
+Graspea.Flint.Theming.ThemeType.KeyTitle.set -> void
+Graspea.Flint.Theming.ThemeType.Kicker.get -> Graspea.Flint.Theming.TypeRole?
+Graspea.Flint.Theming.ThemeType.Kicker.set -> void
+Graspea.Flint.Theming.ThemeVariantThen.Interaction.get -> Graspea.Flint.Theming.ThemeInteraction?
+Graspea.Flint.Theming.ThemeVariantThen.Source.get -> Graspea.Flint.Theming.ThemeSource?
+Graspea.Flint.Theming.ThemeVariantThen.Source.set -> void
+Graspea.Flint.Theming.TypeRole.Weight.get -> Graspea.Flint.Theming.TypeWeight?
 Graspea.Flint.Theming.TypeWeight
 Graspea.Flint.Theming.TypeWeight.Keyword.get -> string?
 Graspea.Flint.Theming.TypeWeight.Number.get -> double?
+Graspea.Flint.ViolinPlotBuilder<TRow>.Widths(Graspea.Flint.ViolinPlotWidths value) -> Graspea.Flint.ViolinPlotBuilder<TRow>!
+Graspea.Flint.ViolinPlotWidths
+Graspea.Flint.ViolinPlotWidths.Area = 2 -> Graspea.Flint.ViolinPlotWidths
+Graspea.Flint.ViolinPlotWidths.Auto = 1 -> Graspea.Flint.ViolinPlotWidths
+Graspea.Flint.ViolinPlotWidths.Band = 3 -> Graspea.Flint.ViolinPlotWidths
+Graspea.Flint.ViolinPlotWidths.Default = 0 -> Graspea.Flint.ViolinPlotWidths
+const Graspea.Flint.FlintUpstream.Version = "1.0.0" -> string!
 override Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> System.Collections.Generic.Dictionary<int, T>!
 override Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>.Write(System.Text.Json.Utf8JsonWriter! writer, System.Collections.Generic.Dictionary<int, T>! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.LabelOverflowConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.LabelOverflow!
 override Graspea.Flint.Serialization.LabelOverflowConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.LabelOverflow! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.MinorGridSpecConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.MinorGridSpec!
 override Graspea.Flint.Serialization.MinorGridSpecConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.MinorGridSpec! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.PointInkConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.PointInk
+override Graspea.Flint.Serialization.PointInkConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.PointInk value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.RuleSpecConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.RuleSpec!
 override Graspea.Flint.Serialization.RuleSpecConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.RuleSpec! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.ThemeLengthConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.ThemeLength!
 override Graspea.Flint.Serialization.ThemeLengthConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.ThemeLength! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.TypeWeightConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.TypeWeight!
 override Graspea.Flint.Serialization.TypeWeightConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.TypeWeight! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Theming.PointInk.GetHashCode() -> int
+override Graspea.Flint.Theming.PointInk.ToString() -> string!
+static Graspea.Flint.Chart.Marginal(Graspea.Flint.ChartData! data) -> Graspea.Flint.MarginalPlotBuilder<object!>!
+static Graspea.Flint.Chart.Marginal(string! url) -> Graspea.Flint.MarginalPlotBuilder<object!>!
+static Graspea.Flint.Chart.Marginal<TRow>(Graspea.Flint.RowOptions? options = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+static Graspea.Flint.Chart.Marginal<TRow>(System.Collections.Generic.IEnumerable<TRow>! rows, Graspea.Flint.RowOptions? options = null) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+static Graspea.Flint.Chart.Marginal<TRow>(System.Collections.Generic.IEnumerable<TRow>! rows, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TRow>! typeInfo) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+static Graspea.Flint.Chart.Marginal<TRow>(System.Text.Json.Serialization.Metadata.JsonTypeInfo<TRow>! typeInfo) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
+static Graspea.Flint.Chart.Ridgeline(Graspea.Flint.ChartData! data) -> Graspea.Flint.RidgelinePlotBuilder<object!>!
+static Graspea.Flint.Chart.Ridgeline(string! url) -> Graspea.Flint.RidgelinePlotBuilder<object!>!
+static Graspea.Flint.Chart.Ridgeline<TRow>(Graspea.Flint.RowOptions? options = null) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+static Graspea.Flint.Chart.Ridgeline<TRow>(System.Collections.Generic.IEnumerable<TRow>! rows, Graspea.Flint.RowOptions? options = null) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+static Graspea.Flint.Chart.Ridgeline<TRow>(System.Collections.Generic.IEnumerable<TRow>! rows, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TRow>! typeInfo) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+static Graspea.Flint.Chart.Ridgeline<TRow>(System.Text.Json.Serialization.Metadata.JsonTypeInfo<TRow>! typeInfo) -> Graspea.Flint.RidgelinePlotBuilder<TRow>!
+static Graspea.Flint.Chart.Table(Graspea.Flint.ChartData! data) -> Graspea.Flint.TableBuilder<object!>!
+static Graspea.Flint.Chart.Table(string! url) -> Graspea.Flint.TableBuilder<object!>!
+static Graspea.Flint.Chart.Table<TRow>(Graspea.Flint.RowOptions? options = null) -> Graspea.Flint.TableBuilder<TRow>!
+static Graspea.Flint.Chart.Table<TRow>(System.Collections.Generic.IEnumerable<TRow>! rows, Graspea.Flint.RowOptions? options = null) -> Graspea.Flint.TableBuilder<TRow>!
+static Graspea.Flint.Chart.Table<TRow>(System.Collections.Generic.IEnumerable<TRow>! rows, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TRow>! typeInfo) -> Graspea.Flint.TableBuilder<TRow>!
+static Graspea.Flint.Chart.Table<TRow>(System.Text.Json.Serialization.Metadata.JsonTypeInfo<TRow>! typeInfo) -> Graspea.Flint.TableBuilder<TRow>!
 static Graspea.Flint.Theming.LabelOverflow.implicit operator Graspea.Flint.Theming.LabelOverflow?(string![]? steps) -> Graspea.Flint.Theming.LabelOverflow?
 static Graspea.Flint.Theming.LabelOverflow.implicit operator Graspea.Flint.Theming.LabelOverflow?(string? step) -> Graspea.Flint.Theming.LabelOverflow?
 static Graspea.Flint.Theming.MinorGridSpec.implicit operator Graspea.Flint.Theming.MinorGridSpec?(string? presence) -> Graspea.Flint.Theming.MinorGridSpec?
+static Graspea.Flint.Theming.PointInk.implicit operator Graspea.Flint.Theming.PointInk(string! value) -> Graspea.Flint.Theming.PointInk
+static Graspea.Flint.Theming.PointInk.implicit operator Graspea.Flint.Theming.PointInk?(string? value) -> Graspea.Flint.Theming.PointInk?
+static Graspea.Flint.Theming.PointInk.operator !=(Graspea.Flint.Theming.PointInk left, Graspea.Flint.Theming.PointInk right) -> bool
+static Graspea.Flint.Theming.PointInk.operator ==(Graspea.Flint.Theming.PointInk left, Graspea.Flint.Theming.PointInk right) -> bool
 static Graspea.Flint.Theming.RuleSpec.implicit operator Graspea.Flint.Theming.RuleSpec?(string? presence) -> Graspea.Flint.Theming.RuleSpec?
 static Graspea.Flint.Theming.ThemeLength.implicit operator Graspea.Flint.Theming.ThemeLength!(double number) -> Graspea.Flint.Theming.ThemeLength!
 static Graspea.Flint.Theming.ThemeLength.implicit operator Graspea.Flint.Theming.ThemeLength?(string? text) -> Graspea.Flint.Theming.ThemeLength?
 static Graspea.Flint.Theming.TypeWeight.implicit operator Graspea.Flint.Theming.TypeWeight!(double number) -> Graspea.Flint.Theming.TypeWeight!
 static Graspea.Flint.Theming.TypeWeight.implicit operator Graspea.Flint.Theming.TypeWeight?(string? keyword) -> Graspea.Flint.Theming.TypeWeight?
+static readonly Graspea.Flint.ChartType.MarginalPlot -> Graspea.Flint.ChartType
+static readonly Graspea.Flint.ChartType.RidgelinePlot -> Graspea.Flint.ChartType
+static readonly Graspea.Flint.ChartType.Table -> Graspea.Flint.ChartType
+static readonly Graspea.Flint.ThemePreset.Apple -> Graspea.Flint.ThemePreset
+static readonly Graspea.Flint.ThemePreset.Bbc -> Graspea.Flint.ThemePreset
+static readonly Graspea.Flint.ThemePreset.DeStijl -> Graspea.Flint.ThemePreset
+static readonly Graspea.Flint.ThemePreset.Material -> Graspea.Flint.ThemePreset
+static readonly Graspea.Flint.Theming.PointInk.Series -> Graspea.Flint.Theming.PointInk
+static readonly Graspea.Flint.Theming.PointInk.Text -> Graspea.Flint.Theming.PointInk
+~override Graspea.Flint.Theming.PointInk.Equals(object obj) -> bool

@@ -1191,6 +1191,212 @@
             ],
             "properties": [
               {
+                "key": "level",
+                "label": "Level",
+                "options": [
+                  {
+                    "label": "States",
+                    "value": "state"
+                  },
+                  {
+                    "label": "Counties (FIPS ids)",
+                    "value": "county"
+                  },
+                  {
+                    "label": "Zoom: states, then counties",
+                    "value": "auto"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "projection",
+                "label": "Projection",
+                "options": [
+                  {
+                    "label": "Default",
+                    "value": "default"
+                  },
+                  {
+                    "label": "Mercator",
+                    "value": "mercator"
+                  },
+                  {
+                    "label": "Equal Earth",
+                    "value": "equalEarth"
+                  },
+                  {
+                    "label": "Orthographic (Globe)",
+                    "value": "orthographic"
+                  },
+                  {
+                    "label": "Stereographic",
+                    "value": "stereographic"
+                  },
+                  {
+                    "label": "Conic Equal Area",
+                    "value": "conicEqualArea"
+                  },
+                  {
+                    "label": "Conic Equidistant",
+                    "value": "conicEquidistant"
+                  },
+                  {
+                    "label": "Azimuthal Equidistant",
+                    "value": "azimuthalEquidistant"
+                  },
+                  {
+                    "label": "Mollweide",
+                    "value": "mollweide"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "projectionCenter",
+                "label": "Center",
+                "options": [
+                  {
+                    "label": "Default",
+                    "omitted": true
+                  },
+                  {
+                    "label": "World (Atlantic) [0, 0]",
+                    "value": [
+                      0,
+                      0
+                    ]
+                  },
+                  {
+                    "label": "World (Pacific) [150, 0]",
+                    "value": [
+                      150,
+                      0
+                    ]
+                  },
+                  {
+                    "label": "China [105, 35]",
+                    "value": [
+                      105,
+                      35
+                    ]
+                  },
+                  {
+                    "label": "USA [-98, 39]",
+                    "value": [
+                      -98,
+                      39
+                    ]
+                  },
+                  {
+                    "label": "Europe [10, 50]",
+                    "value": [
+                      10,
+                      50
+                    ]
+                  },
+                  {
+                    "label": "Japan [138, 36]",
+                    "value": [
+                      138,
+                      36
+                    ]
+                  },
+                  {
+                    "label": "India [78, 22]",
+                    "value": [
+                      78,
+                      22
+                    ]
+                  },
+                  {
+                    "label": "Brazil [-52, -14]",
+                    "value": [
+                      -52,
+                      -14
+                    ]
+                  },
+                  {
+                    "label": "Australia [134, -25]",
+                    "value": [
+                      134,
+                      -25
+                    ]
+                  },
+                  {
+                    "label": "Russia [100, 60]",
+                    "value": [
+                      100,
+                      60
+                    ]
+                  },
+                  {
+                    "label": "Africa [20, 0]",
+                    "value": [
+                      20,
+                      0
+                    ]
+                  },
+                  {
+                    "label": "Middle East [45, 28]",
+                    "value": [
+                      45,
+                      28
+                    ]
+                  },
+                  {
+                    "label": "Southeast Asia [115, 5]",
+                    "value": [
+                      115,
+                      5
+                    ]
+                  },
+                  {
+                    "label": "South America [-60, -15]",
+                    "value": [
+                      -60,
+                      -15
+                    ]
+                  },
+                  {
+                    "label": "North America [-100, 45]",
+                    "value": [
+                      -100,
+                      45
+                    ]
+                  },
+                  {
+                    "label": "UK [-2, 54]",
+                    "value": [
+                      -2,
+                      54
+                    ]
+                  },
+                  {
+                    "label": "Germany [10, 51]",
+                    "value": [
+                      10,
+                      51
+                    ]
+                  },
+                  {
+                    "label": "France [2, 47]",
+                    "value": [
+                      2,
+                      47
+                    ]
+                  },
+                  {
+                    "label": "Korea [128, 36]",
+                    "value": [
+                      128,
+                      36
+                    ]
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
                 "key": "region",
                 "label": "Region",
                 "options": [
@@ -1427,6 +1633,33 @@
                 "key": "independentYAxis",
                 "label": "Independent Y",
                 "type": "binary"
+              },
+              {
+                "key": "opacity",
+                "label": "Opacity",
+                "max": 1,
+                "min": 0.1,
+                "step": 0.1,
+                "type": "continuous"
+              },
+              {
+                "key": "stackMode",
+                "label": "Stack",
+                "options": [
+                  {
+                    "label": "Stacked (default)",
+                    "omitted": true
+                  },
+                  {
+                    "label": "Normalize (100%)",
+                    "value": "normalize"
+                  },
+                  {
+                    "label": "Layered (overlap)",
+                    "value": "layered"
+                  }
+                ],
+                "type": "discrete"
               }
             ]
           }
@@ -2138,6 +2371,7 @@
               "x",
               "y",
               "group",
+              "color",
               "column",
               "row"
             ],
@@ -2401,16 +2635,6 @@
                 "type": "continuous"
               },
               {
-                "key": "includeZero_x",
-                "label": "Zero X",
-                "type": "binary"
-              },
-              {
-                "key": "includeZero_y",
-                "label": "Zero Y",
-                "type": "binary"
-              },
-              {
                 "key": "layout",
                 "label": "Layout",
                 "options": [
@@ -2428,16 +2652,6 @@
                   }
                 ],
                 "type": "discrete"
-              },
-              {
-                "key": "logScale_x",
-                "label": "Log X",
-                "type": "binary"
-              },
-              {
-                "key": "logScale_y",
-                "label": "Log Y",
-                "type": "binary"
               },
               {
                 "key": "style",
@@ -2513,6 +2727,7 @@
               "x",
               "y",
               "color",
+              "strokeDash",
               "opacity",
               "column",
               "row"
@@ -3121,26 +3336,6 @@
             ],
             "properties": [
               {
-                "key": "includeZero_x",
-                "label": "Zero X",
-                "type": "binary"
-              },
-              {
-                "key": "includeZero_y",
-                "label": "Zero Y",
-                "type": "binary"
-              },
-              {
-                "key": "logScale_x",
-                "label": "Log X",
-                "type": "binary"
-              },
-              {
-                "key": "logScale_y",
-                "label": "Log Y",
-                "type": "binary"
-              },
-              {
                 "key": "projection",
                 "label": "Projection",
                 "options": [
@@ -3350,6 +3545,122 @@
           }
         },
         "name": "Map"
+      },
+      {
+        "backends": {
+          "vegalite": {
+            "category": "Points",
+            "channels": [
+              "x",
+              "y",
+              "color",
+              "size",
+              "shape",
+              "opacity"
+            ],
+            "properties": [
+              {
+                "key": "bandwidth",
+                "label": "Bandwidth",
+                "max": 2,
+                "min": 0.05,
+                "step": 0.05,
+                "type": "continuous"
+              },
+              {
+                "key": "binCount",
+                "label": "Max Bins",
+                "max": 50,
+                "min": 5,
+                "step": 1,
+                "type": "continuous"
+              },
+              {
+                "key": "includeZero_x",
+                "label": "Zero X",
+                "type": "binary"
+              },
+              {
+                "key": "includeZero_y",
+                "label": "Zero Y",
+                "type": "binary"
+              },
+              {
+                "key": "logScale_x",
+                "label": "Log X",
+                "type": "binary"
+              },
+              {
+                "key": "logScale_y",
+                "label": "Log Y",
+                "type": "binary"
+              },
+              {
+                "key": "marginal",
+                "label": "Margins",
+                "options": [
+                  {
+                    "label": "Density",
+                    "omitted": true
+                  },
+                  {
+                    "label": "Histogram",
+                    "value": "histogram"
+                  },
+                  {
+                    "label": "Boxplot",
+                    "value": "boxplot"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "opacity",
+                "label": "Opacity",
+                "max": 1,
+                "min": 0.1,
+                "step": 0.1,
+                "type": "continuous"
+              },
+              {
+                "key": "showOutliers",
+                "label": "Outliers",
+                "type": "binary"
+              },
+              {
+                "key": "stackMode",
+                "label": "Stack",
+                "options": [
+                  {
+                    "label": "Layered (default)",
+                    "omitted": true
+                  },
+                  {
+                    "label": "Stacked",
+                    "value": "stacked"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "whiskerMethod",
+                "label": "Whiskers",
+                "options": [
+                  {
+                    "label": "Tukey (1.5 × IQR)",
+                    "value": "iqr"
+                  },
+                  {
+                    "label": "Min–Max",
+                    "value": "minmax"
+                  }
+                ],
+                "type": "discrete"
+              }
+            ]
+          }
+        },
+        "name": "Marginal Plot"
       },
       {
         "backends": {
@@ -4235,6 +4546,160 @@
       },
       {
         "backends": {
+          "vegalite": {
+            "category": "Distributions",
+            "channels": [
+              "x",
+              "y",
+              "color"
+            ],
+            "properties": [
+              {
+                "key": "bandwidth",
+                "label": "Bandwidth",
+                "max": 2,
+                "min": 0.05,
+                "step": 0.05,
+                "type": "continuous"
+              },
+              {
+                "key": "colorBy",
+                "label": "Fill",
+                "options": [
+                  {
+                    "label": "One colour",
+                    "omitted": true
+                  },
+                  {
+                    "label": "By series",
+                    "value": "series"
+                  },
+                  {
+                    "label": "By x value",
+                    "value": "x"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "interpolate",
+                "label": "Curve",
+                "options": [
+                  {
+                    "label": "Default (linear)",
+                    "omitted": true
+                  },
+                  {
+                    "label": "Linear",
+                    "value": "linear"
+                  },
+                  {
+                    "label": "Monotone (smooth)",
+                    "value": "monotone"
+                  },
+                  {
+                    "label": "Step",
+                    "value": "step"
+                  },
+                  {
+                    "label": "Step Before",
+                    "value": "step-before"
+                  },
+                  {
+                    "label": "Step After",
+                    "value": "step-after"
+                  },
+                  {
+                    "label": "Basis (smooth)",
+                    "value": "basis"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "markAt",
+                "label": "Mark values",
+                "type": "binary"
+              },
+              {
+                "key": "opacity",
+                "label": "Opacity",
+                "max": 1,
+                "min": 0.1,
+                "step": 0.1,
+                "type": "continuous"
+              },
+              {
+                "key": "order",
+                "label": "Order",
+                "options": [
+                  {
+                    "label": "As given",
+                    "omitted": true
+                  },
+                  {
+                    "label": "By mean (highest on top)",
+                    "value": "mean"
+                  },
+                  {
+                    "label": "Reversed",
+                    "value": "reverse"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "overlap",
+                "label": "Overlap",
+                "max": 4,
+                "min": 0.5,
+                "step": 0.1,
+                "type": "continuous"
+              },
+              {
+                "key": "perspective",
+                "label": "Perspective",
+                "type": "binary"
+              },
+              {
+                "key": "skew",
+                "label": "Skew",
+                "max": 0.4,
+                "min": 0,
+                "step": 0.01,
+                "type": "continuous"
+              },
+              {
+                "key": "tailCut",
+                "label": "Trim tails",
+                "max": 0.2,
+                "min": 0,
+                "step": 0.01,
+                "type": "continuous"
+              },
+              {
+                "key": "tilt",
+                "label": "Tilt",
+                "max": 6,
+                "min": 0,
+                "step": 0.1,
+                "type": "continuous"
+              },
+              {
+                "key": "valueMax",
+                "label": "Value max",
+                "max": 1000,
+                "min": 0,
+                "step": 0.1,
+                "type": "continuous"
+              }
+            ]
+          }
+        },
+        "name": "Ridgeline Plot"
+      },
+      {
+        "backends": {
           "chartjs": {
             "category": "Polar",
             "channels": [
@@ -4561,6 +5026,7 @@
               "color",
               "size",
               "shape",
+              "detail",
               "opacity",
               "column",
               "row"
@@ -5247,6 +5713,16 @@
       },
       {
         "backends": {
+          "vegalite": {
+            "category": "Tables & Maps",
+            "channels": [],
+            "properties": []
+          }
+        },
+        "name": "Table"
+      },
+      {
+        "backends": {
           "echarts": {
             "category": "Part-to-Whole",
             "channels": [
@@ -5387,6 +5863,25 @@
                 "key": "showPoints",
                 "label": "Observations",
                 "type": "binary"
+              },
+              {
+                "key": "widths",
+                "label": "Widths",
+                "options": [
+                  {
+                    "label": "Auto",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "Equal area",
+                    "value": "area"
+                  },
+                  {
+                    "label": "Fill band",
+                    "value": "band"
+                  }
+                ],
+                "type": "discrete"
               }
             ]
           }
@@ -5988,19 +6483,39 @@
     ],
     "themePresets": [
       {
+        "description": "Quiet app-interface chart: system colours, value axis on the trailing edge, light labels, symbols beside colour, rounded bars.",
+        "id": "apple",
+        "label": "Apple"
+      },
+      {
+        "description": "BBC News graphics (bbplot): Reith Sans, a large bold headline, light horizontal gridlines with no axis lines or titles, a heavy rule at zero, and a footer rule closing every chart.",
+        "id": "bbc",
+        "label": "BBC News"
+      },
+      {
         "description": "A playful comic house: warm cream paper, a rounded comic typeface, fat dark \"sticker\" outlines around bright crayon-coloured bars, wedges and dots, rounded corners, chunky round-capped lines, and a soft dashed grid.",
         "id": "cartoon",
         "label": "Cartoon"
       },
       {
-        "description": "Embedded web chart: narrow column, plain headline and deck, a rule under the footer.",
+        "description": "Embedded web chart: Roboto, a plain headline and description, values on bars and no value axis.",
         "id": "datawrapper",
         "label": "Datawrapper"
+      },
+      {
+        "description": "De Stijl (Neo-Plasticism): red, yellow and blue planes bounded by heavy black lines on off-white, only horizontals and verticals, and the title set under the picture like a museum label.",
+        "id": "de-stijl",
+        "label": "De Stijl"
       },
       {
         "description": "Print weekly: compact, flat headline over a deck that names the measure, units repeated down the ruler.",
         "id": "economist",
         "label": "The Economist"
+      },
+      {
+        "description": "Material Design 3: the baseline purple-led tonal palette, Google Sans and Roboto type with a medium-weight title, light outline-variant gridlines, no axis lines, and bars rounded to the M3 shape scale.",
+        "id": "material",
+        "label": "Material"
       },
       {
         "description": "Consulting deck: wide bands, every value printed in a column, a headline that states the takeaway.",
@@ -6069,6 +6584,34 @@
               "pad"
             ]
           }
+        },
+        {
+          "doc": "The hole as a share of the outer radius, 0–0.9, for every donut the house draws.",
+          "name": "hole",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "The order wedges run clockwise from the start (M4): the data's order (default), or largest\nfirst. A chart that sorts its own slices keeps its sort.",
+          "name": "order",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "data",
+              "largestFirst"
+            ]
+          }
+        },
+        {
+          "doc": "Where the first wedge starts, in degrees clockwise from 12 o'clock (default 0).",
+          "name": "startAngle",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
         }
       ]
     },
@@ -6098,6 +6641,18 @@
           }
         },
         {
+          "doc": "`fade` runs the fill from the area's ink at its top to clear at the baseline. Stacked bands\nkeep a solid fill: each sits on the next, and a fade would melt one into the other.",
+          "name": "fill",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "solid",
+              "fade"
+            ]
+          }
+        },
+        {
           "name": "interpolation",
           "optional": true,
           "type": {
@@ -6119,7 +6674,6 @@
       ]
     },
     "AssembleOptions": {
-      "doc": "Options for the chart assembly function.\nIncludes layout tuning parameters — all have sensible defaults.",
       "kind": "object",
       "props": [
         {
@@ -6131,8 +6685,24 @@
           }
         },
         {
+          "doc": "The range's spread either side of its centre, as a ratio: unset, the stretch allowed.",
+          "name": "aspectTolerance",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
           "doc": "Whether to auto-wrap column-only facets into a 2D grid.\n\nWhen `true` (default), `computeFacetGrid` considers wrapping N\ncolumn facets into multiple rows, choosing the layout whose\noverall aspect ratio best matches the canvas AR.\n\nWhen `false`, column-only facets stay in a single row (capped\nat the maximum that fits the canvas budget). Useful for small\nmultiples that should always be side-by-side.",
           "name": "autoFacetWrap",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "doc": "Whether a plot with one banded axis leans back where its bands, with the labels it cannot\ndrop, put it outside the shapes a chart of its base takes on its own (default true). That\nrange runs from the base with its height stretched to the base with its width stretched\n(at least 1.25× either side); where it cannot be reached readably, a range half as wide\nagain is aimed for instead.",
+          "name": "bandBalance",
           "optional": true,
           "type": {
             "kind": "boolean"
@@ -6173,6 +6743,43 @@
         {
           "doc": "Backend-native base font size (px) for **headers** (axis titles, legend,\nchart title), at a 300px reference canvas. Scaled subtly with canvas size\n(grows up to +4 on large canvases, shrinks toward the base in small\nmultiples) so headers stay proportionate to the chart.\n\nLearned from each renderer's defaults:\n  - Vega-Lite: 11   - ECharts: 12   - Chart.js: 12   - Plotly: 14\n\nDefault: 11.",
           "name": "baseTitleFontSize",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "What the layout does when the chart will not read well in its canvas: the title, keys, labels\nand chrome taking the chart area's room, the drawing overflowing its box past legibility, or\nstretched out of its box's shape. `'auto'` (the default) lays such a chart out again — each part\ngiven a box from the canvas and fitted to it (keys on the edge with room, their names wrapped;\nthe title set down to fit), then, where that is not enough, cheap treatments one at a time — and\nkeeps the cheapest that reads well. A chart that reads well as planned is never changed.\n`'off'` lays every chart out as planned.",
+          "name": "canvasFit",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "off",
+              "auto"
+            ]
+          }
+        },
+        {
+          "doc": "Whether the canvas fit, once it has settled what is around the chart, lays the plot out once\nmore in the room the box leaves it — kept only where the chart reads better for it (default true).",
+          "name": "canvasRefit",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "doc": "Internal: the treatment a canvas-fit pass lays the chart out under.",
+          "name": "canvasTreatment",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "CanvasTreatment"
+          }
+        },
+        {
+          "doc": "How far a grid's cells grow past their reading target (28 px) toward the size that fills the\nbase, from 0 (not at all, the default) to 1 (to twice the target at most). Set from a house's\n`layout.bandStepFit`.",
+          "name": "cellGrowth",
           "optional": true,
           "type": {
             "kind": "number"
@@ -6312,11 +6919,58 @@
           }
         },
         {
+          "doc": "The gap between facet columns and between facet rows the panels are laid out for, where it differs from `facetGap`; set by the plan.",
+          "name": "facetGapColumn",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "facetGapRow",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
           "doc": "When a discrete axis is **grouped** (dodged lanes within each category\nband), by default the band's elastic stretch target is the *per-item*\nstep — so a category holding N lanes is only sized as if it held one.\nFor thin marks (grouped bars) that's fine: 4 lanes share a ~66px band\ncomfortably. But wide marks — a box-and-whisker glyph — need real room\nper lane, and the per-item target leaves grouped boxplots compressed on\nan otherwise roomy canvas.\n\nWhen set, the grouped band instead targets `itemsPerGroup × step`, so\nthe category band stretches to give each lane its full width (still\nbounded by `maxBandSize × itemsPerGroup` and the canvas budget). Scoped\nto templates whose grouped glyph is wide (boxplot); left off for bars so\ntheir tuned grouped spacing does not change.",
           "name": "groupBandFillsLanes",
           "optional": true,
           "type": {
             "kind": "boolean"
+          }
+        },
+        {
+          "doc": "The smallest band step (per group where bars are grouped) the value labels need on each axis,\nwhich the plan has checked the canvas can hold. Internal: the plan sets it when it widens the\nbands for their labels.",
+          "name": "labelStep",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "x",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "y",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "Set by the interactive renderer when a viewport will change the rows in view:\nvalue labels are built for any window that could print them, and this signal\ndecides whether they show.",
+          "name": "liveLayoutSignal",
+          "optional": true,
+          "type": {
+            "kind": "string"
           }
         },
         {
@@ -6376,6 +7030,14 @@
           }
         },
         {
+          "doc": "The smallest axis tick label (px) the shrink ladder may reach, as small multiples\nshrink their plots. A themed chart takes its theme's `type.minSize`. Default: 6.",
+          "name": "minLabelFontSize",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
           "doc": "Minimum pixels per discrete axis item (default: 6)",
           "name": "minStep",
           "optional": true,
@@ -6392,8 +7054,40 @@
           }
         },
         {
+          "doc": "Internal: the names down y stand on their own line above each bar. The y band starts at\n`scale` times the house band, never under `scale` times the least step nor `minStep` — a\nname's line, its bar and the air between — by the same stretch.",
+          "name": "rowNamesAbove",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "minStep",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "scale",
+                "optional": false,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
           "doc": "Fraction of each step reserved for inter-category padding (0–1).\nVL pads *inside* the step (band = step × (1 − padding)), so this\nvalue should match VL's paddingInner.  ECharts pads *outside* the\nband, so the layout engine passes this through so ECharts can\ncompute barWidth = step × (1 − stepPadding) explicitly.\n\nDefault: 0.1 (matching VL's default band paddingInner).",
           "name": "stepPadding",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "The centre of that range, as width over height: unset, the base's.",
+          "name": "targetAspect",
           "optional": true,
           "type": {
             "kind": "number"
@@ -6406,12 +7100,64 @@
           "type": {
             "kind": "number"
           }
+        },
+        {
+          "doc": "Attach the theme's resolved decisions to the spec as `_theme.decisions`, for tools that inspect them. Default: false.",
+          "name": "themeDecisions",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        }
+      ]
+    },
+    "AssistedTargetingOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "details",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "boolean"
+              },
+              {
+                "kind": "ref",
+                "name": "TargetDetailsOptions"
+              }
+            ]
+          }
+        },
+        {
+          "name": "indicator",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "doc": "Hard override for eligible preset distances, in renderer pixels.",
+          "name": "maxDistance",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
         }
       ]
     },
     "AxisRole": {
       "kind": "object",
       "props": [
+        {
+          "doc": "The rule's and ticks' own ink, in place of `ink.structure.axis`; the presence still tones it (AX1).",
+          "name": "color",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
         {
           "doc": "Distance from the axis rule to its labels in px. For outward ticks, the\ntick occupies the first part of this distance.",
           "name": "labelGap",
@@ -6443,14 +7189,20 @@
           }
         },
         {
-          "doc": "`opposite` = the far side of the plot (top for x, right for y).",
+          "doc": "Which side of the plot the axis sits on (AX1):\n- `opposite` — the far side, whichever way the axis runs (top for x, right for y);\n- `leading` / `trailing` — the start or end of the reading direction: a vertical axis on the\n  left or right; a horizontal axis keeps the bottom;\n- `top` / `bottom` / `left` / `right` — a screen side, applied only when the axis runs that\n  way (`top` moves a horizontal value axis and leaves a vertical one where it is).",
           "name": "placement",
           "optional": true,
           "type": {
             "kind": "literalUnion",
             "values": [
               "default",
-              "opposite"
+              "opposite",
+              "leading",
+              "trailing",
+              "top",
+              "bottom",
+              "left",
+              "right"
             ]
           }
         },
@@ -6547,6 +7299,56 @@
           }
         },
         {
+          "doc": "Grouped (dodged) bars: `gap` between the bars in a group and `spacing` between groups, each a\nshare of a bar's width (`0` touching, `1` a bar's width) or px (`\"2px\"`); the bars take what is\nleft of the step: the bar's width is derived, and the step is a guideline. Unset `spacing`\nkeeps `fraction` for the group as a whole, but never less than half a bar or three gaps, so\ngroups read as groups; unset `gap` is a twentieth of a bar, at least 1px.",
+          "name": "group",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "gap",
+                "optional": true,
+                "type": {
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "number"
+                    },
+                    {
+                      "kind": "unsupported",
+                      "text": "`${number}px`"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "spacing",
+                "optional": true,
+                "type": {
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "number"
+                    },
+                    {
+                      "kind": "unsupported",
+                      "text": "`${number}px`"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "The least length, px, a bar with a non-zero value is drawn (M6): a near-zero bar shows as a\nstub at the baseline rather than vanishing into it. Zero stays empty.",
+          "name": "minLength",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
           "name": "opacity",
           "optional": true,
           "type": {
@@ -6568,7 +7370,140 @@
           }
         },
         {
+          "doc": "The ink of the outline: the structure ink (default), the surface, or each bar's own series ink.",
+          "name": "outlineInk",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "ink",
+              "surface",
+              "series"
+            ]
+          }
+        },
+        {
           "name": "outlineWidth",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        }
+      ]
+    },
+    "CanvasTreatment": {
+      "doc": "A treatment the canvas-fit pass lays a chart out under, to win back room the title, keys and\nnames took from the chart area (see `AssembleOptions.canvasFit`).",
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Every key at one edge: beside the plot, or in one row above or below it.",
+          "name": "keys",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "side",
+              "top",
+              "bottom"
+            ]
+          }
+        },
+        {
+          "doc": "Long key names kept to this many px a column, wrapped onto lines before they are cut.",
+          "name": "names",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "keyWidth",
+                "optional": false,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "One key moved to another edge, the others left where they stand: the key at `index` among\nthe chart's keys. `title` names it, for reports.",
+          "name": "oneKey",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "index",
+                "optional": false,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "title",
+                "optional": true,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "name": "to",
+                "optional": false,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "side",
+                    "top",
+                    "bottom"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "The plot laid out at this share of its base size, both ways, so it keeps its shape: what the\nbox cannot hold comes out of the plot rather than out of every glyph, as a host shrinking the\nwhole drawing would take it.",
+          "name": "plotScale",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "The room the box leaves the plot once what is around the chart is settled, in px: the plot is\nlaid out again in it, once. A continuous side takes it; a banded side keeps its steps.",
+          "name": "plotSpace",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "height",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "width",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "The width the names down the y axis are given, in px: longer ones wrap onto a second line, so\nthe chart area — its plot and its names — takes the width the box leaves it.",
+          "name": "rowNames",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "The headline and deck set at this share of their size, never below a legible floor.",
+          "name": "titleScale",
           "optional": true,
           "type": {
             "kind": "number"
@@ -6682,6 +7617,46 @@
                 }
               },
               {
+                "doc": "The house chrome this chart keeps. Unset follows the theme. `false` drops it all; an object\nturns off parts: `header` (rules, tabs, wordmarks and logos above or beside the title),\n`footer` (the closing rule and the house's credit beside the source) and `logos` (every\nlogo, header or footer — a footer credit then shows its words). The source line itself is\ndrawn whenever `source` is given.",
+                "name": "chrome",
+                "optional": true,
+                "type": {
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "literal",
+                      "value": false
+                    },
+                    {
+                      "kind": "object",
+                      "props": [
+                        {
+                          "name": "footer",
+                          "optional": true,
+                          "type": {
+                            "kind": "boolean"
+                          }
+                        },
+                        {
+                          "name": "header",
+                          "optional": true,
+                          "type": {
+                            "kind": "boolean"
+                          }
+                        },
+                        {
+                          "name": "logos",
+                          "optional": true,
+                          "type": {
+                            "kind": "boolean"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
                 "doc": "Channel → encoding map (e.g., `{ x: { field: 'weight' }, y: { field: 'mpg' } }`).\nA bare string is shorthand for `{ field: <string> }` (e.g. `{ x: 'weight' }`).",
                 "name": "encodings",
                 "optional": false,
@@ -6717,6 +7692,46 @@
                 }
               },
               {
+                "doc": "A short line above the headline: a figure label (“Figure 2”) or a kicker. Set in the\ntheme's `type.kicker`.",
+                "name": "label",
+                "optional": true,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "doc": "Where the data comes from, drawn as the chart's source line in the house's way (the theme's\n`source`). Optional: give it only where the source is known — an agent should not invent one.",
+                "name": "source",
+                "optional": true,
+                "type": {
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "string"
+                    },
+                    {
+                      "kind": "object",
+                      "props": [
+                        {
+                          "name": "href",
+                          "optional": true,
+                          "type": {
+                            "kind": "string"
+                          }
+                        },
+                        {
+                          "name": "text",
+                          "optional": false,
+                          "type": {
+                            "kind": "string"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
                 "doc": "The deck: the reading of the headline — what is measured, of whom, when, in what units.",
                 "name": "subtitle",
                 "optional": true,
@@ -6725,7 +7740,7 @@
                 }
               },
               {
-                "doc": "The headline — what this chart says, in words.\n\nNot decoration. A chart of bare numbers names nothing on its own, and\nthe headline is where the measure gets named: `Male` and `75+` say\nwhat they are, `35 30 25` does not. Design languages that drop axis\ntitles are leaning on this line to carry the subject, so a chart\nauthored without one loses the naming altogether — the compiler\nnotices, and puts the axis titles back.",
+                "doc": "The headline — what this chart says, in words.\n\nThemes that omit required axis titles append their names and units\nto the subtitle instead. The compiler does not interpret this text\nto decide whether it explains an axis.",
                 "name": "title",
                 "optional": true,
                 "type": {
@@ -6795,6 +7810,15 @@
             "value": {
               "kind": "string"
             }
+          }
+        },
+        {
+          "doc": "Interactions — describes *how it behaves*.\n\nPresets named by type with their options, each with its own reset\ngestures, and the targeting policies. Retained state is not part of it;\na host applies that through the interactive surface.\nSits beside `chart_spec` for the same reason `theme_spec`\ndoes: one behaviour applies to many charts, and a static backend ignores\nit without harm.\n\nRead by the interactive surface in `flint-chart/interactive` (Vega-Lite\nonly). The assemblers leave it untouched. A preset the chart cannot\nhonour is dropped with a warning rather than failing the chart.",
+          "name": "interaction_spec",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "InteractionSpec"
           }
         },
         {
@@ -6909,6 +7933,41 @@
           }
         },
         {
+          "doc": "Colour channel: quantize a continuous measure into this many bins; `0` keeps the ramp continuous.",
+          "name": "bins",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Colour channel: colours bound to values, for this chart (the field's `colors`): `{ \"Win\": \"#2a9d8f\" }`.",
+          "name": "colors",
+          "optional": true,
+          "type": {
+            "kind": "record",
+            "value": {
+              "kind": "string"
+            }
+          }
+        },
+        {
+          "doc": "Colour channel: the measure extent the ramp spans, `[low, high]`, in place of the data's.",
+          "name": "domain",
+          "optional": true,
+          "type": {
+            "elements": [
+              {
+                "kind": "number"
+              },
+              {
+                "kind": "number"
+              }
+            ],
+            "kind": "tuple"
+          }
+        },
+        {
           "name": "field",
           "optional": true,
           "type": {
@@ -6916,10 +7975,38 @@
           }
         },
         {
+          "doc": "Colour channel: the value a diverging scale pivots on, for this chart (the field's `divergingMidpoint`).",
+          "name": "mid",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Colour channel: run the scale the other way round.",
+          "name": "reverse",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "doc": "Colour channel: a Vega scheme name (`viridis`, `redblue`), or the stops a ramp or palette runs\nthrough, low end first (`[\"#c0392b\", \"#f2f2f2\", \"#2e75b6\"]`). Wins over the theme's ramp.",
           "name": "scheme",
           "optional": true,
           "type": {
-            "kind": "string"
+            "kind": "union",
+            "members": [
+              {
+                "kind": "string"
+              },
+              {
+                "element": {
+                  "kind": "string"
+                },
+                "kind": "array"
+              }
+            ]
           }
         },
         {
@@ -6938,6 +8025,14 @@
               "ascending",
               "descending"
             ]
+          }
+        },
+        {
+          "doc": "The name the channel's axis or key prints, in place of the field's; `null` prints none. A\ntheme still decides whether a key is titled at all: a name given here renames it where it is.",
+          "name": "title",
+          "optional": true,
+          "type": {
+            "kind": "string"
           }
         },
         {
@@ -7045,6 +8140,46 @@
           }
         },
         {
+          "doc": "The house chrome this chart keeps. Unset follows the theme. `false` drops it all; an object\nturns off parts: `header` (rules, tabs, wordmarks and logos above or beside the title),\n`footer` (the closing rule and the house's credit beside the source) and `logos` (every\nlogo, header or footer — a footer credit then shows its words). The source line itself is\ndrawn whenever `source` is given.",
+          "name": "chrome",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "literal",
+                "value": false
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "footer",
+                    "optional": true,
+                    "type": {
+                      "kind": "boolean"
+                    }
+                  },
+                  {
+                    "name": "header",
+                    "optional": true,
+                    "type": {
+                      "kind": "boolean"
+                    }
+                  },
+                  {
+                    "name": "logos",
+                    "optional": true,
+                    "type": {
+                      "kind": "boolean"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "doc": "Channel → encoding map (e.g., `{ x: { field: 'weight' }, y: { field: 'mpg' } }`).\nA bare string is shorthand for `{ field: <string> }` (e.g. `{ x: 'weight' }`).",
           "name": "encodings",
           "optional": false,
@@ -7080,6 +8215,46 @@
           }
         },
         {
+          "doc": "A short line above the headline: a figure label (“Figure 2”) or a kicker. Set in the\ntheme's `type.kicker`.",
+          "name": "label",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Where the data comes from, drawn as the chart's source line in the house's way (the theme's\n`source`). Optional: give it only where the source is known — an agent should not invent one.",
+          "name": "source",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "string"
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "href",
+                    "optional": true,
+                    "type": {
+                      "kind": "string"
+                    }
+                  },
+                  {
+                    "name": "text",
+                    "optional": false,
+                    "type": {
+                      "kind": "string"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "doc": "The deck: the reading of the headline — what is measured, of whom, when, in what units.",
           "name": "subtitle",
           "optional": true,
@@ -7088,7 +8263,7 @@
           }
         },
         {
-          "doc": "The headline — what this chart says, in words.\n\nNot decoration. A chart of bare numbers names nothing on its own, and\nthe headline is where the measure gets named: `Male` and `75+` say\nwhat they are, `35 30 25` does not. Design languages that drop axis\ntitles are leaning on this line to carry the subject, so a chart\nauthored without one loses the naming altogether — the compiler\nnotices, and puts the axis titles back.",
+          "doc": "The headline — what this chart says, in words.\n\nThemes that omit required axis titles append their names and units\nto the subtitle instead. The compiler does not interpret this text\nto decide whether it explains an axis.",
           "name": "title",
           "optional": true,
           "type": {
@@ -7153,6 +8328,79 @@
         }
       ]
     },
+    "InteractionEntry": {
+      "doc": "One preset as JSON: the type name, an optional id, and that preset's options\nunder `options`, for example\n`{ \"type\": \"navigate\", \"options\": { \"axes\": \"x\", \"pan\": false } }`.\nThe options are the ones the matching factory in `flint-chart/interactive`\naccepts; the precise per-type shape is `InteractionPresetSpec` there.\n`id` defaults to `type` and lives on the entry, never inside `options`.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "options",
+          "optional": true,
+          "type": {
+            "kind": "record",
+            "value": {
+              "kind": "any"
+            }
+          }
+        },
+        {
+          "name": "type",
+          "optional": false,
+          "type": {
+            "kind": "unsupported",
+            "text": "(typeof INTERACTION_PRESET_TYPES)[number]"
+          }
+        }
+      ]
+    },
+    "InteractionSpec": {
+      "doc": "How a chart behaves. Sits beside `chart_spec` and `theme_spec` in\n`ChartAssemblyInput`. Only the Vega-Lite interactive surface reads it; the\nassemblers and the static backends leave it untouched. Retained state is not\npart of it; a host applies that through the surface.",
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Presets assist by default; false requires direct hits, maxDistance overrides eligible presets.",
+          "name": "assistedTargeting",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "boolean"
+              },
+              {
+                "kind": "ref",
+                "name": "AssistedTargetingOptions"
+              }
+            ]
+          }
+        },
+        {
+          "doc": "One entry per interaction. Its type names the preset that makes it, and its options carry its own `reset` list.",
+          "name": "interactions",
+          "optional": false,
+          "type": {
+            "element": {
+              "kind": "ref",
+              "name": "InteractionEntry"
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "name": "keyboardTargeting",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        }
+      ]
+    },
     "LineGeometry": {
       "kind": "object",
       "props": [
@@ -7194,6 +8442,27 @@
         },
         {
           "name": "opacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "A wash under each line, down to the baseline, in the line's own ink: `tint` is a flat pale\nfill, `fade` runs from the ink at the line to clear at the baseline. Default `none`.",
+          "name": "wash",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "none",
+              "tint",
+              "fade"
+            ]
+          }
+        },
+        {
+          "doc": "How strong the wash is where it meets the line, 0–1 (default 0.12 for `tint`, 0.3 for `fade`).",
+          "name": "washOpacity",
           "optional": true,
           "type": {
             "kind": "number"
@@ -7252,6 +8521,19 @@
       "kind": "object",
       "props": [
         {
+          "doc": "Which lines keep the dots (M5): `countable` (default) — lines of up to 12 readings; `all` —\nevery line, the dots shrinking to fit; `sparse` — only where readings stand 20px apart or more.",
+          "name": "density",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "countable",
+              "all",
+              "sparse"
+            ]
+          }
+        },
+        {
           "name": "fill",
           "optional": true,
           "type": {
@@ -7260,6 +8542,58 @@
               "solid",
               "hollow"
             ]
+          }
+        },
+        {
+          "doc": "A ring in the plot's colour around each dot, so overlapping dots stay countable. A line's dots\nget one wherever lines can cross unless this says `omit`; a scatter's dots only where it is\ndeclared. A quarter of the dot's radius, at most `width`; a scatter's dots under 28px² get\nnone. An outline takes its place. Not combined with an `opacity` below 1: ringed dots are solid.",
+          "name": "halo",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "presence",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "omit",
+                    "hairline",
+                    "quiet",
+                    "full",
+                    "emphasised"
+                  ]
+                }
+              },
+              {
+                "name": "width",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "The ink of a line's vertex dots: `series` (default), `text`, or a colour.",
+          "name": "ink",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "open": true,
+            "values": [
+              "series",
+              "text"
+            ]
+          }
+        },
+        {
+          "doc": "How opaque a dot is, 0–1. Unset, the renderer's own: Vega-Lite draws a scatter's dots at 0.7\nso overlaps show through. A house whose marks are flat planes states 1. Dots a full plot shrinks\nrise toward solid, holding diameter × opacity. A chart's own\n`opacity` property still wins.",
+          "name": "opacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
           }
         },
         {
@@ -7281,6 +8615,21 @@
               "quiet",
               "full",
               "emphasised"
+            ]
+          }
+        },
+        {
+          "doc": "The glyph every dot is drawn as: `circle` (default), `square`, `diamond`, `triangle` or `cross`.",
+          "name": "shape",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "circle",
+              "square",
+              "diamond",
+              "triangle",
+              "cross"
             ]
           }
         },
@@ -7370,6 +8719,17 @@
       "kind": "object",
       "props": [
         {
+          "doc": "Colours bound to values of this field, wherever they fall: `{ \"DFL\": \"#0793AB\" }`. Matched on\nthe value, trimmed and case-insensitive. Values left out take the palette in order, which then\nskips the bound colours. Wins over the theme's role inks.",
+          "name": "colors",
+          "optional": true,
+          "type": {
+            "kind": "record",
+            "value": {
+              "kind": "string"
+            }
+          }
+        },
+        {
           "doc": "The value a diverging colour scale should pivot on — what the reader is\nbeing asked to compare against.\n\nThis is a judgement, not a fact about the field, which is why it has to\nbe declared rather than inferred. A temperature in °C pivots at 0 if the\nquestion is whether it freezes, and at something nearer 18 if the\nquestion is whether a city is comfortable to live in; the numbers are\nidentical either way and only the question tells them apart. Declare it\nwhen the chart is about the comparison — above and below an average, a\ntarget, a baseline period, a comfort line — and leave it out otherwise,\nin which case the pivot falls back to whatever the type and the data\nmake obvious: a sign change at zero, a bounded domain's centre, or no\npivot at all.\n\nDeclaring one also *asserts* the split: the scale diverges even if every\nreading happens to land on one side of it.",
           "name": "divergingMidpoint",
           "optional": true,
@@ -7391,6 +8751,18 @@
               }
             ],
             "kind": "tuple"
+          }
+        },
+        {
+          "doc": "Which way the field's values are good, for a diverging colour: `higher-is-better` (profit,\ngrowth) puts the warm, alarming end on the low side; `lower-is-better` (cost, errors, churn)\nputs it on the high side. Unset ⇒ the semantic type decides (signed measures read as\nhigher-is-better, temperatures run warm-high).",
+          "name": "polarity",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "higher-is-better",
+              "lower-is-better"
+            ]
           }
         },
         {
@@ -7422,6 +8794,29 @@
         }
       ]
     },
+    "TargetDetailsOptions": {
+      "doc": "Pointer acquisition that snaps to a nearby mark instead of requiring a direct hit.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "fields",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "string"
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "name": "maxRows",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        }
+      ]
+    },
     "ThemeAnnotation": {
       "kind": "object",
       "props": [
@@ -7447,7 +8842,7 @@
           }
         },
         {
-          "doc": "`whenAmbiguous` asks the same question of each axis: `Jan Feb Mar` names\nits own kind and needs no title over it, `26 20 14` names nothing until\none is written. Ranks and binned ranges count as numbers.",
+          "doc": "`whenAmbiguous` asks the same question of each axis: `Jan Feb Mar` names\nits own kind and needs no title over it, `26 20 14` names nothing until\none is written. Ranks and binned ranges count as numbers.\n`omit` moves required titles and declared units to the end of the\nsubtitle rather than relying on the author's prose to name the axes.",
           "name": "axisTitles",
           "optional": true,
           "type": {
@@ -7465,6 +8860,89 @@
           "type": {
             "kind": "object",
             "props": [
+              {
+                "doc": "Number compaction (1,250,000 → 1.25M). The theme says whether, how and where; the field\nsays whether it may be — by its semantic type (`types`) and its unit (a value already in\nmillions, `Population (m)`, is never compacted again). Unset, `thousands: \"suffix\"`\ncompacts value labels value by value, as before; otherwise nothing is compacted.",
+                "name": "compact",
+                "optional": true,
+                "type": {
+                  "kind": "object",
+                  "props": [
+                    {
+                      "doc": "Where: measure-axis ticks, value labels, or both (default). Tooltips always print the full value.",
+                      "name": "on",
+                      "optional": true,
+                      "type": {
+                        "element": {
+                          "kind": "literalUnion",
+                          "values": [
+                            "axis",
+                            "labels"
+                          ]
+                        },
+                        "kind": "array"
+                      }
+                    },
+                    {
+                      "doc": "`scale` (default): one unit for a whole ruler or label set, from its largest value; `value`: each its own.",
+                      "name": "per",
+                      "optional": true,
+                      "type": {
+                        "kind": "literalUnion",
+                        "values": [
+                          "scale",
+                          "value"
+                        ]
+                      }
+                    },
+                    {
+                      "doc": "`auto` (the default once `compact` is stated) compacts where the largest value reaches `threshold`.",
+                      "name": "show",
+                      "optional": true,
+                      "type": {
+                        "kind": "literalUnion",
+                        "values": [
+                          "auto",
+                          "never"
+                        ]
+                      }
+                    },
+                    {
+                      "doc": "`short` k/M/B/T (default), `upper` K/M/B/T (BI), `lower` k/m/b/t, `editorial` k/m/bn/tn, `si` k/M/G/T.",
+                      "name": "style",
+                      "optional": true,
+                      "type": {
+                        "kind": "literalUnion",
+                        "values": [
+                          "short",
+                          "upper",
+                          "lower",
+                          "editorial",
+                          "si"
+                        ]
+                      }
+                    },
+                    {
+                      "doc": "The least largest value that is compacted. Default 10,000.",
+                      "name": "threshold",
+                      "optional": true,
+                      "type": {
+                        "kind": "number"
+                      }
+                    },
+                    {
+                      "doc": "The semantic types (or families) compacted. Default Amount, Price, Profit, Count, Number, Quantity.",
+                      "name": "types",
+                      "optional": true,
+                      "type": {
+                        "element": {
+                          "kind": "string"
+                        },
+                        "kind": "array"
+                      }
+                    }
+                  ]
+                }
+              },
               {
                 "name": "ordinal",
                 "optional": true,
@@ -7586,7 +9064,7 @@
       ]
     },
     "ThemeChartDefaults": {
-      "doc": "The one block that is allowed to name a chart type.\n\nEverything else at level 1 is a policy the compiler binds to whatever chart\nit is handed. This is different in kind: it is the house's list of settings\nfor charts it has an opinion about — the Times puts a dot on every reading\nof a line, and a bump chart it prints is never smoothed. Those are not\nconsequences of a design language, they are house rules, and there is no\nhonest way to derive them from ink and type.\n\nKeyed by chart type id, or `*` for every chart. Values are chart-property\nkeys the template already declares. It is a *default*: anything the caller\nset explicitly wins, and a key the template does not offer is reported and\ndropped.",
+      "doc": "The one block that is allowed to name a chart type.\n\nEverything else at level 1 is a policy the compiler binds to whatever chart\nit is handed. This is different in kind: it is the house's list of settings\nfor charts it has an opinion about — the Times puts a dot on every reading\nof a line, and a bump chart it prints is never smoothed. Those are not\nconsequences of a design language, they are house rules, and there is no\nhonest way to derive them from ink and type.\n\nKeyed by chart type id, or `*` for every chart. Values are chart-property\nkeys the template already declares. It is a *default*: anything the caller\nset explicitly wins, and a key the template does not offer is reported and\ndropped. So is a key that changes how the data is read rather than how the\nchart looks: axis type, zero baseline, log scale, transform, encoding actions.",
       "kind": "record",
       "value": {
         "kind": "record",
@@ -7608,8 +9086,24 @@
           }
         },
         {
+          "doc": "The range's spread either side of its centre, as a ratio: unset, the stretch allowed.",
+          "name": "aspectTolerance",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
           "doc": "Whether to auto-wrap column-only facets into a 2D grid.\n\nWhen `true` (default), `computeFacetGrid` considers wrapping N\ncolumn facets into multiple rows, choosing the layout whose\noverall aspect ratio best matches the canvas AR.\n\nWhen `false`, column-only facets stay in a single row (capped\nat the maximum that fits the canvas budget). Useful for small\nmultiples that should always be side-by-side.",
           "name": "autoFacetWrap",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "doc": "Whether a plot with one banded axis leans back where its bands, with the labels it cannot\ndrop, put it outside the shapes a chart of its base takes on its own (default true). That\nrange runs from the base with its height stretched to the base with its width stretched\n(at least 1.25× either side); where it cannot be reached readably, a range half as wide\nagain is aimed for instead.",
+          "name": "bandBalance",
           "optional": true,
           "type": {
             "kind": "boolean"
@@ -7679,6 +9173,26 @@
           }
         },
         {
+          "doc": "What the layout does when the chart will not read well in its canvas: the title, keys, labels\nand chrome taking the chart area's room, the drawing overflowing its box past legibility, or\nstretched out of its box's shape. `'auto'` (the default) lays such a chart out again — each part\ngiven a box from the canvas and fitted to it (keys on the edge with room, their names wrapped;\nthe title set down to fit), then, where that is not enough, cheap treatments one at a time — and\nkeeps the cheapest that reads well. A chart that reads well as planned is never changed.\n`'off'` lays every chart out as planned.",
+          "name": "canvasFit",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "off",
+              "auto"
+            ]
+          }
+        },
+        {
+          "doc": "Whether the canvas fit, once it has settled what is around the chart, lays the plot out once\nmore in the room the box leaves it — kept only where the chart reads better for it (default true).",
+          "name": "canvasRefit",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
           "name": "canvasSize",
           "optional": true,
           "type": {
@@ -7699,6 +9213,23 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "doc": "Internal: the treatment a canvas-fit pass lays the chart out under.",
+          "name": "canvasTreatment",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "CanvasTreatment"
+          }
+        },
+        {
+          "doc": "How far a grid's cells grow past their reading target (28 px) toward the size that fills the\nbase, from 0 (not at all, the default) to 1 (to twice the target at most). Set from a house's\n`layout.bandStepFit`.",
+          "name": "cellGrowth",
+          "optional": true,
+          "type": {
+            "kind": "number"
           }
         },
         {
@@ -7835,11 +9366,58 @@
           }
         },
         {
+          "doc": "The gap between facet columns and between facet rows the panels are laid out for, where it differs from `facetGap`; set by the plan.",
+          "name": "facetGapColumn",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "facetGapRow",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
           "doc": "When a discrete axis is **grouped** (dodged lanes within each category\nband), by default the band's elastic stretch target is the *per-item*\nstep — so a category holding N lanes is only sized as if it held one.\nFor thin marks (grouped bars) that's fine: 4 lanes share a ~66px band\ncomfortably. But wide marks — a box-and-whisker glyph — need real room\nper lane, and the per-item target leaves grouped boxplots compressed on\nan otherwise roomy canvas.\n\nWhen set, the grouped band instead targets `itemsPerGroup × step`, so\nthe category band stretches to give each lane its full width (still\nbounded by `maxBandSize × itemsPerGroup` and the canvas budget). Scoped\nto templates whose grouped glyph is wide (boxplot); left off for bars so\ntheir tuned grouped spacing does not change.",
           "name": "groupBandFillsLanes",
           "optional": true,
           "type": {
             "kind": "boolean"
+          }
+        },
+        {
+          "doc": "The smallest band step (per group where bars are grouped) the value labels need on each axis,\nwhich the plan has checked the canvas can hold. Internal: the plan sets it when it widens the\nbands for their labels.",
+          "name": "labelStep",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "x",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "y",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "Set by the interactive renderer when a viewport will change the rows in view:\nvalue labels are built for any window that could print them, and this signal\ndecides whether they show.",
+          "name": "liveLayoutSignal",
+          "optional": true,
+          "type": {
+            "kind": "string"
           }
         },
         {
@@ -7899,6 +9477,14 @@
           }
         },
         {
+          "doc": "The smallest axis tick label (px) the shrink ladder may reach, as small multiples\nshrink their plots. A themed chart takes its theme's `type.minSize`. Default: 6.",
+          "name": "minLabelFontSize",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
           "doc": "Minimum pixels per discrete axis item (default: 6)",
           "name": "minStep",
           "optional": true,
@@ -7915,8 +9501,40 @@
           }
         },
         {
+          "doc": "Internal: the names down y stand on their own line above each bar. The y band starts at\n`scale` times the house band, never under `scale` times the least step nor `minStep` — a\nname's line, its bar and the air between — by the same stretch.",
+          "name": "rowNamesAbove",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "minStep",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "scale",
+                "optional": false,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
           "doc": "Fraction of each step reserved for inter-category padding (0–1).\nVL pads *inside* the step (band = step × (1 − padding)), so this\nvalue should match VL's paddingInner.  ECharts pads *outside* the\nband, so the layout engine passes this through so ECharts can\ncompute barWidth = step × (1 − stepPadding) explicitly.\n\nDefault: 0.1 (matching VL's default band paddingInner).",
           "name": "stepPadding",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "The centre of that range, as width over height: unset, the base's.",
+          "name": "targetAspect",
           "optional": true,
           "type": {
             "kind": "number"
@@ -7929,12 +9547,45 @@
           "type": {
             "kind": "number"
           }
+        },
+        {
+          "doc": "Attach the theme's resolved decisions to the spec as `_theme.decisions`, for tools that inspect them. Default: false.",
+          "name": "themeDecisions",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
         }
       ]
     },
     "ThemeDataLabels": {
       "kind": "object",
       "props": [
+        {
+          "doc": "Where a label printed inside a bar sits along it: at the value `end` (default), at the bar's\n`start` (its base, so the numbers read as one column), or in the `middle`.",
+          "name": "anchor",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "end",
+              "start",
+              "middle"
+            ]
+          }
+        },
+        {
+          "doc": "When some bars are too short to hold their label inside: `perMark` (default) prints just those\npast their end; `allOutside` prints every label past its bar's end, so they read alike.",
+          "name": "fallback",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "perMark",
+              "allOutside"
+            ]
+          }
+        },
         {
           "name": "inkMode",
           "optional": true,
@@ -7945,6 +9596,14 @@
               "matchSeries",
               "contrastWithMark"
             ]
+          }
+        },
+        {
+          "doc": "The contrast (x:1) a label printed on a mark keeps with it under `contrastWithMark`; default 3.",
+          "name": "minContrast",
+          "optional": true,
+          "type": {
+            "kind": "number"
           }
         },
         {
@@ -8083,6 +9742,27 @@
       "kind": "object",
       "props": [
         {
+          "doc": "Which end of its frame it sits at. Default `start`. Rules and bands span the frame.",
+          "name": "align",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "start",
+              "end"
+            ]
+          }
+        },
+        {
+          "doc": "The image's text alternative.",
+          "name": "alt",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "The earlier corner placement, read by `mastheadTab`, `headerRule` and `footerRule`.",
           "name": "anchor",
           "optional": true,
           "type": {
@@ -8096,6 +9776,20 @@
           }
         },
         {
+          "doc": "Where it sits. Defaults: `canvasTop` for rules, bands and tabs; `aboveTitle` for text and images.",
+          "name": "at",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "canvasTop",
+              "aboveTitle",
+              "besideTitle",
+              "belowTitle"
+            ]
+          }
+        },
+        {
           "name": "color",
           "optional": true,
           "type": {
@@ -8103,6 +9797,20 @@
           }
         },
         {
+          "doc": "What it is aligned to or spans. Defaults: `canvas` for a rule or band on the edge, else `content`.",
+          "name": "frame",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "canvas",
+              "content",
+              "block"
+            ]
+          }
+        },
+        {
+          "doc": "px. A rule's weight, a band's or tab's or image's height.",
           "name": "height",
           "optional": true,
           "type": {
@@ -8110,18 +9818,65 @@
           }
         },
         {
+          "doc": "Where the item links to, when it is clicked.",
+          "name": "href",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "`rule` — a line across its frame; `band` — a filled strip across its frame; `tab` — a short\nblock (the Economist's red tab); `text` — a wordmark or credit; `image` — a logo, from inline\n`svg` or an image `src`. `mastheadTab`, `headerRule` and `footerRule` are the earlier names:\na tab above the title at the content's start, a rule below the title across the block, and a\nrule below the plot.",
           "name": "kind",
           "optional": false,
           "type": {
             "kind": "literalUnion",
             "values": [
+              "rule",
+              "band",
+              "tab",
+              "text",
+              "image",
               "mastheadTab",
-              "footerRule",
-              "headerRule"
+              "headerRule",
+              "footerRule"
             ]
           }
         },
         {
+          "doc": "An image URL or data URI for an `image` item.",
+          "name": "src",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Inline SVG markup for an `image` item.",
+          "name": "svg",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "The words of a `text` item, set in `type` (else the deck's type).",
+          "name": "text",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "type",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "TypeRole"
+          }
+        },
+        {
+          "doc": "px. A tab's or image's width; a rule or band spans its frame unless given one.",
           "name": "width",
           "optional": true,
           "type": {
@@ -8288,6 +10043,43 @@
             "kind": "object",
             "props": [
               {
+                "doc": "Inks for one family of marks, keyed by mark: `line`, `area`, `bar` (bars and cells),\n`arc` (pies and donuts) or `point`. A chart whose series are drawn by one family takes that\nfamily's `single` and `categorical` in place of the general ones; a chart mixing families\n(bars with a line) keeps the general set, so a series has one colour throughout.",
+                "name": "byMark",
+                "optional": true,
+                "type": {
+                  "keys": [
+                    "line",
+                    "area",
+                    "bar",
+                    "arc",
+                    "point"
+                  ],
+                  "kind": "record",
+                  "value": {
+                    "kind": "object",
+                    "props": [
+                      {
+                        "name": "categorical",
+                        "optional": true,
+                        "type": {
+                          "element": {
+                            "kind": "string"
+                          },
+                          "kind": "array"
+                        }
+                      },
+                      {
+                        "name": "single",
+                        "optional": true,
+                        "type": {
+                          "kind": "string"
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
                 "name": "categorical",
                 "optional": true,
                 "type": {
@@ -8298,8 +10090,34 @@
                 }
               },
               {
+                "doc": "A set written for an exact number of series, keyed by that number (`{ 2: [...], 3: [...] }`).\nA chart with that many series takes its set instead of the first inks of `categorical`. A\nchart with more series than `categorical` names may also reach a larger set here, the way it\nreaches `categoricalExtended`. One series keeps `single`.",
+                "name": "categoricalByCount",
+                "optional": true,
+                "type": {
+                  "key": "number",
+                  "kind": "record",
+                  "value": {
+                    "element": {
+                      "kind": "string"
+                    },
+                    "kind": "array"
+                  }
+                }
+              },
+              {
                 "doc": "A larger indexed set the house reaches for when a chart has more\nseries than its core {@link categorical } palette can name, in the\nspirit of Tableau's 10→20 step. The core set carries the house's\nidentity at low cardinality (a handful of well-known inks); the\nextended set trades a little of that identity for the capacity to\nkeep every series distinct up to its length. Grounding picks the\nsmallest set whose length covers the series count; past the extended\nset's length the {@link overflow } ink takes the tail.\n\nMust contain the core set's inks as a prefix is *not* required — but\nordering the shared hues first keeps a chart's colours stable as it\ngrows. Unset ⇒ the house has only its core palette.",
                 "name": "categoricalExtended",
+                "optional": true,
+                "type": {
+                  "element": {
+                    "kind": "string"
+                  },
+                  "kind": "array"
+                }
+              },
+              {
+                "doc": "The ink each categorical entry takes when it is *written* rather than filled — a series\nname at a line's end, a value in the series' colour. Parallel to {@link categorical } (then\n{@link categoricalExtended }): entry *i* is the text variant of ink *i*. Where a house gives\nnone, a series ink too light to read on the surface is darkened in its own hue until it\nreaches 3:1.",
+                "name": "categoricalText",
                 "optional": true,
                 "type": {
                   "element": {
@@ -8317,10 +10135,82 @@
                 }
               },
               {
+                "doc": "The least contrast a series ink keeps against the plot surface. A fill below `fill`\n(default 1.25:1) is drawn with a 1px edge in a darker shade of its hue; a line below\n`stroke` (default 1.6:1) is darkened in its hue until it passes. Inks that pass are\nuntouched.",
+                "name": "minContrast",
+                "optional": true,
+                "type": {
+                  "kind": "object",
+                  "props": [
+                    {
+                      "name": "fill",
+                      "optional": true,
+                      "type": {
+                        "kind": "number"
+                      }
+                    },
+                    {
+                      "name": "stroke",
+                      "optional": true,
+                      "type": {
+                        "kind": "number"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "doc": "The ramp for ordered series (Gold, Silver, Bronze; Strongly agree … Strongly disagree), its\nstops listed in the order the categories take them. Unset ⇒ ordered series sample\n`sequential`.",
+                "name": "ordinal",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "Ramp"
+                }
+              },
+              {
                 "name": "overflow",
                 "optional": true,
                 "type": {
                   "kind": "string"
+                }
+              },
+              {
+                "doc": "Past the last ink, start the palette again instead of folding the rest into the overflow\nink: for houses whose guide says colours repeat after the *n*th series.",
+                "name": "repeat",
+                "optional": true,
+                "type": {
+                  "kind": "boolean"
+                }
+              },
+              {
+                "doc": "Inks for values that play a role, whatever their position: `other` (Other, Others, Rest of\nworld …), `total` (Total, Grand total) and `missing` (Missing, Unknown, No data, N/A …).\nA value with a role takes its ink and no other series in the chart wears it. `other` is\nalso the overflow ink when the house names none. Colours for particular values (a party,\nan asset class) belong to the chart: the field annotation `colors`, which wins over these.",
+                "name": "roles",
+                "optional": true,
+                "type": {
+                  "kind": "object",
+                  "props": [
+                    {
+                      "name": "missing",
+                      "optional": true,
+                      "type": {
+                        "kind": "string"
+                      }
+                    },
+                    {
+                      "name": "other",
+                      "optional": true,
+                      "type": {
+                        "kind": "string"
+                      }
+                    },
+                    {
+                      "name": "total",
+                      "optional": true,
+                      "type": {
+                        "kind": "string"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -8329,6 +10219,18 @@
                 "type": {
                   "kind": "object",
                   "props": [
+                    {
+                      "doc": "A nominal series whose order the chart declares (the field annotation's `sortOrder`):\n`ramp` reads it as ordered and samples the ordinal ramp; `categorical` (default) keeps\ndistinct hues. A sequence Flint infers on its own (months, compass points) is not\ndeclared and keeps distinct hues.",
+                      "name": "ordered",
+                      "optional": true,
+                      "type": {
+                        "kind": "literalUnion",
+                        "values": [
+                          "ramp",
+                          "categorical"
+                        ]
+                      }
+                    },
                     {
                       "name": "partToWhole",
                       "optional": true,
@@ -8352,6 +10254,7 @@
                       }
                     },
                     {
+                      "doc": "How a signed series is coloured. Applies only when the coloured field itself carries\nthe sign: a continuous colour whose values cross zero, or categories that split by\nsign (increase / decrease, regions netting a gain or a loss). A measure on an axis\nthat dips below zero leaves the series' colour to the ordinal and categorical rules.",
                       "name": "signed",
                       "optional": true,
                       "type": {
@@ -8561,19 +10464,137 @@
         }
       ]
     },
+    "ThemeInteraction": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Paint for the exterior of a contiguous semantic selection.",
+          "name": "selectionBoundary",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "color",
+                "optional": true,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "name": "haloColor",
+                "optional": true,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "name": "haloOpacity",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "doc": "Set to zero to disable the contrast halo.",
+                "name": "haloWidth",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "opacity",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "width",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "tooltipFormat",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        }
+      ]
+    },
+    "ThemeLabelFit": {
+      "doc": "The thresholds category names are set against (`labels.fit`).",
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Space two straight names keep between them, in em. Default half an em, at least 6px.",
+          "name": "gap",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Characters a cut name keeps before its ellipsis; a cut that keeps fewer is not taken. Default 4.",
+          "name": "minChars",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "The widest a row name down y runs before it wraps or is cut: px, or a share of the chart's width. Default a quarter of it, at least 180px.",
+          "name": "rowLimit",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "number"
+              },
+              {
+                "kind": "unsupported",
+                "text": "`${number}%`"
+              }
+            ]
+          }
+        },
+        {
+          "doc": "The widest a turned name runs before it is cut: px, or a share of the plot's height (`\"40%\"`, the default).",
+          "name": "turnedLimit",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "number"
+              },
+              {
+                "kind": "unsupported",
+                "text": "`${number}%`"
+              }
+            ]
+          }
+        }
+      ]
+    },
     "ThemeLabels": {
       "kind": "object",
       "props": [
         {
-          "name": "angle",
+          "doc": "The thresholds the names are set against; each has a default.",
+          "name": "fit",
           "optional": true,
           "type": {
-            "kind": "literalUnion",
-            "values": [
-              "auto",
-              "horizontal",
-              "rotated"
-            ]
+            "kind": "ref",
+            "name": "ThemeLabelFit"
           }
         },
         {
@@ -8581,6 +10602,50 @@
           "optional": true,
           "type": {
             "kind": "boolean"
+          }
+        },
+        {
+          "doc": "The path category names along x take when they do not stand flat and whole. Names that fit\nare always flat — a theme never forces a turn. Leave it unset for the general path:\n- a row of names: `[\"wrap\", \"rotate90\"]`;\n- a sequence that explains itself (times, dates, months, years, decades, ranks, by semantic\n  type): `[\"wrap\", \"skip\", \"rotate90\"]`.\nAdd `\"rotate45\"` before `\"rotate90\"` where the house turns labels 45°. Steps: `wrap` (two\nlines, or one in wider bands), `skip` (only the round values, sequences only), `rotate45`,\n`rotate90`. Trimming is not a step: any step may trim its names (an ellipsis at the band or\nat `fit.turnedLimit`) unless `truncation` is `\"never\"`. The path's order binds; within it,\nevery step is weighed at every size down to the floor and the cheapest taken. A chart can\nstate its own path in `chartProperties.labelOverflow`.",
+          "name": "overflow",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "literalUnion",
+                "values": [
+                  "wrap",
+                  "skip",
+                  "rotate45",
+                  "rotate90"
+                ]
+              },
+              {
+                "element": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "wrap",
+                    "skip",
+                    "rotate45",
+                    "rotate90"
+                  ]
+                },
+                "kind": "array"
+              }
+            ]
+          }
+        },
+        {
+          "doc": "Where the names of horizontal bars stand. `beside` (the default): down the y axis, left of the\nbars. `above`: each on its own line over its bar, the full width of the chart theirs — the\nbands take twice their room, by the same stretch, and where the canvas cannot hold that the\nnames stand beside. `auto`: above only where, beside, a name would be cut or wrapped. One bar\nto a band only: grouped bars and small multiples keep their names beside.",
+          "name": "rowNames",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "beside",
+              "above",
+              "auto"
+            ]
           }
         },
         {
@@ -8608,7 +10673,7 @@
           }
         },
         {
-          "doc": "How strongly category pitch follows the available discrete-axis span.\n  On sparse one-banded axes, `0` preserves `bandStep`, `1` fills the span,\n  and intermediate values linearly blend the two. Under pressure normal\n  elasticity applies to `bandStep`; two-banded cell grids ignore this.",
+          "doc": "How strongly category pitch follows the available discrete-axis span.\n  On sparse one-banded axes, `0` preserves `bandStep`, `1` fills the span,\n  and intermediate values linearly blend the two. Under pressure normal\n  elasticity applies to `bandStep`. A grid's cells (both axes banded) are not bars: they keep\n  their reading target, and grow past it toward the size that fills the base by this share, to\n  twice the target at most.",
           "name": "bandStepFit",
           "optional": true,
           "type": {
@@ -8616,7 +10681,7 @@
           }
         },
         {
-          "doc": "Air around the plot. Not the ruler's gradations — those are `tickDensity`.",
+          "doc": "Air around the plot: the canvas padding, and a key's gap to the plot (0.8, 1 or 1.4 em of its\nlabels, unless `legend.gaps.plot` says). Not the ruler's gradations — those are `tickDensity`.",
           "name": "density",
           "optional": true,
           "type": {
@@ -8667,7 +10732,19 @@
                 }
               },
               {
-                "doc": "The vertical gap between the title block and the chart below it — a\nhouse's whitespace personality reaching the headline. `tight` packs\nthe chart up under the title (a dense figure, a dashboard tile);\n`loose` gives an action title room to breathe (a slide exhibit).",
+                "doc": "The edge the title block starts from: `content` (default) — the canvas inside its margin,\npast the category labels; `plot` — the plot's own left edge, so the headline lines up with\nthe start of the x axis.",
+                "name": "frame",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "content",
+                    "plot"
+                  ]
+                }
+              },
+              {
+                "doc": "The vertical gap between the title block and the chart below it — a\nhouse's whitespace personality reaching the headline. `tight` packs\nthe chart up under the title (a dense figure, a dashboard tile);\n`loose` gives an action title room to breathe (a slide exhibit). Keys above the plot join\nthe block: the title stands an em over them (`legend.gaps.title`), and this gap\nstands below them.",
                 "name": "gap",
                 "optional": true,
                 "type": {
@@ -8700,6 +10777,32 @@
       "kind": "object",
       "props": [
         {
+          "doc": "Where keys stand along their edge: from its start, centred, at its end, or spread across it.",
+          "name": "align",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "start",
+              "center",
+              "end",
+              "spread"
+            ]
+          }
+        },
+        {
+          "doc": "Several keys above or below the plot: side by side, or one above another. A preference: it gives way where the keys would overflow.",
+          "name": "arrangement",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "row",
+              "stack"
+            ]
+          }
+        },
+        {
           "name": "direction",
           "optional": true,
           "type": {
@@ -8711,6 +10814,52 @@
           }
         },
         {
+          "doc": "Names at the line ends also say where each line ends — \"Japan 84.5\" — in the value labels'\nnumber format. They follow the rows the chart draws, so a chart whose rows are replaced\n(re-indexed, filtered) keeps its names honest.",
+          "name": "endValue",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "doc": "The air around keys, in em of their labels — so it keeps its proportion to the type — and\neased smoothly with the plot's size (0.7 on a small tile to 1.3 on a large chart).\n`title`: the title block to keys standing under it; `stack`: between keys one above another;\n`row`: between keys side by side, and keys one above another beside the plot; `plot`: a key to\nthe plot. Unset: the header grouped by its gaps — 0.6 em for `stack`, an em for `title`, 2.25 em\nfor `row`; an em for `plot`, by `layout.density`.",
+          "name": "gaps",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "plot",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "row",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "stack",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "title",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
           "name": "gradientLength",
           "optional": true,
           "type": {
@@ -8718,7 +10867,7 @@
           }
         },
         {
-          "doc": "The most entries a key to *values* may spend. A legend that names ten\nbubble sizes is a table, not a key: three well-chosen sizes tell the\nreader the scale and leave the chart the room.",
+          "doc": "The most entries a key to *values* may spend. A legend that names ten\nbubble sizes is a table, not a key. Unset, a size key lists round values\nas its edge has room for — one for every 80 px of the plot's side it\nstands on, from three to five — each symbol clearly larger than the last.",
           "name": "maxSwatches",
           "optional": true,
           "type": {
@@ -8772,23 +10921,41 @@
           }
         },
         {
+          "doc": "The symbol beside each name in a key to categories: `auto` (default) takes it from the mark —\na square for bars, a stroke for lines, the dot's own shape for points; `square`, `circle` or\n`line` (a short stroke) draw that symbol for every mark. A key whose entries are shapes (a\nshape channel) or sizes keeps its own symbols. Vega-Lite only.",
           "name": "swatch",
           "optional": true,
           "type": {
-            "kind": "literal",
-            "value": "auto"
+            "kind": "literalUnion",
+            "values": [
+              "auto",
+              "square",
+              "circle",
+              "line"
+            ]
           }
         },
         {
-          "doc": "`whenAmbiguous` asks whether the key's labels say what they are: a list\nof names (`Chrome`, `Cairo`) does, and a ramp of numbers does not.",
+          "doc": "Whether a key carries its field's name. `always`; or `whenAmbiguous` (the default), which\nleaves it off only on proof the reader does not need it: the headline, deck or an axis on the\nsame field already names it, the chart makes the key itself, or every value proves one closed\nkind (months, years, countries…) under a field name that says no more. A semantic type is not\nproof. An author who wants no title says so on the encoding. `omit` is read as `whenAmbiguous`.",
           "name": "title",
           "optional": true,
           "type": {
             "kind": "literalUnion",
             "values": [
-              "omit",
               "whenAmbiguous",
-              "always"
+              "always",
+              "omit"
+            ]
+          }
+        },
+        {
+          "doc": "A key's title above its entries, or before them on their line, above or below the plot. A preference.",
+          "name": "titlePosition",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "above",
+              "inline"
             ]
           }
         }
@@ -8798,7 +10965,89 @@
       "kind": "object",
       "props": [
         {
+          "doc": "Wedge order, start angle and hole (`geometry.arc`).",
+          "name": "arc",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "hole",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "order",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "data",
+                    "largestFirst"
+                  ]
+                }
+              },
+              {
+                "name": "startAngle",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "The line along the top of each area (`geometry.area.edge`), in the area's own ink; never an outline on other marks.",
+          "name": "areaEdge",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "presence",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "omit",
+                    "hairline",
+                    "quiet",
+                    "full",
+                    "emphasised"
+                  ]
+                }
+              },
+              {
+                "name": "width",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
           "name": "bandFraction",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "The least length, px, of a non-zero bar (`geometry.band.minLength`).",
+          "name": "barMinLength",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "How opaque a bar's fill is (`geometry.band.opacity`), 0–1; areas keep `fillOpacity`.",
+          "name": "barOpacity",
           "optional": true,
           "type": {
             "kind": "number"
@@ -8868,6 +11117,88 @@
           "optional": true,
           "type": {
             "kind": "number"
+          }
+        },
+        {
+          "doc": "Gradient fills: an area that fades to its baseline, a wash under each line.",
+          "name": "gradient",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "area",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "solid",
+                    "fade"
+                  ]
+                }
+              },
+              {
+                "name": "lineWash",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "none",
+                    "tint",
+                    "fade"
+                  ]
+                }
+              },
+              {
+                "name": "washOpacity",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "How a group of bars shares its step (`geometry.band.group`).",
+          "name": "group",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "gap",
+                "optional": true,
+                "type": {
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "number"
+                    },
+                    {
+                      "kind": "unsupported",
+                      "text": "`${number}px`"
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "spacing",
+                "optional": true,
+                "type": {
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "number"
+                    },
+                    {
+                      "kind": "unsupported",
+                      "text": "`${number}px`"
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
@@ -8959,7 +11290,7 @@
           }
         },
         {
-          "doc": "A stroke drawn around every filled mark — a bar, wedge, or point: the\n\"sticker\" / flat-illustration edge. It is not a `separator` (which cuts\n*between* adjacent pieces) nor a `frame` (which bounds the plot): it\nbounds each mark on its own, so a lone bar carries it too. A bar's\noutline stands down where the bar is too thin to hold it (so a dense bar\nchart keeps its fill); a grid cell is a field, held apart by a `tile`\ngap, not an outline. Large points keep the outline while dense point\nclouds may shrink the whole dot so the border does not turn the plot\ninto a solid field. `ink` draws it in the house's dark structural ink;\n`surface` draws it in the page. A house that says nothing leaves its\nmarks unbordered.",
+          "doc": "`series` draws each mark's border in its own series ink, at full strength.",
           "name": "outline",
           "optional": true,
           "type": {
@@ -8986,7 +11317,8 @@
                   "kind": "literalUnion",
                   "values": [
                     "ink",
-                    "surface"
+                    "surface",
+                    "series"
                   ]
                 }
               },
@@ -9007,6 +11339,19 @@
             "kind": "object",
             "props": [
               {
+                "doc": "Which lines keep the dots (M5): `countable` (default) — lines of up to 12 readings; `all` —\nevery line, the dots shrinking to fit; `sparse` — only where readings stand 20px apart or more.",
+                "name": "density",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "countable",
+                    "all",
+                    "sparse"
+                  ]
+                }
+              },
+              {
                 "name": "fill",
                 "optional": true,
                 "type": {
@@ -9018,6 +11363,7 @@
                 }
               },
               {
+                "doc": "A ring in the plot's surface colour around each dot, so dots that overlap, or sit on a line,\nstay countable. A line's dots get one wherever lines can cross unless this says `omit`; a\nscatter's dots get one only where it is declared. An `outline` takes its place (a dot has\none stroke). A halo and an opacity below 1 are not combined: ringed dots are solid.",
                 "name": "halo",
                 "optional": true,
                 "type": {
@@ -9048,6 +11394,27 @@
                 }
               },
               {
+                "doc": "The ink of a line's vertex dots: the series' own ink (the default), the house's text ink\n(dark dots on coloured lines), or a colour the house names. A scatter's dots are the\nseries and always take its ink.",
+                "name": "ink",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "open": true,
+                  "values": [
+                    "series",
+                    "text"
+                  ]
+                }
+              },
+              {
+                "doc": "How opaque a dot is, 0–1; unset, the renderer's own.",
+                "name": "opacity",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
                 "doc": "Whether a *line* carries a dot at each of its vertices. This is a\nquestion about lines, not about dots: a scatter's dots are drawn\nbecause the chart is a scatter, and no house presence turns them off.",
                 "name": "presence",
                 "optional": true,
@@ -9068,6 +11435,21 @@
                 "optional": true,
                 "type": {
                   "kind": "number"
+                }
+              },
+              {
+                "doc": "The glyph every dot is drawn as; see {@link PointShape}.",
+                "name": "shape",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "circle",
+                    "square",
+                    "diamond",
+                    "triangle",
+                    "cross"
+                  ]
                 }
               },
               {
@@ -9332,6 +11714,64 @@
           }
         },
         {
+          "doc": "How the `texture` channel is drawn on filled marks (bars, wedges, areas): `vary` (default)\ngives each series its own pattern — diagonal, the other diagonal, horizontal, vertical, cross,\ndots — so series differ without colour; `hatch` gives every series the same diagonal hatch in\nits own ink. `patterns` names the house's own sequence instead, in palette order (`solid`\nleaves that series a flat fill). The lines are a darker shade of the fill (`ink: \"darker\"`) or white.",
+          "name": "texture",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "ink",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "darker",
+                    "white"
+                  ]
+                }
+              },
+              {
+                "name": "pattern",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "vary",
+                    "hatch"
+                  ]
+                }
+              },
+              {
+                "name": "patterns",
+                "optional": true,
+                "type": {
+                  "element": {
+                    "kind": "literalUnion",
+                    "values": [
+                      "solid",
+                      "diagonal",
+                      "antidiagonal",
+                      "horizontal",
+                      "vertical",
+                      "cross",
+                      "dots"
+                    ]
+                  },
+                  "kind": "array"
+                }
+              },
+              {
+                "name": "spacing",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
           "doc": "How far apart the cells of a grid stand — a heatmap, a calendar, a\nmatrix. A cell is not a bar: it has no band to give back, its two\nneighbours are on two axes, and its colour is the reading, so a gap\nbetween cells has to be cut out of the shape the way a wedge's is.\n\nWhether to cut at all is a real difference between houses and not a\ndetail. Flush cells read as a continuous field — the eye follows the\ngradient across a row and sees a season. Cut cells read as a table of\nseparate readings, which is what a house wants when it prints the number\ninside each one. Where the house says nothing, cells are held apart the\nway its bars are.\n\nThe gap is painted, not spaced, and it takes the surface unless the\nhouse asks for structure: on a grid whose colour *is* the value, an edge\nin any other ink reads as data.",
           "name": "tile",
           "optional": true,
@@ -9397,6 +11837,373 @@
             "values": [
               "summaryOverData",
               "summaryUnderData"
+            ]
+          }
+        }
+      ]
+    },
+    "ThemeSource": {
+      "doc": "The source line (S1). The chart says what the source is (`chart_spec.source`); the house says how\nit reads: a lead-in, where it sits, a rule above it, a credit of its own. Set in `type.footnote`.",
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Which end of the frame the line sits at; default `start`.",
+          "name": "align",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "start",
+              "end"
+            ]
+          }
+        },
+        {
+          "doc": "The house's own credit: `inline` after the source (with `separator`), at the frame's other\n`end`, or on the `nextLine`.",
+          "name": "credit",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "doc": "A logo in place of the credit's words, at the frame's other end, level with the source\n(`placement: \"end\"` only; `text` stays its alternative text): inline `svg` or a `src` URL\nor data URI (PNG works), drawn `width`×`height` px.",
+                "name": "image",
+                "optional": true,
+                "type": {
+                  "kind": "object",
+                  "props": [
+                    {
+                      "name": "height",
+                      "optional": false,
+                      "type": {
+                        "kind": "number"
+                      }
+                    },
+                    {
+                      "name": "src",
+                      "optional": true,
+                      "type": {
+                        "kind": "string"
+                      }
+                    },
+                    {
+                      "name": "svg",
+                      "optional": true,
+                      "type": {
+                        "kind": "string"
+                      }
+                    },
+                    {
+                      "name": "width",
+                      "optional": false,
+                      "type": {
+                        "kind": "number"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "placement",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "inline",
+                    "end",
+                    "nextLine"
+                  ]
+                }
+              },
+              {
+                "name": "separator",
+                "optional": true,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "name": "text",
+                "optional": false,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "name": "weight",
+                "optional": true,
+                "type": {
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "literal",
+                      "value": "thin"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "extralight"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "light"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "regular"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "medium"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "semibold"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "bold"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "extrabold"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": "black"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 100
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 200
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 300
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 400
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 500
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 600
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 700
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 800
+                    },
+                    {
+                      "kind": "literal",
+                      "value": 900
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "`content` (default): inside the margin, with the headline; `canvas`: the graphic's outer edges.",
+          "name": "frame",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "content",
+              "canvas"
+            ]
+          }
+        },
+        {
+          "doc": "px between the chart and the source line (or its rule); default 8.",
+          "name": "gap",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "The words before the source; default `\"Source:\"`, `\"\"` for none.",
+          "name": "leadIn",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "leadInCase",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "upper",
+              "lower",
+              "title",
+              "sentence"
+            ]
+          }
+        },
+        {
+          "name": "leadInStyle",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "normal",
+              "italic"
+            ]
+          }
+        },
+        {
+          "doc": "The lead-in's weight, slope and case, where they differ from the source's.",
+          "name": "leadInWeight",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "literal",
+                "value": "thin"
+              },
+              {
+                "kind": "literal",
+                "value": "extralight"
+              },
+              {
+                "kind": "literal",
+                "value": "light"
+              },
+              {
+                "kind": "literal",
+                "value": "regular"
+              },
+              {
+                "kind": "literal",
+                "value": "medium"
+              },
+              {
+                "kind": "literal",
+                "value": "semibold"
+              },
+              {
+                "kind": "literal",
+                "value": "bold"
+              },
+              {
+                "kind": "literal",
+                "value": "extrabold"
+              },
+              {
+                "kind": "literal",
+                "value": "black"
+              },
+              {
+                "kind": "literal",
+                "value": 100
+              },
+              {
+                "kind": "literal",
+                "value": 200
+              },
+              {
+                "kind": "literal",
+                "value": 300
+              },
+              {
+                "kind": "literal",
+                "value": 400
+              },
+              {
+                "kind": "literal",
+                "value": 500
+              },
+              {
+                "kind": "literal",
+                "value": 600
+              },
+              {
+                "kind": "literal",
+                "value": 700
+              },
+              {
+                "kind": "literal",
+                "value": 800
+              },
+              {
+                "kind": "literal",
+                "value": 900
+              }
+            ]
+          }
+        },
+        {
+          "doc": "A rule across the frame above the source line.",
+          "name": "rule",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "color",
+                "optional": true,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "name": "dash",
+                "optional": true,
+                "type": {
+                  "element": {
+                    "kind": "number"
+                  },
+                  "kind": "array"
+                }
+              },
+              {
+                "name": "presence",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "omit",
+                    "hairline",
+                    "quiet",
+                    "full",
+                    "emphasised"
+                  ]
+                }
+              },
+              {
+                "name": "width",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "`whenGiven` (default) draws the chart's source; `never` leaves it to the host page.",
+          "name": "show",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "whenGiven",
+              "never"
             ]
           }
         }
@@ -9492,16 +12299,8 @@
           "name": "interaction",
           "optional": true,
           "type": {
-            "kind": "object",
-            "props": [
-              {
-                "name": "tooltipFormat",
-                "optional": true,
-                "type": {
-                  "kind": "string"
-                }
-              }
-            ]
+            "kind": "ref",
+            "name": "ThemeInteraction"
           }
         },
         {
@@ -9544,6 +12343,15 @@
           }
         },
         {
+          "doc": "How a chart's source line is drawn, when the chart gives one (`chart_spec.source`).",
+          "name": "source",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "ThemeSource"
+          }
+        },
+        {
           "name": "structure",
           "optional": true,
           "type": {
@@ -9582,6 +12390,7 @@
             "kind": "object",
             "props": [
               {
+                "doc": "The axis the chart is indexed by, wherever it is drawn.",
                 "name": "categorical",
                 "optional": true,
                 "type": {
@@ -9590,7 +12399,39 @@
                 }
               },
               {
+                "doc": "What the axis lines are where the value scale floats — does not start at zero, as a line\nor scatter at 45–90 does. `omit`: the line along the floor is a base, and a base there\nwould claim a zero the chart does not have, so it is not drawn; the value grid marks the\nfloor where a tick stands, and the line's ticks go with it. `keep`: the lines frame the\nwindow, wherever it starts. `rangeFrame`: the lines span only the data, set off from the\nplot (Tufte's range frame), so the frame stays and says where the data runs. Unset, a\nhouse that rules its value axis keeps the frame; one that grids its values instead omits\nthe line. Bars and areas start at zero, so a floor under them is always a base.\n`rangeFrame` is drawn by Vega-Lite only.",
+                "name": "floating",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "omit",
+                    "keep",
+                    "rangeFrame"
+                  ]
+                }
+              },
+              {
+                "doc": "The axis values are read off, wherever it is drawn.",
                 "name": "measure",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "AxisRole"
+                }
+              },
+              {
+                "doc": "The axis drawn along the bottom or top (x), whatever it carries: its settings override\nthe role's (AX1). A house that styles its axes by side — a 2px rule along the bottom on\nevery chart — states it here rather than by role.",
+                "name": "x",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "AxisRole"
+                }
+              },
+              {
+                "doc": "The axis drawn up the left or right (y), whatever it carries; overrides the role's.",
+                "name": "y",
                 "optional": true,
                 "type": {
                   "kind": "ref",
@@ -9601,30 +12442,182 @@
           }
         },
         {
+          "doc": "The rule the marks stand on (A7): a presence, or one with its own weight, dash and ink.",
           "name": "baseline",
           "optional": true,
           "type": {
-            "kind": "literalUnion",
-            "values": [
-              "omit",
-              "hairline",
-              "quiet",
-              "full",
-              "emphasised"
+            "kind": "union",
+            "members": [
+              {
+                "kind": "literalUnion",
+                "values": [
+                  "omit",
+                  "hairline",
+                  "quiet",
+                  "full",
+                  "emphasised"
+                ]
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "doc": "This rule's own ink, in place of the role's (`ink.structure.grid`, `.zero`, `.axis`); the presence still tones it.",
+                    "name": "color",
+                    "optional": true,
+                    "type": {
+                      "kind": "string"
+                    }
+                  },
+                  {
+                    "doc": "The dash rhythm in px, `[dash, gap]`; overrides `style`'s default.",
+                    "name": "dash",
+                    "optional": true,
+                    "type": {
+                      "element": {
+                        "kind": "number"
+                      },
+                      "kind": "array"
+                    }
+                  },
+                  {
+                    "doc": "A grid only: drawn over the marks (`front`) or under them; unset takes `grid.layer`. Vega-Lite only.",
+                    "name": "layer",
+                    "optional": true,
+                    "type": {
+                      "kind": "literalUnion",
+                      "values": [
+                        "behind",
+                        "front"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "presence",
+                    "optional": true,
+                    "type": {
+                      "kind": "literalUnion",
+                      "values": [
+                        "omit",
+                        "hairline",
+                        "quiet",
+                        "full",
+                        "emphasised"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "style",
+                    "optional": true,
+                    "type": {
+                      "kind": "literalUnion",
+                      "values": [
+                        "solid",
+                        "dashed",
+                        "dotted"
+                      ]
+                    }
+                  },
+                  {
+                    "doc": "Stroke width in px before the presence scales it (`emphasised` is 1.5×).",
+                    "name": "weight",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  }
+                ]
+              }
             ]
           }
         },
         {
+          "doc": "The rule round the plot: a presence, or one with its own weight, dash and ink, so a house\nwhose frame is as heavy as its grid can say so. Dashes are drawn by Vega-Lite only.",
           "name": "frame",
           "optional": true,
           "type": {
-            "kind": "literalUnion",
-            "values": [
-              "omit",
-              "hairline",
-              "quiet",
-              "full",
-              "emphasised"
+            "kind": "union",
+            "members": [
+              {
+                "kind": "literalUnion",
+                "values": [
+                  "omit",
+                  "hairline",
+                  "quiet",
+                  "full",
+                  "emphasised"
+                ]
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "doc": "This rule's own ink, in place of the role's (`ink.structure.grid`, `.zero`, `.axis`); the presence still tones it.",
+                    "name": "color",
+                    "optional": true,
+                    "type": {
+                      "kind": "string"
+                    }
+                  },
+                  {
+                    "doc": "The dash rhythm in px, `[dash, gap]`; overrides `style`'s default.",
+                    "name": "dash",
+                    "optional": true,
+                    "type": {
+                      "element": {
+                        "kind": "number"
+                      },
+                      "kind": "array"
+                    }
+                  },
+                  {
+                    "doc": "A grid only: drawn over the marks (`front`) or under them; unset takes `grid.layer`. Vega-Lite only.",
+                    "name": "layer",
+                    "optional": true,
+                    "type": {
+                      "kind": "literalUnion",
+                      "values": [
+                        "behind",
+                        "front"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "presence",
+                    "optional": true,
+                    "type": {
+                      "kind": "literalUnion",
+                      "values": [
+                        "omit",
+                        "hairline",
+                        "quiet",
+                        "full",
+                        "emphasised"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "style",
+                    "optional": true,
+                    "type": {
+                      "kind": "literalUnion",
+                      "values": [
+                        "solid",
+                        "dashed",
+                        "dotted"
+                      ]
+                    }
+                  },
+                  {
+                    "doc": "Stroke width in px before the presence scales it (`emphasised` is 1.5×).",
+                    "name": "weight",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  }
+                ]
+              }
             ]
           }
         },
@@ -9636,16 +12629,92 @@
             "kind": "object",
             "props": [
               {
+                "doc": "The grid across the axis the chart is indexed by; styled on its own, as `measure`.",
                 "name": "category",
                 "optional": true,
                 "type": {
-                  "kind": "literalUnion",
-                  "values": [
-                    "omit",
-                    "hairline",
-                    "quiet",
-                    "full",
-                    "emphasised"
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "literalUnion",
+                      "values": [
+                        "omit",
+                        "hairline",
+                        "quiet",
+                        "full",
+                        "emphasised"
+                      ]
+                    },
+                    {
+                      "kind": "object",
+                      "props": [
+                        {
+                          "doc": "This rule's own ink, in place of the role's (`ink.structure.grid`, `.zero`, `.axis`); the presence still tones it.",
+                          "name": "color",
+                          "optional": true,
+                          "type": {
+                            "kind": "string"
+                          }
+                        },
+                        {
+                          "doc": "The dash rhythm in px, `[dash, gap]`; overrides `style`'s default.",
+                          "name": "dash",
+                          "optional": true,
+                          "type": {
+                            "element": {
+                              "kind": "number"
+                            },
+                            "kind": "array"
+                          }
+                        },
+                        {
+                          "doc": "A grid only: drawn over the marks (`front`) or under them; unset takes `grid.layer`. Vega-Lite only.",
+                          "name": "layer",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "behind",
+                              "front"
+                            ]
+                          }
+                        },
+                        {
+                          "name": "presence",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "omit",
+                              "hairline",
+                              "quiet",
+                              "full",
+                              "emphasised"
+                            ]
+                          }
+                        },
+                        {
+                          "name": "style",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "solid",
+                              "dashed",
+                              "dotted"
+                            ]
+                          }
+                        },
+                        {
+                          "doc": "Stroke width in px before the presence scales it (`emphasised` is 1.5×).",
+                          "name": "weight",
+                          "optional": true,
+                          "type": {
+                            "kind": "number"
+                          }
+                        }
+                      ]
+                    }
                   ]
                 }
               },
@@ -9661,20 +12730,166 @@
                 }
               },
               {
-                "name": "measure",
+                "doc": "`front` draws both grids over the marks (white rules cutting the bars); default `behind`. A grid may state its own. Vega-Lite only.",
+                "name": "layer",
                 "optional": true,
                 "type": {
                   "kind": "literalUnion",
                   "values": [
-                    "omit",
-                    "hairline",
-                    "quiet",
-                    "full",
-                    "emphasised"
+                    "behind",
+                    "front"
                   ]
                 }
               },
               {
+                "doc": "The grid across the value axis: a presence, or the presence with its own style, dash, weight and ink.",
+                "name": "measure",
+                "optional": true,
+                "type": {
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "literalUnion",
+                      "values": [
+                        "omit",
+                        "hairline",
+                        "quiet",
+                        "full",
+                        "emphasised"
+                      ]
+                    },
+                    {
+                      "kind": "object",
+                      "props": [
+                        {
+                          "doc": "This rule's own ink, in place of the role's (`ink.structure.grid`, `.zero`, `.axis`); the presence still tones it.",
+                          "name": "color",
+                          "optional": true,
+                          "type": {
+                            "kind": "string"
+                          }
+                        },
+                        {
+                          "doc": "The dash rhythm in px, `[dash, gap]`; overrides `style`'s default.",
+                          "name": "dash",
+                          "optional": true,
+                          "type": {
+                            "element": {
+                              "kind": "number"
+                            },
+                            "kind": "array"
+                          }
+                        },
+                        {
+                          "doc": "A grid only: drawn over the marks (`front`) or under them; unset takes `grid.layer`. Vega-Lite only.",
+                          "name": "layer",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "behind",
+                              "front"
+                            ]
+                          }
+                        },
+                        {
+                          "name": "presence",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "omit",
+                              "hairline",
+                              "quiet",
+                              "full",
+                              "emphasised"
+                            ]
+                          }
+                        },
+                        {
+                          "name": "style",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "solid",
+                              "dashed",
+                              "dotted"
+                            ]
+                          }
+                        },
+                        {
+                          "doc": "Stroke width in px before the presence scales it (`emphasised` is 1.5×).",
+                          "name": "weight",
+                          "optional": true,
+                          "type": {
+                            "kind": "number"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "doc": "Fainter lines between the labelled ones, on continuous axes. Vega-Lite only.",
+                "name": "minor",
+                "optional": true,
+                "type": {
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "literalUnion",
+                      "values": [
+                        "omit",
+                        "hairline",
+                        "quiet",
+                        "full",
+                        "emphasised"
+                      ]
+                    },
+                    {
+                      "kind": "intersection",
+                      "members": [
+                        {
+                          "kind": "unsupported",
+                          "text": "Exclude<RuleSpec, Presence>"
+                        },
+                        {
+                          "kind": "object",
+                          "props": [
+                            {
+                              "doc": "Intervals each major interval is cut into: 2 draws one line halfway. Default 2.",
+                              "name": "divisions",
+                              "optional": true,
+                              "type": {
+                                "kind": "number"
+                              }
+                            },
+                            {
+                              "doc": "Which grids carry them. Default both, each only where its major grid is drawn.",
+                              "name": "on",
+                              "optional": true,
+                              "type": {
+                                "element": {
+                                  "kind": "literalUnion",
+                                  "values": [
+                                    "measure",
+                                    "category"
+                                  ]
+                                },
+                                "kind": "array"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              {
+                "doc": "The style both grids take unless one states its own.",
                 "name": "style",
                 "optional": true,
                 "type": {
@@ -9695,17 +12910,92 @@
                 }
               },
               {
-                "doc": "A separate rule where the value axis crosses zero. `omit` leaves\nzero as an ordinary gridline; anything else draws it in its own\nweight. Only ever drawn when zero is inside the domain.",
+                "doc": "A separate rule where the value axis crosses zero. `omit` leaves\nzero as an ordinary gridline; anything else draws it in its own\nweight, or the weight, dash and ink it states. Only ever drawn when\nzero is inside the domain.",
                 "name": "zero",
                 "optional": true,
                 "type": {
-                  "kind": "literalUnion",
-                  "values": [
-                    "omit",
-                    "hairline",
-                    "quiet",
-                    "full",
-                    "emphasised"
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "literalUnion",
+                      "values": [
+                        "omit",
+                        "hairline",
+                        "quiet",
+                        "full",
+                        "emphasised"
+                      ]
+                    },
+                    {
+                      "kind": "object",
+                      "props": [
+                        {
+                          "doc": "This rule's own ink, in place of the role's (`ink.structure.grid`, `.zero`, `.axis`); the presence still tones it.",
+                          "name": "color",
+                          "optional": true,
+                          "type": {
+                            "kind": "string"
+                          }
+                        },
+                        {
+                          "doc": "The dash rhythm in px, `[dash, gap]`; overrides `style`'s default.",
+                          "name": "dash",
+                          "optional": true,
+                          "type": {
+                            "element": {
+                              "kind": "number"
+                            },
+                            "kind": "array"
+                          }
+                        },
+                        {
+                          "doc": "A grid only: drawn over the marks (`front`) or under them; unset takes `grid.layer`. Vega-Lite only.",
+                          "name": "layer",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "behind",
+                              "front"
+                            ]
+                          }
+                        },
+                        {
+                          "name": "presence",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "omit",
+                              "hairline",
+                              "quiet",
+                              "full",
+                              "emphasised"
+                            ]
+                          }
+                        },
+                        {
+                          "name": "style",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "solid",
+                              "dashed",
+                              "dotted"
+                            ]
+                          }
+                        },
+                        {
+                          "doc": "Stroke width in px before the presence scales it (`emphasised` is 1.5×).",
+                          "name": "weight",
+                          "optional": true,
+                          "type": {
+                            "kind": "number"
+                          }
+                        }
+                      ]
+                    }
                   ]
                 }
               }
@@ -9776,6 +13066,24 @@
         },
         {
           "name": "keyLabel",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "TypeRole"
+          }
+        },
+        {
+          "doc": "A key's title (\"Population (M)\"). It names a field as an axis title does, so unset parts follow\n`axisTitle`'s family, slope and ink, at the key labels' size; with neither stated, the labels'\nfamily and the secondary text ink. Its weight is bold, or heavier where `axisTitle` is, lighter\nonly where this role says so: the weight is what tells a title from its entries. Its `case` is\nnot applied: the title is the field's name as written.",
+          "name": "keyTitle",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "TypeRole"
+          }
+        },
+        {
+          "doc": "The line above the headline: a figure label (“FIGURE 2”) or a newsroom kicker, from `chart_spec.label`.",
+          "name": "kicker",
           "optional": true,
           "type": {
             "kind": "ref",
@@ -9880,16 +13188,8 @@
                 "name": "interaction",
                 "optional": true,
                 "type": {
-                  "kind": "object",
-                  "props": [
-                    {
-                      "name": "tooltipFormat",
-                      "optional": true,
-                      "type": {
-                        "kind": "string"
-                      }
-                    }
-                  ]
+                  "kind": "ref",
+                  "name": "ThemeInteraction"
                 }
               },
               {
@@ -9925,6 +13225,15 @@
                 }
               },
               {
+                "doc": "How a chart's source line is drawn, when the chart gives one (`chart_spec.source`).",
+                "name": "source",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "ThemeSource"
+                }
+              },
+              {
                 "name": "structure",
                 "optional": true,
                 "type": {
@@ -9950,6 +13259,7 @@
       "kind": "object",
       "props": [
         {
+          "doc": "`upper`, `lower`, `title` (each word capitalised, short joining words kept lower-case) or\n`sentence` (first letter capitalised, the rest as written). Applied where the text is measured,\nso a wider upper-case headline is fitted as it will be drawn.",
           "name": "case",
           "optional": true,
           "type": {
@@ -9958,7 +13268,8 @@
               "asIs",
               "upper",
               "lower",
-              "title"
+              "title",
+              "sentence"
             ]
           }
         },
@@ -10004,15 +13315,84 @@
           }
         },
         {
+          "doc": "The full CSS scale: `thin` (100) … `regular` (400) … `black` (900), or the number itself.",
           "name": "weight",
           "optional": true,
           "type": {
-            "kind": "literalUnion",
-            "values": [
-              "regular",
-              "medium",
-              "semibold",
-              "bold"
+            "kind": "union",
+            "members": [
+              {
+                "kind": "literal",
+                "value": "thin"
+              },
+              {
+                "kind": "literal",
+                "value": "extralight"
+              },
+              {
+                "kind": "literal",
+                "value": "light"
+              },
+              {
+                "kind": "literal",
+                "value": "regular"
+              },
+              {
+                "kind": "literal",
+                "value": "medium"
+              },
+              {
+                "kind": "literal",
+                "value": "semibold"
+              },
+              {
+                "kind": "literal",
+                "value": "bold"
+              },
+              {
+                "kind": "literal",
+                "value": "extrabold"
+              },
+              {
+                "kind": "literal",
+                "value": "black"
+              },
+              {
+                "kind": "literal",
+                "value": 100
+              },
+              {
+                "kind": "literal",
+                "value": 200
+              },
+              {
+                "kind": "literal",
+                "value": 300
+              },
+              {
+                "kind": "literal",
+                "value": 400
+              },
+              {
+                "kind": "literal",
+                "value": 500
+              },
+              {
+                "kind": "literal",
+                "value": 600
+              },
+              {
+                "kind": "literal",
+                "value": 700
+              },
+              {
+                "kind": "literal",
+                "value": 800
+              },
+              {
+                "kind": "literal",
+                "value": 900
+              }
             ]
           }
         }
@@ -10020,8 +13400,8 @@
     }
   },
   "upstream": {
-    "integrity": "sha512-2JWtwM/rj86SXGZYgNsFzya/VUy5SsG4X+nEeGVndr88MmY+yN0zACi1MotHOSpZ9MZY9R0D/xQiGSTuhQngvQ==",
+    "integrity": "sha512-pRcgq0IzSHDG+HpWX9dNRJqzqmLiviQtxhhqd6wxkc4SvhSKSsw6hhgCrBoKl+jRulMrBrIVlzVXaR2DjH2z7Q==",
     "package": "flint-chart",
-    "version": "0.5.1"
+    "version": "1.0.0"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "flint-chart": "0.5.1",
-  "flint-chart-mcp": "0.5.1",
-  "upstreamRef": "0.5.1"
+  "flint-chart": "1.0.0",
+  "flint-chart-mcp": "1.0.0",
+  "upstreamRef": "60324d2fa31acd46bb2e79bc4503930da69f2619"
 }
