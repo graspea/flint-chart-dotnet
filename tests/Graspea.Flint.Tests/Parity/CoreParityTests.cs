@@ -39,6 +39,9 @@ public sealed class CoreParityTests
         BaseSize = new ChartSize(400, 300),
         CanvasSize = new ChartSize(800, 600),
         ChartProperties = new() { ["interpolate"] = "monotone" },
+        Label = "Figure 2",
+        Source = "Survey",
+        Chrome = ChartChrome.None,
     };
 
     private static ChartEncoding FullEncoding() => new()
@@ -49,6 +52,12 @@ public sealed class CoreParityTests
         SortOrder = SortOrder.Descending,
         SortBy = "y",
         Scheme = "default",
+        Title = "Revenue",
+        Reverse = true,
+        Mid = 0,
+        Domain = [-10, 10],
+        Bins = 5,
+        Colors = new() { ["Win"] = "#2a9d8f" },
     };
 
     private static JsonNode InEncoding(ChartEncoding e)
@@ -62,6 +71,25 @@ public sealed class CoreParityTests
         var input = Input();
         input.SemanticTypes = new() { ["revenue"] = a };
         return Wire(input)["semantic_types"]!["revenue"]!;
+    }
+
+    private static JsonNode InSpec(ChartChrome chrome)
+    {
+        var spec = new ChartSpec { ChartType = ChartType.LineChart, Chrome = chrome };
+        return Wire(Input(spec))["chart_spec"]!["chrome"]!;
+    }
+
+    private static JsonNode InSource(ChartSource source)
+    {
+        var spec = new ChartSpec { ChartType = ChartType.LineChart, Source = source };
+        return Wire(Input(spec))["chart_spec"]!["source"]!;
+    }
+
+    private static JsonNode InTargeting(AssistedTargeting targeting)
+    {
+        var input = Input();
+        input.InteractionSpec = new InteractionSpec { Interactions = [], AssistedTargeting = targeting };
+        return Wire(input)["interaction_spec"]!["assistedTargeting"]!;
     }
 
     private static JsonNode InCrossSection(ContinuousMarkCrossSection c)
@@ -82,6 +110,7 @@ public sealed class CoreParityTests
                 input.ThemeSpec = ThemePreset.Economist;
                 input.Options = new AssembleOptions();
                 input.FieldDisplayNames = new() { ["revenue"] = "Revenue" };
+                input.InteractionSpec = new InteractionSpec { Interactions = [] };
                 return Wire(input);
             }),
             new("ChartSpec", t => Type(t, "ChartSpec"), () => Wire(Input())["chart_spec"]!, () => Wire(Input(FullSpec()))["chart_spec"]!),
@@ -93,7 +122,17 @@ public sealed class CoreParityTests
                 Unit = "%",
                 DivergingMidpoint = 50,
                 SortOrder = ["low", "high"],
+                Colors = new() { ["low"] = "#0793AB" },
+                Polarity = Polarity.LowerIsBetter,
             })),
+            new("ChartChrome (object)", t => UnionMember(t["ChartSpec"]!["props"]!.AsArray().First(p => p!["name"]!.GetValue<string>() == "chrome")!, "type", 1),
+                () => InSpec(new ChartChrome()), () => InSpec(new ChartChrome { Header = true, Footer = false, Logos = true })),
+            new("ChartSource (object)", t => UnionMember(t["ChartSpec"]!["props"]!.AsArray().First(p => p!["name"]!.GetValue<string>() == "source")!, "type", 1),
+                () => InSource(new ChartSource { Text = "Survey" }), () => InSource(new ChartSource { Text = "Survey", Href = "https://example.com" })),
+            new("AssistedTargetingOptions", t => Type(t, "AssistedTargetingOptions"), () => InTargeting(new AssistedTargeting()),
+                () => InTargeting(new AssistedTargeting { Details = new TargetDetails(), Indicator = true, MaxDistance = 8 })),
+            new("TargetDetailsOptions", t => Type(t, "TargetDetailsOptions"), () => InTargeting(new AssistedTargeting { Details = new TargetDetails() })["details"]!,
+                () => InTargeting(new AssistedTargeting { Details = new TargetDetails { Fields = ["a"], MaxRows = 2 } })["details"]!),
             new("ChartSize", t => Type(t, "ChartSize"), () => Wire(Input(FullSpec()))["chart_spec"]!["baseSize"]!, () => Wire(Input(FullSpec()))["chart_spec"]!["baseSize"]!),
             new("ChartData (values)", t => UnionMember(t, "ChartData", 0), () => Wire(Input())["data"]!, () => Wire(Input())["data"]!),
             new("ChartData (url)", t => UnionMember(t, "ChartData", 1), () => Wire(Input(data: ChartData.FromUrl("https://example.com/rows.json")))["data"]!, () => Wire(Input(data: ChartData.FromUrl("https://example.com/rows.json")))["data"]!),
@@ -103,8 +142,10 @@ public sealed class CoreParityTests
         return forms.Select(f => new TestCaseData(f).SetName($"HandWrittenCore_MatchesIr({f.Name})"));
     }
 
-    // source: ir/flint-ir.json types (ChartAssemblyInput, ChartData, ChartSpec, ChartEncoding, SemanticAnnotation, ChartSize,
-    // ContinuousMarkCrossSection): wire names, optionality and kinds; a trivial annotation is its string form (design §5.2)
+    // source: ir/flint-ir.json types (ChartAssemblyInput, ChartData, ChartSpec with its chrome and source unions, ChartEncoding,
+    // SemanticAnnotation, ChartSize, ContinuousMarkCrossSection, and the AssistedTargetingOptions and TargetDetailsOptions that
+    // the hand-written AssistedTargeting and TargetDetails model): wire names, optionality and kinds; a trivial annotation
+    // is its string form (design §5.2)
     [TestCaseSource(nameof(Forms))]
     public void HandWrittenCore_MatchesIr(Form form)
     {

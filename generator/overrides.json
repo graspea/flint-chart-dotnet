@@ -4,6 +4,8 @@
     "AssembleOptions.continuousMarkCrossSection": "Graspea.Flint.ContinuousMarkCrossSection",
     "BandGeometry.group.gap": "Graspea.Flint.Theming.ThemeLength",
     "BandGeometry.group.spacing": "Graspea.Flint.Theming.ThemeLength",
+    "InteractionEntry.options{*}": "JsonNode",
+    "InteractionSpec.assistedTargeting": "Graspea.Flint.AssistedTargeting",
     "Radar Chart/property/filled": "JsonNode",
     "ThemeChartDefaults{*}{*}": "JsonNode",
     "ThemeCompileDefaults.continuousMarkCrossSection": "Graspea.Flint.ContinuousMarkCrossSection",

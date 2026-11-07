@@ -24,6 +24,11 @@ public sealed partial class ChartSpec
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Subtitle { get; set; }
 
+    /// <summary>The <c>label</c> member: a short line above the headline, a figure label (<c>Figure 2</c>) or a kicker, set in the theme's <c>type.kicker</c>.</summary>
+    [JsonPropertyName("label")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Label { get; set; }
+
     /// <summary>The <c>encodings</c> member: channel name to field binding.</summary>
     [JsonPropertyName("encodings")]
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
@@ -45,6 +50,16 @@ public sealed partial class ChartSpec
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonConverter(typeof(VerbatimKeyDictionaryConverter<JsonNode?>))]
     public Dictionary<string, JsonNode?>? ChartProperties { get; set; }
+
+    /// <summary>The <c>source</c> member: where the data comes from, drawn as the chart's source line; give it only where the source is known.</summary>
+    [JsonPropertyName("source")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ChartSource? Source { get; set; }
+
+    /// <summary>The <c>chrome</c> member: the house chrome this chart keeps; unset follows the theme.</summary>
+    [JsonPropertyName("chrome")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ChartChrome? Chrome { get; set; }
 
     /// <summary>Members this version does not model; written after the known members.</summary>
     [JsonExtensionData]

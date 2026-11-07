@@ -3,8 +3,8 @@ import { ordinal, type IrBackendTemplate, type IrCatalog, type IrChartType, type
 
 /** Core method names of ChartBuilder<TSelf,TRow> (design §4.2). */
 export const RESERVED_CORE_NAMES: ReadonlySet<string> = new Set([
-  'Encode', 'Series', 'Encoding', 'Property', 'Title', 'Subtitle', 'BaseSize', 'CanvasSize', 'Annotate',
-  'DisplayName', 'Theme', 'Options', 'Configure', 'Build', 'Validate', 'ToJson', 'ToTemplate',
+  'Encode', 'Series', 'Encoding', 'Property', 'Title', 'Subtitle', 'Label', 'Source', 'Chrome', 'BaseSize', 'CanvasSize',
+  'Annotate', 'DisplayName', 'Theme', 'Interaction', 'Options', 'Configure', 'Build', 'Validate', 'ToJson', 'ToTemplate',
 ]);
 
 /**

@@ -28,6 +28,16 @@ describe('naming', () => {
     });
   }
 
+  // source: ChartBuilder<TSelf,TRow> core methods for the flint-chart 1.0.0 core members (chart_spec label, source and
+  // chrome; interaction_spec) join the reserved core names of design §4.2
+  it('suffixes a channel or property named like the Label, Source, Chrome and Interaction core methods', () => {
+    const names = templateMemberNames('Some Chart', ['label', 'source'], ['chrome', 'interaction']);
+    assert.equal(names.channels.get('label'), 'LabelChannel');
+    assert.equal(names.channels.get('source'), 'SourceChannel');
+    assert.equal(names.properties.get('chrome'), 'ChromeValue');
+    assert.equal(names.properties.get('interaction'), 'InteractionValue');
+  });
+
   // source: design §7.6 rule 6 and §10.4 test 1
   it('gives the property the Value suffix when a channel and a property share a key', () => {
     const names = templateMemberNames('Scatter Plot', ['x', 'opacity'], ['opacity']);

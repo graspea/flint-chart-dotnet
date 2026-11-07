@@ -25,6 +25,8 @@ public sealed class SemanticAnnotationConverter : JsonConverter<SemanticAnnotati
             Unit = dto.Unit,
             DivergingMidpoint = dto.DivergingMidpoint,
             SortOrder = dto.SortOrder,
+            Colors = dto.Colors,
+            Polarity = dto.Polarity,
             Extensions = dto.Extensions,
         };
     }
@@ -32,7 +34,8 @@ public sealed class SemanticAnnotationConverter : JsonConverter<SemanticAnnotati
     /// <inheritdoc/>
     public override void Write(Utf8JsonWriter writer, SemanticAnnotation value, JsonSerializerOptions options)
     {
-        if (value is { IntrinsicDomain: null, Unit: null, DivergingMidpoint: null, SortOrder: null } && value.Extensions is not { Count: > 0 })
+        if (value is { IntrinsicDomain: null, Unit: null, DivergingMidpoint: null, SortOrder: null, Colors: null, Polarity: null }
+            && value.Extensions is not { Count: > 0 })
         {
             StringBacked.Write<SemanticType>(writer, value.Type.Name);
             return;
@@ -45,6 +48,8 @@ public sealed class SemanticAnnotationConverter : JsonConverter<SemanticAnnotati
             Unit = value.Unit,
             DivergingMidpoint = value.DivergingMidpoint,
             SortOrder = value.SortOrder,
+            Colors = value.Colors,
+            Polarity = value.Polarity,
             Extensions = value.Extensions,
         };
         JsonSerializer.Serialize(writer, dto, FlintJsonContext.Default.SemanticAnnotationDto);
@@ -73,6 +78,15 @@ internal sealed class SemanticAnnotationDto
     [JsonPropertyName("sortOrder")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string[]? SortOrder { get; set; }
+
+    [JsonPropertyName("colors")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonConverter(typeof(VerbatimKeyDictionaryConverter<string>))]
+    public Dictionary<string, string>? Colors { get; set; }
+
+    [JsonPropertyName("polarity")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Polarity? Polarity { get; set; }
 
     [JsonExtensionData]
     public Dictionary<string, JsonElement>? Extensions { get; set; }

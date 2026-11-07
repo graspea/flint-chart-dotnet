@@ -16,6 +16,10 @@ function irWithLiterals(): Ir {
         { name: 'type', optional: true, type: { kind: 'literalUnion', values: ['temporal'] } },
       ],
     },
+    SemanticAnnotation: {
+      kind: 'object',
+      props: [{ name: 'polarity', optional: true, type: { kind: 'literalUnion', values: ['higher-is-better', 'lower-is-better'] } }],
+    },
     ContinuousMarkCrossSection: {
       kind: 'union',
       members: [
@@ -40,6 +44,7 @@ describe('emit/constants', () => {
       'Constants/ChartType.g.cs',
       'Constants/EncodingType.g.cs',
       'Constants/FlintUpstream.g.cs',
+      'Constants/Polarity.g.cs',
       'Constants/SemanticType.g.cs',
       'Constants/SeriesCountAxis.g.cs',
       'Constants/SortOrder.g.cs',
@@ -77,6 +82,15 @@ public readonly partial record struct ChartType
     assert.match(text('Constants/EncodingType.g.cs'), /public static readonly EncodingType Temporal = new\("temporal"\);/);
     assert.match(text('Constants/SortOrder.g.cs'), /public static readonly SortOrder Ascending = new\("ascending"\);/);
     assert.match(text('Constants/SeriesCountAxis.g.cs'), /public static readonly SeriesCountAxis Auto = new\("auto"\);/);
+  });
+
+  // source: flint-chart 1.0.0 d.ts SemanticAnnotation.polarity ('higher-is-better' | 'lower-is-better'), D:2849
+  it('emits the Polarity literals of SemanticAnnotation.polarity', () => {
+    const result = emitConstants(irWithLiterals());
+    const text = result.files.find((f) => f.path === 'Constants/Polarity.g.cs')!.content;
+    assert.match(text, /public static readonly Polarity HigherIsBetter = new\("higher-is-better"\);/);
+    assert.match(text, /public static readonly Polarity LowerIsBetter = new\("lower-is-better"\);/);
+    assert.ok(result.apiLines.includes('static readonly Graspea.Flint.Polarity.HigherIsBetter -> Graspea.Flint.Polarity'));
   });
 
   // source: design §6 (invalid_literal: a value outside the IR literal set); the set is internal, for the validator

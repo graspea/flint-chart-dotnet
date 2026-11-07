@@ -262,6 +262,35 @@ public sealed class ChartBuilderTests
         Assert.That((cleared.ChartSpec.Title, cleared.ChartSpec.Subtitle), Is.EqualTo(((string?)null, (string?)null)));
     }
 
+    // source: flint-chart 1.0.0 d.ts D:4826-4842 (chart_spec label, source, chrome) and D:4909 (interaction_spec); design
+    // §4.2 (each core method is one model mutation; builder state is copied for each document)
+    [Test]
+    public void CoreSetters_Upstream100Members_EachWriteTheirMember()
+    {
+        var interaction = new InteractionSpec { Interactions = [new InteractionEntry { Type = "brush-x" }], AssistedTargeting = false };
+        var builder = Chart.Of(ChartType.BarChart, Derived)
+            .Label("Figure 2")
+            .Source(new ChartSource { Text = "Open data", Href = "https://example.com/data" })
+            .Chrome(new ChartChrome { Footer = false })
+            .Interaction(interaction);
+        var input = builder.Build();
+        JsonAssert.Equal(
+            """
+            {"data":{"values":[{"GDP per capita":1.5,"value":2,"region":"EU"}]},
+             "chart_spec":{"chartType":"Bar Chart","label":"Figure 2","encodings":{},
+               "source":{"text":"Open data","href":"https://example.com/data"},"chrome":{"footer":false}},
+             "interaction_spec":{"assistedTargeting":false,"interactions":[{"type":"brush-x"}]}}
+            """,
+            FlintJson.SerializeToNode(input));
+
+        interaction.Interactions![0].Type = "select";
+        Assert.That(builder.Build().InteractionSpec!.Interactions![0].Type, Is.EqualTo("brush-x"), "the builder keeps a copy");
+        Assert.That(input.InteractionSpec, Is.Not.SameAs(builder.Build().InteractionSpec), "each document gets its own copy");
+
+        var cleared = Chart.Of(ChartType.BarChart, Derived).Label("x").Label(null).Source("s").Source(null).Chrome(ChartChrome.None).Chrome(null).Build();
+        Assert.That((cleared.ChartSpec.Label, cleared.ChartSpec.Source, cleared.ChartSpec.Chrome), Is.EqualTo(((string?)null, (ChartSource?)null, (ChartChrome?)null)));
+    }
+
     // source: design §4.2 entry points (Of(ChartType, ChartData) for pre-built values or {url}) and spike (a) change 1 (the
     // string overload is error-marked, so Chart.Of(type, "https://…") does not compile: CS0619)
     [Test]

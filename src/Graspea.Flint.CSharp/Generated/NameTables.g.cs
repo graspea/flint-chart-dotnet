@@ -554,6 +554,12 @@ internal static partial class NameTables
         new("descending", "Descending"),
     ];
 
+    internal static readonly ConstantName[] Polarities =
+    [
+        new("higher-is-better", "HigherIsBetter"),
+        new("lower-is-better", "LowerIsBetter"),
+    ];
+
     internal static readonly ConstantName[] SeriesCountAxes =
     [
         new("x", "X"),
@@ -641,6 +647,18 @@ internal static partial class NameTables
         [
             new("height", "Height", "double"),
             new("width", "Width", "double"),
+        ]),
+        new("Graspea.Flint.InteractionEntry",
+        [
+            new("id", "Id", "string"),
+            new("options", "Options", "Dictionary<string, JsonNode?>"),
+            new("type", "Type", "string"),
+        ]),
+        new("Graspea.Flint.InteractionSpec",
+        [
+            new("assistedTargeting", "AssistedTargeting", "Graspea.Flint.AssistedTargeting"),
+            new("interactions", "Interactions", "InteractionEntry[]"),
+            new("keyboardTargeting", "KeyboardTargeting", "bool"),
         ]),
         new("Graspea.Flint.Theming.ArcGeometry",
         [

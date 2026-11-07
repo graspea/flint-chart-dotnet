@@ -26,6 +26,14 @@ public sealed partial class SemanticAnnotation
     /// <summary>The <c>sortOrder</c> member: the categories in their natural order.</summary>
     public string[]? SortOrder { get; set; }
 
+    /// <summary>The <c>colors</c> member: colours bound to values of this field, wherever they fall, such as
+    /// <c>{ "North": "#0793AB" }</c>; matched on the value, trimmed and case-insensitive. Wins over the theme's role inks.</summary>
+    public Dictionary<string, string>? Colors { get; set; }
+
+    /// <summary>The <c>polarity</c> member: which way the field's values are good, for a diverging colour; unset, the
+    /// semantic type decides.</summary>
+    public Polarity? Polarity { get; set; }
+
     /// <summary>Members of the object form this version does not model; written after the known members.</summary>
     public Dictionary<string, JsonElement>? Extensions { get; set; }
 }

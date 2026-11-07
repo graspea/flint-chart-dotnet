@@ -256,6 +256,32 @@ public sealed partial class AssembleOptions
     ]);
   });
 
+  // source: flint-chart 1.0.0 d.ts ChartAssemblyInput.interaction_spec (InteractionSpec { interactions: readonly
+  // InteractionEntry[]; assistedTargeting?: boolean | AssistedTargetingOptions; … }) and docs/generator.md "Namespaces"
+  // (the third root, Graspea.Flint in Generated/Interaction; its bool | object union through a unions override, so the
+  // object member's interface is never planned)
+  it('emits the InteractionSpec root into Graspea.Flint under Interaction/', () => {
+    const obj = (name: string, type: IrType, optional = true): IrProp => ({ name, optional, type });
+    const ir = irWith({
+      InteractionSpec: options([
+        obj('assistedTargeting', { kind: 'union', members: [{ kind: 'boolean' }, { kind: 'ref', name: 'AssistedTargetingOptions' }] }),
+        obj('interactions', { kind: 'array', element: { kind: 'ref', name: 'InteractionEntry' } }, false),
+      ]),
+      InteractionEntry: options([obj('type', { kind: 'literalUnion', values: ['brush-x', 'select'] }, false)]),
+      AssistedTargetingOptions: options([obj('maxDistance', { kind: 'number' })]),
+    });
+    const result = emitOptions(ir, overrides({ unions: { 'InteractionSpec.assistedTargeting': 'Graspea.Flint.AssistedTargeting' } }));
+    assert.deepEqual(result.files.map((f) => f.path), [
+      'Interaction/InteractionEntry.g.cs',
+      'Interaction/InteractionSpec.g.cs',
+      'Json/FlintMapJsonContext.g.cs',
+    ]);
+    assert.match(fileContent(result, 'Interaction/InteractionSpec.g.cs'), /^namespace Graspea\.Flint;$/m);
+    assert.ok(result.apiLines.includes('Graspea.Flint.InteractionSpec.AssistedTargeting.get -> Graspea.Flint.AssistedTargeting?'));
+    assert.ok(result.apiLines.includes('Graspea.Flint.InteractionSpec.Interactions.get -> Graspea.Flint.InteractionEntry![]?'));
+    assert.ok(result.apiLines.includes('Graspea.Flint.InteractionEntry.Type.get -> string?'));
+  });
+
   // source: design §7.4 (structurally identical {width,height} -> ChartSize via overrides.json)
   it('maps a dedup path to ChartSize and refuses a dedup path of another shape', () => {
     const size = {

@@ -126,6 +126,20 @@ public sealed class SortOrderConverter : JsonConverter<SortOrder>
         StringBacked.Write<SortOrder>(writer, value.Name);
 }
 
+/// <summary>Writes <see cref="Polarity"/> as its string, verbatim. Infrastructure: public only so that a host
+/// source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public sealed class PolarityConverter : JsonConverter<Polarity>
+{
+    /// <inheritdoc/>
+    public override Polarity Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        StringBacked.Read(ref reader, static name => new Polarity(name));
+
+    /// <inheritdoc/>
+    public override void Write(Utf8JsonWriter writer, Polarity value, JsonSerializerOptions options) =>
+        StringBacked.Write<Polarity>(writer, value.Name);
+}
+
 /// <summary>Writes <see cref="SeriesCountAxis"/> as its string, verbatim. Infrastructure: public only so that a host
 /// source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
 [EditorBrowsable(EditorBrowsableState.Never)]

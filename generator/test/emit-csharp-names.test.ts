@@ -28,6 +28,10 @@ function irWithTypes(): Ir {
       kind: 'union',
       members: [{ kind: 'number' }, { kind: 'object', props: [{ name: 'seriesCountAxis', optional: true, type: { kind: 'literalUnion', values: ['auto'] } }] }],
     },
+    SemanticAnnotation: {
+      kind: 'object',
+      props: [{ name: 'polarity', optional: true, type: { kind: 'literalUnion', values: ['lower-is-better'] } }],
+    },
   };
   return ir;
 }
@@ -90,6 +94,11 @@ internal static partial class NameTables
     internal static readonly ConstantName[] SortOrders =
     [
         new("ascending", "Ascending"),
+    ];
+
+    internal static readonly ConstantName[] Polarities =
+    [
+        new("lower-is-better", "LowerIsBetter"),
     ];
 
     internal static readonly ConstantName[] SeriesCountAxes =

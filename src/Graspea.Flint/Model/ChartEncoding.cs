@@ -1,9 +1,10 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Graspea.Flint.Serialization;
 
 namespace Graspea.Flint;
 
-/// <summary>One channel binding: a field plus optional type, aggregate, sort and scheme.</summary>
+/// <summary>One channel binding: a field plus optional type, aggregate, sort, scheme, title and colour scale settings.</summary>
 [JsonNumberHandling(JsonNumberHandling.Strict)]
 public sealed partial class ChartEncoding
 {
@@ -36,6 +37,37 @@ public sealed partial class ChartEncoding
     [JsonPropertyName("scheme")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Scheme { get; set; }
+
+    /// <summary>The <c>title</c> member: the name the channel's axis or key prints, in place of the field's; <see cref="ChannelTitle.None"/> prints none.</summary>
+    [JsonPropertyName("title")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ChannelTitle? Title { get; set; }
+
+    /// <summary>The <c>reverse</c> member, colour channel: run the scale the other way round.</summary>
+    [JsonPropertyName("reverse")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? Reverse { get; set; }
+
+    /// <summary>The <c>mid</c> member, colour channel: the value a diverging scale pivots on, for this chart (the field's <c>divergingMidpoint</c>).</summary>
+    [JsonPropertyName("mid")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public double? Mid { get; set; }
+
+    /// <summary>The <c>domain</c> member, colour channel: the measure extent the ramp spans, <c>[low, high]</c>, in place of the data's.</summary>
+    [JsonPropertyName("domain")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public double[]? Domain { get; set; }
+
+    /// <summary>The <c>bins</c> member, colour channel: quantize a continuous measure into this many bins; <c>0</c> keeps the ramp continuous.</summary>
+    [JsonPropertyName("bins")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public double? Bins { get; set; }
+
+    /// <summary>The <c>colors</c> member, colour channel: colours bound to values, for this chart (the field's <c>colors</c>), such as <c>{ "Win": "#2a9d8f" }</c>.</summary>
+    [JsonPropertyName("colors")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonConverter(typeof(VerbatimKeyDictionaryConverter<string>))]
+    public Dictionary<string, string>? Colors { get; set; }
 
     /// <summary>Members this version does not model; written after the known members.</summary>
     [JsonExtensionData]

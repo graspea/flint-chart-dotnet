@@ -6,7 +6,7 @@ namespace Graspea.Flint;
 
 /// <summary>
 /// The document flint-chart assembles: <c>data</c>, <c>semantic_types</c>, <c>chart_spec</c>, <c>theme_spec</c>,
-/// <c>options</c> and <c>field_display_names</c>. Serialise it with <see cref="Serialization.FlintJson"/>; the wire
+/// <c>options</c>, <c>field_display_names</c> and <c>interaction_spec</c>. Serialise it with <see cref="Serialization.FlintJson"/>; the wire
 /// shape is attached to the types, so any <see cref="JsonSerializerOptions"/> produce the same document.
 /// </summary>
 [JsonNumberHandling(JsonNumberHandling.Strict)]
@@ -45,6 +45,11 @@ public sealed partial class ChartAssemblyInput
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [JsonConverter(typeof(VerbatimKeyDictionaryConverter<string>))]
     public Dictionary<string, string>? FieldDisplayNames { get; set; }
+
+    /// <summary>The <c>interaction_spec</c> member: how the chart behaves, read by the Vega-Lite interactive surface (<c>flint-chart/interactive</c>); the assemblers and the static backends leave it untouched.</summary>
+    [JsonPropertyName("interaction_spec")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public InteractionSpec? InteractionSpec { get; set; }
 
     /// <summary>Members this version does not model; written after the known members.</summary>
     [JsonExtensionData]

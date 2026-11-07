@@ -14,6 +14,7 @@ import { csString, docComment, emptyResult, header, type EmitResult } from './co
 const ROOTS = [
   { type: 'AssembleOptions', namespace: 'Graspea.Flint', folder: 'Options' },
   { type: 'ThemeSpec', namespace: 'Graspea.Flint.Theming', folder: 'Theming' },
+  { type: 'InteractionSpec', namespace: 'Graspea.Flint', folder: 'Interaction' },
 ] as const;
 
 /** A named type reached from more than one root: shared, like the hand-written ContinuousMarkCrossSection. */

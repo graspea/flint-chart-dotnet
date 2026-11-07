@@ -30,6 +30,10 @@ public abstract class ChartBuilder<TSelf, TRow>
     private Dictionary<string, JsonNode> _properties = [];
     private string? _title;
     private string? _subtitle;
+    private string? _label;
+    private ChartSource? _source;
+    private ChartChrome? _chrome;
+    private InteractionSpec? _interaction;
     private ChartSize? _baseSize;
     private ChartSize? _canvasSize;
     private ChartTheme? _theme;
@@ -241,6 +245,35 @@ public abstract class ChartBuilder<TSelf, TRow>
         return Self;
     }
 
+    /// <summary>Sets <c>chart_spec.label</c>, a short line above the headline (a figure label or a kicker); null removes it.</summary>
+    /// <param name="label">The label.</param>
+    /// <returns>This builder.</returns>
+    public TSelf Label(string? label)
+    {
+        _label = label;
+        return Self;
+    }
+
+    /// <summary>Sets <c>chart_spec.source</c>, the chart's source line: a string or a <see cref="ChartSource"/> with a link;
+    /// null removes it. Give it only where the source is known. The builder keeps a copy.</summary>
+    /// <param name="source">The source.</param>
+    /// <returns>This builder.</returns>
+    public TSelf Source(ChartSource? source)
+    {
+        _source = source is null ? null : Clone(source, FlintJsonContext.Default.ChartSource);
+        return Self;
+    }
+
+    /// <summary>Sets <c>chart_spec.chrome</c>, the house chrome the chart keeps: <see cref="ChartChrome.None"/> or the parts
+    /// to turn off; null removes it, so the theme decides. The builder keeps a copy.</summary>
+    /// <param name="chrome">The chrome.</param>
+    /// <returns>This builder.</returns>
+    public TSelf Chrome(ChartChrome? chrome)
+    {
+        _chrome = chrome is null ? null : Clone(chrome, FlintJsonContext.Default.ChartChrome);
+        return Self;
+    }
+
     /// <summary>Sets <c>chart_spec.baseSize</c>, the size of the plot area before layout stretching.</summary>
     /// <param name="width">The width in pixels.</param>
     /// <param name="height">The height in pixels.</param>
@@ -324,6 +357,19 @@ public abstract class ChartBuilder<TSelf, TRow>
         return Self;
     }
 
+    /// <summary>Sets <c>interaction_spec</c>, how the chart behaves. The Vega-Lite interactive surface
+    /// (<c>flint-chart/interactive</c>) reads it; the assemblers and the static backends leave it untouched. The builder
+    /// keeps a copy.</summary>
+    /// <param name="interaction">The interactions.</param>
+    /// <returns>This builder.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="interaction"/> is null.</exception>
+    public TSelf Interaction(InteractionSpec interaction)
+    {
+        ArgumentNullException.ThrowIfNull(interaction);
+        _interaction = Clone(interaction, FlintJsonContext.Default.InteractionSpec);
+        return Self;
+    }
+
     /// <summary>Changes <c>options</c>; every call is applied, in order, to a new <see cref="AssembleOptions"/> at
     /// <see cref="Build"/>. Objects the action assigns are used as given, not copied.</summary>
     /// <param name="configure">Changes the options.</param>
@@ -398,14 +444,18 @@ public abstract class ChartBuilder<TSelf, TRow>
                 ChartType = _chartType,
                 Title = _title,
                 Subtitle = _subtitle,
+                Label = _label,
                 Encodings = _encodings.ToDictionary(p => p.Key, p => Clone(p.Value, FlintJsonContext.Default.EncodingValue)),
                 BaseSize = _baseSize,
                 CanvasSize = _canvasSize,
                 ChartProperties = _properties.Count == 0 ? null : _properties.ToDictionary(p => p.Key, p => (JsonNode?)p.Value.DeepClone()),
+                Source = _source is null ? null : Clone(_source, FlintJsonContext.Default.ChartSource),
+                Chrome = _chrome is null ? null : Clone(_chrome, FlintJsonContext.Default.ChartChrome),
             },
             ThemeSpec = _theme is null ? null : Clone(_theme, FlintJsonContext.Default.ChartTheme),
             Options = options,
             FieldDisplayNames = _displayNames.Count == 0 ? null : new Dictionary<string, string>(_displayNames),
+            InteractionSpec = _interaction is null ? null : Clone(_interaction, FlintJsonContext.Default.InteractionSpec),
         };
         foreach (var configure in _configure)
         {

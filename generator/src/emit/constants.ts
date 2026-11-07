@@ -74,7 +74,7 @@ export function catalogConstantNames(ir: Ir, overrides: Overrides): Map<string, 
 
 /**
  * Struct name -> its constants in emission order (wire value and C# member, overrides.json renames applied), for every
- * string-backed struct: the catalog structs and the literal structs (EncodingType, Aggregate, SortOrder, SeriesCountAxis).
+ * string-backed struct: the catalog structs and the literal structs (EncodingType, Aggregate, SortOrder, Polarity, SeriesCountAxis).
  */
 export function constantNames(ir: Ir, overrides: Overrides): Map<string, Array<{ value: string; member: string }>> {
   return new Map(structs(ir).map(([struct, constants]) => [struct, constants.map((c) => ({ value: c.value, member: overrides.renames[c.path] ?? c.member }))]));
@@ -86,6 +86,7 @@ function structs(ir: Ir): Array<[string, Constant[]]> {
     ['EncodingType', literal(ir, 'ChartEncoding.type', (t) => member(t, 'type'))],
     ['Aggregate', literal(ir, 'ChartEncoding.aggregate', (t) => member(t, 'aggregate'))],
     ['SortOrder', literal(ir, 'ChartEncoding.sortOrder', (t) => member(t, 'sortOrder'))],
+    ['Polarity', literal(ir, 'SemanticAnnotation.polarity', (t) => member(t, 'polarity'))],
     [
       'SeriesCountAxis',
       literal(ir, 'ContinuousMarkCrossSection.seriesCountAxis', (t) =>

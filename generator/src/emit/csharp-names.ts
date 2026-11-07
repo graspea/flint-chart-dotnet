@@ -111,6 +111,7 @@ export function emitCSharpNames(ir: Ir, overrides: Overrides): EmittedFile[] {
       list('EncodingTypes', 'ConstantName', struct('EncodingType')),
       list('Aggregates', 'ConstantName', struct('Aggregate')),
       list('SortOrders', 'ConstantName', struct('SortOrder')),
+      list('Polarities', 'ConstantName', struct('Polarity')),
       list('SeriesCountAxes', 'ConstantName', struct('SeriesCountAxis')),
       list('Classes', 'ClassNames', classes),
       list('StringUnions', 'StringUnionNames', unions),

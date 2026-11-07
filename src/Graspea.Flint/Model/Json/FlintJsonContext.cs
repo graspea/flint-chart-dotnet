@@ -9,14 +9,18 @@ namespace Graspea.Flint.Serialization;
 /// <c>[JsonSerializable]</c> from one partial declaration only.
 /// </summary>
 [JsonSourceGenerationOptions(DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, NumberHandling = JsonNumberHandling.Strict)]
+[JsonSerializable(typeof(AssistedTargetingDto))]
 [JsonSerializable(typeof(ChartAssemblyInput))]
+[JsonSerializable(typeof(ChartChromeDto))]
 [JsonSerializable(typeof(ChartDataDto))]
 [JsonSerializable(typeof(ChartEncoding))]
+[JsonSerializable(typeof(ChartSourceDto))]
 [JsonSerializable(typeof(EncodingValue))]
 [JsonSerializable(typeof(ContinuousMarkCrossSectionDto))]
 [JsonSerializable(typeof(MinorGridSpecDto))]
 [JsonSerializable(typeof(RuleSpecDto))]
 [JsonSerializable(typeof(SemanticAnnotation))]
 [JsonSerializable(typeof(SemanticAnnotationDto))]
+[JsonSerializable(typeof(TargetDetailsDto))]
 [JsonSerializable(typeof(Theming.ThemeSpec))]
 internal sealed partial class FlintJsonContext : JsonSerializerContext;

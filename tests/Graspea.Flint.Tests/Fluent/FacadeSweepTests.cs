@@ -18,7 +18,10 @@ namespace Graspea.Flint.Tests.Fluent;
 public sealed partial class FacadeSweepTests
 {
     private static readonly string[] ReservedCoreNames =
-        ["Encode", "Series", "Encoding", "Property", "Title", "Subtitle", "BaseSize", "CanvasSize", "Annotate", "DisplayName", "Theme", "Options", "Configure", "Build", "Validate", "ToJson", "ToTemplate"];
+        [
+            "Encode", "Series", "Encoding", "Property", "Title", "Subtitle", "Label", "Source", "Chrome", "BaseSize", "CanvasSize", "Annotate",
+            "DisplayName", "Theme", "Interaction", "Options", "Configure", "Build", "Validate", "ToJson", "ToTemplate",
+        ];
 
     private static readonly Assembly Library = typeof(ChartBuilder<,>).Assembly;
 
