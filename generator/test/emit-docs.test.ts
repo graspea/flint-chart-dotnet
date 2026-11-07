@@ -203,7 +203,7 @@ describe('emit/docs', () => {
     const table = readme.slice(readme.indexOf('<!-- flint:generated:chart-catalog start -->'), readme.indexOf('<!-- flint:generated:chart-catalog end -->'));
     const inReadme = [...table.matchAll(/`ChartType\.(\w+)`/g)].map((m) => m[1]).sort();
     const inIr = ir.catalog.chartTypes.map((t) => renames[`catalog.chartTypes[${t.name}]`] ?? pascal(t.name)).sort();
-    assert.equal(inIr.length, 48);
+    assert.equal(new Set(inIr).size, ir.catalog.chartTypes.length);
     assert.deepEqual(inReadme, inIr);
   });
 });

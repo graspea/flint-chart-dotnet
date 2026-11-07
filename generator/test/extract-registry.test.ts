@@ -1,15 +1,24 @@
 import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import * as flint from 'flint-chart';
 import { extractCatalog } from '../src/extract/registry.ts';
 import { flintPackageDir } from '../src/extract/package.ts';
-import type { IrCatalog } from '../src/ir.ts';
+import type { Ir, IrCatalog } from '../src/ir.ts';
 
-// Runs against the installed flint-chart@0.5.1. Expected counts: docs/design part 01 §2 and §10.4 test 3,
-// all probed against the 0.5.1 tarball.
+// Runs against the installed flint-chart. Facts cited from docs/design part 01 §2 and §10.4 test 3 were probed against
+// the 0.5.1 tarball; a count or list that changes between upstream versions is read from the committed IR of the pinned
+// version (ir/flint-ir.json), with the 0.5.1 value named in the source comment.
 describe('extract/registry', () => {
   let catalog: IrCatalog;
+  const committed = (JSON.parse(readFileSync(new URL('../ir/flint-ir.json', import.meta.url), 'utf8')) as Ir).catalog;
   const backendsOf = (name: string) => Object.keys(catalog.chartTypes.find((t) => t.name === name)!.backends).sort();
+  const perBackend = (c: IrCatalog) =>
+    Object.fromEntries(c.backends.map((b) => [b, c.chartTypes.filter((t) => b in t.backends).length]));
+  const allProperties = (c: IrCatalog) =>
+    c.chartTypes.flatMap((t) => Object.values(t.backends).flatMap((b) => b.properties.map((p) => ({ t, p }))));
+  const discretePairs = (c: IrCatalog) =>
+    new Set(allProperties(c).filter(({ p }) => p.type === 'discrete').map(({ t, p }) => `${t.name}/${p.key}`));
 
   before(() => {
     catalog = extractCatalog(flint as unknown as Record<string, unknown>, flintPackageDir(), {
@@ -24,13 +33,12 @@ describe('extract/registry', () => {
     assert.deepEqual(catalog.backends, ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel']);
   });
 
-  // source: design §2 (48 chart types; Vega-Lite 36, ECharts 37, Chart.js 22, Plotly 38, Excel 18)
-  it('extracts 48 chart types with the per-backend counts', () => {
-    assert.equal(catalog.chartTypes.length, 48);
-    const perBackend = Object.fromEntries(
-      catalog.backends.map((b) => [b, catalog.chartTypes.filter((t) => b in t.backends).length]),
-    );
-    assert.deepEqual(perBackend, { vegalite: 36, echarts: 37, chartjs: 22, plotly: 38, excel: 18 });
+  // source: ir/flint-ir.json catalog.chartTypes (the chart types of the pinned version; design §2 on 0.5.1: 48, Vega-Lite
+  // 36, ECharts 37, Chart.js 22, Plotly 38, Excel 18)
+  it('extracts the chart types of the committed IR with its per-backend counts', () => {
+    assert.deepEqual(catalog.chartTypes.map((t) => t.name), committed.chartTypes.map((t) => t.name));
+    assert.deepEqual(perBackend(catalog), perBackend(committed));
+    assert.ok(Object.values(perBackend(catalog)).every((n) => n > 0));
   });
 
   // source: design §7.3 (chart types sorted by name)
@@ -39,21 +47,20 @@ describe('extract/registry', () => {
     assert.deepEqual(names, [...names].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)));
   });
 
-  // source: design §2 (44-entry SemanticTypes registry; ten theme presets)
-  it('extracts 44 semantic types and 10 theme presets', () => {
-    assert.equal(catalog.semanticTypes.length, 44);
-    assert.deepEqual(
-      catalog.themePresets.map((p) => p.id),
-      ['cartoon', 'datawrapper', 'economist', 'mckinsey', 'nature', 'nyt', 'pop', 'powerbi', 'powerbi-light', 'swiss'],
-    );
+  // source: ir/flint-ir.json catalog.semanticTypes and catalog.themePresets (the pinned version; design §2 on 0.5.1: 44
+  // semantic types, ten presets from cartoon to swiss)
+  it('extracts the semantic types and theme presets of the committed IR', () => {
+    assert.deepEqual(catalog.semanticTypes.map((t) => t.name), committed.semanticTypes.map((t) => t.name));
+    assert.deepEqual(catalog.themePresets.map((p) => p.id), committed.themePresets.map((p) => p.id));
+    assert.ok(catalog.themePresets.some((p) => p.id === 'swiss'));
   });
 
-  // source: design §2 (296 ChartPropertyDefs; 46 distinct (template, key) discrete pairs)
-  it('extracts 296 properties and 46 distinct discrete pairs', () => {
-    const all = catalog.chartTypes.flatMap((t) => Object.values(t.backends).flatMap((b) => b.properties.map((p) => ({ t, p }))));
-    assert.equal(all.length, 296);
-    const pairs = new Set(all.filter(({ p }) => p.type === 'discrete').map(({ t, p }) => `${t.name}/${p.key}`));
-    assert.equal(pairs.size, 46);
+  // source: ir/flint-ir.json catalog.chartTypes[*].backends[*].properties (the pinned version; design §2 on 0.5.1: 296
+  // ChartPropertyDefs, 46 distinct (template, key) discrete pairs)
+  it('extracts the properties and distinct discrete pairs of the committed IR', () => {
+    assert.equal(allProperties(catalog).length, allProperties(committed).length);
+    assert.deepEqual([...discretePairs(catalog)].sort(), [...discretePairs(committed)].sort());
+    assert.ok(discretePairs(catalog).size > 0);
   });
 
   // source: design §2 Channels (constant 26 + theta = 27; text only in channelGroups)
@@ -63,12 +70,16 @@ describe('extract/registry', () => {
     assert.ok(!catalog.channels.includes('text'));
   });
 
-  // source: design §10.4 test 3 (registry facts)
-  it('records Line Chart strokeDash on vegalite, plotly and excel and detail on vegalite only', () => {
-    const line = catalog.chartTypes.find((t) => t.name === 'Line Chart')!;
-    const having = (ch: string) => Object.entries(line.backends).filter(([, b]) => b.channels.includes(ch)).map(([n]) => n).sort();
-    assert.deepEqual(having('strokeDash'), ['excel', 'plotly', 'vegalite']);
-    assert.deepEqual(having('detail'), ['vegalite']);
+  // source: design §10.4 test 3 (registry facts: channels are recorded per backend; on 0.5.1 Line Chart has strokeDash on
+  // vegalite, plotly and excel and detail on vegalite only) and ir/flint-ir.json catalog.chartTypes[Line Chart]
+  it('records the Line Chart strokeDash and detail channels per backend', () => {
+    const having = (c: IrCatalog, ch: string) =>
+      Object.entries(c.chartTypes.find((t) => t.name === 'Line Chart')!.backends).filter(([, b]) => b.channels.includes(ch)).map(([n]) => n).sort();
+    for (const ch of ['strokeDash', 'detail']) {
+      assert.deepEqual(having(catalog, ch), having(committed, ch), ch);
+      assert.ok(having(catalog, ch).includes('vegalite'), ch);
+    }
+    assert.ok(having(catalog, 'detail').length < Object.keys(catalog.chartTypes.find((t) => t.name === 'Line Chart')!.backends).length);
   });
 
   // source: design §10.4 test 3 (registry facts)

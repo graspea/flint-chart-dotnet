@@ -12,35 +12,45 @@ describe('naming on the committed IR', () => {
   const ir = JSON.parse(readFileSync(new URL('../ir/flint-ir.json', import.meta.url), 'utf8')) as Ir;
   const names = catalogNames(ir.catalog, loadOverrides(new URL('../overrides.json', import.meta.url).pathname).renames);
 
-  // source: design §2 registry facts (48 chart types) and §7.6 rule 6 (two entries equal after stripping fail)
-  it('derives 48 distinct entry names', () => {
-    assert.equal(names.entries.size, 48);
-    assert.equal(new Set(names.entries.values()).size, 48);
+  // source: ir/flint-ir.json catalog.chartTypes (one entry per chart type; 48 on 0.5.1, design §2) and §7.6 rule 6 (two
+  // entries equal after stripping fail)
+  it('derives one distinct entry name per chart type', () => {
+    assert.equal(names.entries.size, ir.catalog.chartTypes.length);
+    assert.equal(new Set(names.entries.values()).size, ir.catalog.chartTypes.length);
   });
 
-  // source: design §4.2 collision rule (expected 0.5.1 results: OpacityValue on Scatter Plot, Area Chart and Bubble
-  // Chart only; no reserved core name is hit)
-  it('renames only the opacity property, on Area Chart, Bubble Chart and Scatter Plot', () => {
+  // source: design §4.2 collision rule (a property named like a channel of its template gets Value; on 0.5.1 OpacityValue
+  // on Scatter Plot, Area Chart and Bubble Chart only, and no reserved core name is hit) and ir/flint-ir.json (the
+  // channels and properties of each template)
+  it('renames exactly the properties that collide with a channel of their template', () => {
     const renamed: string[] = [];
     for (const [chartType, members] of names.members) {
       for (const [raw, name] of [...members.channels, ...members.properties]) {
         if (name !== pascal(raw)) renamed.push(`${chartType}/${raw} -> ${name}`);
       }
     }
-    assert.deepEqual(renamed.sort(), [
-      'Area Chart/opacity -> OpacityValue',
-      'Bubble Chart/opacity -> OpacityValue',
-      'Scatter Plot/opacity -> OpacityValue',
-    ]);
+    const colliding = ir.catalog.chartTypes.flatMap((t) => {
+      const backends = Object.values(t.backends);
+      const channels = new Set(backends.flatMap((b) => b.channels.map(pascal)));
+      const keys = [...new Set(backends.flatMap((b) => b.properties.map((p) => p.key)))];
+      return keys.filter((k) => channels.has(pascal(k))).map((k) => `${t.name}/${k} -> ${pascal(k)}Value`);
+    });
+    assert.deepEqual(renamed.sort(), colliding.sort());
+    assert.ok(renamed.includes('Scatter Plot/opacity -> OpacityValue'));
   });
 
-  // source: design §3 and §7.4 (one enum per distinct template-and-key discrete pair: 46 on 0.5.1) and overrides.json
-  // (Radar Chart filled, binary on vegalite and discrete elsewhere, maps to JsonNode, so it has no enum)
-  it('derives 45 enums and one JsonNode property', () => {
+  // source: design §3 and §7.4 (one enum per distinct template-and-key discrete pair; 46 pairs on 0.5.1), ir/flint-ir.json
+  // (the discrete pairs of the pinned version) and overrides.json (Radar Chart filled, binary on vegalite and discrete
+  // elsewhere, maps to JsonNode, so it has no enum)
+  it('derives one enum per discrete pair except the JsonNode property', () => {
     const model = fluentModel(ir, loadOverrides(new URL('../overrides.json', import.meta.url).pathname));
     const properties = model.flatMap((t) => t.properties.map((p) => ({ t: t.name, p })));
-    assert.equal(properties.filter(({ p }) => p.enum).length, 45);
-    assert.deepEqual(properties.filter(({ p }) => p.kind === 'json').map(({ t, p }) => `${t}/${p.key}`), ['Radar Chart/filled']);
+    const json = properties.filter(({ p }) => p.kind === 'json').map(({ t, p }) => `${t}/${p.key}`);
+    assert.deepEqual(json, ['Radar Chart/filled']);
+    const discrete = new Set(
+      ir.catalog.chartTypes.flatMap((t) => Object.values(t.backends).flatMap((b) => b.properties.filter((p) => p.type === 'discrete').map((p) => `${t.name}/${p.key}`))),
+    );
+    assert.deepEqual(properties.filter(({ p }) => p.enum).map(({ t, p }) => `${t}/${p.key}`).sort(), [...discrete].filter((k) => !json.includes(k)).sort());
   });
 
   // source: design §7.6 rule 3 and overrides.json (renames["Regression/enum/regressionMethod"] = RegressionMethod, so no

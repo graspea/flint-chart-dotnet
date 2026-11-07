@@ -1,30 +1,36 @@
 import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { extractTypes } from '../src/extract/dts.ts';
 import { flintPackageDir } from '../src/extract/package.ts';
-import type { IrNamedType, IrProp, IrType } from '../src/ir.ts';
+import type { Ir, IrNamedType, IrProp, IrType } from '../src/ir.ts';
 
-// Runs against the d.ts of the installed flint-chart@0.5.1. T: = dist/types-BWc1W3v4.d.ts.
+// Runs against the d.ts of the installed flint-chart. T: = dist/types-BWc1W3v4.d.ts of 0.5.1, which the cited facts hold
+// for; a value that changes between upstream versions (a member count, a member list) is read from the committed IR of
+// the pinned version, ir/flint-ir.json, and pinned on a synthetic d.ts below where the rule behind it matters.
 describe('extract/dts', () => {
   let types: Record<string, IrNamedType>;
-  const props = (name: string): IrProp[] => {
-    const t = types[name];
-    assert.equal(t.kind, 'object', name);
+  const committed = (JSON.parse(readFileSync(new URL('../ir/flint-ir.json', import.meta.url), 'utf8')) as Ir).types;
+  const propsOf = (all: Record<string, IrNamedType>, name: string): IrProp[] => {
+    const t = all[name];
+    assert.equal(t?.kind, 'object', name);
     return (t as { props: IrProp[] }).props;
   };
+  const props = (name: string): IrProp[] => propsOf(types, name);
+  const committedNames = (name: string) => propsOf(committed, name).map((p) => `${p.name}${p.optional ? '?' : ''}`);
   const prop = (name: string, member: string): IrProp => props(name).find((p) => p.name === member)!;
 
   before(() => {
     types = extractTypes(flintPackageDir());
   });
 
-  // source: T:3032-3300, design §2 (AssembleOptions has 27 optional members)
-  it('extracts AssembleOptions with 27 optional members sorted by wire name', () => {
+  // source: T:3032-3300 and design §2 (every AssembleOptions member is optional; 27 on 0.5.1) and ir/flint-ir.json
+  // types.AssembleOptions (the members of the pinned version)
+  it('extracts the AssembleOptions members of the committed IR, all optional, sorted by wire name', () => {
     const members = props('AssembleOptions');
-    assert.equal(members.length, 27);
+    assert.deepEqual(members.map((p) => `${p.name}${p.optional ? '?' : ''}`), committedNames('AssembleOptions'));
     assert.ok(members.every((p) => p.optional));
     const names = members.map((p) => p.name);
     assert.deepEqual(names, [...names].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)));
@@ -60,12 +66,12 @@ describe('extract/dts', () => {
     assert.deepEqual(prop('ChartEncoding', 'sortOrder').type, { kind: 'literalUnion', values: ['ascending', 'descending'] });
   });
 
-  // source: T:2916-3027 (six top-level keys; data and chart_spec required)
-  it('extracts the six ChartAssemblyInput keys', () => {
-    assert.deepEqual(
-      props('ChartAssemblyInput').map((p) => `${p.name}${p.optional ? '?' : ''}`),
-      ['chart_spec', 'data', 'field_display_names?', 'options?', 'semantic_types?', 'theme_spec?'],
-    );
+  // source: T:2916-3027 (data and chart_spec required, options a reference to AssembleOptions; six keys on 0.5.1) and
+  // ir/flint-ir.json types.ChartAssemblyInput (the keys of the pinned version)
+  it('extracts the ChartAssemblyInput keys of the committed IR, with data and chart_spec required', () => {
+    const keys = props('ChartAssemblyInput').map((p) => `${p.name}${p.optional ? '?' : ''}`);
+    assert.deepEqual(keys, committedNames('ChartAssemblyInput'));
+    assert.ok(keys.includes('chart_spec') && keys.includes('data'));
     assert.deepEqual(prop('ChartAssemblyInput', 'options').type, { kind: 'ref', name: 'AssembleOptions' });
   });
 
@@ -78,21 +84,24 @@ describe('extract/dts', () => {
     });
   });
 
-  // source: design §7.1 (core types without an upstream name are extracted for the parity test)
+  // source: design §7.1 (core types without an upstream name are extracted for the parity test) and ir/flint-ir.json
+  // types.ChartSpec (the chart_spec members of the pinned version; seven on 0.5.1)
   it('adds the anonymous core types under their SDK names', () => {
-    assert.deepEqual(
-      props('ChartSpec').map((p) => p.name),
-      ['baseSize', 'canvasSize', 'chartProperties', 'chartType', 'encodings', 'subtitle', 'title'],
-    );
+    assert.deepEqual(props('ChartSpec').map((p) => `${p.name}${p.optional ? '?' : ''}`), committedNames('ChartSpec'));
+    assert.ok(props('ChartSpec').some((p) => p.name === 'chartType'));
     assert.deepEqual(props('ChartSize').map((p) => p.name), ['height', 'width']);
     assert.equal(types.ContinuousMarkCrossSection.kind, 'union');
     assert.equal(types.ChartData.kind, 'union');
   });
 
-  // source: design §7.4 (compileDefaults is accepted as a flattened 29-property class; upstream names it ThemeCompileDefaults)
-  it('flattens ThemeCompileDefaults extends Partial<AssembleOptions> into 29 members', () => {
+  // source: design §7.4 (compileDefaults is accepted as a flattened class, 29 members on 0.5.1; upstream names it
+  // ThemeCompileDefaults) and ir/flint-ir.json types.ThemeCompileDefaults; the rule is pinned on a synthetic d.ts below
+  it('flattens ThemeCompileDefaults extends Partial<AssembleOptions> into every AssembleOptions member and its own', () => {
     assert.deepEqual(prop('ThemeSpec', 'compileDefaults').type, { kind: 'ref', name: 'ThemeCompileDefaults' });
-    assert.equal(props('ThemeCompileDefaults').length, 29);
+    const names = props('ThemeCompileDefaults').map((p) => p.name);
+    assert.deepEqual(names, propsOf(committed, 'ThemeCompileDefaults').map((p) => p.name));
+    for (const p of props('AssembleOptions')) assert.ok(names.includes(p.name), p.name);
+    assert.ok(names.length > props('AssembleOptions').length);
   });
 
   // source: T:1425-1431 (ThemeVariant.then: Partial<Omit<ThemeSpec, ...>> is a mapped type)
@@ -120,52 +129,52 @@ describe('extract/dts', () => {
     });
   });
 
-  // source: the interface declarations reachable from ThemeSpec in the d.ts: ArcGeometry T:1480, AreaGeometry T:1464,
-  // AxisRole T:973, BandGeometry T:1471, CellGeometry T:1487, LineGeometry T:1442, NumericGuard T:1418,
+  // source: the interface declarations reachable from ThemeSpec in the d.ts (on 0.5.1: ArcGeometry T:1480, AreaGeometry
+  // T:1464, AxisRole T:973, BandGeometry T:1471, CellGeometry T:1487, LineGeometry T:1442, NumericGuard T:1418,
   // PointGeometry T:1449, Ramp T:1005, ThemeAnnotation T:1326, ThemeCompileDefaults T:1546, ThemeDataLabels T:1321,
   // ThemeFacets T:1366, ThemeFurniture T:1359, ThemeGeometry T:1511, ThemeGuard T:1406, ThemeInk T:1015,
   // ThemeLabels T:1293, ThemeLayout T:1378, ThemeLegend T:1299, ThemeMarks T:1136, ThemeSpec T:1566,
   // ThemeStructure T:1100, ThemeType T:1087, ThemeVariant T:1425, TypeRole T:964; with the index-signature-only
-  // ThemeChartDefaults T:1534 (a record, not listed) these are the 27 named types of design §7.4
+  // ThemeChartDefaults T:1534, a record, the 27 named types of design §7.4), as ir/flint-ir.json records them for the
+  // pinned version
   it('collects the named object types of the ThemeSpec tree', () => {
-    const reachable = new Set<string>();
-    const visit = (t: IrType) => {
-      switch (t.kind) {
-        case 'ref':
-          if (!reachable.has(t.name)) {
-            reachable.add(t.name);
-            visit(types[t.name]);
-          }
-          break;
-        case 'object':
-        case 'mapped':
-          t.props.forEach((p) => visit(p.type));
-          break;
-        case 'array':
-          visit(t.element);
-          break;
-        case 'record':
-          visit(t.value);
-          break;
-        case 'union':
-        case 'intersection':
-          t.members.forEach(visit);
-          break;
-        case 'partial':
-          visit(t.of);
-          break;
-        default:
-          break;
-      }
+    const treeOf = (all: Record<string, IrNamedType>): string[] => {
+      const reachable = new Set<string>();
+      const visit = (t: IrType) => {
+        switch (t.kind) {
+          case 'ref':
+            if (!reachable.has(t.name)) {
+              reachable.add(t.name);
+              visit(all[t.name]);
+            }
+            break;
+          case 'object':
+          case 'mapped':
+            t.props.forEach((p) => visit(p.type));
+            break;
+          case 'array':
+            visit(t.element);
+            break;
+          case 'record':
+            visit(t.value);
+            break;
+          case 'union':
+          case 'intersection':
+            t.members.forEach(visit);
+            break;
+          case 'partial':
+            visit(t.of);
+            break;
+          default:
+            break;
+        }
+      };
+      visit({ kind: 'ref', name: 'ThemeSpec' });
+      return [...reachable].filter((n) => all[n].kind === 'object').sort();
     };
-    visit({ kind: 'ref', name: 'ThemeSpec' });
-    const objects = [...reachable].filter((n) => types[n].kind === 'object').sort();
-    assert.deepEqual(objects, [
-      'ArcGeometry', 'AreaGeometry', 'AxisRole', 'BandGeometry', 'CellGeometry', 'LineGeometry', 'NumericGuard',
-      'PointGeometry', 'Ramp', 'ThemeAnnotation', 'ThemeCompileDefaults', 'ThemeDataLabels', 'ThemeFacets',
-      'ThemeFurniture', 'ThemeGeometry', 'ThemeGuard', 'ThemeInk', 'ThemeLabels', 'ThemeLayout', 'ThemeLegend',
-      'ThemeMarks', 'ThemeSpec', 'ThemeStructure', 'ThemeType', 'ThemeVariant', 'TypeRole',
-    ]);
+    const objects = treeOf(types);
+    assert.deepEqual(objects, treeOf(committed));
+    for (const name of ['ThemeCompileDefaults', 'ThemeInk', 'ThemeSpec', 'ThemeVariant']) assert.ok(objects.includes(name), name);
   });
 
   // source: JSDoc on AssembleOptions.addTooltips (T:3034)
@@ -202,7 +211,7 @@ describe('extract/dts', () => {
 
 describe('extract/dts on a synthetic d.ts', () => {
   /** Extracts a package whose index.d.ts declares the roots and core aliases plus `ThemeSpec { <members> }`. */
-  const extractTheme = (members: string): Record<string, IrNamedType> => {
+  const extractTheme = (members: string, ...declarations: string[]): Record<string, IrNamedType> => {
     const dir = mkdtempSync(join(tmpdir(), 'flint-dts-'));
     try {
       writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'fake', version: '0.0.0', types: 'index.d.ts' }));
@@ -214,6 +223,7 @@ describe('extract/dts on a synthetic d.ts', () => {
           'export interface ChartAssemblyInput { data?: number; chart_spec?: { baseSize?: number }; }',
           'export interface ChartEncoding { x?: number; }',
           'export interface SemanticAnnotation { x?: number; }',
+          ...declarations,
         ].join('\n'),
       );
       return extractTypes(dir);
@@ -246,6 +256,17 @@ describe('extract/dts on a synthetic d.ts', () => {
   it('records a Record keyed by one string literal as a record with that key', () => {
     const types = extractTheme("only?: Record<'line', number>;");
     assert.deepEqual(member(types, 'only'), { kind: 'record', keys: ['line'], value: { kind: 'number' } });
+  });
+
+  // source: design §7.4 (ThemeCompileDefaults extends Partial<AssembleOptions> is extracted as one flattened object: the
+  // inherited members and its own, sorted by wire name)
+  it('flattens an interface that extends Partial<AssembleOptions> into the inherited and own members', () => {
+    const types = extractTheme('compileDefaults?: ThemeCompileDefaults;', 'export interface ThemeCompileDefaults extends Partial<AssembleOptions> { baseSize?: number; }');
+    assert.deepEqual(member(types, 'compileDefaults'), { kind: 'ref', name: 'ThemeCompileDefaults' });
+    assert.deepEqual((types.ThemeCompileDefaults as { props: IrProp[] }).props.map((p) => `${p.name}${p.optional ? '?' : ''}`), [
+      'baseSize?',
+      'continuousMarkCrossSection?',
+    ]);
   });
 
   // source: flint-chart 1.0.0 d.ts PointGeometry.ink (`'series' | 'text' | string`): any string is accepted, the literals

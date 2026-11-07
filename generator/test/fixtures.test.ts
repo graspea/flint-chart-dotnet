@@ -29,21 +29,27 @@ function folderHash(dir: string): string {
   return hash.digest('hex');
 }
 
-// Runs against the installed flint-chart@0.5.1.
+// Runs against the installed flint-chart, the version package.json pins. A count that changes between upstream versions
+// is read from the committed fixture set of that version, tests/fixtures/flint-chart@<version>/, with the 0.5.1 value
+// named in the source comment.
 describe('extract/fixtures', () => {
+  const version: string = JSON.parse(readFileSync(join(generatorDir, 'package.json'), 'utf8')).dependencies['flint-chart'];
+  const versionFolder = `flint-chart@${version}`;
+  const committedFolder = join(generatorDir, '../tests/fixtures', versionFolder);
   let first: string;
   let second: string;
   let folder: string;
-  const lines = (file: string) =>
-    readFileSync(join(folder, file), 'utf8')
+  const linesIn = (dir: string, file: string) =>
+    readFileSync(join(dir, file), 'utf8')
       .trimEnd()
       .split('\n')
       .map((l) => JSON.parse(l));
+  const lines = (file: string) => linesIn(folder, file);
 
   before(() => {
     first = runFixtures();
     second = runFixtures();
-    folder = join(first, 'flint-chart@0.5.1');
+    folder = join(first, versionFolder);
   });
 
   after(() => {
@@ -63,7 +69,7 @@ describe('extract/fixtures', () => {
       const run = spawnSync(process.execPath, fixturesArgs(empty, '--check'), { ...childOptions, encoding: 'utf8' });
       assert.equal(run.status, 1);
       assert.match(run.stderr, /cases\.jsonl/);
-      assert.equal(existsSync(join(empty, 'flint-chart@0.5.1')), false);
+      assert.equal(existsSync(join(empty, versionFolder)), false);
     } finally {
       rmSync(empty, { recursive: true });
     }
@@ -83,19 +89,24 @@ describe('extract/fixtures', () => {
     assert.equal(readFileSync(join(folder, 'known-failures.txt'), 'utf8'), '');
   });
 
-  // source: design §10.3 fixture formats (manifest) and part 01 §2 (934 TestCases)
+  // source: design §10.3 fixture formats (manifest: case counts, integrity, seed 42, UTC, the upstream version),
+  // package.json (the pin), package-lock.json, src/extract/probe-cases.ts (38 crafted cases) and the committed
+  // tests/fixtures/flint-chart@<version>/manifest.json (the TestCases of the installed version; 934 on 0.5.1, part 01 §2)
   it('records the manifest', () => {
     const manifest = JSON.parse(readFileSync(join(folder, 'manifest.json'), 'utf8'));
     const lock = JSON.parse(readFileSync(join(generatorDir, 'package-lock.json'), 'utf8'));
+    const committedManifest = JSON.parse(readFileSync(join(committedFolder, 'manifest.json'), 'utf8'));
     assert.deepEqual(manifest, {
-      cases: 934,
+      cases: committedManifest.cases,
       excludedNondeterministic: [],
       integrity: lock.packages['node_modules/flint-chart'].integrity,
       probeCases: 38,
       seed: 42,
       tz: 'UTC',
-      upstream: '0.5.1',
+      upstream: version,
     });
+    assert.equal(manifest.cases, lines('cases.jsonl').length);
+    assert.equal(manifest.probeCases, lines('probe-cases.jsonl').length);
   });
 
   // source: design §10.4 test 6 (Semantic Context #0 is a Bar Chart over city and revenue), §10.3 (id format) and §10.1
@@ -116,16 +127,25 @@ describe('extract/fixtures', () => {
     assert.equal(new Set(names).size, names.length);
   });
 
-  // source: part 01 §2 Fixtures (no throw on vegalite 886, echarts 866, chartjs 743, plotly 894; Excel throws on 219 of 695)
+  // source: part 01 §2 Fixtures (the layout backends throw on no test case; Excel throws on some; on 0.5.1 vegalite 886,
+  // echarts 866, chartjs 743, plotly 894 and Excel 219 of 695) and the committed
+  // tests/fixtures/flint-chart@<version>/expectations.jsonl (the counts of the installed version)
   it('records the per-backend outcomes', () => {
+    const backends = ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel'];
+    const tally = (expectations: { backends: Record<string, { throws: boolean }> }[]) => {
+      const count = (b: string, pick: (o: { throws: boolean }) => boolean) =>
+        expectations.filter((e) => e.backends[b] && pick(e.backends[b])).length;
+      return {
+        applicable: Object.fromEntries(backends.map((b) => [b, count(b, () => true)])),
+        throws: Object.fromEntries(backends.map((b) => [b, count(b, (o) => o.throws)])),
+      };
+    };
     const expectations = lines('expectations.jsonl');
-    assert.equal(expectations.length, 934);
-    const count = (b: string, pick: (o: { throws: boolean }) => boolean) =>
-      expectations.filter((e) => e.backends[b] && pick(e.backends[b])).length;
-    const applicable = Object.fromEntries(['vegalite', 'echarts', 'chartjs', 'plotly', 'excel'].map((b) => [b, count(b, () => true)]));
-    const throws = Object.fromEntries(['vegalite', 'echarts', 'chartjs', 'plotly', 'excel'].map((b) => [b, count(b, (o) => o.throws)]));
-    assert.deepEqual(applicable, { vegalite: 886, echarts: 866, chartjs: 743, plotly: 894, excel: 695 });
-    assert.deepEqual(throws, { vegalite: 0, echarts: 0, chartjs: 0, plotly: 0, excel: 219 });
+    assert.equal(expectations.length, lines('cases.jsonl').length);
+    const fresh = tally(expectations);
+    assert.deepEqual(fresh, tally(linesIn(committedFolder, 'expectations.jsonl')));
+    for (const b of backends.slice(0, 4)) assert.equal(fresh.throws[b], 0, b);
+    assert.ok(fresh.throws.excel > 0 && fresh.throws.excel < fresh.applicable.excel);
   });
 
   // source: src/extract/probe-cases.ts (one case per rule; a case without the template on a backend is recorded there
