@@ -17,7 +17,7 @@ Both diagnostics are warnings, never errors. To silence one for a member you sti
 | Member | IR path | Removed in flint-chart | Replacement | Deleted in |
 |---|---|---|---|---|
 
-No member is deprecated under FLINT0001 in the flint-chart 0.5.1 line.
+No member is deprecated under FLINT0001 in the flint-chart 0.5.1 and 1.0.0 lines. flint-chart 1.0.0, an upstream major, retired the `includeZero_x/y` and `logScale_x/y` properties of KPI Card and Map (`generator/retired.json`); their builder methods were deleted in that breaking window instead of kept under FLINT0001, because the generator does not emit `[Obsolete]` for retired members yet (design §7.8). The `CHANGELOG.md` entry lists them.
 
 <a id="FLINT0002"></a>
 
