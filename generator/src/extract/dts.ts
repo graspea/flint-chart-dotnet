@@ -81,9 +81,9 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
       .filter((n) => n.kind !== ts.SyntaxKind.UndefinedKeyword && !(ts.isLiteralTypeNode(n) && n.literal.kind === ts.SyntaxKind.NullKeyword))
       .map((n) => mapNode(n, path));
     if (members.length === 1) return members[0];
-    // `'a' | 'b' | string` is string to the checker; the literals are only editor hints.
+    // `'a' | 'b' | string` takes any string; the literals are the documented values.
     if (members.some((m) => m.kind === 'string') && members.every((m) => m.kind === 'string' || (m.kind === 'literal' && typeof m.value === 'string'))) {
-      return { kind: 'string' };
+      return { kind: 'literalUnion', values: members.flatMap((m) => (m.kind === 'literal' ? [m.value as string] : [])), open: true };
     }
     if (members.every((m) => m.kind === 'literal' && typeof m.value === 'string')) {
       return { kind: 'literalUnion', values: members.map((m) => (m as { value: string }).value) };
@@ -155,10 +155,14 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
         return { kind: 'array', element: mapNode(args[0], `${path}[]`) };
       }
       if (symbol.name === 'Record' && args.length === 2) {
-        // JSON keys are strings: a number key, or a set of string literals, is a string-keyed map on the wire.
+        // JSON keys are strings on the wire; the key kind decides the C# shape (string or int keys, or one member per literal).
         const key = mapNode(args[0], path);
-        if (key.kind !== 'string' && key.kind !== 'number' && key.kind !== 'literalUnion') return { kind: 'unsupported', text: node.getText() };
-        return { kind: 'record', value: mapNode(args[1], `${path}{*}`) };
+        const value = mapNode(args[1], `${path}{*}`);
+        if (key.kind === 'string' || (key.kind === 'literalUnion' && key.open)) return { kind: 'record', value };
+        if (key.kind === 'number') return { kind: 'record', key: 'number', value };
+        if (key.kind === 'literalUnion' && !key.open) return { kind: 'record', keys: key.values, value };
+        if (key.kind === 'literal' && typeof key.value === 'string') return { kind: 'record', keys: [key.value], value };
+        return { kind: 'unsupported', text: node.getText() };
       }
       if (symbol.name === 'Partial' && args.length === 1) {
         const inner = mapNode(args[0], path);

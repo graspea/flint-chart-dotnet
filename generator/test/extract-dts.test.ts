@@ -224,27 +224,34 @@ describe('extract/dts on a synthetic d.ts', () => {
   const member = (types: Record<string, IrNamedType>, name: string) =>
     (types.ThemeSpec as { props: IrProp[] }).props.find((p) => p.name === name)!.type;
 
-  // source: flint-chart 1.0.0 d.ts ThemeInk.series.categoricalByCount (`Record<number, string[]>`); JSON object keys are
-  // strings, so a number-keyed record is a string-keyed map on the wire
-  it('records a number-keyed Record as a record', () => {
+  // source: flint-chart 1.0.0 d.ts ThemeInk.series.categoricalByCount (`Record<number, string[]>`); the key kind is kept
+  // so the map can be integer-keyed in C# (JSON keys stay strings on the wire)
+  it('records a number-keyed Record as a record with number keys', () => {
     const types = extractTheme('byCount?: Record<number, string[]>;');
-    assert.deepEqual(member(types, 'byCount'), { kind: 'record', value: { kind: 'array', element: { kind: 'string' } } });
+    assert.deepEqual(member(types, 'byCount'), { kind: 'record', key: 'number', value: { kind: 'array', element: { kind: 'string' } } });
   });
 
   // source: flint-chart 1.0.0 d.ts ThemeInk.series.byMark (`Partial<Record<SeriesMarkFamily, {...}>>`, SeriesMarkFamily a
-  // string literal union): a map whose keys are a subset of the literals
-  it('records a Partial Record keyed by string literals as a record', () => {
+  // string literal union): a map whose keys are a subset of the literals, kept in declaration order
+  it('records a Partial Record keyed by string literals as a record with its keys', () => {
     const types = extractTheme("byMark?: Partial<Record<'line' | 'bar', { single?: string }>>;");
     assert.deepEqual(member(types, 'byMark'), {
       kind: 'record',
+      keys: ['line', 'bar'],
       value: { kind: 'object', props: [{ name: 'single', optional: true, type: { kind: 'string' } }] },
     });
   });
 
-  // source: TypeScript handbook, union types (`'series' | 'text' | string` reduces to string); flint-chart 1.0.0 d.ts
-  // PointGeometry.ink
-  it('records a union of string literals and string as string', () => {
+  // source: TypeScript handbook, Record<Keys, Type> (a single literal is a one-key set)
+  it('records a Record keyed by one string literal as a record with that key', () => {
+    const types = extractTheme("only?: Record<'line', number>;");
+    assert.deepEqual(member(types, 'only'), { kind: 'record', keys: ['line'], value: { kind: 'number' } });
+  });
+
+  // source: flint-chart 1.0.0 d.ts PointGeometry.ink (`'series' | 'text' | string`): any string is accepted, the literals
+  // are the documented values, kept in declaration order
+  it('records a union of string literals and string as an open literal union', () => {
     const types = extractTheme("ink?: 'series' | 'text' | string;");
-    assert.deepEqual(member(types, 'ink'), { kind: 'string' });
+    assert.deepEqual(member(types, 'ink'), { kind: 'literalUnion', values: ['series', 'text'], open: true });
   });
 });

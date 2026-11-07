@@ -8,10 +8,12 @@ export type IrType =
   | { kind: 'unknown' }
   | { kind: 'never' }
   | { kind: 'literal'; value: string | number | boolean }
-  | { kind: 'literalUnion'; values: string[] }
+  /** `open`: the union also takes `string` (`'a' | 'b' | string`), so the values are the documented ones, not a closed set. */
+  | { kind: 'literalUnion'; values: string[]; open?: true }
   | { kind: 'array'; element: IrType }
   | { kind: 'tuple'; elements: IrType[] }
-  | { kind: 'record'; value: IrType }
+  /** `key: 'number'` for `Record<number, T>`; `keys` for a record keyed by string literals (`Record<'a' | 'b', T>`). */
+  | { kind: 'record'; value: IrType; key?: 'number'; keys?: string[] }
   | { kind: 'object'; props: IrProp[] }
   | { kind: 'ref'; name: string }
   | { kind: 'partial'; of: IrType }
