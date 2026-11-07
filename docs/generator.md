@@ -135,7 +135,7 @@ All three numbers appear in upstream material. The generator takes the union, de
 
 ## Type mapping of the 0.5.1 d.ts
 
-Emission starts at two roots. `AssembleOptions` goes to `Graspea.Flint` (`Generated/Options`). `ThemeSpec` goes to `Graspea.Flint.Theming` (`Generated/Theming`, 53 classes). `ChartAssemblyInput`, `ChartEncoding` and `SemanticAnnotation` are extracted for the parity test only. So are the anonymous core types, stored under their SDK names: `ChartData`, `ChartSpec`, `ChartSize` and `ContinuousMarkCrossSection`.
+Emission starts at two roots. `AssembleOptions` goes to `Graspea.Flint` (`Generated/Options`). `ThemeSpec` goes to `Graspea.Flint.Theming` (`Generated/Theming`, 53 classes). A named type reached from both roots goes to `Graspea.Flint` (`Generated/Options`), like the hand-written shared `ContinuousMarkCrossSection`; the namespace follows from which roots reach the type, not from the order the emitter meets it (see [Namespaces](#namespaces)). `ChartAssemblyInput`, `ChartEncoding` and `SemanticAnnotation` are extracted for the parity test only. So are the anonymous core types, stored under their SDK names: `ChartData`, `ChartSpec`, `ChartSize` and `ContinuousMarkCrossSection`.
 
 | Construct found | Where | Decision |
 |---|---|---|
@@ -172,6 +172,10 @@ A union of string literals and `string` takes any string; the literals are the d
 Every map value type (other than `JsonNode`) gets a `[JsonSerializable]` line in the generated `FlintMapJsonContext`, from which `VerbatimKeyDictionaryConverter<T>` resolves it; on 0.5.1 that is `Dictionary<string, JsonNode?>` (the `chartDefaults` values) and `string`, which is always listed.
 
 Required upstream members are nullable too, because "omitted" and "null" are one state in C# (design §5.2).
+
+### Namespaces
+
+The options emitter places every named object type before it emits anything: it walks the IR from each root, without passing through the other root, and records which roots reach the type. Reached from one root, the type takes that root's namespace and folder; reached from both, `Graspea.Flint` and `Generated/Options`. A nested `<Parent><Prop>` class takes its parent's namespace, and every PublicAPI line names the type in that namespace. On 0.5.1 no named type is reached from both roots; on 1.0.0 `CanvasTreatment` is (`AssembleOptions.canvasTreatment` and `ThemeCompileDefaults.canvasTreatment`), so it is `Graspea.Flint.CanvasTreatment`.
 
 ## `overrides.json` entries for 0.5.1
 

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { emitOptions } from '../src/emit/options.ts';
 import { checkPropertyKinds } from '../src/emit/property-kinds.ts';
 import { emptyOverrides, parseOverrides, type Overrides } from '../src/overrides.ts';
-import type { Ir, IrNamedType } from '../src/ir.ts';
+import type { Ir, IrNamedType, IrProp, IrType } from '../src/ir.ts';
 import { syntheticIr } from './support/synthetic-ir.ts';
 
 const crossSection: IrNamedType = {
@@ -210,6 +210,50 @@ public sealed partial class AssembleOptions
     assert.ok(result.files.some((f) => f.path === 'Options/Shared.g.cs'));
     assert.ok(result.apiLines.includes('Graspea.Flint.AssembleOptions.Shared.get -> Graspea.Flint.Shared?'));
     assert.ok(result.apiLines.includes('Graspea.Flint.Theming.ThemeCompileDefaults.Shared.get -> Graspea.Flint.Shared?'));
+  });
+
+  // source: docs/generator.md "Namespaces" (a named type reached from both roots goes to Graspea.Flint, like the
+  // hand-written ContinuousMarkCrossSection, whichever root reaches it first; one reached from one root keeps its namespace)
+  it('puts a named type reached from both roots into Graspea.Flint, independent of traversal order', () => {
+    const obj = (name: string, type: IrType): IrProp => ({ name, optional: true, type });
+    const ir = irWith({
+      // Options reaches Shared at depth two, theming at depth one: the theming root plans it first.
+      AssembleOptions: options([obj('inner', { kind: 'ref', name: 'OptionsInner' })]),
+      OptionsInner: options([obj('shared', { kind: 'ref', name: 'Shared' })]),
+      ThemeSpec: options([obj('shared', { kind: 'ref', name: 'Shared' }), obj('ink', { kind: 'ref', name: 'ThemeInk' })]),
+      ThemeInk: options([obj('color', { kind: 'string' })]),
+      Shared: options([
+        obj('names', { kind: 'object', props: [obj('width', { kind: 'number' })] }),
+        obj('mark', { kind: 'ref', name: 'SharedMark' }),
+      ]),
+      SharedMark: options([obj('size', { kind: 'number' })]),
+    });
+    const result = emitOptions(ir, emptyOverrides());
+    assert.deepEqual(result.files.map((f) => f.path), [
+      'Json/FlintMapJsonContext.g.cs',
+      'Options/AssembleOptions.g.cs',
+      'Options/OptionsInner.g.cs',
+      'Options/Shared.g.cs',
+      'Options/SharedMark.g.cs',
+      'Options/SharedNames.g.cs',
+      'Theming/ThemeInk.g.cs',
+      'Theming/ThemeSpec.g.cs',
+    ]);
+    assert.match(fileContent(result, 'Options/Shared.g.cs'), /^namespace Graspea\.Flint;$/m);
+    assert.match(fileContent(result, 'Options/SharedNames.g.cs'), /^namespace Graspea\.Flint;$/m);
+    assert.ok(result.apiLines.includes('Graspea.Flint.Theming.ThemeSpec.Shared.get -> Graspea.Flint.Shared?'));
+    assert.ok(result.apiLines.includes('Graspea.Flint.OptionsInner.Shared.get -> Graspea.Flint.Shared?'));
+    assert.ok(result.apiLines.includes('Graspea.Flint.Shared.Mark.get -> Graspea.Flint.SharedMark?'));
+    assert.ok(result.apiLines.includes('Graspea.Flint.Theming.ThemeSpec.Ink.get -> Graspea.Flint.Theming.ThemeInk?'));
+    assert.deepEqual(result.ownedTypes, [
+      'Graspea.Flint.AssembleOptions',
+      'Graspea.Flint.OptionsInner',
+      'Graspea.Flint.Shared',
+      'Graspea.Flint.SharedMark',
+      'Graspea.Flint.SharedNames',
+      'Graspea.Flint.Theming.ThemeInk',
+      'Graspea.Flint.Theming.ThemeSpec',
+    ]);
   });
 
   // source: design §7.4 (structurally identical {width,height} -> ChartSize via overrides.json)

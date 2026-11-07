@@ -10,11 +10,46 @@ import { pascal } from '../naming.ts';
 import { OverrideUse, type Overrides } from '../overrides.ts';
 import { csString, docComment, emptyResult, header, type EmitResult } from './common.ts';
 
-/** Emission roots: every class reachable from a root is emitted into that root's namespace and folder. */
+/** Emission roots: every class reachable from one root only is emitted into that root's namespace and folder. */
 const ROOTS = [
   { type: 'AssembleOptions', namespace: 'Graspea.Flint', folder: 'Options' },
   { type: 'ThemeSpec', namespace: 'Graspea.Flint.Theming', folder: 'Theming' },
 ] as const;
+
+/** A named type reached from more than one root: shared, like the hand-written ContinuousMarkCrossSection. */
+const SHARED = { namespace: 'Graspea.Flint', folder: 'Options' } as const;
+
+/**
+ * The namespace and folder of every named type reachable from a root: its root's, or SHARED when more than one root
+ * reaches it. Decided from reachability alone, so it does not depend on the order the emitter meets the types.
+ */
+function placeNamedTypes(ir: Ir): Map<string, { namespace: string; folder: string }> {
+  const reachedBy = new Map<string, Set<(typeof ROOTS)[number]>>();
+  const refs = (node: unknown, out: string[]): void => {
+    if (node === null || typeof node !== 'object') return;
+    const n = node as { kind?: unknown; name?: unknown };
+    if (n.kind === 'ref' && typeof n.name === 'string') out.push(n.name);
+    for (const v of Object.values(node)) refs(v, out);
+  };
+  for (const root of ROOTS) {
+    const queue: string[] = [root.type];
+    const seen = new Set(queue);
+    while (queue.length > 0) {
+      const name = queue.shift()!;
+      if (!reachedBy.has(name)) reachedBy.set(name, new Set());
+      reachedBy.get(name)!.add(root);
+      const next: string[] = [];
+      refs(ir.types[name], next);
+      for (const r of next) {
+        // Another root keeps its own namespace and does not pass this root on.
+        if (seen.has(r) || ROOTS.some((o) => o.type === r)) continue;
+        seen.add(r);
+        queue.push(r);
+      }
+    }
+  }
+  return new Map([...reachedBy].map(([name, roots]) => [name, roots.size === 1 ? [...roots][0] : SHARED]));
+}
 
 /** Classes whose members are assembler options (ThemeCompileDefaults extends Partial<AssembleOptions>). */
 const OPTION_CLASSES: ReadonlySet<string> = new Set(['AssembleOptions', 'ThemeCompileDefaults']);
@@ -127,6 +162,7 @@ function buildPass(
   const queue: ClassPlan[] = [];
   /** Map value types (typeof form) that VerbatimKeyDictionaryConverter<T> resolves from FlintMapJsonContext. */
   const contextTypes = new Set<string>();
+  const placed = placeNamedTypes(ir);
 
   const plan = (p: ClassPlan) => {
     const existing = classes.get(p.name);
@@ -220,10 +256,9 @@ function buildPass(
         if (!target) return fail(path, `reference to ${t.name}, which the IR does not contain`);
         if (target.kind === 'record') return mapType(target, t.name, owner, propName);
         if (target.kind !== 'object') return fail(t.name, `named type of kind ${target.kind}`);
-        const root = ROOTS.find((r) => r.type === t.name);
-        plan({ name: t.name, namespace: root?.namespace ?? owner.namespace, folder: root?.folder ?? owner.folder, path: t.name, doc: target.doc, props: target.props });
-        // The class lives where it was first planned, which may be the other root's namespace.
-        return { cs: t.name, api: `${classes.get(t.name)!.namespace}.${t.name}`, value: false };
+        const place = placed.get(t.name) ?? owner;
+        plan({ name: t.name, namespace: place.namespace, folder: place.folder, path: t.name, doc: target.doc, props: target.props });
+        return { cs: t.name, api: `${place.namespace}.${t.name}`, value: false };
       }
       case 'partial':
         return mapType(t.of, path, owner, propName);
