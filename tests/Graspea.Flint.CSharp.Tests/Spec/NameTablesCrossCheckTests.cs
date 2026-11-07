@@ -87,6 +87,28 @@ public sealed class NameTablesCrossCheckTests
         }
     }
 
+    public static IEnumerable<TestCaseData> UnionObjectForms() =>
+        NameTables.UnionObjectForms.Select(c => new TestCaseData(c.Name).SetName($"UnionObjectForm_MatchesTheLibrary({c.Name})"));
+
+    // source: the compiled Graspea.Flint (the hand-written theme union and its converter): every member of the table,
+    // written under its wire name, is read into the property of that name and type
+    [TestCaseSource(nameof(UnionObjectForms))]
+    public void UnionObjectForm_MatchesTheLibrary(string name)
+    {
+        var type = Library.GetType(name, throwOnError: true)!;
+        var members = NameTables.Class(name)!.Members;
+        var json = "{" + string.Join(",", members.Select(m => $"\"{m.Wire}\":{(m.Type switch { "double" => "1", "double[]" => "[1]", "string[]" => "[\"a\"]", _ => "\"a\"" })}")) + "}";
+        var value = System.Text.Json.JsonSerializer.Deserialize(json, type)!;
+        Assert.That(type.GetProperty("Extensions")!.GetValue(value), Is.Null, json);
+        foreach (var member in members)
+        {
+            var property = type.GetProperty(member.Name);
+            Assert.That(property, Is.Not.Null, $"{name}.{member.Name}");
+            Assert.That(TypeText(property!.PropertyType), Is.EqualTo(member.Type), $"{name}.{member.Name}");
+            Assert.That(property.GetValue(value), Is.Not.Null, $"{name}.{member.Name}");
+        }
+    }
+
     private static T Constant<T>(string member) => (T)typeof(T).GetField(member, BindingFlags.Public | BindingFlags.Static)!.GetValue(null)!;
 
     private static ChartAssemblyInput Build(string entry, Action<object> configure)
@@ -106,6 +128,9 @@ public sealed class NameTablesCrossCheckTests
         if (type == typeof(JsonNode)) return "JsonNode";
         if (type.IsArray) return TypeText(type.GetElementType()!) + "[]";
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>)) return $"Dictionary<string, {TypeText(type.GetGenericArguments()[1])}>";
-        return type == typeof(ChartSize) || type == typeof(ContinuousMarkCrossSection) ? type.FullName! : type.Name;
+        // Hand-written types that overrides.json names are written by their full name.
+        return type == typeof(ChartSize) || type == typeof(ContinuousMarkCrossSection) || type.GetCustomAttribute<JsonConverterAttribute>() is not null
+            ? type.FullName!
+            : type.Name;
     }
 }

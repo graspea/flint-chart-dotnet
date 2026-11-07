@@ -77,7 +77,7 @@ internal static partial class NameTables
         if (classes is null)
         {
             classes = new Dictionary<string, ClassNames>(StringComparer.Ordinal);
-            foreach (var c in Classes)
+            foreach (var c in Classes.Concat(UnionObjectForms))
             {
                 classes[c.Name] = c;
                 classes[SimpleName(c.Name)] = c;
@@ -88,6 +88,23 @@ internal static partial class NameTables
 
         return classes.TryGetValue(name, out var found) ? found : null;
     }
+
+    /// <summary>The object forms of the hand-written theme unions, written and checked as classes; their string forms are
+    /// handled by type name in <c>ValueWriter</c> and <c>SpecShape</c>.</summary>
+    internal static readonly ClassNames[] UnionObjectForms =
+    [
+        new("Graspea.Flint.Theming.RuleSpec",
+        [
+            new("color", "Color", "string"), new("dash", "Dash", "double[]"), new("layer", "Layer", "string"),
+            new("presence", "Presence", "string"), new("style", "Style", "string"), new("weight", "Weight", "double"),
+        ]),
+        new("Graspea.Flint.Theming.MinorGridSpec",
+        [
+            new("color", "Color", "string"), new("dash", "Dash", "double[]"), new("divisions", "Divisions", "double"),
+            new("layer", "Layer", "string"), new("on", "On", "string[]"), new("presence", "Presence", "string"),
+            new("style", "Style", "string"), new("weight", "Weight", "double"),
+        ]),
+    ];
 
     public static string SimpleName(string name) => name.Substring(name.LastIndexOf('.') + 1);
 

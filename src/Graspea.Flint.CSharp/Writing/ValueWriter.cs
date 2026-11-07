@@ -115,6 +115,19 @@ internal sealed class ValueWriter
                 return Size(item);
             case "Graspea.Flint.ContinuousMarkCrossSection":
                 return CrossSection(item);
+            case "Graspea.Flint.Theming.TypeWeight" or "Graspea.Flint.Theming.ThemeLength":
+                return item.IsString ? CSharpText.StringLiteral(item.Value!) : Number(item);
+            case "Graspea.Flint.Theming.LabelOverflow":
+                if (item.IsString)
+                {
+                    return CSharpText.StringLiteral(item.Value!);
+                }
+
+                return item.IsArray && item.Items.All(i => i.IsString)
+                    ? $"new string[] {{ {string.Join(", ", item.Items.Select(i => CSharpText.StringLiteral(i.Value!)))} }}"
+                    : null;
+            case "Graspea.Flint.Theming.RuleSpec" or "Graspea.Flint.Theming.MinorGridSpec" when item.IsString:
+                return CSharpText.StringLiteral(item.Value!); // the presence form; the object form is written as a class below
         }
 
         if (type.EndsWith("[]", StringComparison.Ordinal))

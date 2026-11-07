@@ -231,9 +231,9 @@ internal static class SpecShape
     }
 
     /// <summary>A value of a model or name-table type: <c>string</c>, <c>double</c>, <c>bool</c>, <c>JsonNode</c>, arrays,
-    /// string-keyed maps, <c>ChartSize</c>, <c>ContinuousMarkCrossSection</c>, a string-backed literal or a generated
-    /// class. Every type is nullable except the <c>!</c> forms.</summary>
-    private static void Typed(JsonItem value, string type, string path)
+    /// string-keyed maps, <c>ChartSize</c>, <c>ContinuousMarkCrossSection</c>, a theme union, a string-backed literal or a
+    /// generated class. Every type is nullable except the <c>!</c> forms.</summary>
+    internal static void Typed(JsonItem value, string type, string path)
     {
         if (type is "JsonNode" or "JsonNode?")
         {
@@ -271,6 +271,14 @@ internal static class SpecShape
             case "Graspea.Flint.ContinuousMarkCrossSection":
                 CrossSection(value, path);
                 return;
+            case "Graspea.Flint.Theming.TypeWeight" or "Graspea.Flint.Theming.ThemeLength":
+                Require(value.IsString || value.IsNumber, value, path, $"{path} must be a string or a number.");
+                return;
+            case "Graspea.Flint.Theming.LabelOverflow":
+                Require(value.IsString || (value.IsArray && value.Items.All(i => i.IsString)), value, path, $"{path} must be a string or an array of strings.");
+                return;
+            case "Graspea.Flint.Theming.RuleSpec" or "Graspea.Flint.Theming.MinorGridSpec" when value.IsString:
+                return; // the presence form; the object form is checked as a class below
         }
 
         if (type.EndsWith("[]", StringComparison.Ordinal))
