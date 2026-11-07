@@ -51,8 +51,27 @@ internal static partial class CatalogTables
                 [],
                 supportsFacets: false,
                 hasValidate: true)))));
+
+    internal static readonly FrozenDictionary<string, string> Retired = ByName<string>();
 }
 `,
+    );
+  });
+
+  // source: design §7.8 and part 3 §8.4 (the validator reports retired_member from the ledger, naming the version; every
+  // entry counts, also one whose facade member was removed)
+  it('lists every retired IR path with the version that retired it', () => {
+    const ir = syntheticIr();
+    ir.retired = [
+      { path: 'catalog.chartTypes[Line Chart].backends.vegalite.properties[smooth]', lastSeenIn: '0.4.0', retiredIn: '0.4.1', deletedIn: '0.5.0' },
+      { path: 'catalog.semanticTypes[Week]', lastSeenIn: '0.5.0', retiredIn: '0.5.1', was: { name: 'Week' } },
+    ];
+    assert.ok(
+      emitTables(ir).files[0].content.includes(
+        '    internal static readonly FrozenDictionary<string, string> Retired = ByName(\n' +
+          '        ("catalog.chartTypes[Line Chart].backends.vegalite.properties[smooth]", "0.4.1"),\n' +
+          '        ("catalog.semanticTypes[Week]", "0.5.1"));\n',
+      ),
     );
   });
 

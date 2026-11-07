@@ -80,6 +80,12 @@ export function emitTables(ir: Ir): EmitResult {
       'FrozenDictionary<FlintBackend, TemplateRow>',
       '    ',
     )};`,
+    // IR path -> the version that retired it, for retired_member (design §7.8).
+    `    ${member} FrozenDictionary<string, string> Retired = ${byName(
+      (ir.retired ?? []).map((e) => [e.path, csString(e.retiredIn)]),
+      'string',
+      '    ',
+    )};`,
   ];
 
   const content =

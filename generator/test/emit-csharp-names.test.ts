@@ -173,9 +173,30 @@ internal static partial class Catalog
             new("excel", ["x", "y"], []),
         ]),
     ];
+
+    internal static readonly RetiredRow[] Retired =
+    [
+    ];
 }
 `,
     );
+  });
+
+  // source: design §12.7 and §7.8 (the catalog checks report retired_member, FLINT117, from the ledger; the conversion
+  // writes a retired member through the generic setter, so the name tables leave it out)
+  it('lists the retired paths for the catalog checks and keeps obsolete members out of the name tables', () => {
+    const ir = irWithTypes();
+    ir.retired = [
+      {
+        path: 'catalog.chartTypes[Line Chart].backends.vegalite.properties[smooth]',
+        lastSeenIn: '0.5.0',
+        retiredIn: '0.5.1',
+        was: { key: 'smooth', label: 'Smooth', type: 'binary' },
+      },
+    ];
+    const [names, catalog] = emitCSharpNames(ir, emptyOverrides());
+    assert.ok(catalog.content.includes('    internal static readonly RetiredRow[] Retired =\n    [\n        new("catalog.chartTypes[Line Chart].backends.vegalite.properties[smooth]", "0.5.1"),\n    ];\n'));
+    assert.ok(!names.content.includes('"smooth"'));
   });
 
   // source: design §12.7 (renames from overrides.json are applied, because the fluent model applies them) and

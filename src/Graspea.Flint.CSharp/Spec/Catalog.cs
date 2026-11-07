@@ -20,6 +20,9 @@ internal sealed record BackendTemplateRow(string Backend, string[] Channels, Cat
     public CatalogPropertyRow? Property(string key) => Array.Find(Properties, p => p.Key == key);
 }
 
+/// <summary>A member upstream retired: its IR path in <c>generator/retired.json</c> and the version that removed it.</summary>
+internal sealed record RetiredRow(string Path, string RetiredIn);
+
 /// <summary>A chart type and its templates, in the catalog's backend order.</summary>
 internal sealed record ChartTypeRow(string Name, BackendTemplateRow[] Templates);
 
@@ -30,6 +33,14 @@ internal sealed record ChartTypeRow(string Name, BackendTemplateRow[] Templates)
 internal static partial class Catalog
 {
     private static Dictionary<string, ChartTypeRow>? _chartTypes;
+    private static Dictionary<string, string>? _retired;
+
+    /// <summary>The version that retired the member at an IR path, or null.</summary>
+    public static string? RetiredIn(string path)
+    {
+        _retired ??= Retired.ToDictionary(r => r.Path, r => r.RetiredIn, StringComparer.Ordinal);
+        return _retired.TryGetValue(path, out var found) ? found : null;
+    }
 
     public static ChartTypeRow? ChartType(string name)
     {

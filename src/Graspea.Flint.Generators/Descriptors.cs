@@ -27,6 +27,7 @@ internal static class Descriptors
     public static readonly DiagnosticDescriptor UnknownThemePreset = Create("FLINT114", "Unknown theme preset", DiagnosticSeverity.Error);
     public static readonly DiagnosticDescriptor SpecThrows = Create("FLINT115", "The spec makes the assemblers throw", DiagnosticSeverity.Error);
     public static readonly DiagnosticDescriptor SpecInfo = Create("FLINT116", "Catalog note", DiagnosticSeverity.Info);
+    public static readonly DiagnosticDescriptor RetiredMember = Create("FLINT117", "Member retired upstream", DiagnosticSeverity.Warning);
     public static readonly DiagnosticDescriptor FieldWithoutMember = Create("FLINT120", "No member of the row type binds a spec field", DiagnosticSeverity.Warning);
     public static readonly DiagnosticDescriptor IncompatibleMember = Create("FLINT121", "The member's type does not fit the field", DiagnosticSeverity.Warning);
     public static readonly DiagnosticDescriptor RowMetadata = Create("FLINT122", "The row metadata breaks the row guarantees", DiagnosticSeverity.Error);
@@ -40,7 +41,7 @@ internal static class Descriptors
     private static readonly Dictionary<string, DiagnosticDescriptor> ById = new[]
     {
         ReferenceMismatch, SpecNotFound, InvalidJson, NotAChart, InvalidTarget, InvalidAttribute, ContextWithoutRowType, LanguageVersion,
-        UnknownChartType, UnsupportedChannel, InvalidOptionValue, UnknownSemanticType, UnknownThemePreset, SpecThrows, SpecInfo,
+        UnknownChartType, UnsupportedChannel, InvalidOptionValue, UnknownSemanticType, UnknownThemePreset, SpecThrows, SpecInfo, RetiredMember,
         FieldWithoutMember, IncompatibleMember, RowMetadata, AmbiguousMember, UncheckedMember, UninferredField, NonUniformRows, UrlNotUsed, UnknownKey,
     }.ToDictionary(d => d.Id, StringComparer.Ordinal);
 

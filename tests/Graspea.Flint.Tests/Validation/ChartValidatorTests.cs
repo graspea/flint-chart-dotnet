@@ -550,6 +550,31 @@ public sealed partial class ChartValidatorTests
         }
     }
 
+    // source: generator/retired.json (flint-chart 1.0.0 retired includeZero_x of KPI Card on vegalite; plotly never declared
+    // it) and design part 3 §8.4 (retired_member, Warning, names the removing version; the key is still written)
+    [Test]
+    public void Warnings_RetiredMember()
+    {
+        var kpi = Bar(i =>
+        {
+            i.ChartSpec.ChartType = ChartType.KpiCard;
+            i.ChartSpec.Encodings = new() { ["metric"] = "city", ["value"] = "revenue" };
+            i.ChartSpec.ChartProperties = new() { ["includeZero_x"] = true };
+        });
+        foreach (var backend in new FlintBackend?[] { FlintBackend.VegaLite, null })
+        {
+            var issue = Issues(kpi, backend, "retired_member").Single();
+            Assert.That(issue.Severity, Is.EqualTo(IssueSeverity.Warning));
+            Assert.That(issue.Path, Is.EqualTo("chart_spec.chartProperties.includeZero_x"));
+            Assert.That(issue.Message, Does.Contain("flint-chart 1.0.0").And.Contain("vegalite"));
+            AssertNone(kpi, backend, "unknown_chart_property");
+        }
+
+        AssertNone(kpi, FlintBackend.Plotly, "retired_member");
+        AssertOne(kpi, FlintBackend.Plotly, "unknown_chart_property", IssueSeverity.Info);
+        Assert.That(FlintJson.Serialize(kpi), Does.Contain("\"includeZero_x\":true"));
+    }
+
     // source: ir/flint-ir.json (Bar Chart cornerRadius is continuous with a declared min and max) and design §6 Info
     // continuous_out_of_range (normalize-properties.ts checks discrete values only, so upstream passes it through)
     [Test]

@@ -221,15 +221,32 @@ internal sealed partial class ValidationRun
                 return;
             }
 
-            Add(IssueSeverity.Warning, Codes.UnsupportedChannel, path, $"The {Id(b)} template of \"{input.ChartSpec.ChartType.Name}\" does not declare \"{channel}\"; {Id(b)} ignores it.", channel);
+            if (!RetiredChannel([b], channel, path))
+            {
+                Add(IssueSeverity.Warning, Codes.UnsupportedChannel, path, $"The {Id(b)} template of \"{input.ChartSpec.ChartType.Name}\" does not declare \"{channel}\"; {Id(b)} ignores it.", channel);
+            }
+
             return;
         }
 
         var declaring = targets.Where(t => template[t].Channels.Contains(channel)).ToArray();
-        if (declaring.Length == 0)
+        if (declaring.Length == 0 && !RetiredChannel(targets, channel, path))
         {
             Add(IssueSeverity.Warning, Codes.UnsupportedChannel, path, $"No backend's template of \"{input.ChartSpec.ChartType.Name}\" declares \"{channel}\"; it is ignored.", channel);
         }
+    }
+
+    /// <summary>Reports <c>retired_member</c> when the ledger lists the channel as retired on one of the backends.</summary>
+    private bool RetiredChannel(FlintBackend[] on, string channel, string path)
+    {
+        var retiredOn = on.Where(t => Retired(t, $"channels[{channel}]") is not null).ToArray();
+        if (retiredOn.Length > 0)
+        {
+            Add(IssueSeverity.Warning, Codes.RetiredMember, path,
+                $"flint-chart {Retired(retiredOn[0], $"channels[{channel}]")} removed the \"{channel}\" channel from the {string.Join(", ", retiredOn.Select(Id))} template of \"{input.ChartSpec.ChartType.Name}\"; it is ignored there.", channel);
+        }
+
+        return retiredOn.Length > 0;
     }
 
     private void UnknownField(string channel, string path, ChartEncoding encoding)
@@ -439,7 +456,13 @@ internal sealed partial class ValidationRun
                     $"\"{field}\" is not {(deferred is null ? "a key of the first row" : "a key the rows are written with")}; upstream never reads this annotation.", field: field);
             }
 
-            if (annotation?.Type is { Name: { } name } type && !type.IsRegistered)
+            if (annotation?.Type is { Name: { } retired } && CatalogTables.Retired.GetValueOrDefault($"catalog.semanticTypes[{retired}]") is { } version)
+            {
+                Add(IssueSeverity.Warning, Codes.RetiredMember, $"semantic_types.{field}",
+                    $"flint-chart {version} removed the semantic type \"{retired}\"; the type is inferred from the data, as without an annotation.",
+                    field: field);
+            }
+            else if (annotation?.Type is { Name: { } name } type && !type.IsRegistered)
             {
                 Add(IssueSeverity.Warning, Codes.UnknownSemanticType, $"semantic_types.{field}",
                     $"\"{name}\" is not a registered semantic type of flint-chart {FlintUpstream.Version}; the type is inferred from the data, as without an annotation.",
@@ -493,6 +516,16 @@ internal sealed partial class ValidationRun
 
             var path = $"chart_spec.chartProperties.{key}";
             var invalidOn = targets.Where(t => template[t].Properties.TryGetValue(key, out var p) && p.Kind == PropertyKind.Discrete && !Accepts(p, value)).ToArray();
+            // The ledger keys an option by its JSON text (generator/src/diff.ts).
+            var option = $"properties[{key}].options[={value.ToJsonString(RelaxedJson)}]";
+            var optionRetiredOn = invalidOn.Where(t => Retired(t, option) is not null).ToArray();
+            if (optionRetiredOn.Length > 0)
+            {
+                Add(IssueSeverity.Warning, Codes.RetiredMember, path,
+                    $"flint-chart {Retired(optionRetiredOn[0], option)} removed the option {value.ToJsonString()} of \"{key}\" on {string.Join(", ", optionRetiredOn.Select(Id))}; upstream drops it (invalid-option-value) and uses the default.");
+                invalidOn = [.. invalidOn.Except(optionRetiredOn)];
+            }
+
             if (invalidOn.Length > 0)
             {
                 Add(IssueSeverity.Warning, Codes.InvalidOptionValue, path,
@@ -502,8 +535,17 @@ internal sealed partial class ValidationRun
             var undeclaredOn = targets.Where(t => !template[t].Properties.ContainsKey(key)).ToArray();
             if (!CatalogTables.HostStateKeys.Contains(key) && undeclaredOn.Length > 0 && (backend is not null || undeclaredOn.Length == targets.Length))
             {
-                Add(IssueSeverity.Info, Codes.UnknownChartProperty, path,
-                    $"The {string.Join(", ", undeclaredOn.Select(Id))} template of \"{input.ChartSpec.ChartType.Name}\" does not declare \"{key}\"; it is passed through and may have no effect.");
+                var retiredOn = undeclaredOn.Where(t => Retired(t, $"properties[{key}]") is not null).ToArray();
+                if (retiredOn.Length > 0)
+                {
+                    Add(IssueSeverity.Warning, Codes.RetiredMember, path,
+                        $"flint-chart {Retired(retiredOn[0], $"properties[{key}]")} removed \"{key}\" from the {string.Join(", ", retiredOn.Select(Id))} template of \"{input.ChartSpec.ChartType.Name}\"; it is ignored there.");
+                }
+                else
+                {
+                    Add(IssueSeverity.Info, Codes.UnknownChartProperty, path,
+                        $"The {string.Join(", ", undeclaredOn.Select(Id))} template of \"{input.ChartSpec.ChartType.Name}\" does not declare \"{key}\"; it is passed through and may have no effect.");
+                }
             }
 
             if (Js.Kind(value) == JsonValueKind.Number)
@@ -520,6 +562,14 @@ internal sealed partial class ValidationRun
             }
         }
     }
+
+    /// <summary>JSON text as <c>JSON.stringify</c> writes a string: only quotes, backslashes and control characters escaped.</summary>
+    private static readonly JsonSerializerOptions RelaxedJson = new() { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+
+    /// <summary>The flint-chart version that retired a member of the template on a backend (<c>generator/retired.json</c>),
+    /// such as <c>properties[key]</c>; null when the ledger does not list it.</summary>
+    private string? Retired(FlintBackend b, string member) =>
+        CatalogTables.Retired.GetValueOrDefault($"catalog.chartTypes[{input.ChartSpec.ChartType.Name}].backends.{Id(b)}.{member}");
 
     /// <summary><c>normalizeChartProperties</c>: a value equal to an option value under <c>sameOptionValue</c> (===, or for
     /// two arrays the same length with every entry ===), or a string equal to an option label ignoring case and surrounding

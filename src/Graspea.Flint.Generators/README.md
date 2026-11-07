@@ -95,6 +95,7 @@ The data in the spec is never embedded: `data.values` only shapes the row type a
 | FLINT114 | Error | `unknown_theme_preset` (an Info for a template on no backend that applies themes) |
 | FLINT115 | Error | a rule that makes the assemblers throw and needs no data: `missing_encodings`, `channel_null`, `reserved_semantic_type`, the `series_*` rules |
 | FLINT116 | Info | `unknown_chart_property`, `continuous_out_of_range`, `invalid_literal`, `semantic_type_without_field`, `canvas_too_large`, `required_channel_missing` |
+| FLINT117 | Warning | `retired_member`: a channel, property, option value or semantic type the pinned flint-chart removed (`generator/retired.json`) |
 | FLINT120 | Warning | mode B: no member binds a spec field (an Error for a static-series entry) |
 | FLINT121 | Warning | mode B: the member's type does not fit what the spec says about the field |
 | FLINT122 | Error | mode B: the row metadata may omit a null member or writes numbers as strings |
@@ -105,7 +106,7 @@ The data in the spec is never embedded: `data.values` only shapes the row type a
 | FLINT133 | Info | `data.url` is not used by the generated members |
 | FLINT140 | Info | an unknown key is passed through `Extensions` |
 
-The catalog checks (FLINT110 to FLINT116) are the Graspea.Flint validator's rules that need no data, at the validator's
+The catalog checks (FLINT110 to FLINT117) are the Graspea.Flint validator's rules that need no data, at the validator's
 severity for every backend that has the template, with the validator's code in the message; a spec that passes them can
 still fail `Validate` on its data. A finding in a spec is reported at its line and column in the JSON file.
 

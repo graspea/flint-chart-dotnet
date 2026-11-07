@@ -850,4 +850,16 @@ internal static partial class Catalog
             new("excel", ["x", "y", "color"], []),
         ]),
     ];
+
+    internal static readonly RetiredRow[] Retired =
+    [
+        new("catalog.chartTypes[KPI Card].backends.vegalite.properties[includeZero_x]", "1.0.0"),
+        new("catalog.chartTypes[KPI Card].backends.vegalite.properties[includeZero_y]", "1.0.0"),
+        new("catalog.chartTypes[KPI Card].backends.vegalite.properties[logScale_x]", "1.0.0"),
+        new("catalog.chartTypes[KPI Card].backends.vegalite.properties[logScale_y]", "1.0.0"),
+        new("catalog.chartTypes[Map].backends.vegalite.properties[includeZero_x]", "1.0.0"),
+        new("catalog.chartTypes[Map].backends.vegalite.properties[includeZero_y]", "1.0.0"),
+        new("catalog.chartTypes[Map].backends.vegalite.properties[logScale_x]", "1.0.0"),
+        new("catalog.chartTypes[Map].backends.vegalite.properties[logScale_y]", "1.0.0"),
+    ];
 }

@@ -122,6 +122,20 @@ public sealed class CatalogCheckTests
         Assert.That(issues.Select(i => $"{i.Id} {i.Code} {i.Severity} {i.Path}"), Is.EqualTo(expected is null ? Array.Empty<string>() : new[] { expected }));
     }
 
+    // source: generator/retired.json (flint-chart 1.0.0 retired includeZero_x of KPI Card on vegalite) and
+    // ValidationRun.PropertyChecks (retired_member, Warning, in place of unknown_chart_property), as FLINT117
+    [Test]
+    public void Run_RetiredProperty_IsFlint117()
+    {
+        var json = Doc("KPI Card", "{\"metric\":\"a\",\"value\":\"b\"}", specExtra: "\"chartProperties\":{\"includeZero_x\":true},");
+        var issues = Check(json);
+
+        Assert.That(issues.Select(i => $"{i.Id} {i.Code} {i.Severity} {i.Path}"), Is.EqualTo(new[] { "FLINT117 retired_member Warning chart_spec.chartProperties.includeZero_x" }));
+        Assert.That(issues[0].Message, Does.Contain("flint-chart 1.0.0"));
+        var validator = ChartTemplate.Create<JsonObject>(FlintJson.Deserialize(json)).Validate().Issues.Where(i => i.Code == "retired_member");
+        Assert.That(validator.Select(i => $"{i.Severity} {i.Path}"), Is.EqualTo(new[] { "Warning chart_spec.chartProperties.includeZero_x" }));
+    }
+
     // source: ValidationRun.LiteralChecks (a literal outside the pinned union, on an encoding and in the options) and
     // RequiredChannelChecks (x and y when a template declares both)
     [Test]
@@ -164,7 +178,7 @@ public sealed class CatalogCheckTests
         "missing_encodings", "channel_null", "reserved_semantic_type", "series_multiple_channels", "series_channel_not_xy",
         "series_too_few", "series_field_missing", "series_duplicate_field", "series_color_bound", "series_nominal_entry",
         "unknown_chart_property", "continuous_out_of_range", "invalid_literal", "semantic_type_without_field", "canvas_too_large",
-        "required_channel_missing",
+        "required_channel_missing", "retired_member",
     };
 
     // source: design §12.10 (catalog checks: over the fixtures and probe cases, the core's codes equal the validator's
@@ -195,9 +209,9 @@ public sealed class CatalogCheckTests
         }
 
         Assert.That(SpecCorpus.Accepted, Has.Count.GreaterThan(900));
-        // The corpus reaches every mirrored code except canvas_too_large (a unit test above) and
+        // The corpus reaches every mirrored code except canvas_too_large and retired_member (unit tests above) and
         // semantic_type_without_field, which the validator skips without row keys.
-        Assert.That(codes, Is.EquivalentTo(Mirrored.Except(["canvas_too_large", "semantic_type_without_field"])));
+        Assert.That(codes, Is.EquivalentTo(Mirrored.Except(["canvas_too_large", "retired_member", "semantic_type_without_field"])));
         Assert.That(failures, Is.Empty, string.Join("\n", failures.Take(20)));
     }
 }

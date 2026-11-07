@@ -69,6 +69,7 @@ function emitCatalog(ir: Ir): EmittedFile {
       `    internal static readonly string[] BackendsApplyingTheme = ${strings(c.backendsApplyingTheme)};\n`,
       `    internal static readonly string[] HostStateKeys = ${strings(c.hostStateKeys)};\n`,
       list('ChartTypes', 'ChartTypeRow', chartTypes),
+      list('Retired', 'RetiredRow', (ir.retired ?? []).map((e) => `new(${csString(e.path)}, ${csString(e.retiredIn)})`)),
     ].join('\n') +
     '}\n';
   return { path: 'Catalog.g.cs', content };
@@ -76,7 +77,9 @@ function emitCatalog(ir: Ir): EmittedFile {
 
 const pair = (wire: string, member: string) => `new(${csString(wire)}, ${csString(member)})`;
 
-export function emitCSharpNames(ir: Ir, overrides: Overrides): EmittedFile[] {
+export function emitCSharpNames(ledgerIr: Ir, overrides: Overrides): EmittedFile[] {
+  // The conversion writes a retired member through the generic setter, so the name tables leave the obsolete ones out.
+  const ir: Ir = { ...ledgerIr, retired: undefined };
   const constants = constantNames(ir, overrides);
   const struct = (name: string) => (constants.get(name) ?? []).map((c) => pair(c.value, c.member));
   const chartTypes = new Map((constants.get('ChartType') ?? []).map((c) => [c.value, c.member]));
@@ -117,5 +120,5 @@ export function emitCSharpNames(ir: Ir, overrides: Overrides): EmittedFile[] {
       list('StringUnions', 'StringUnionNames', unions),
     ].join('\n') +
     '}\n';
-  return [{ path: 'NameTables.g.cs', content }, emitCatalog(ir)];
+  return [{ path: 'NameTables.g.cs', content }, emitCatalog(ledgerIr)];
 }

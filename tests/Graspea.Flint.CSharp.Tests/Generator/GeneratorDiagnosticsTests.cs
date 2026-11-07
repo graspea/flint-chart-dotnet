@@ -205,6 +205,17 @@ public sealed class GeneratorDiagnosticsTests
         Assert.That(run.Problems(), Is.Empty);
     }
 
+    // source: design §12.6.7 (FLINT117 retired_member, Warning, at the node) and generator/retired.json (flint-chart 1.0.0
+    // retired includeZero_x of KPI Card on vegalite)
+    [Test]
+    public void CatalogChecks_RetiredProperty_IsFlint117()
+    {
+        var run = Run(Target, "{\"chart_spec\":{\"chartType\":\"KPI Card\",\"encodings\":{\"metric\":\"a\",\"value\":\"b\"},\"chartProperties\":{\"includeZero_x\":true}}}");
+
+        Assert.That(Typed(run), Is.EqualTo(new[] { "FLINT117 Warning sales.flint.json(1,113)" }));
+        Assert.That(run.Diagnostics.Single(d => d.Id == "FLINT117").GetMessage(), Does.EndWith("(retired_member)"));
+    }
+
     // source: design §12.6.7 (FLINT110 at the chartType value; FLINT115 at the offending node; one id with the validator's
     // severity per case: unknown_theme_preset is an Error where Vega-Lite or Plotly has the template, an Info otherwise)
     [Test]

@@ -70,6 +70,7 @@ internal sealed class CatalogCheck
         "invalid_option_value" => "FLINT112",
         "unknown_semantic_type" => "FLINT113",
         "unknown_theme_preset" => "FLINT114",
+        "retired_member" => "FLINT117",
         "unknown_chart_property" or "continuous_out_of_range" or "invalid_literal" or "semantic_type_without_field"
             or "canvas_too_large" or "required_channel_missing" => "FLINT116",
         "unknown_key" => "FLINT140",
@@ -142,8 +143,17 @@ internal sealed class CatalogCheck
 
             if (_targets.Length > 0 && !_targets.Any(t => Array.IndexOf(t.Channels, channel) >= 0))
             {
-                AddAtKey("unsupported_channel", SpecSeverity.Warning, path, member,
-                    $"No backend's template of \"{ChartTypeName}\" declares \"{channel}\"; it is ignored.");
+                var retiredOn = _targets.Where(t => Retired(t, $"channels[{channel}]") is not null).ToList();
+                if (retiredOn.Count > 0)
+                {
+                    AddAtKey("retired_member", SpecSeverity.Warning, path, member,
+                        $"flint-chart {Retired(retiredOn[0], $"channels[{channel}]")} removed the \"{channel}\" channel from the {string.Join(", ", retiredOn.Select(t => t.Backend))} template of \"{ChartTypeName}\"; it is ignored there.");
+                }
+                else
+                {
+                    AddAtKey("unsupported_channel", SpecSeverity.Warning, path, member,
+                        $"No backend's template of \"{ChartTypeName}\" declares \"{channel}\"; it is ignored.");
+                }
             }
         }
     }
@@ -247,7 +257,12 @@ internal sealed class CatalogCheck
                 continue;
             }
 
-            if (NameTables.SemanticType(name.Value!) is null)
+            if (Catalog.RetiredIn($"catalog.semanticTypes[{name.Value}]") is { } version)
+            {
+                Add("retired_member", SpecSeverity.Warning, path, name,
+                    $"flint-chart {version} removed the semantic type \"{name.Value}\"; the type is inferred from the data, as without an annotation.");
+            }
+            else if (NameTables.SemanticType(name.Value!) is null)
             {
                 Add("unknown_semantic_type", SpecSeverity.Warning, path, name,
                     $"\"{name.Value}\" is not a registered semantic type of the pinned flint-chart; the type is inferred from the data, as without an annotation.");
@@ -297,7 +312,17 @@ internal sealed class CatalogCheck
             }
 
             var path = $"chart_spec.chartProperties.{key}";
-            var invalidOn = _targets.Where(t => t.Property(key) is { Kind: CatalogPropertyKind.Discrete } p && !Accepts(p, value)).Select(t => t.Backend).ToList();
+            var invalid = _targets.Where(t => t.Property(key) is { Kind: CatalogPropertyKind.Discrete } p && !Accepts(p, value)).ToList();
+            // The ledger keys an option by its JSON text (generator/src/diff.ts).
+            var option = $"properties[{key}].options[={JsonText.Compact(value)}]";
+            var optionRetiredOn = invalid.Where(t => Retired(t, option) is not null).ToList();
+            if (optionRetiredOn.Count > 0)
+            {
+                Add("retired_member", SpecSeverity.Warning, path, value,
+                    $"flint-chart {Retired(optionRetiredOn[0], option)} removed the option {JsonText.Compact(value)} of \"{key}\" on {string.Join(", ", optionRetiredOn.Select(t => t.Backend))}; upstream drops it (invalid-option-value) and uses the default.");
+            }
+
+            var invalidOn = invalid.Except(optionRetiredOn).Select(t => t.Backend).ToList();
             if (invalidOn.Count > 0)
             {
                 Add("invalid_option_value", SpecSeverity.Warning, path, value,
@@ -307,8 +332,17 @@ internal sealed class CatalogCheck
             var undeclaredOn = _targets.Where(t => t.Property(key) is null).Select(t => t.Backend).ToList();
             if (Array.IndexOf(Catalog.HostStateKeys, key) < 0 && undeclaredOn.Count == _targets.Length)
             {
-                Add("unknown_chart_property", SpecSeverity.Info, path, value,
-                    $"The {string.Join(", ", undeclaredOn)} template of \"{ChartTypeName}\" does not declare \"{key}\"; it is passed through and may have no effect.");
+                var retiredOn = _targets.Where(t => Retired(t, $"properties[{key}]") is not null).ToList();
+                if (retiredOn.Count > 0)
+                {
+                    Add("retired_member", SpecSeverity.Warning, path, value,
+                        $"flint-chart {Retired(retiredOn[0], $"properties[{key}]")} removed \"{key}\" from the {string.Join(", ", retiredOn.Select(t => t.Backend))} template of \"{ChartTypeName}\"; it is ignored there.");
+                }
+                else
+                {
+                    Add("unknown_chart_property", SpecSeverity.Info, path, value,
+                        $"The {string.Join(", ", undeclaredOn)} template of \"{ChartTypeName}\" does not declare \"{key}\"; it is passed through and may have no effect.");
+                }
             }
 
             if (value.IsNumber && Number(value.Value!) is { } number)
@@ -323,6 +357,9 @@ internal sealed class CatalogCheck
             }
         }
     }
+
+    /// <summary>The version that retired a member of the template on a backend (<c>generator/retired.json</c>), or null.</summary>
+    private string? Retired(BackendTemplateRow t, string member) => Catalog.RetiredIn($"catalog.chartTypes[{ChartTypeName}].backends.{t.Backend}.{member}");
 
     /// <summary><c>normalizeChartProperties</c>: a value equal to an option value under <c>sameOptionValue</c> (===, or for
     /// two arrays the same length with every entry ===), or a string equal to an option label ignoring case and surrounding

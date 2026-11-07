@@ -1043,4 +1043,14 @@ internal static partial class CatalogTables
                 [],
                 supportsFacets: false,
                 hasValidate: true)))));
+
+    internal static readonly FrozenDictionary<string, string> Retired = ByName(
+        ("catalog.chartTypes[KPI Card].backends.vegalite.properties[includeZero_x]", "1.0.0"),
+        ("catalog.chartTypes[KPI Card].backends.vegalite.properties[includeZero_y]", "1.0.0"),
+        ("catalog.chartTypes[KPI Card].backends.vegalite.properties[logScale_x]", "1.0.0"),
+        ("catalog.chartTypes[KPI Card].backends.vegalite.properties[logScale_y]", "1.0.0"),
+        ("catalog.chartTypes[Map].backends.vegalite.properties[includeZero_x]", "1.0.0"),
+        ("catalog.chartTypes[Map].backends.vegalite.properties[includeZero_y]", "1.0.0"),
+        ("catalog.chartTypes[Map].backends.vegalite.properties[logScale_x]", "1.0.0"),
+        ("catalog.chartTypes[Map].backends.vegalite.properties[logScale_y]", "1.0.0"));
 }

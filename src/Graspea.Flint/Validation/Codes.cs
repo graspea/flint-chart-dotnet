@@ -30,6 +30,7 @@ internal static class Codes
     internal const string InvalidOptionValue = "invalid_option_value";
     internal const string UnknownSemanticType = "unknown_semantic_type";
     internal const string SortByInvalid = "sort_by_invalid";
+    internal const string RetiredMember = "retired_member";
 
     // Info.
     internal const string DataUrlNotFetched = "data_url_not_fetched";

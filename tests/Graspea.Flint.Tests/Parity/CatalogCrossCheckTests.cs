@@ -67,6 +67,11 @@ public sealed class CatalogCrossCheckTests
                     {
                         Assert.That(Has(result, "unsupported_channel", channel) || Has(result, "excel_unsupported", channel), Is.True, $"{id}: {channel} is not declared");
                     }
+                    else if (CommittedIr.RetiredIn($"catalog.chartTypes[{chartType}].backends.{id}.channels[{channel}]") is not null)
+                    {
+                        // source: generator/retired.json and design part 3 §8.4 (a retired channel is retired_member)
+                        Assert.That(Has(result, "retired_member", channel), Is.True, $"{id}: {channel} is retired");
+                    }
                     else
                     {
                         Assert.That(Has(result, "unsupported_channel", channel), Is.True, $"{id}: {channel} is not declared");
