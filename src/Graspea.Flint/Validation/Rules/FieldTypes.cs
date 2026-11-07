@@ -87,7 +87,13 @@ internal sealed partial class FieldTypes
         var values = Values(field);
         var supplied = SuppliedSemanticType(field);
         var semanticType = supplied.Length > 0 ? supplied : ImplicitYear(field, values);
-        var resolved = ResolveEncodingType(semanticType, values, channel, field);
+        // Upstream decides on the values as the chart holds them: a YearMonth 202501 is "2025-01" (parseTemporalByType).
+        if (TemporalParse.HasParsers(semanticType))
+        {
+            values = [.. values.Select(v => TemporalParse.Parse(v.Value, semanticType) is { } parsed ? (JsonValue.Create(parsed), true) : v)];
+        }
+
+        var resolved = ResolveEncodingType(semanticType, values, channel);
 
         if (e.Type?.Name is { Length: > 0 } explicitType)
         {
@@ -128,14 +134,14 @@ internal sealed partial class FieldTypes
         return sample.Length > 0 && sample.All(v => IsoDateTime().IsMatch(Js.Trim(v!)));
     }
 
-    private FieldType ResolveEncodingType(string semanticType, (JsonNode? Value, bool Present)[] values, string channel, string field)
+    private FieldType ResolveEncodingType(string semanticType, (JsonNode? Value, bool Present)[] values, string channel)
     {
         // A registered type without candidates has no registry category, as upstream's visEncodings[0] ?? null.
         if (semanticType.Length > 0 && CatalogTables.SemanticTypes.TryGetValue(semanticType, out var candidates) && candidates.Length > 0)
         {
             if (candidates.Length > 1)
             {
-                return Disambiguate(candidates, channel, field);
+                return Disambiguate(candidates, channel, values);
             }
 
             switch (candidates[0])
@@ -146,7 +152,7 @@ internal sealed partial class FieldTypes
                         || (Js.Kind(v.Value) == JsonValueKind.String && !double.IsNaN(Js.ToNumber(v.Value)) && Js.Trim(v.Value!.GetValue<string>()).Length > 0));
                     return allNumeric ? FieldType.Quantitative : FromCategory(InferVisCategory(values));
                 case "temporal":
-                    return TemporalEncoding(channel, field, fromRegistry: true);
+                    return TemporalEncoding(channel, values, fromRegistry: true);
                 case "ordinal":
                     return OrdinalGuards(channel, values, fromRegistry: true);
                 default:
@@ -156,7 +162,7 @@ internal sealed partial class FieldTypes
 
         return InferVisCategory(values) switch
         {
-            "temporal" => TemporalEncoding(channel, field, fromRegistry: false),
+            "temporal" => TemporalEncoding(channel, values, fromRegistry: false),
             "quantitative" => FieldType.Quantitative,
             "nominal" => FieldType.Nominal,
             _ => FieldType.Unknown,
@@ -173,19 +179,19 @@ internal sealed partial class FieldTypes
         _ => FieldType.Nominal,
     };
 
-    private FieldType Disambiguate(string[] candidates, string channel, string field)
+    private FieldType Disambiguate(string[] candidates, string channel, (JsonNode? Value, bool Present)[] values)
     {
         bool Has(string c) => candidates.Contains(c);
         if (Has("temporal") && Has("ordinal"))
         {
-            return TemporalEncoding(channel, field, fromRegistry: true);
+            return TemporalEncoding(channel, values, fromRegistry: true);
         }
 
         if (Has("quantitative") && Has("ordinal"))
         {
             return channel switch
             {
-                "color" or "group" => DistinctCount(field) <= 12 ? FieldType.Ordinal : FieldType.Quantitative,
+                "color" or "group" => DistinctCount(values) <= 12 ? FieldType.Ordinal : FieldType.Quantitative,
                 "column" or "row" => FieldType.Ordinal,
                 _ => FieldType.Quantitative,
             };
@@ -237,29 +243,37 @@ internal sealed partial class FieldTypes
     }
 
     /// <summary><c>new Set(data.map(r => r[field])).size</c>.</summary>
-    internal int DistinctCount(string field) => rows.Select(r => Js.SetKey(Js.Get(r, field, out var present), present)).Distinct().Count();
+    internal int DistinctCount(string field) => DistinctCount(Values(field));
 
-    private FieldType TemporalEncoding(string channel, string field, bool fromRegistry)
+    private static int DistinctCount((JsonNode? Value, bool Present)[] values) => values.Select(v => Js.SetKey(v.Value, v.Present)).Distinct().Count();
+
+    private FieldType TemporalEncoding(string channel, (JsonNode? Value, bool Present)[] values, bool fromRegistry)
     {
         if (channel is "size" or "column" or "row")
         {
             return FieldType.Ordinal;
         }
 
-        if (channel is "color" or "group" && DistinctCount(field) <= 12)
+        if (channel is "color" or "group" && DistinctCount(values) <= 12)
         {
             return FieldType.Ordinal;
         }
 
-        return ValidateTemporalParsing(field, fromRegistry) switch
+        var parses = ValidateTemporalParsing(values, fromRegistry);
+        if (parses == false)
         {
-            // ponytail: readsAsSnapshots (a few dated snapshots on a banded x or y read as ordinal) needs the Date.parse
-            // times of the values, so it stays undecided; port snapshotTime when a rule needs the exact answer.
-            true => channel is "x" or "y" && BandedChartTypes.Contains(input.ChartSpec?.ChartType.Name ?? string.Empty)
-                ? FieldType.TemporalOrOrdinal
-                : FieldType.Temporal,
-            false => FieldType.Ordinal,
-            null => FieldType.TemporalOrOrdinal,
+            return FieldType.Ordinal;
+        }
+
+        // A few dates along a row of bands are snapshots: ordinal (readsAsSnapshots).
+        var snapshots = channel is "x" or "y" && BandedChartTypes.Contains(input.ChartSpec?.ChartType.Name ?? string.Empty)
+            ? Snapshots.ReadAs(values.Where(v => v.Present).Select(v => v.Value))
+            : false;
+        return (parses, snapshots) switch
+        {
+            (true, true) => FieldType.Ordinal,
+            (true, false) => FieldType.Temporal,
+            _ => FieldType.TemporalOrOrdinal,
         };
     }
 
@@ -271,13 +285,12 @@ internal sealed partial class FieldTypes
     };
 
     /// <summary><c>validateTemporalParsing</c>: up to 15 distinct defined values, enough of which look temporal.</summary>
-    private bool? ValidateTemporalParsing(string field, bool fromRegistry)
+    private static bool? ValidateTemporalParsing((JsonNode? Value, bool Present)[] values, bool fromRegistry)
     {
         var seen = new HashSet<string>(StringComparer.Ordinal);
         var sample = new List<JsonNode?>();
-        foreach (var row in rows)
+        foreach (var (value, present) in values)
         {
-            var value = Js.Get(row, field, out var present);
             if (Js.IsNullish(value, present))
             {
                 continue;
@@ -391,12 +404,14 @@ internal sealed partial class FieldTypes
         return dates.All(d => d == true) ? "temporal" : null;
     }
 
+    /// <summary>The <c>isDate</c> of 1.0.0's <c>inferVisCategory</c>; a string is a date when <c>isUnambiguousDateString</c>
+    /// holds: an <c>ISO_DATE</c> or US slash date that <c>Date.parse</c> reads, or a full date <c>parseTemporalByType</c> reads.</summary>
     private static bool? IsDate(JsonNode? value)
     {
         if (Js.Kind(value) == JsonValueKind.String)
         {
-            var s = value!.GetValue<string>();
-            return LooksLikeDate().IsMatch(Js.Trim(s)) ? Js.DateParses(s) : false;
+            var s = Js.Trim(value!.GetValue<string>());
+            return Js.WideIsoDate().IsMatch(s) || UsSlashDate().IsMatch(s) ? Js.DateParses(s) : TemporalParse.IsDate(s);
         }
 
         // Date.parse(String(v)): V8 reads many bare numbers as dates, so a number is undecided.
@@ -427,8 +442,8 @@ internal sealed partial class FieldTypes
     [GeneratedRegex("^[0-9]{4}$", RegexOptions.CultureInvariant)]
     private static partial Regex FourDigits();
 
-    [GeneratedRegex("^[0-9]|^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
-    private static partial Regex LooksLikeDate();
+    [GeneratedRegex(@"^[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}\z", RegexOptions.CultureInvariant)]
+    private static partial Regex UsSlashDate();
 
     [GeneratedRegex("([a-z0-9])([A-Z])", RegexOptions.CultureInvariant)]
     private static partial Regex CamelBoundary();

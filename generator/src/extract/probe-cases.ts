@@ -45,6 +45,15 @@ const sortBy = (value: string, change: (i: Doc) => void = () => {}): Doc =>
     change(i);
   });
 
+const monthStarts = (count: number) => Array.from({ length: count }, (_, i) => new Date(Date.UTC(2024, i, 1)).toISOString().slice(0, 10));
+
+/** A Boxplot over dates on x (Excel needs a categorical x): snapshots read as ordinal, a run of time as temporal. */
+const boxplot = (dates: unknown[], semanticType?: string): Doc => ({
+  data: { values: dates.flatMap((d, i) => [{ day: d, revenue: 10 + i }, { day: d, revenue: 20 + i }]) },
+  chart_spec: { chartType: 'Boxplot', encodings: { x: { field: 'day' }, y: { field: 'revenue' } } },
+  ...(semanticType ? { semantic_types: { day: semanticType } } : {}),
+});
+
 const cases: Array<[string, Doc, true?]> = [
   ['static series on x and y', line((i) => (i.chart_spec.encodings = { x: series({ field: 'city' }, { field: 'cost' }), y: series({ field: 'revenue' }, { field: 'cost' }) }))],
   ['static series on color', line((i) => (i.chart_spec.encodings.color = series({ field: 'revenue' }, { field: 'cost' })))],
@@ -109,6 +118,12 @@ const cases: Array<[string, Doc, true?]> = [
   ['sortBy a JSON number', sortBy('5')],
   ['sortOrder invalid', bar((i) => (i.chart_spec.encodings.x.sortOrder = 'zzz'))],
   ['sortOrder valid', bar((i) => (i.chart_spec.encodings.x.sortOrder = 'descending'))],
+  ['boxplot x of 3 dates', boxplot(['2024-01-15', '2024-06-15', '2025-01-15'])],
+  ['boxplot x of 12 consecutive months', boxplot(monthStarts(12))],
+  ['boxplot x of 9 consecutive months and one far', boxplot([...monthStarts(9), '2026-01-01'])],
+  ['boxplot x of 12 consecutive YearMonth numbers', boxplot(Array.from({ length: 12 }, (_, i) => 202401 + i), 'YearMonth')],
+  ['boxplot x of 3 YearMonth numbers', boxplot([202501, 202503, 202507], 'YearMonth')],
+  ['boxplot x of 12 YearMonth spellings', boxplot(['Jan 2024', 'Feb 2024', 'Mar 2024', 'Apr 2024', 'May 2024', 'Jun 2024', 'Jul 2024', 'Aug 2024', 'Sep 2024', 'Oct 2024', 'Nov 2024', 'Dec 2024'], 'YearMonth')],
 ];
 
 export function probeCases(): ProbeCase[] {

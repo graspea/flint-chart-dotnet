@@ -1,5 +1,5 @@
 // Runtime probes behind the facts the design cites as probed (design §7.2): null handling and row shapes, the backends
-// that apply the theme (by preset id or an object's `extends`), names of Object.prototype used as ids, the inference of the values .NET writes, and the Date.parse results the validator relies on.
+// that apply the theme (by preset id or an object's `extends`), names of Object.prototype used as ids, the inference of the values .NET writes, the Date.parse results the validator relies on, and the channel types it ports.
 // `npm run generate` (its fixtures step) records the output per version in tests/fixtures/flint-chart@<version>/probes.json;
 // a unit test that cites a probe fact names that file, and test/probes.test.ts keeps the pinned version's record equal to
 // a fresh run.
@@ -16,6 +16,8 @@ export interface ProbeResults {
   themeBackends: { unknownPresetThrows: Backend[]; unknownExtendsThrows: Backend[]; presetChangesOutput: Backend[] };
   valueInference: Record<string, string>;
   dateParse: Record<string, 'parses' | 'NaN'>;
+  /** The type `resolveChannelSemantics` gives the probe's channel, with ` snapshots` when it reads the dates as snapshots. */
+  channelTypes: Record<string, string>;
 }
 
 type Assembler = (input: Input) => unknown;
@@ -98,17 +100,76 @@ const inferenceProbes: Record<string, unknown[]> = {
   'single-number array': [[1], [2]],
 };
 
-/** ISO forms (parse), strings without a digit (never parse), and legacy forms V8 also reads ("Stage 1", "Jan 2024", "1"). */
+/**
+ * ISO forms (parse), strings without a digit (never parse), and legacy forms V8 also reads ("Stage 1", "Jan 2024", "1");
+ * the wider ISO forms of upstream's `ISO_DATE` (a space for `T`, an offset without a colon, a longer fraction) and its
+ * US slash dates, each with components in and out of range.
+ */
 const dateParseProbes = [
   '1', '2024', '2024-01-15', '2024-01-15T10:30:00Z', '2024-02-30', '2024-13', 'East', 'Jan 2024', 'Mar-Apr', 'May',
   'Monday January', 'Stage 1', 'Sat, Jan', 'now',
+  '2024-00', '2024-01-00', '2024-01-32', '2024-01-15T24:00', '2024-01-15T25:00', '2024-01-15T10:60', '2024-01-15T10:00:60',
+  '2024-01-15T10:00+0200', '2024-01-15T10:00:00.123456Z', '2024-01-15 10:00', '2024-01-15 10:00+0200', '2024-01-15 25:00',
+  '2024-01-15 10:60', '1/15/2025', '2/30/2025', '12/31/2025', '0/15/2025', '1/0/2025', '13/1/2025', '12/32/2025', '13/45/2025',
 ];
+
+const months = (from: number, count: number, step = 1) =>
+  Array.from({ length: count }, (_, i) => new Date(Date.UTC(2024, from + i * step, 1)).toISOString().slice(0, 10));
+const days = (count: number, step = 1) => Array.from({ length: count }, (_, i) => new Date(Date.UTC(2024, 0, 1 + i * step)).toISOString().slice(0, 10));
+
+/**
+ * One channel of a chart over one field (`resolveChannelSemantics` with the chart type, as every backend calls it): dates
+ * on a banded axis read as snapshots or a time scale (`readsAsSnapshots`), the spellings a YearMonth or Date semantic type
+ * rewrites (`parseTemporalByType`), and the strings untyped inference reads as dates (`isUnambiguousDateString`).
+ */
+const channelTypeProbes: Record<string, { chartType: string; values: unknown[]; semanticType?: string; channel?: string }> = {
+  'banded x, 3 dates': { chartType: 'Bar Chart', values: ['2024-01-15', '2024-06-15', '2025-01-15'] },
+  'line x, 3 dates': { chartType: 'Line Chart', values: ['2024-01-15', '2024-06-15', '2025-01-15'] },
+  'banded y, 3 dates': { chartType: 'Bar Chart', values: ['2024-01-15', '2024-06-15', '2025-01-15'], channel: 'y' },
+  'banded color, 3 dates': { chartType: 'Bar Chart', values: ['2024-01-15', '2024-06-15', '2025-01-15'], channel: 'color' },
+  'banded x, 12 consecutive months': { chartType: 'Bar Chart', values: months(0, 12) },
+  'banded x, 10 quarterly months': { chartType: 'Bar Chart', values: months(0, 10, 3) },
+  'banded x, 9 consecutive months and one far': { chartType: 'Bar Chart', values: [...months(0, 9), '2026-01-01'] },
+  'banded x, 10 weekly dates': { chartType: 'Bar Chart', values: days(10, 7) },
+  'banded x, 9 consecutive days and one far': { chartType: 'Bar Chart', values: [...days(9), '2024-02-01'] },
+  'banded x, 60 days': { chartType: 'Bar Chart', values: days(60) },
+  'banded x, 10 hours UTC': { chartType: 'Bar Chart', values: Array.from({ length: 10 }, (_, i) => `2024-01-01T${String(i).padStart(2, '0')}:00:00Z`) },
+  'banded x, 10 dates with an offset, 2 days apart': {
+    chartType: 'Bar Chart',
+    values: Array.from({ length: 10 }, (_, i) => `2024-01-${String(1 + i * 2).padStart(2, '0')}T00:00:00+00:00`),
+  },
+  'banded x, Year 2000 to 2008 and 2024': { chartType: 'Bar Chart', values: [...Array.from({ length: 9 }, (_, i) => 2000 + i), 2024], semanticType: 'Year' },
+  'banded x, YearMonth numbers 202501, 202503, 202507': { chartType: 'Bar Chart', values: [202501, 202503, 202507], semanticType: 'YearMonth' },
+  'banded x, YearMonth numbers, 12 consecutive': {
+    chartType: 'Bar Chart',
+    values: Array.from({ length: 12 }, (_, i) => 202401 + i),
+    semanticType: 'YearMonth',
+  },
+  'line x, YearMonth numbers': { chartType: 'Line Chart', values: [202501, 202502, 202503], semanticType: 'YearMonth' },
+  'line x, YearMonth spellings': { chartType: 'Line Chart', values: ['2025M01', 'Feb 2025', '03/2025', '2025-Apr'], semanticType: 'YearMonth' },
+  'line x, Date spellings': { chartType: 'Line Chart', values: ['20250115', '2025/01/16', 'Jan 17, 2025', '18 January 2025'], semanticType: 'Date' },
+  'line x, Date spellings with an invalid day': { chartType: 'Line Chart', values: ['2025/02/30', '2025/02/31'], semanticType: 'Date' },
+  'line x, untyped "Jan 2025"': { chartType: 'Line Chart', values: ['Jan 2025', 'Feb 2025'] },
+  'line x, untyped "Jan 15, 2025"': { chartType: 'Line Chart', values: ['Jan 15, 2025', 'Feb 15, 2025'] },
+  'line x, untyped "2025/01/15"': { chartType: 'Line Chart', values: ['2025/01/15', '2025/02/15'] },
+  'line x, untyped "2024-01-15 10:00"': { chartType: 'Line Chart', values: ['2024-01-15 10:00', '2024-01-16 10:00'] },
+  'line x, untyped US slash dates': { chartType: 'Line Chart', values: ['1/15/2025', '2/30/2025'] },
+  'line x, untyped "13/45/2025"': { chartType: 'Line Chart', values: ['13/45/2025', '1/15/2025'] },
+  'line x, untyped "Stage 1"': { chartType: 'Line Chart', values: ['Stage 1', 'Stage 2'] },
+};
 
 const sortedBackends = (set: Set<Backend>) => BACKENDS.filter((b) => set.has(b));
 
 export async function runProbes(): Promise<ProbeResults> {
   const flint = (await import('flint-chart')) as unknown as Record<string, Assembler> & {
     inferVisCategory: (values: unknown[]) => string;
+    resolveChannelSemantics: (
+      encodings: Record<string, unknown>,
+      data: unknown[],
+      semanticTypes: Record<string, string>,
+      converted: undefined,
+      context: { chartType: string },
+    ) => Record<string, { type: string; snapshots?: boolean }>;
   };
   const assemblers: Record<Backend, Assembler> = {
     vegalite: flint.assembleVegaLite,
@@ -161,7 +222,17 @@ export async function runProbes(): Promise<ProbeResults> {
 
     const dateParse = Object.fromEntries(dateParseProbes.map((s) => [s, Number.isNaN(Date.parse(s)) ? 'NaN' : 'parses'])) as ProbeResults['dateParse'];
 
+    const channelTypes = Object.fromEntries(
+      Object.entries(channelTypeProbes).map(([name, { chartType, values, semanticType, channel = 'x' }]) => {
+        const data = values.map((v, i) => ({ f: v, n: i + 1 }));
+        const encodings = channel === 'x' ? { x: { field: 'f' }, y: { field: 'n' } } : { x: { field: 'n' }, [channel]: { field: 'f' } };
+        const resolved = flint.resolveChannelSemantics(encodings, data, semanticType ? { f: semanticType } : {}, undefined, { chartType })[channel];
+        return [name, `${resolved.type}${resolved.snapshots ? ' snapshots' : ''}`];
+      }),
+    );
+
     return {
+      channelTypes,
       dateParse,
       nullHandling,
       prototypeKeys,

@@ -130,6 +130,62 @@ describe(`probes: documented facts (flint-chart ${DOCUMENTED})`, () => {
       'Stage 1': 'parses',
       'Sat, Jan': 'NaN',
       'now': 'NaN',
+      '2024-00': 'NaN',
+      '2024-01-00': 'NaN',
+      '2024-01-32': 'NaN',
+      '2024-01-15T24:00': 'parses',
+      '2024-01-15T25:00': 'NaN',
+      '2024-01-15T10:60': 'NaN',
+      '2024-01-15T10:00:60': 'NaN',
+      '2024-01-15T10:00+0200': 'parses',
+      '2024-01-15T10:00:00.123456Z': 'parses',
+      '2024-01-15 10:00': 'parses',
+      '2024-01-15 10:00+0200': 'parses',
+      '2024-01-15 25:00': 'NaN',
+      '2024-01-15 10:60': 'NaN',
+      '1/15/2025': 'parses',
+      '2/30/2025': 'parses',
+      '12/31/2025': 'parses',
+      '0/15/2025': 'NaN',
+      '1/0/2025': 'NaN',
+      '13/1/2025': 'NaN',
+      '12/32/2025': 'NaN',
+      '13/45/2025': 'NaN',
+    });
+  });
+
+  // source: src/core/decisions.ts readsAsSnapshots (at most 8 dates; 9 to 50 calendar dates filling under half their
+  // periods), src/core/temporal-parse.ts parseTemporalByType (the YearMonth and Date spellings) and
+  // src/core/semantic-types.ts isUnambiguousDateString of flint-chart 1.0.0 (docs/validation-codes.md, "How a rule reads a
+  // field's type")
+  it('records the channel types the validator ports', () => {
+    assert.deepEqual(results.channelTypes, {
+      'banded x, 3 dates': 'ordinal snapshots',
+      'line x, 3 dates': 'temporal',
+      'banded y, 3 dates': 'ordinal snapshots',
+      'banded color, 3 dates': 'ordinal',
+      'banded x, 12 consecutive months': 'temporal',
+      'banded x, 10 quarterly months': 'temporal',
+      'banded x, 9 consecutive months and one far': 'ordinal snapshots',
+      'banded x, 10 weekly dates': 'temporal',
+      'banded x, 9 consecutive days and one far': 'ordinal snapshots',
+      'banded x, 60 days': 'temporal',
+      'banded x, 10 hours UTC': 'temporal',
+      'banded x, 10 dates with an offset, 2 days apart': 'temporal',
+      'banded x, Year 2000 to 2008 and 2024': 'ordinal snapshots',
+      'banded x, YearMonth numbers 202501, 202503, 202507': 'ordinal snapshots',
+      'banded x, YearMonth numbers, 12 consecutive': 'temporal',
+      'line x, YearMonth numbers': 'temporal',
+      'line x, YearMonth spellings': 'temporal',
+      'line x, Date spellings': 'temporal',
+      'line x, Date spellings with an invalid day': 'temporal',
+      'line x, untyped "Jan 2025"': 'nominal',
+      'line x, untyped "Jan 15, 2025"': 'temporal',
+      'line x, untyped "2025/01/15"': 'temporal',
+      'line x, untyped "2024-01-15 10:00"': 'temporal',
+      'line x, untyped US slash dates': 'temporal',
+      'line x, untyped "13/45/2025"': 'nominal',
+      'line x, untyped "Stage 1"': 'nominal',
     });
   });
 });

@@ -235,23 +235,49 @@ internal static partial class Js
     private static readonly object Null = new();
 
     /// <summary>
-    /// Whether V8's <c>Date.parse</c> returns a number: true for the ISO 8601 forms of ECMA-262 §21.4.1.32 with a valid
-    /// month, a day of at most 31 and a valid time of day, false for a string without an ASCII digit (V8 needs a number for a date), null
-    /// otherwise (V8's legacy parser accepts more, such as <c>"Stage 1"</c>; recorded in tests/fixtures/flint-chart@1.0.0/probes.json).
+    /// Whether V8's <c>Date.parse</c> returns a number, as far as tests/fixtures/flint-chart@1.0.0/probes.json (<c>dateParse</c>)
+    /// records it: an ISO 8601 form of ECMA-262 §21.4.1.32, or the wider form of upstream's <c>ISO_DATE</c> (a space for
+    /// <c>T</c>, an offset without a colon, a longer fraction), parses when its month, day and time of day are in range
+    /// (<c>T24:00</c> too; a day past the month's end rolls over) and not when one is out of range; a US slash date
+    /// <c>M/D/YYYY</c> likewise; a string without an ASCII digit never parses. Null otherwise: V8's legacy parser accepts
+    /// more, such as <c>"Stage 1"</c>.
     /// </summary>
     internal static bool? DateParses(string s)
     {
         var t = Trim(s);
-        if (IsoDate().Match(t) is { Success: true } m)
+        var m = IsoDate().Match(t);
+        if (!m.Success)
+        {
+            m = WideIsoDate().Match(t);
+        }
+
+        if (m.Success)
         {
             int Part(string name, int fallback) => m.Groups[name].Success ? int.Parse(m.Groups[name].Value, CultureInfo.InvariantCulture) : fallback;
-            var valid = Part("month", 1) is >= 1 and <= 12 && Part("day", 1) is >= 1 and <= 31
-                && Part("hour", 0) <= 23 && Part("minute", 0) <= 59 && Part("second", 0) <= 59;
-            return valid ? true : null;
+            var (month, day, hour, minute, second) = (Part("month", 1), Part("day", 1), Part("hour", 0), Part("minute", 0), Part("second", 0));
+            if (month is < 1 or > 12 || day is < 1 or > 31 || hour > 24 || minute > 59 || second > 59)
+            {
+                return false;
+            }
+
+            var midnight = minute == 0 && second == 0 && !m.Groups["fraction"].Value.Any(c => c != '0');
+            var offset = m.Groups["offset"].Value is { Length: > 1 } o ? (int.Parse(o.AsSpan(1, 2), CultureInfo.InvariantCulture), int.Parse(o.AsSpan(o.Length - 2), CultureInfo.InvariantCulture)) : (0, 0);
+            return (hour < 24 || midnight) && offset.Item1 <= 23 && offset.Item2 <= 59 ? true : null;
+        }
+
+        if (UsSlashDate().Match(t) is { Success: true } us)
+        {
+            var (month, day) = (int.Parse(us.Groups[1].Value, CultureInfo.InvariantCulture), int.Parse(us.Groups[2].Value, CultureInfo.InvariantCulture));
+            return month is >= 1 and <= 12 && day is >= 1 and <= 31;
         }
 
         return t.Any(char.IsAsciiDigit) ? null : false;
     }
+
+    /// <summary>An ISO 8601 form of ECMA-262 that every engine reads as one instant: a date without a time (UTC), or a
+    /// date-time with <c>Z</c> or an offset. A date-time without one is local time.</summary>
+    internal static bool IsoDateOnlyOrWithOffset(string s) =>
+        IsoDate().Match(Trim(s)) is { Success: true } m && (!m.Groups["hour"].Success || m.Groups["offset"].Success);
 
     /// <summary>The time value of an ISO 8601 string accepted by <see cref="DateParses"/>, read as UTC when it has no
     /// offset (V8 reads a date-time without one as local time; the order of two such values is the same).</summary>
@@ -275,7 +301,9 @@ internal static partial class Js
         }
 
         var fraction = m.Groups["fraction"].Success ? double.Parse("0." + m.Groups["fraction"].Value, CultureInfo.InvariantCulture) * 1000 : 0;
-        var time = new DateTimeOffset(year, month, day, g("hour", 0), g("minute", 0), g("second", 0), TimeSpan.Zero).ToUnixTimeMilliseconds() + fraction;
+        // T24:00 is the end of the day (ECMA-262 §21.4.1.32), so the time of day is added rather than constructed.
+        var time = new DateTimeOffset(year, month, day, 0, 0, 0, TimeSpan.Zero).ToUnixTimeMilliseconds()
+            + ((((g("hour", 0) * 60) + g("minute", 0)) * 60) + g("second", 0)) * 1000d + fraction;
         if (m.Groups["offset"].Success && m.Groups["offset"].Value is not ("Z" or "z"))
         {
             var o = m.Groups["offset"].Value;
@@ -297,6 +325,14 @@ internal static partial class Js
 
     [GeneratedRegex(@"^[+-]?([0-9]+\.?[0-9]*([eE][+-]?[0-9]+)?|\.[0-9]+([eE][+-]?[0-9]+)?)$", RegexOptions.CultureInvariant)]
     private static partial Regex DecimalLiteral();
+
+    /// <summary>Upstream's <c>ISO_DATE</c> (src/core/semantic-types.ts), with the groups of <see cref="IsoDate"/>.</summary>
+    [GeneratedRegex(@"^(?<year>[0-9]{4})-(?<month>[0-9]{2})(-(?<day>[0-9]{2})([T ](?<hour>[0-9]{2}):(?<minute>[0-9]{2})(:(?<second>[0-9]{2})(\.(?<fraction>[0-9]+))?)?(?<offset>Z|[+-][0-9]{2}:?[0-9]{2})?)?)?\z", RegexOptions.CultureInvariant)]
+    internal static partial Regex WideIsoDate();
+
+    /// <summary>Upstream's <c>US_SLASH_DATE</c>.</summary>
+    [GeneratedRegex(@"^([0-9]{1,2})/([0-9]{1,2})/[0-9]{4}\z", RegexOptions.CultureInvariant)]
+    private static partial Regex UsSlashDate();
 
     [GeneratedRegex(@"^(?<year>[0-9]{4})(-(?<month>[0-9]{2})(-(?<day>[0-9]{2})(T(?<hour>[0-9]{2}):(?<minute>[0-9]{2})(:(?<second>[0-9]{2})(\.(?<fraction>[0-9]{1,3}))?)?(?<offset>Z|[+-][0-9]{2}:[0-9]{2})?)?)?)?$", RegexOptions.CultureInvariant)]
     private static partial Regex IsoDate();
