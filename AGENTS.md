@@ -42,7 +42,7 @@ section, which the generator also writes to `docs/package/AGENTS.md` and packs a
   permissions it needs; a new variable, secret or environment goes into `docs/maintainers.md` ("What the workflows
   need").
 - Pipeline logic (version and tag checks, the release tag signature check, the upstream picker, the gate, the sync
-  report, the sync path check) lives in `generator/scripts/*.mjs`, tested with `node:test` in `generator/test/`;
+  report, the sync path check, the sync branch owner check) lives in `generator/scripts/*.mjs`, tested with `node:test` in `generator/test/`;
   workflow YAML only calls it.
 - `.github/allowed_signers` (maintainer keys for release tags), `.github/CODEOWNERS` and `.github/rulesets/*.json`
   (repository rulesets, applied by hand with `gh api`) change only in a pull request a maintainer reviews; never add a

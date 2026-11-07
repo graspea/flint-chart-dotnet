@@ -1,6 +1,7 @@
 # The upstream watch bot (design part 4). Daily, it picks the next stable flint-chart version above the pin, runs the
 # install gate, regenerates, tests, writes a change report and opens one pull request per upstream version on branch
-# upstream/flint-chart-<version>. It never tags and never publishes: the maintainer merges, opens the release pull
+# upstream/flint-chart-<version>; once a maintainer has committed to that branch, the bot no longer pushes to it and
+# comments its newer regeneration instead. It never tags and never publishes: the maintainer merges, opens the release pull
 # request and pushes the tag (release.yml).
 #
 # Job generate runs code from the upstream package, so it has a read-only token and no secrets. Every write goes
@@ -140,8 +141,8 @@ jobs:
     needs: [detect, generate]
     runs-on: ubuntu-latest
     environment: upstream-sync
-    # Checkout only; every write uses the App token. No npm or dotnet command runs in this job, only the path check
-    # from main's checkout.
+    # Checkout only; every write uses the App token. No npm or dotnet command runs in this job, only the path check and
+    # the branch owner check from main's checkout.
     permissions:
       contents: read
     env:
@@ -186,10 +187,21 @@ jobs:
       - run: |
           git apply "$RUNNER_TEMP/out/upstream.patch"
           node generator/scripts/check-sync-paths.mjs
-      # Creates the pull request, or force-updates the branch and the open pull request on a rerun; no change, no push.
+      # A branch with a commit that is not the App's belongs to the maintainer: no push, no label or draft change, and the
+      # report of this regeneration goes into one comment on the open pull request (sync-branch-owner.mjs).
+      - id: owner
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: upstream/flint-chart-${{ needs.detect.outputs.version }}
+          BOT: ${{ steps.app.outputs.app-slug }}[bot]
+          VERSION: ${{ needs.detect.outputs.version }}
+        run: node generator/scripts/sync-branch-owner.mjs "$RUNNER_TEMP/out/pr-body.md"
+      # Creates the pull request, or force-updates the bot's branch and the open pull request on a rerun; no change, no push.
       # sign-commits creates the commit through the GitHub API with the App token, so GitHub signs it as the App's bot
       # (main requires signed commits); author and committer are the bot and cannot be set.
       - id: cpr
+        if: steps.owner.outputs.push == 'true'
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ steps.app.outputs.token }}
@@ -203,7 +215,7 @@ jobs:
           add-paths: ${{ env.SYNC_PATHS }}
       # On an existing pull request the action updates only the title and body: it adds labels but never removes them,
       # and draft applies at creation. Bring the computed labels and the draft state up to date on every run.
-      - if: steps.cpr.outputs.pull-request-number != ''
+      - if: steps.owner.outputs.push == 'true' && steps.cpr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
           GH_REPO: ${{ github.repository }}

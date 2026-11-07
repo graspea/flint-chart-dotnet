@@ -251,7 +251,8 @@ export function renderReport(m) {
     '### After merge\n' +
     `1. Open the release pull request \`release: ${m.suggestedTag}\` (design part 3 §9.6 step 2: Shipped moved, baseline set, CHANGELOG entry, NuGet badge kind, install line) and merge it.\n` +
     `2. \`git tag ${m.suggestedTag} <release PR merge sha> && git push origin ${m.suggestedTag}\`\n\n` +
-    'Review checklist: design part 3 §9.5. Never edit this pull request by hand: generator fixes go to `main` in their own pull request, then dispatch the workflow again.\n' +
+    "Review checklist: design part 3 §9.5. While this pull request has only the bot's commits, do not edit it by hand: generator fixes go to `main` in their own pull request, then dispatch the workflow again. " +
+    'When this version needs SDK work, push the commits to this branch; from then on the bot no longer pushes to it and posts each newer regeneration as a comment (`docs/maintainers.md`).\n' +
     (m.generation === 'ok' ? '' : `\n### Generation log\n${fenced(logTail(m.generateLog, m.version), 'text')}`)
   );
 }

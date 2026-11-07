@@ -289,6 +289,15 @@ describe('upstream-report: body', () => {
     assert.ok(!inside.includes('stays a draft'), inside);
   });
 
+  // source: maintainer decision on maintainer commits (the hand-edit rule holds only while the branch has only the bot's
+  // commits; a maintainer adds SDK work to the sync pull request directly)
+  it('limits the hand-edit rule to a bot-only pull request', () => {
+    const body = renderReport(model());
+    assert.ok(!body.includes('Never edit this pull request by hand'), body);
+    assert.ok(body.includes('While this pull request has only the bot\'s commits, do not edit it by hand'), body);
+    assert.ok(body.includes('push the commits to this branch'), body);
+  });
+
   // source: GitHub Flavored Markdown code spans (a backtick inside needs a longer delimiter; a pipe needs escaping);
   // long documentation values are cut so the table stays readable
   it('quotes IR values with backticks or pipes and shortens long values', () => {
