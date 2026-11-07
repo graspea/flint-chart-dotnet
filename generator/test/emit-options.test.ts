@@ -548,6 +548,61 @@ internal sealed partial class FlintMapJsonContext : JsonSerializerContext;
   });
 });
 
+describe('emit/options: interaction presets', () => {
+  const str = (name: string, optional = true): IrProp => ({ name, optional, type: { kind: 'string' } });
+  const presetIr = () =>
+    irWith({
+      InteractionPresetOptions: options([
+        { name: 'brush-x', optional: false, type: { kind: 'ref', name: 'SelectOptions' } },
+        { name: 'group-focus', optional: false, type: { kind: 'ref', name: 'GroupFocusOptions' } },
+        { name: 'lasso-select', optional: false, type: { kind: 'mapped', text: "Omit<SelectOptions, 'mode'>", props: [str('id'), str('match')] } },
+      ]),
+      SelectOptions: options([str('id'), str('match'), str('mode')]),
+      GroupFocusOptions: options([str('groupBy', false), str('id')]),
+    });
+  const result = () => emitOptions(presetIr(), overrides({ flatten: ['InteractionPresetOptions.lasso-select'] }));
+
+  // source: flint-chart 1.0.0 dist/interactive (InteractionPresetOptions maps each preset type to the options its factory
+  // takes; InteractionPresetSpec omits id from them, and upstream rejects options.id; LassoSelectOptions =
+  // Omit<SelectOptions, 'mode'>), docs/generator.md "Interaction presets"
+  it('emits one options class per preset without id, and no class for the preset map', () => {
+    const r = result();
+    assert.ok(!r.files.some((f) => f.path === 'Interaction/InteractionPresetOptions.g.cs'));
+    assert.ok(!fileContent(r, 'Interaction/SelectOptions.g.cs').includes('"id"'));
+    assert.ok(fileContent(r, 'Interaction/LassoSelectOptions.g.cs').includes('public string? Match { get; set; }'));
+    assert.ok(!fileContent(r, 'Interaction/LassoSelectOptions.g.cs').includes('"id"'));
+    assert.ok(!r.ownedTypes.includes('Graspea.Flint.InteractionPresetOptions'));
+  });
+
+  // source: docs/generator.md "Interaction presets" (one InteractionEntry factory per preset, through a source-generated
+  // context so trimming and AOT stay safe; a preset with a required option takes its options)
+  it('emits one InteractionEntry factory per preset and the context they serialise through', () => {
+    const r = result();
+    const entry = fileContent(r, 'Interaction/InteractionEntry.Presets.g.cs');
+    assert.ok(entry.includes(
+      '    public static InteractionEntry BrushX(SelectOptions? options = null, string? id = null) =>\n' +
+        '        Preset("brush-x", id, options is null ? null : JsonSerializer.SerializeToNode(options, InteractionPresetJsonContext.Default.SelectOptions));\n',
+    ), entry);
+    assert.ok(entry.includes('    public static InteractionEntry GroupFocus(GroupFocusOptions options, string? id = null) =>\n'));
+    assert.ok(entry.includes('    public static InteractionEntry LassoSelect(LassoSelectOptions? options = null, string? id = null) =>\n'));
+    assert.ok(r.apiLines.includes('static Graspea.Flint.InteractionEntry.GroupFocus(Graspea.Flint.GroupFocusOptions! options, string? id = null) -> Graspea.Flint.InteractionEntry!'));
+    const context = fileContent(r, 'Json/InteractionPresetJsonContext.g.cs');
+    assert.ok(context.includes('[JsonSerializable(typeof(Graspea.Flint.GroupFocusOptions))]\n[JsonSerializable(typeof(Graspea.Flint.LassoSelectOptions))]\n[JsonSerializable(typeof(Graspea.Flint.SelectOptions))]\n'));
+  });
+
+  // source: flint-chart 1.0.0 dist/interactive FilterControlsOptions.fields (`readonly (string | FilterFieldOptions)[]`):
+  // no element type maps, so overrides.json maps the array as a whole
+  it('maps an array of an unmappable union as a whole through unions', () => {
+    const ir = irWith({
+      InteractionPresetOptions: options([{ name: 'filter', optional: false, type: { kind: 'ref', name: 'FilterOptions' } }]),
+      FilterOptions: options([{ name: 'fields', optional: true, type: { kind: 'array', element: { kind: 'union', members: [{ kind: 'string' }, { kind: 'number' }] } } }]),
+    });
+    assert.throws(() => emitOptions(ir, overrides({})), /FilterOptions\.fields\[\]: union/);
+    const r = emitOptions(ir, overrides({ unions: { 'FilterOptions.fields': 'JsonNode' } }));
+    assert.ok(fileContent(r, 'Interaction/FilterOptions.g.cs').includes('public JsonNode? Fields { get; set; }'));
+  });
+});
+
 describe('overrides', () => {
   // source: design §7.2 (overrides.json validated against overrides.schema.json)
   it('rejects an unknown top-level key', () => {

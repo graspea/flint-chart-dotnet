@@ -15,7 +15,16 @@ const ROOTS = [
   { type: 'AssembleOptions', namespace: 'Graspea.Flint', folder: 'Options' },
   { type: 'ThemeSpec', namespace: 'Graspea.Flint.Theming', folder: 'Theming' },
   { type: 'InteractionSpec', namespace: 'Graspea.Flint', folder: 'Interaction' },
+  { type: 'InteractionPresetOptions', namespace: 'Graspea.Flint', folder: 'Interaction' },
 ] as const;
+
+/**
+ * `flint-chart/interactive` `InteractionPresetOptions`: preset type -> its options. It is not emitted itself; each member
+ * type is a preset's options class (a mapped member is `<Preset>Options`, such as `LassoSelectOptions`), without `id`,
+ * which lives on the entry (`InteractionPresetSpec` omits it, and upstream rejects `options.id`). `InteractionEntry`
+ * gets one factory per preset.
+ */
+const PRESETS = 'InteractionPresetOptions';
 
 /** A named type reached from more than one root: shared, like the hand-written ContinuousMarkCrossSection. */
 const SHARED = { namespace: 'Graspea.Flint', folder: 'Options' } as const;
@@ -127,13 +136,18 @@ export function optionClasses(ir: Ir, overrides: Overrides): OptionClass[] {
   return buildOptions(ir, overrides).classes;
 }
 
+/** The interaction presets with their `InteractionEntry` factory and namespace-qualified options class, in emission order. */
+export function interactionPresets(ir: Ir, overrides: Overrides): Array<{ type: string; method: string; options: string }> {
+  return buildOptions(ir, overrides).presets.map((p) => ({ type: p.type, method: pascal(p.type), options: `Graspea.Flint.${p.cls}` }));
+}
+
 /** Every generated open literal union struct, by name. */
 export function openStructs(ir: Ir, overrides: Overrides): OpenStruct[] {
   return buildOptions(ir, overrides).structs;
 }
 
 /** Two passes: the first finds every member of each open literal union, so the struct name can be chosen from all of them. */
-type Built = { result: EmitResult; classes: OptionClass[]; structs: OpenStruct[] };
+type Built = { result: EmitResult; classes: OptionClass[]; structs: OpenStruct[]; presets: Array<{ type: string; cls: string; required: boolean }> };
 
 function buildOptions(ir: Ir, overrides: Overrides): Built {
   const opens = new Map<string, OpenUnion>();
@@ -188,7 +202,7 @@ function buildPass(
       return { cs: dedup, api: dedup, value: VALUE_TYPES.has(dedup) };
     }
     const nested = (props: IrProp[], doc?: string): CsType => {
-      const name = owner.name + pascal(propName);
+      const name = owner.name === PRESETS ? `${pascal(propName)}Options` : owner.name + pascal(propName);
       plan({ name, namespace: owner.namespace, folder: owner.folder, path, doc, props });
       return { cs: name, api: `${owner.namespace}.${name}`, value: false };
     };
@@ -220,6 +234,8 @@ function buildPass(
         };
       }
       case 'array': {
+        // An array of a union no element type maps (`(string | FilterFieldOptions)[]`) maps as a whole.
+        if ((t.element.kind === 'union' || t.element.kind === 'unsupported') && use.union(path) === 'JsonNode') return JSON_NODE;
         const el = mapType(t.element, `${path}[]`, owner, propName);
         if (el.node) return fail(`${path}[]`, 'JsonNode array elements would be written with the caller\'s options');
         const i = inner(el);
@@ -293,8 +309,19 @@ function buildPass(
 
   const rendered = new Map<string, { content: string; api: string[] }>();
   const shapes: OptionClass[] = [];
+  /** Preset type -> its options class and whether a member is required. */
+  const presets: Array<{ type: string; cls: string; required: boolean }> = [];
   while (queue.length > 0) {
     const c = queue.shift()!;
+    if (c.name === PRESETS) {
+      for (const p of c.props) presets.push({ type: p.name, cls: mapType(p.type, `${c.path}.${p.name}`, c, p.name).cs, required: false });
+      continue;
+    }
+    const preset = presets.filter((x) => x.cls === c.name);
+    if (preset.length > 0) {
+      c.props = c.props.filter((p) => p.name !== 'id');
+      for (const x of preset) x.required = c.props.some((p) => !p.optional);
+    }
     const full = `${c.namespace}.${c.name}`;
     const api = [full, `${full}.${c.name}() -> void`];
     const members: string[] = [];
@@ -379,6 +406,12 @@ function buildPass(
     rendered.set(`Json/${named.name}Converter.g.cs`, struct.converter);
   }
 
+  if (presets.length > 0) {
+    const factories = presetFactories(ir, presets);
+    rendered.set('Interaction/InteractionEntry.Presets.g.cs', factories.entry);
+    rendered.set('Json/InteractionPresetJsonContext.g.cs', factories.context);
+  }
+
   // string keeps the context non-empty (the converter compiles against it) and is the commonest map value.
   contextTypes.add('string');
   rendered.set('Json/FlintMapJsonContext.g.cs', {
@@ -401,11 +434,44 @@ function buildPass(
     result.apiLines.push(...api);
   }
   result.ownedTypes = [
-    ...[...classes.values()].map((c) => `${c.namespace}.${c.name}`),
+    ...[...classes.values()].filter((c) => c.name !== PRESETS).map((c) => `${c.namespace}.${c.name}`),
     ...structs,
     ...structs.map((t) => `Graspea.Flint.Serialization.${t.slice(t.lastIndexOf('.') + 1)}Converter`),
   ].sort(ordinal);
-  return { result, classes: shapes.sort((a, b) => ordinal(a.name, b.name)), structs: structShapes.sort((a, b) => ordinal(a.name, b.name)) };
+  return { result, classes: shapes.sort((a, b) => ordinal(a.name, b.name)), structs: structShapes.sort((a, b) => ordinal(a.name, b.name)), presets };
+}
+
+/**
+ * One `InteractionEntry` factory per preset (`InteractionEntry.Navigate(options, id)`), which writes the typed options
+ * into the generic `Options` map through a source-generated context, so it stays trimming- and AOT-safe. A preset with a
+ * required option takes its options; the others default to none.
+ */
+function presetFactories(ir: Ir, presets: Array<{ type: string; cls: string; required: boolean }>) {
+  const methods = presets.map(({ type, cls, required }) => {
+    const name = pascal(type);
+    const parameter = required ? `${cls} options` : `${cls}? options = null`;
+    return {
+      code:
+        docComment('    ', `An entry of the \`${type}\` preset.`) +
+        `    /// <param name="options">The preset's options${required ? '; it has a required member' : '; null writes none'}.</param>\n` +
+        '    /// <param name="id">The entry\'s id; null lets upstream use the type.</param>\n' +
+        '    /// <returns>The entry.</returns>\n' +
+        `    public static InteractionEntry ${name}(${parameter}, string? id = null) =>\n` +
+        `        Preset(${csString(type)}, id, options is null ? null : JsonSerializer.SerializeToNode(options, InteractionPresetJsonContext.Default.${cls}));\n`,
+      api: `static Graspea.Flint.InteractionEntry.${name}(Graspea.Flint.${cls}${required ? '!' : '?'} options${required ? '' : ' = null'}, string? id = null) -> Graspea.Flint.InteractionEntry!`,
+    };
+  });
+  const entry =
+    `${header(ir)}\nusing System.Text.Json;\nusing Graspea.Flint.Serialization;\n\nnamespace Graspea.Flint;\n\n` +
+    `public sealed partial class InteractionEntry\n{\n${methods.map((m) => m.code).join('\n')}}\n`;
+  const classes = [...new Set(presets.map((x) => x.cls))].sort(ordinal);
+  const context =
+    `${header(ir)}\nusing System.Text.Json.Serialization;\n\nnamespace Graspea.Flint.Serialization;\n\n` +
+    '/// <summary>The interaction preset options classes, which the <c>InteractionEntry</c> factories write into <c>Options</c>.</summary>\n' +
+    '[JsonSourceGenerationOptions(DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, NumberHandling = JsonNumberHandling.Strict)]\n' +
+    classes.map((c) => `[JsonSerializable(typeof(Graspea.Flint.${c}))]\n`).join('') +
+    'internal sealed partial class InteractionPresetJsonContext : JsonSerializerContext;\n';
+  return { entry: { content: entry, api: methods.map((m) => m.api) }, context: { content: context, api: [] } };
 }
 
 /** The C# member of an open union literal: Pascal(literal), or undefined when the literal gives no name. */

@@ -30,6 +30,20 @@
 *REMOVED*Graspea.Flint.Theming.ThemeVariantThenInteraction.TooltipFormat.set -> void
 *REMOVED*Graspea.Flint.Theming.TypeRole.Weight.get -> string?
 *REMOVED*const Graspea.Flint.FlintUpstream.Version = "0.5.1" -> string!
+Graspea.Flint.AccessibleNavigationOptions
+Graspea.Flint.AccessibleNavigationOptions.AccessibleNavigationOptions() -> void
+Graspea.Flint.AccessibleNavigationOptions.Caption.get -> bool?
+Graspea.Flint.AccessibleNavigationOptions.Caption.set -> void
+Graspea.Flint.AccessibleNavigationOptions.DimOpacity.get -> double?
+Graspea.Flint.AccessibleNavigationOptions.DimOpacity.set -> void
+Graspea.Flint.AccessibleNavigationOptions.Emphasis.get -> bool?
+Graspea.Flint.AccessibleNavigationOptions.Emphasis.set -> void
+Graspea.Flint.AccessibleNavigationOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AccessibleNavigationOptions.Extensions.set -> void
+Graspea.Flint.AccessibleNavigationOptions.MaxFields.get -> double?
+Graspea.Flint.AccessibleNavigationOptions.MaxFields.set -> void
+Graspea.Flint.AccessibleNavigationOptions.Sections.get -> string![]?
+Graspea.Flint.AccessibleNavigationOptions.Sections.set -> void
 Graspea.Flint.AssembleOptions.AspectTolerance.get -> double?
 Graspea.Flint.AssembleOptions.AspectTolerance.set -> void
 Graspea.Flint.AssembleOptions.BandBalance.get -> bool?
@@ -85,6 +99,32 @@ Graspea.Flint.AssistedTargeting.Indicator.get -> bool?
 Graspea.Flint.AssistedTargeting.Indicator.init -> void
 Graspea.Flint.AssistedTargeting.MaxDistance.get -> double?
 Graspea.Flint.AssistedTargeting.MaxDistance.init -> void
+Graspea.Flint.AxisHighlightOptions
+Graspea.Flint.AxisHighlightOptions.Axis.get -> string?
+Graspea.Flint.AxisHighlightOptions.Axis.set -> void
+Graspea.Flint.AxisHighlightOptions.AxisHighlightOptions() -> void
+Graspea.Flint.AxisHighlightOptions.DimOpacity.get -> double?
+Graspea.Flint.AxisHighlightOptions.DimOpacity.set -> void
+Graspea.Flint.AxisHighlightOptions.Event.get -> string?
+Graspea.Flint.AxisHighlightOptions.Event.set -> void
+Graspea.Flint.AxisHighlightOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AxisHighlightOptions.Extensions.set -> void
+Graspea.Flint.AxisHighlightOptions.Reset.get -> string![]?
+Graspea.Flint.AxisHighlightOptions.Reset.set -> void
+Graspea.Flint.BrushZoomOptions
+Graspea.Flint.BrushZoomOptions.Axes.get -> string?
+Graspea.Flint.BrushZoomOptions.Axes.set -> void
+Graspea.Flint.BrushZoomOptions.BrushZoomOptions() -> void
+Graspea.Flint.BrushZoomOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.BrushZoomOptions.Extensions.set -> void
+Graspea.Flint.BrushZoomOptions.Guide.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.BrushZoomOptions.Guide.set -> void
+Graspea.Flint.BrushZoomOptions.Reset.get -> string![]?
+Graspea.Flint.BrushZoomOptions.Reset.set -> void
+Graspea.Flint.BrushZoomOptions.ResetTransition.get -> Graspea.Flint.NavigationTransition?
+Graspea.Flint.BrushZoomOptions.ResetTransition.set -> void
+Graspea.Flint.BrushZoomOptions.Transition.get -> Graspea.Flint.NavigationTransition?
+Graspea.Flint.BrushZoomOptions.Transition.set -> void
 Graspea.Flint.CanvasTreatment
 Graspea.Flint.CanvasTreatment.CanvasTreatment() -> void
 Graspea.Flint.CanvasTreatment.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
@@ -212,12 +252,144 @@ Graspea.Flint.ChoroplethProjectionCenter.Uk = 16 -> Graspea.Flint.ChoroplethProj
 Graspea.Flint.ChoroplethProjectionCenter.Usa = 4 -> Graspea.Flint.ChoroplethProjectionCenter
 Graspea.Flint.ChoroplethProjectionCenter.WorldAtlantic = 1 -> Graspea.Flint.ChoroplethProjectionCenter
 Graspea.Flint.ChoroplethProjectionCenter.WorldPacific = 2 -> Graspea.Flint.ChoroplethProjectionCenter
+Graspea.Flint.ClickAnnotateOptions
+Graspea.Flint.ClickAnnotateOptions.ClickAnnotateOptions() -> void
+Graspea.Flint.ClickAnnotateOptions.DimOpacity.get -> double?
+Graspea.Flint.ClickAnnotateOptions.DimOpacity.set -> void
+Graspea.Flint.ClickAnnotateOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.ClickAnnotateOptions.Extensions.set -> void
+Graspea.Flint.ClickAnnotateOptions.Reset.get -> string![]?
+Graspea.Flint.ClickAnnotateOptions.Reset.set -> void
+Graspea.Flint.ClickGroupFocusOptions
+Graspea.Flint.ClickGroupFocusOptions.ClickGroupFocusOptions() -> void
+Graspea.Flint.ClickGroupFocusOptions.DimOpacity.get -> double?
+Graspea.Flint.ClickGroupFocusOptions.DimOpacity.set -> void
+Graspea.Flint.ClickGroupFocusOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.ClickGroupFocusOptions.Extensions.set -> void
+Graspea.Flint.ClickGroupFocusOptions.GroupBy.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.ClickGroupFocusOptions.GroupBy.set -> void
+Graspea.Flint.ClickGroupFocusOptions.Reset.get -> string![]?
+Graspea.Flint.ClickGroupFocusOptions.Reset.set -> void
+Graspea.Flint.ClickHighlightOptions
+Graspea.Flint.ClickHighlightOptions.ClickHighlightOptions() -> void
+Graspea.Flint.ClickHighlightOptions.DimOpacity.get -> double?
+Graspea.Flint.ClickHighlightOptions.DimOpacity.set -> void
+Graspea.Flint.ClickHighlightOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.ClickHighlightOptions.Extensions.set -> void
+Graspea.Flint.ClickHighlightOptions.Reset.get -> string![]?
+Graspea.Flint.ClickHighlightOptions.Reset.set -> void
+Graspea.Flint.ClickHighlightOptions.Targets.get -> string![]?
+Graspea.Flint.ClickHighlightOptions.Targets.set -> void
+Graspea.Flint.ContextActivateOptions
+Graspea.Flint.ContextActivateOptions.ContextActivateOptions() -> void
+Graspea.Flint.ContextActivateOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.ContextActivateOptions.Extensions.set -> void
+Graspea.Flint.ContextMenuItem
+Graspea.Flint.ContextMenuItem.ContextMenuItem() -> void
+Graspea.Flint.ContextMenuItem.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.ContextMenuItem.Extensions.set -> void
+Graspea.Flint.ContextMenuItem.Id.get -> string?
+Graspea.Flint.ContextMenuItem.Id.set -> void
+Graspea.Flint.ContextMenuItem.Label.get -> string?
+Graspea.Flint.ContextMenuItem.Label.set -> void
+Graspea.Flint.ContextMenuOptions
+Graspea.Flint.ContextMenuOptions.ContextMenuOptions() -> void
+Graspea.Flint.ContextMenuOptions.DimOpacity.get -> double?
+Graspea.Flint.ContextMenuOptions.DimOpacity.set -> void
+Graspea.Flint.ContextMenuOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.ContextMenuOptions.Extensions.set -> void
+Graspea.Flint.ContextMenuOptions.Gesture.get -> string?
+Graspea.Flint.ContextMenuOptions.Gesture.set -> void
+Graspea.Flint.ContextMenuOptions.Items.get -> Graspea.Flint.ContextMenuItem![]?
+Graspea.Flint.ContextMenuOptions.Items.set -> void
+Graspea.Flint.ContextMenuOptions.Render.get -> bool?
+Graspea.Flint.ContextMenuOptions.Render.set -> void
+Graspea.Flint.ContextMenuOptions.Reset.get -> string![]?
+Graspea.Flint.ContextMenuOptions.Reset.set -> void
 Graspea.Flint.DensityPlotBuilder<TRow>.Opacity(double value) -> Graspea.Flint.DensityPlotBuilder<TRow>!
 Graspea.Flint.DensityPlotBuilder<TRow>.StackMode(Graspea.Flint.DensityPlotStackMode value) -> Graspea.Flint.DensityPlotBuilder<TRow>!
 Graspea.Flint.DensityPlotStackMode
 Graspea.Flint.DensityPlotStackMode.Default = 0 -> Graspea.Flint.DensityPlotStackMode
 Graspea.Flint.DensityPlotStackMode.Layered = 2 -> Graspea.Flint.DensityPlotStackMode
 Graspea.Flint.DensityPlotStackMode.Normalize = 1 -> Graspea.Flint.DensityPlotStackMode
+Graspea.Flint.DoubleActivateOptions
+Graspea.Flint.DoubleActivateOptions.DimOpacity.get -> double?
+Graspea.Flint.DoubleActivateOptions.DimOpacity.set -> void
+Graspea.Flint.DoubleActivateOptions.DoubleActivateOptions() -> void
+Graspea.Flint.DoubleActivateOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.DoubleActivateOptions.Extensions.set -> void
+Graspea.Flint.DoubleActivateOptions.Reset.get -> string![]?
+Graspea.Flint.DoubleActivateOptions.Reset.set -> void
+Graspea.Flint.DragReorderOptions
+Graspea.Flint.DragReorderOptions.DragReorderOptions() -> void
+Graspea.Flint.DragReorderOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.DragReorderOptions.Extensions.set -> void
+Graspea.Flint.DragReorderOptions.Reset.get -> string![]?
+Graspea.Flint.DragReorderOptions.Reset.set -> void
+Graspea.Flint.FilterControlsOptions
+Graspea.Flint.FilterControlsOptions.DimOpacity.get -> double?
+Graspea.Flint.FilterControlsOptions.DimOpacity.set -> void
+Graspea.Flint.FilterControlsOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.FilterControlsOptions.Extensions.set -> void
+Graspea.Flint.FilterControlsOptions.Fields.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.FilterControlsOptions.Fields.set -> void
+Graspea.Flint.FilterControlsOptions.FilterControlsOptions() -> void
+Graspea.Flint.FilterControlsOptions.Initial.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.Nodes.JsonNode?>?
+Graspea.Flint.FilterControlsOptions.Initial.set -> void
+Graspea.Flint.FilterControlsOptions.Mode.get -> string?
+Graspea.Flint.FilterControlsOptions.Mode.set -> void
+Graspea.Flint.FilterControlsOptions.Placement.get -> string?
+Graspea.Flint.FilterControlsOptions.Placement.set -> void
+Graspea.Flint.FilterControlsOptions.Render.get -> bool?
+Graspea.Flint.FilterControlsOptions.Render.set -> void
+Graspea.Flint.HoverGroupFocusOptions
+Graspea.Flint.HoverGroupFocusOptions.DimOpacity.get -> double?
+Graspea.Flint.HoverGroupFocusOptions.DimOpacity.set -> void
+Graspea.Flint.HoverGroupFocusOptions.Emphasis.get -> string?
+Graspea.Flint.HoverGroupFocusOptions.Emphasis.set -> void
+Graspea.Flint.HoverGroupFocusOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.HoverGroupFocusOptions.Extensions.set -> void
+Graspea.Flint.HoverGroupFocusOptions.GroupBy.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.HoverGroupFocusOptions.GroupBy.set -> void
+Graspea.Flint.HoverGroupFocusOptions.HoverGroupFocusOptions() -> void
+Graspea.Flint.HoverGroupFocusOptions.Tolerance.get -> double?
+Graspea.Flint.HoverGroupFocusOptions.Tolerance.set -> void
+Graspea.Flint.InspectIndexOptions
+Graspea.Flint.InspectIndexOptions.Axis.get -> string?
+Graspea.Flint.InspectIndexOptions.Axis.set -> void
+Graspea.Flint.InspectIndexOptions.DisplayValue.get -> bool?
+Graspea.Flint.InspectIndexOptions.DisplayValue.set -> void
+Graspea.Flint.InspectIndexOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.InspectIndexOptions.Extensions.set -> void
+Graspea.Flint.InspectIndexOptions.Guide.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.InspectIndexOptions.Guide.set -> void
+Graspea.Flint.InspectIndexOptions.InspectIndexOptions() -> void
+Graspea.Flint.InspectIndexOptions.Reset.get -> string![]?
+Graspea.Flint.InspectIndexOptions.Reset.set -> void
+Graspea.Flint.InspectIndexOptions.Selector.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.InspectIndexOptions.Selector.set -> void
+Graspea.Flint.InspectIndexOptions.SeriesBy.get -> string?
+Graspea.Flint.InspectIndexOptions.SeriesBy.set -> void
+Graspea.Flint.InspectIndexOptions.Show.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.InspectIndexOptions.Show.set -> void
+Graspea.Flint.InspectIndexOptions.Tolerance.get -> double?
+Graspea.Flint.InspectIndexOptions.Tolerance.set -> void
+Graspea.Flint.InspectOptions
+Graspea.Flint.InspectOptions.Cycle.get -> string![]?
+Graspea.Flint.InspectOptions.Cycle.set -> void
+Graspea.Flint.InspectOptions.DimOpacity.get -> double?
+Graspea.Flint.InspectOptions.DimOpacity.set -> void
+Graspea.Flint.InspectOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.InspectOptions.Extensions.set -> void
+Graspea.Flint.InspectOptions.Guide.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.InspectOptions.Guide.set -> void
+Graspea.Flint.InspectOptions.InspectOptions() -> void
+Graspea.Flint.InspectOptions.Mode.get -> string?
+Graspea.Flint.InspectOptions.Mode.set -> void
+Graspea.Flint.InspectOptions.Selector.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.InspectOptions.Selector.set -> void
+Graspea.Flint.InspectOptions.Tolerance.get -> double?
+Graspea.Flint.InspectOptions.Tolerance.set -> void
 Graspea.Flint.InteractionEntry
 Graspea.Flint.InteractionEntry.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.InteractionEntry.Extensions.set -> void
@@ -238,6 +410,54 @@ Graspea.Flint.InteractionSpec.Interactions.get -> Graspea.Flint.InteractionEntry
 Graspea.Flint.InteractionSpec.Interactions.set -> void
 Graspea.Flint.InteractionSpec.KeyboardTargeting.get -> bool?
 Graspea.Flint.InteractionSpec.KeyboardTargeting.set -> void
+Graspea.Flint.LassoSelectOptions
+Graspea.Flint.LassoSelectOptions.DimOpacity.get -> double?
+Graspea.Flint.LassoSelectOptions.DimOpacity.set -> void
+Graspea.Flint.LassoSelectOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.LassoSelectOptions.Extensions.set -> void
+Graspea.Flint.LassoSelectOptions.Guide.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.LassoSelectOptions.Guide.set -> void
+Graspea.Flint.LassoSelectOptions.LassoSelectOptions() -> void
+Graspea.Flint.LassoSelectOptions.Match.get -> string?
+Graspea.Flint.LassoSelectOptions.Match.set -> void
+Graspea.Flint.LassoSelectOptions.Reset.get -> string![]?
+Graspea.Flint.LassoSelectOptions.Reset.set -> void
+Graspea.Flint.LegendToggleOptions
+Graspea.Flint.LegendToggleOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.LegendToggleOptions.Extensions.set -> void
+Graspea.Flint.LegendToggleOptions.LegendToggleOptions() -> void
+Graspea.Flint.LegendToggleOptions.MutedOpacity.get -> double?
+Graspea.Flint.LegendToggleOptions.MutedOpacity.set -> void
+Graspea.Flint.LegendToggleOptions.Reset.get -> string![]?
+Graspea.Flint.LegendToggleOptions.Reset.set -> void
+Graspea.Flint.LinkedBrushOptions
+Graspea.Flint.LinkedBrushOptions.Brush.get -> string?
+Graspea.Flint.LinkedBrushOptions.Brush.set -> void
+Graspea.Flint.LinkedBrushOptions.DimOpacity.get -> double?
+Graspea.Flint.LinkedBrushOptions.DimOpacity.set -> void
+Graspea.Flint.LinkedBrushOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.LinkedBrushOptions.Extensions.set -> void
+Graspea.Flint.LinkedBrushOptions.GroupBy.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.LinkedBrushOptions.GroupBy.set -> void
+Graspea.Flint.LinkedBrushOptions.Guide.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.LinkedBrushOptions.Guide.set -> void
+Graspea.Flint.LinkedBrushOptions.LinkedBrushOptions() -> void
+Graspea.Flint.LinkedBrushOptions.Match.get -> string?
+Graspea.Flint.LinkedBrushOptions.Match.set -> void
+Graspea.Flint.LinkedBrushOptions.Mode.get -> string?
+Graspea.Flint.LinkedBrushOptions.Mode.set -> void
+Graspea.Flint.LinkedBrushOptions.Reset.get -> string![]?
+Graspea.Flint.LinkedBrushOptions.Reset.set -> void
+Graspea.Flint.LongPressOptions
+Graspea.Flint.LongPressOptions.DimOpacity.get -> double?
+Graspea.Flint.LongPressOptions.DimOpacity.set -> void
+Graspea.Flint.LongPressOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.LongPressOptions.Extensions.set -> void
+Graspea.Flint.LongPressOptions.HoldMs.get -> double?
+Graspea.Flint.LongPressOptions.HoldMs.set -> void
+Graspea.Flint.LongPressOptions.LongPressOptions() -> void
+Graspea.Flint.LongPressOptions.Reset.get -> string![]?
+Graspea.Flint.LongPressOptions.Reset.set -> void
 Graspea.Flint.MarginalPlotBuilder<TRow>
 Graspea.Flint.MarginalPlotBuilder<TRow>.Bandwidth(double value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
 Graspea.Flint.MarginalPlotBuilder<TRow>.BinCount(double value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
@@ -279,6 +499,40 @@ Graspea.Flint.MarginalPlotWhiskerMethod
 Graspea.Flint.MarginalPlotWhiskerMethod.Default = 0 -> Graspea.Flint.MarginalPlotWhiskerMethod
 Graspea.Flint.MarginalPlotWhiskerMethod.Iqr = 1 -> Graspea.Flint.MarginalPlotWhiskerMethod
 Graspea.Flint.MarginalPlotWhiskerMethod.Minmax = 2 -> Graspea.Flint.MarginalPlotWhiskerMethod
+Graspea.Flint.NavigateOptions
+Graspea.Flint.NavigateOptions.Axes.get -> string?
+Graspea.Flint.NavigateOptions.Axes.set -> void
+Graspea.Flint.NavigateOptions.DomainGuard.get -> Graspea.Flint.NavigationDomainGuard?
+Graspea.Flint.NavigateOptions.DomainGuard.set -> void
+Graspea.Flint.NavigateOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.NavigateOptions.Extensions.set -> void
+Graspea.Flint.NavigateOptions.NavigateOptions() -> void
+Graspea.Flint.NavigateOptions.Pan.get -> bool?
+Graspea.Flint.NavigateOptions.Pan.set -> void
+Graspea.Flint.NavigateOptions.Reset.get -> string![]?
+Graspea.Flint.NavigateOptions.Reset.set -> void
+Graspea.Flint.NavigateOptions.ResetTransition.get -> Graspea.Flint.NavigationTransition?
+Graspea.Flint.NavigateOptions.ResetTransition.set -> void
+Graspea.Flint.NavigateOptions.WheelSensitivity.get -> double?
+Graspea.Flint.NavigateOptions.WheelSensitivity.set -> void
+Graspea.Flint.NavigateOptions.Zoom.get -> bool?
+Graspea.Flint.NavigateOptions.Zoom.set -> void
+Graspea.Flint.NavigationDomainGuard
+Graspea.Flint.NavigationDomainGuard.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.NavigationDomainGuard.Extensions.set -> void
+Graspea.Flint.NavigationDomainGuard.MaxVisibleFraction.get -> double?
+Graspea.Flint.NavigationDomainGuard.MaxVisibleFraction.set -> void
+Graspea.Flint.NavigationDomainGuard.MinVisibleFraction.get -> double?
+Graspea.Flint.NavigationDomainGuard.MinVisibleFraction.set -> void
+Graspea.Flint.NavigationDomainGuard.NavigationDomainGuard() -> void
+Graspea.Flint.NavigationDomainGuard.OverscrollFraction.get -> double?
+Graspea.Flint.NavigationDomainGuard.OverscrollFraction.set -> void
+Graspea.Flint.NavigationTransition
+Graspea.Flint.NavigationTransition.Duration.get -> double?
+Graspea.Flint.NavigationTransition.Duration.set -> void
+Graspea.Flint.NavigationTransition.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.NavigationTransition.Extensions.set -> void
+Graspea.Flint.NavigationTransition.NavigationTransition() -> void
 Graspea.Flint.Polarity
 Graspea.Flint.Polarity.Equals(Graspea.Flint.Polarity other) -> bool
 Graspea.Flint.Polarity.Name.get -> string!
@@ -325,6 +579,20 @@ Graspea.Flint.RidgelinePlotOrder.Reverse = 2 -> Graspea.Flint.RidgelinePlotOrder
 Graspea.Flint.ScatterPlotBuilder<TRow>.Detail(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.ScatterPlotBuilder<TRow>!
 Graspea.Flint.ScatterPlotBuilder<TRow>.Detail(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ScatterPlotBuilder<TRow>!
 Graspea.Flint.ScatterPlotBuilder<TRow>.Detail(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ScatterPlotBuilder<TRow>!
+Graspea.Flint.SelectOptions
+Graspea.Flint.SelectOptions.DimOpacity.get -> double?
+Graspea.Flint.SelectOptions.DimOpacity.set -> void
+Graspea.Flint.SelectOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SelectOptions.Extensions.set -> void
+Graspea.Flint.SelectOptions.Guide.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.SelectOptions.Guide.set -> void
+Graspea.Flint.SelectOptions.Match.get -> string?
+Graspea.Flint.SelectOptions.Match.set -> void
+Graspea.Flint.SelectOptions.Mode.get -> string?
+Graspea.Flint.SelectOptions.Mode.set -> void
+Graspea.Flint.SelectOptions.Reset.get -> string![]?
+Graspea.Flint.SelectOptions.Reset.set -> void
+Graspea.Flint.SelectOptions.SelectOptions() -> void
 Graspea.Flint.SemanticAnnotation.Colors.get -> System.Collections.Generic.Dictionary<string!, string!>?
 Graspea.Flint.SemanticAnnotation.Colors.set -> void
 Graspea.Flint.SemanticAnnotation.Polarity.get -> Graspea.Flint.Polarity?
@@ -889,6 +1157,29 @@ static Graspea.Flint.Chart.Table<TRow>(System.Collections.Generic.IEnumerable<TR
 static Graspea.Flint.Chart.Table<TRow>(System.Text.Json.Serialization.Metadata.JsonTypeInfo<TRow>! typeInfo) -> Graspea.Flint.TableBuilder<TRow>!
 static Graspea.Flint.ChartChrome.None.get -> Graspea.Flint.ChartChrome!
 static Graspea.Flint.ChartSource.implicit operator Graspea.Flint.ChartSource?(string? text) -> Graspea.Flint.ChartSource?
+static Graspea.Flint.InteractionEntry.AccessibleNavigation(Graspea.Flint.AccessibleNavigationOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.AxisHighlight(Graspea.Flint.AxisHighlightOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.BrushAngle(Graspea.Flint.SelectOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.BrushX(Graspea.Flint.SelectOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.BrushY(Graspea.Flint.SelectOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.BrushZoom(Graspea.Flint.BrushZoomOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.ClickAnnotate(Graspea.Flint.ClickAnnotateOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.ClickGroupFocus(Graspea.Flint.ClickGroupFocusOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.ClickHighlight(Graspea.Flint.ClickHighlightOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.ContextActivate(Graspea.Flint.ContextActivateOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.ContextMenu(Graspea.Flint.ContextMenuOptions! options, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.DoubleActivate(Graspea.Flint.DoubleActivateOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.DragReorder(Graspea.Flint.DragReorderOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.FilterControls(Graspea.Flint.FilterControlsOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.HoverGroupFocus(Graspea.Flint.HoverGroupFocusOptions! options, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.Inspect(Graspea.Flint.InspectOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.InspectIndex(Graspea.Flint.InspectIndexOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.LassoSelect(Graspea.Flint.LassoSelectOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.LegendToggle(Graspea.Flint.LegendToggleOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.LinkedBrush(Graspea.Flint.LinkedBrushOptions! options, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.LongPress(Graspea.Flint.LongPressOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.Navigate(Graspea.Flint.NavigateOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.InteractionEntry.Select(Graspea.Flint.SelectOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
 static Graspea.Flint.Polarity.operator !=(Graspea.Flint.Polarity left, Graspea.Flint.Polarity right) -> bool
 static Graspea.Flint.Polarity.operator ==(Graspea.Flint.Polarity left, Graspea.Flint.Polarity right) -> bool
 static Graspea.Flint.TargetDetails.implicit operator Graspea.Flint.TargetDetails!(bool enabled) -> Graspea.Flint.TargetDetails!
