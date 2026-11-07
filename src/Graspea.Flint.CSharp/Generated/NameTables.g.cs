@@ -1499,4 +1499,31 @@ internal static partial class NameTables
     [
         new("Graspea.Flint.Theming.PointInk", [new("series", "Series"), new("text", "Text")]),
     ];
+
+    internal static readonly PresetNames[] Presets =
+    [
+        new("accessible-navigation", "AccessibleNavigation", "Graspea.Flint.AccessibleNavigationOptions"),
+        new("axis-highlight", "AxisHighlight", "Graspea.Flint.AxisHighlightOptions"),
+        new("brush-angle", "BrushAngle", "Graspea.Flint.SelectOptions"),
+        new("brush-x", "BrushX", "Graspea.Flint.SelectOptions"),
+        new("brush-y", "BrushY", "Graspea.Flint.SelectOptions"),
+        new("brush-zoom", "BrushZoom", "Graspea.Flint.BrushZoomOptions"),
+        new("click-annotate", "ClickAnnotate", "Graspea.Flint.ClickAnnotateOptions"),
+        new("click-group-focus", "ClickGroupFocus", "Graspea.Flint.ClickGroupFocusOptions"),
+        new("click-highlight", "ClickHighlight", "Graspea.Flint.ClickHighlightOptions"),
+        new("context-activate", "ContextActivate", "Graspea.Flint.ContextActivateOptions"),
+        new("context-menu", "ContextMenu", "Graspea.Flint.ContextMenuOptions"),
+        new("double-activate", "DoubleActivate", "Graspea.Flint.DoubleActivateOptions"),
+        new("drag-reorder", "DragReorder", "Graspea.Flint.DragReorderOptions"),
+        new("filter-controls", "FilterControls", "Graspea.Flint.FilterControlsOptions"),
+        new("hover-group-focus", "HoverGroupFocus", "Graspea.Flint.HoverGroupFocusOptions"),
+        new("inspect", "Inspect", "Graspea.Flint.InspectOptions"),
+        new("inspect-index", "InspectIndex", "Graspea.Flint.InspectIndexOptions"),
+        new("lasso-select", "LassoSelect", "Graspea.Flint.LassoSelectOptions"),
+        new("legend-toggle", "LegendToggle", "Graspea.Flint.LegendToggleOptions"),
+        new("linked-brush", "LinkedBrush", "Graspea.Flint.LinkedBrushOptions"),
+        new("long-press", "LongPress", "Graspea.Flint.LongPressOptions"),
+        new("navigate", "Navigate", "Graspea.Flint.NavigateOptions"),
+        new("select", "Select", "Graspea.Flint.SelectOptions"),
+    ];
 }

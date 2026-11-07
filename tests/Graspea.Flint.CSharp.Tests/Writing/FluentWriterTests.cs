@@ -208,7 +208,8 @@ public sealed class FluentWriterTests
         }));
     }
 
-    // source: flint-chart 1.0.0 d.ts (chart_spec label, source, chrome; interaction_spec; ChartEncoding title, reverse, mid,
+    // source: flint-chart 1.0.0 d.ts (chart_spec label, source, chrome; interaction_spec with flint-chart/interactive
+    // InteractionPresetOptions["navigate"] = NavigateOptions; ChartEncoding title, reverse, mid,
     // domain, bins, colors; SemanticAnnotation colors, polarity) and design §12.4.1 (a member the builder has a method for
     // is written with it; a value holding a null is assigned in Configure, because the builder copies through JSON)
     [Test]
@@ -228,13 +229,28 @@ public sealed class FluentWriterTests
             ".Source(new ChartSource { Text = \"Open data\", Href = \"https://example.com\" })",
             ".Chrome(ChartChrome.None)",
             ".Annotate(r => r.B, new SemanticAnnotation { Type = SemanticType.Amount, Colors = new() { [\"x\"] = \"#111\" }, Polarity = Polarity.LowerIsBetter })",
-            ".Interaction(new InteractionSpec { Interactions = [new InteractionEntry { Type = \"navigate\", Options = new() { [\"pan\"] = false } }], AssistedTargeting = false })",
+            ".Interaction(new InteractionSpec { Interactions = [InteractionEntry.Navigate(new NavigateOptions { Pan = false })], AssistedTargeting = false })",
             ".Build();",
         }));
 
         var nulls = Chain(Convert(Doc("Bar Chart", "{\"x\":{\"field\":\"a\",\"title\":null}}", specExtra: "\"source\":{\"text\":\"t\",\"href\":null},")));
         Assert.That(nulls, Does.Contain(".Configure(d => d.ChartSpec.Encodings[\"x\"] = new ChartEncoding { Field = \"a\", Title = ChannelTitle.None })"));
         Assert.That(nulls, Does.Contain(".Configure(d => d.ChartSpec.Source = new ChartSource { Text = \"t\", Extensions = new() { [\"href\"] = Json(\"null\") } })"));
+    }
+
+    // source: flint-chart 1.0.0 dist/interactive InteractionPresetOptions (one options class per preset) and design §12.3
+    // (the fidelity rule: a typed expression only where it writes the input JSON, so an unknown preset, a key beside type, id
+    // and options, and an empty options object, which the factory does not write, keep the generic entry)
+    [TestCase("{\"type\":\"brush-x\",\"id\":\"zoom\",\"options\":{\"match\":\"contain\",\"glow\":1}}",
+        "InteractionEntry.BrushX(new SelectOptions { Match = \"contain\", Extensions = new() { [\"glow\"] = Json(\"1\") } }, id: \"zoom\")")]
+    [TestCase("{\"type\":\"hover-group-focus\"}", "InteractionEntry.HoverGroupFocus(new HoverGroupFocusOptions())")]
+    [TestCase("{\"type\":\"spin\"}", "new InteractionEntry { Type = \"spin\" }")]
+    [TestCase("{\"type\":\"navigate\",\"options\":{}}", "new InteractionEntry { Type = \"navigate\", Options = new() }")]
+    [TestCase("{\"type\":\"navigate\",\"zzz\":1}", "new InteractionEntry { Type = \"navigate\", Extensions = new() { [\"zzz\"] = Json(\"1\") } }")]
+    public void Convert_InteractionEntry_UsesThePresetFactoryWhereItWritesTheEntry(string entry, string expected)
+    {
+        var chain = Chain(Convert(Doc("Bar Chart", "{\"x\":\"a\"}", extra: $"\"interaction_spec\":{{\"interactions\":[{entry}]}},")));
+        Assert.That(chain, Does.Contain($".Interaction(new InteractionSpec {{ Interactions = [{expected}] }})"));
     }
 
     // source: design §12.4.1 (theme_spec object -> new ThemeSpec { … } with class and property names from the theming

@@ -38,6 +38,9 @@ internal sealed record MemberName(string Wire, string Name, string Type);
 /// <summary>A generated options or theming class, namespace-qualified, and its members.</summary>
 internal sealed record ClassNames(string Name, MemberName[] Members);
 
+/// <summary>An interaction preset: its <c>type</c>, the <c>InteractionEntry</c> factory and its namespace-qualified options class.</summary>
+internal sealed record PresetNames(string Type, string Method, string Options);
+
 /// <summary>A generated open literal union struct (<c>'a' | 'b' | string</c>), namespace-qualified, and its literals with the
 /// static readonly field of each.</summary>
 internal sealed record StringUnionNames(string Name, ConstantName[] Literals);
@@ -77,6 +80,9 @@ internal static partial class NameTables
     public static string? Polarity(string value) => Find(ref _polarities, Polarities, value);
 
     public static string? SeriesCountAxis(string value) => Find(ref _seriesCountAxes, SeriesCountAxes, value);
+
+    /// <summary>An interaction preset by its <c>type</c>, or null.</summary>
+    public static PresetNames? Preset(string type) => Array.Find(Presets, p => p.Type == type);
 
     /// <summary>A generated class by its simple name (<c>ThemeInk</c>) or namespace-qualified name.</summary>
     public static ClassNames? Class(string name)

@@ -9,7 +9,7 @@ import { csNumber, csString, header, type EmittedFile } from './common.ts';
 import { constantNames } from './constants.ts';
 import { wireValue } from './enums.ts';
 import { fluentModel, type FluentProperty } from './fluent.ts';
-import { openStructs, optionClasses } from './options.ts';
+import { interactionPresets, openStructs, optionClasses } from './options.ts';
 
 const KINDS: Readonly<Record<FluentProperty['kind'], string>> = {
   binary: 'PropertyKind.Bool',
@@ -118,6 +118,7 @@ export function emitCSharpNames(ledgerIr: Ir, overrides: Overrides): EmittedFile
       list('SeriesCountAxes', 'ConstantName', struct('SeriesCountAxis')),
       list('Classes', 'ClassNames', classes),
       list('StringUnions', 'StringUnionNames', unions),
+      list('Presets', 'PresetNames', interactionPresets(ir, overrides).map((p) => `new(${csString(p.type)}, ${csString(p.method)}, ${csString(p.options)})`)),
     ].join('\n') +
     '}\n';
   return [{ path: 'NameTables.g.cs', content }, emitCatalog(ledgerIr)];

@@ -118,9 +118,22 @@ internal static partial class NameTables
     internal static readonly StringUnionNames[] StringUnions =
     [
     ];
+
+    internal static readonly PresetNames[] Presets =
+    [
+    ];
 }
 `,
     );
+  });
+
+  // source: docs/generator.md "Interaction presets" (the conversion writes an entry of a known preset through its
+  // InteractionEntry factory and options class)
+  it('lists each interaction preset with its factory and options class', () => {
+    const ir = irWithTypes();
+    ir.types.InteractionPresetOptions = { kind: 'object', props: [{ name: 'brush-x', optional: false, type: { kind: 'ref', name: 'SelectOptions' } }] };
+    ir.types.SelectOptions = { kind: 'object', props: [{ name: 'match', optional: true, type: { kind: 'string' } }] };
+    assert.match(emitCSharpNames(ir, emptyOverrides())[0].content, /PresetNames\[\] Presets =\n    \[\n        new\("brush-x", "BrushX", "Graspea\.Flint\.SelectOptions"\),\n    \];/);
   });
 
   // source: the options emitter (an open literal union is a string-backed struct with a property per literal; a

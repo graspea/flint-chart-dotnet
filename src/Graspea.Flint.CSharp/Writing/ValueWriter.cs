@@ -190,7 +190,46 @@ internal sealed class ValueWriter
                 : CSharpText.StringLiteral(item.Value!);
         }
 
+        if (type is "InteractionEntry" or "Graspea.Flint.InteractionEntry" && Preset(item) is { } preset)
+        {
+            return preset;
+        }
+
         return NameTables.Class(type) is { } names && item.IsObject ? Object(names, item) : null;
+    }
+
+    /// <summary>
+    /// <c>InteractionEntry.Navigate(new NavigateOptions { … }, id: "…")</c> for an entry of a known preset that has only
+    /// <c>type</c>, <c>id</c> and <c>options</c>; null otherwise, and the entry is written as a class with its options map.
+    /// The factory writes no <c>options</c> for an empty options object, so an entry with <c>"options": {}</c> is not one.
+    /// </summary>
+    private string? Preset(JsonItem item)
+    {
+        if (!item.IsObject || item.Get("type") is not { IsString: true } type || NameTables.Preset(type.Value!) is not { } preset
+            || item.Members.Any(m => m.Key is not ("type" or "id" or "options")) || NameTables.Class(preset.Options) is not { } names)
+        {
+            return null;
+        }
+
+        var options = item.Get("options");
+        if (options is not null && (!options.IsObject || options.Members.Count == 0))
+        {
+            return null;
+        }
+
+        var id = item.Get("id");
+        if (id is not null && !id.IsString)
+        {
+            return null;
+        }
+
+        var arguments = new List<string> { options is null ? $"new {TypeName(names.Name)}()" : Object(names, options) };
+        if (id is not null)
+        {
+            arguments.Add($"id: {CSharpText.StringLiteral(id.Value!)}");
+        }
+
+        return $"{TypeName("Graspea.Flint.InteractionEntry")}.{preset.Method}({string.Join(", ", arguments)})";
     }
 
     /// <summary><c>new T { … }</c> for a generated class: typed members where they write the value, the rest (unknown keys,
