@@ -140,7 +140,8 @@ function buildOptions(ir: Ir, overrides: Overrides): { result: EmitResult; class
         if (target.kind !== 'object') return fail(t.name, `named type of kind ${target.kind}`);
         const root = ROOTS.find((r) => r.type === t.name);
         plan({ name: t.name, namespace: root?.namespace ?? owner.namespace, folder: root?.folder ?? owner.folder, path: t.name, doc: target.doc, props: target.props });
-        return { cs: t.name, api: `${root?.namespace ?? owner.namespace}.${t.name}`, value: false };
+        // The class lives where it was first planned, which may be the other root's namespace.
+        return { cs: t.name, api: `${classes.get(t.name)!.namespace}.${t.name}`, value: false };
       }
       case 'partial':
         return mapType(t.of, path, owner, propName);

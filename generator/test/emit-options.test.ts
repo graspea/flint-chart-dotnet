@@ -196,6 +196,22 @@ public sealed partial class AssembleOptions
     ]);
   });
 
+  // source: design §7.4 (one class per named type) and PublicAPI.txt (a member's type is written in the namespace its class
+  // is declared in); flint-chart 1.0.0 d.ts AssembleOptions.canvasTreatment and ThemeCompileDefaults (extends
+  // Partial<AssembleOptions>) reach one interface from both roots
+  it('writes a named type reached from both roots with the namespace of its one class', () => {
+    const ir = irWith({
+      AssembleOptions: options([{ name: 'shared', optional: true, type: { kind: 'ref', name: 'Shared' } }]),
+      ThemeSpec: options([{ name: 'compileDefaults', optional: true, type: { kind: 'ref', name: 'ThemeCompileDefaults' } }]),
+      ThemeCompileDefaults: options([{ name: 'shared', optional: true, type: { kind: 'ref', name: 'Shared' } }]),
+      Shared: options([{ name: 'on', optional: true, type: { kind: 'boolean' } }]),
+    });
+    const result = emitOptions(ir, emptyOverrides());
+    assert.ok(result.files.some((f) => f.path === 'Options/Shared.g.cs'));
+    assert.ok(result.apiLines.includes('Graspea.Flint.AssembleOptions.Shared.get -> Graspea.Flint.Shared?'));
+    assert.ok(result.apiLines.includes('Graspea.Flint.Theming.ThemeCompileDefaults.Shared.get -> Graspea.Flint.Shared?'));
+  });
+
   // source: design §7.4 (structurally identical {width,height} -> ChartSize via overrides.json)
   it('maps a dedup path to ChartSize and refuses a dedup path of another shape', () => {
     const size = {
