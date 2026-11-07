@@ -322,7 +322,7 @@ async function main() {
   const stableTagForPin = context.restartedLineClean === true ? `${context.tagPrefix}${pin}.1` : null;
   const stats = ['tests/fixtures', 'src/Graspea.Flint', 'generator', 'README.md', 'docs/package/AGENTS.md']
     .map((path) => {
-      const line = run('git', ['diff', '--shortstat', '--', path], { cwd: root }).trim();
+      const line = run('git', ['diff', '--shortstat', 'HEAD', '--', path], { cwd: root }).trim();
       return line ? `${path}: ${line}` : '';
     })
     .filter(Boolean)
