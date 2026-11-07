@@ -9,6 +9,7 @@ import {
   classifyProbeDiff,
   gitBlobSha,
   labelsFor,
+  readyToLand,
   removedApiLines,
   renderReport,
   retirementRows,
@@ -195,6 +196,24 @@ describe('upstream-report: labels and inputs', () => {
     assert.deepEqual(labelsFor({ breaking: false, tests: 'success', generation: 'ok', mcpFallback: false, bump: 'patch', attention: true }), ['upstream', 'needs-attention', 'upstream-patch']);
   });
 
+  // source: maintainer decision on clean syncs (ready-to-land only when generation is ok, every test passes, the report has
+  // no BREAKING or behavioural row, no removed public API and nothing needs attention; never merged by the workflow)
+  it('marks a clean sync ready to land and nothing else', () => {
+    const row = (severity: 'BREAKING' | 'behavioural' | 'additive' | 'cosmetic') => ({ change: 'added' as const, path: 'catalog.themePresets[nyt]', severity });
+    const clean = { rows: [row('additive'), row('cosmetic')], removedApi: [] as string[], generation: 'ok', tests: 'success', forward: 'success', attention: false };
+    assert.equal(readyToLand(clean), true);
+    assert.equal(readyToLand({ ...clean, rows: [row('BREAKING')] }), false);
+    assert.equal(readyToLand({ ...clean, rows: [row('behavioural')] }), false);
+    assert.equal(readyToLand({ ...clean, removedApi: ['Graspea.Flint.X'] }), false);
+    assert.equal(readyToLand({ ...clean, generation: 'failed' }), false);
+    assert.equal(readyToLand({ ...clean, tests: 'failure' }), false);
+    assert.equal(readyToLand({ ...clean, forward: 'failure' }), false);
+    assert.equal(readyToLand({ ...clean, attention: true }), false);
+    assert.deepEqual(labelsFor({ breaking: false, tests: 'success', generation: 'ok', mcpFallback: false, bump: 'patch', ready: true }), ['upstream', 'upstream-patch', 'ready-to-land']);
+    // needs-attention (here the flint-chart-mcp fallback) wins over a ready flag
+    assert.deepEqual(labelsFor({ breaking: false, tests: 'success', generation: 'ok', mcpFallback: true, bump: 'patch', ready: true }), ['upstream', 'needs-attention', 'upstream-patch']);
+  });
+
   // source: VSTest TRX format (ResultSummary/Counters attributes)
   it('reads the counters of a TRX file', () => {
     assert.deepEqual(trxCounts('<ResultSummary outcome="Failed"><Counters total="942" executed="942" passed="940" failed="2" error="0" /></ResultSummary>'), {
@@ -261,6 +280,7 @@ describe('upstream-report: body', () => {
     removedApi: [] as string[],
     breakingWindow: true,
     changelog: '## 0.6.0\n\n- Thanks @someone for `x` and ```fenced``` text.' as string | undefined,
+    ready: false,
   });
 
   // source: companion part 1, "PR body template"
@@ -368,6 +388,16 @@ describe('upstream-report: body', () => {
     assert.ok(body.includes('truncated; full log in artifact upstream-0.6.0/generate.log'));
     const short = renderReport({ ...model(), generation: 'failed', generateLog: 'one line' });
     assert.ok(!short.includes('truncated'));
+  });
+
+  // source: maintainer decision on clean syncs (the body says how the maintainer lands a ready pull request: git land, a
+  // fast-forward push of the head commit, docs/maintainers.md "Landing a pull request")
+  it('tells how to land a ready pull request, and only then', () => {
+    const ready = renderReport({ ...model(), ready: true });
+    assert.ok(ready.includes('### Ready to land\n'), ready);
+    assert.ok(ready.includes('`git land <PR>`'));
+    assert.ok(ready.includes('a fast-forward push of the head commit (`docs/maintainers.md`, "Landing a pull request")'));
+    assert.ok(!renderReport({ ...model(), ready: false }).includes('Ready to land'));
   });
 
   // source: companion part 1 (untagged versions link the gitHead commit; flint-chart-mcp fallback is needs-attention;

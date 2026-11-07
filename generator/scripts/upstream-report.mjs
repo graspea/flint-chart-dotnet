@@ -7,7 +7,8 @@
 // FORWARD, TESTS_DOTNET, TESTS_GENERATOR (step outcomes), FLINT_M2_DONE (repository variable, optional).
 // Reads <out>/generate.log and <out>/forward/forward.trx when present, the probe records of the pin and the new version
 // (tests/fixtures/flint-chart@<version>/probes.json) and PublicAPI.Unshipped.txt against HEAD. Writes <out>/pr-body.md and
-// <out>/result.json (`draft`: tests or generation failed, or removed API outside a breaking window).
+// <out>/result.json (`draft`: tests or generation failed, or removed API outside a breaking window; `ready_to_land`: see
+// readyToLand).
 // Upstream text (CHANGELOG, generation log) goes into the file quoted, never through a shell expression.
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -147,12 +148,31 @@ export function suggestTag({ prefix, version, stableExists, breaking, m2Done, cl
   return `${prefix}${version}.1${stable ? '' : '-preview.1'}`;
 }
 
-/** @param {{ breaking: boolean, tests: string, generation: string, mcpFallback: boolean, bump: string, attention?: boolean }} input */
-export function labelsFor({ breaking, tests, generation, mcpFallback, bump, attention = false }) {
+/**
+ * Whether a sync is clean enough for a maintainer to land as it is (maintainer decision): generation ok, the tests and
+ * the forward-compat round-trip passed, no BREAKING or behavioural row, no removed public API, nothing that needs
+ * attention. The label `ready-to-land` says so; the workflow never merges.
+ * @param {{ rows: ClassifiedRow[], removedApi: string[], generation: string, tests: string, forward: string, attention: boolean }} input
+ */
+export function readyToLand({ rows, removedApi, generation, tests, forward, attention }) {
+  return (
+    generation === 'ok' &&
+    tests === 'success' &&
+    forward === 'success' &&
+    !attention &&
+    removedApi.length === 0 &&
+    !rows.some((r) => r.severity === 'BREAKING' || r.severity === 'behavioural')
+  );
+}
+
+/** @param {{ breaking: boolean, tests: string, generation: string, mcpFallback: boolean, bump: string, attention?: boolean, ready?: boolean }} input */
+export function labelsFor({ breaking, tests, generation, mcpFallback, bump, attention = false, ready = false }) {
   const labels = ['upstream'];
   if (breaking) labels.push('breaking');
-  if (tests !== 'success' || generation !== 'ok' || mcpFallback || attention) labels.push('needs-attention');
+  const needsAttention = tests !== 'success' || generation !== 'ok' || mcpFallback || attention;
+  if (needsAttention) labels.push('needs-attention');
   labels.push(`upstream-${bump}`);
+  if (ready && !needsAttention) labels.push('ready-to-land');
   return labels;
 }
 
@@ -208,7 +228,7 @@ const short = (/** @type {string} */ sha) => sha.slice(0, 8);
  *   generation: string, generateLog: string, forward: { outcome: string, counts: { total: number, passed: number, failed: number } | null },
  *   tests: { dotnet: string, generator: string }, queued: string[], suggestedTag: string, stableTagForPin: string | null,
  *   rows: ClassifiedRow[], retired: { path: string, lastSeenIn: string, retiredIn: string, sdk: 'obsolete' | 'removed' | 'ended' }[], stats: string, changelog: string | undefined,
- *   removedApi: string[], breakingWindow: boolean }} ReportModel
+ *   removedApi: string[], breakingWindow: boolean, ready: boolean }} ReportModel
  * @param {ReportModel} m
  */
 export function renderReport(m) {
@@ -275,6 +295,11 @@ export function renderReport(m) {
     (m.rows.length === 0 ? 'No IR changes besides the version.\n\n' : areas) +
     retired +
     removedApi +
+    (m.ready
+      ? '### Ready to land\n' +
+        'Generation, the tests and the forward-compat round-trip passed, and this report has no BREAKING or behavioural row, no removed public API and nothing that needs attention, so the pull request is labelled `ready-to-land`. ' +
+        'The workflow never merges it: a maintainer lands it with `git land <PR>`, a fast-forward push of the head commit (`docs/maintainers.md`, "Landing a pull request").\n\n'
+      : '') +
     `### Fixtures and generated files\n${m.stats || 'no changes'}\n\n` +
     `### Upstream CHANGELOG ${m.version}\n${m.changelog === undefined ? 'Not found at the new gitHead.\n' : fenced(m.changelog, 'markdown')}\n` +
     '### After merge\n' +
@@ -381,13 +406,17 @@ async function main() {
     changelog,
     removedApi,
     breakingWindow,
+    ready: false,
   };
-  const labels = labelsFor({ breaking, tests: testsOutcome, generation, mcpFallback: model.mcp.version !== version, bump: bumpKind(pin, version), attention });
+  const mcpFallback = model.mcp.version !== version;
+  model.ready = readyToLand({ rows, removedApi, generation, tests: testsOutcome, forward: forward.outcome, attention: attention || mcpFallback });
+  const labels = labelsFor({ breaking, tests: testsOutcome, generation, mcpFallback, bump: bumpKind(pin, version), attention, ready: model.ready });
   writeFileSync(join(out, 'pr-body.md'), renderReport(model));
   const result = {
     tests: testsOutcome,
     generation,
     draft: draft || testsOutcome !== 'success' || generation !== 'ok',
+    ready_to_land: model.ready,
     removed_api: removedApi,
     forward,
     mcp: { version: model.mcp.version, equalsPin: model.mcp.version === version },

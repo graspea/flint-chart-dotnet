@@ -213,7 +213,8 @@ jobs:
           draft: ${{ steps.meta.outputs.draft }}
           add-paths: ${{ env.SYNC_PATHS }}
       # On an existing pull request the action updates only the title and body: it adds labels but never removes them,
-      # and draft applies at creation. Bring the computed labels and the draft state up to date on every run.
+      # and draft applies at creation. Bring the computed labels and the draft state up to date on every run; a rerun
+      # whose result is no longer clean drops ready-to-land. The workflow never merges: a maintainer lands the pull request.
       - if: steps.owner.outputs.push == 'true' && steps.cpr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ steps.app.outputs.token }}
@@ -223,7 +224,7 @@ jobs:
           DRAFT: ${{ steps.meta.outputs.draft }}
         run: |
           current=$(gh pr view "$PR" --json labels --jq '.labels[].name')
-          for label in breaking needs-attention; do
+          for label in breaking needs-attention ready-to-land; do
             case ",$LABELS," in *",$label,"*) continue ;; esac
             if printf '%s\n' "$current" | grep -qx "$label"; then gh pr edit "$PR" --remove-label "$label"; fi
           done
