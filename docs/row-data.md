@@ -36,7 +36,7 @@ Rows are written to JSON when the `ChartData` is created, so later changes to th
 
 ## How each .NET type is written
 
-| .NET | JSON | flint-chart 0.5.1 infers (probe `valueInference`) | Notes |
+| .NET | JSON | flint-chart 1.0.0 infers (probe `valueInference`) | Notes |
 |---|---|---|---|
 | `bool` | `true` / `false` | nominal | |
 | `byte` to `long`, `uint` to `ulong` | number | quantitative | beyond 2^53 JavaScript loses precision; Info `large_integer` |
@@ -46,7 +46,7 @@ Rows are written to JSON when the `ChartData` is created, so later changes to th
 | `DateTimeOffset`, `DateTime` (Utc or Local) | ISO 8601 with `Z` or an offset | temporal | an absolute instant |
 | `DateTime` (Unspecified) | `"2024-01-15T10:00:00"` | temporal | read in the time zone of the process that runs flint-chart; Info `unspecified_datetime` |
 | `TimeOnly` | `"10:00:00"` | nominal | pass a number (for example `TotalSeconds`) for an axis |
-| `TimeSpan` | `"1.02:03:04"` | temporal when a day or longer | write `TotalSeconds` as a number instead; Info `timespan_as_string` |
+| `TimeSpan` | `"1.02:03:04"` | nominal (0.5.1: temporal when a day or longer) | each value is a category, not a duration; write `TotalSeconds` as a number instead; Info `timespan_as_string` |
 | enum | member name | nominal | a number would be read as quantitative |
 | `string` | string | quantitative when numeric, temporal when date-like, otherwise nominal | flint-chart's own inference |
 | `Guid`, `Uri` | string | nominal | |

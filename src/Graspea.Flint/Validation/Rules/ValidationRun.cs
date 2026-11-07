@@ -389,7 +389,7 @@ internal sealed partial class ValidationRun
             case JsonValue v when v.GetValueKind() == JsonValueKind.String && UnspecifiedDateTime().IsMatch(v.GetValue<string>()):
                 return (Codes.UnspecifiedDatetime, $"\"{field}\" holds a date and time without a zone (\"{v.GetValue<string>()}\"); it is read in the local time zone of the process that runs flint-chart.");
             case JsonValue v when v.GetValueKind() == JsonValueKind.String && DayTimeSpan().IsMatch(v.GetValue<string>()):
-                return (Codes.TimespanAsString, $"\"{field}\" holds a duration string (\"{v.GetValue<string>()}\"), which upstream infers as temporal; write the duration as a number.");
+                return (Codes.TimespanAsString, $"\"{field}\" holds a duration string (\"{v.GetValue<string>()}\"), which flint-chart {FlintUpstream.Version} infers as nominal, a category for each value; write the duration as a number.");
             default:
                 return null;
         }
@@ -407,8 +407,9 @@ internal sealed partial class ValidationRun
     private static partial Regex UnspecifiedDateTime();
 
     /// <summary>
-    /// A <c>TimeSpan</c> of a day or more (<c>"1.02:03:04"</c>), which flint-chart 0.5.1 infers as temporal; shorter ones look
-    /// like a time of day, which infers nominal (probe <c>valueInference</c>, tests/fixtures/flint-chart@0.5.1/probes.json).
+    /// A <c>TimeSpan</c> of a day or more (<c>"1.02:03:04"</c>), which flint-chart 1.0.0 infers as nominal; shorter ones look
+    /// like a time of day, which may be one, and are not reported (probe <c>valueInference</c>,
+    /// tests/fixtures/flint-chart@1.0.0/probes.json).
     /// </summary>
     [GeneratedRegex(@"^-?\d+\.\d{2}:\d{2}:\d{2}(\.\d+)?$", RegexOptions.CultureInvariant)]
     private static partial Regex DayTimeSpan();

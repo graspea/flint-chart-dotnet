@@ -86,7 +86,7 @@ Default camelCase matches Flint's own examples and fixtures (`city`, `revenue`) 
 | `DateTimeOffset`, `DateTime` Utc/Local | ISO-8601 with `Z`/offset | temporal, absolute instant | STJ default |
 | `DateTime` Unspecified | `"2024-01-15T10:00:00"` | temporal, interpreted in the local time zone of the process that runs flint-chart | written as-is; Info `unspecified_datetime` |
 | `TimeOnly` | `"10:00:00"` | nominal (probed) | pass a number (`TotalSeconds`) for an axis |
-| `TimeSpan` | `"1.02:03:04"` | **temporal** (probed: digit-leading, V8 `Date.parse` accepts it; `"2.00:00:00"` too) | write `TotalSeconds` as a number; Info `timespan_as_string` |
+| `TimeSpan` | `"1.02:03:04"` | **nominal** on flint-chart 1.0.0 (probed; `"2.00:00:00"` too); 0.5.1 inferred it temporal (digit-leading, V8 `Date.parse` accepts it) | write `TotalSeconds` as a number; Info `timespan_as_string` |
 | enum | member name | nominal | integer enums would be mis-inferred as quantitative |
 | `string` | string | numeric (including `''`/whitespace) → quantitative, date-like → temporal, else nominal | upstream behaviour |
 | `Guid`, `Uri` | string | nominal (probed, digit-leading and letter-leading GUIDs alike) | |

@@ -12,7 +12,7 @@ internal sealed record ExcelReason(string Message, string? Channel, bool FromRow
 /// The throw conditions of <c>assembleExcel</c> in the pinned package (design §6 <c>excel_unsupported</c>): faceting,
 /// static series, each template's <c>validate()</c>, the category/measure resolution of the shared path, and the two
 /// throws inside <c>instantiate()</c> (histogram values, radar metrics). Hand-written from src/excel/assemble.ts and
-/// src/excel/templates/*.ts of flint-chart 0.5.1 and pinned to the recorded fixture outcomes. Row values are read as
+/// src/excel/templates/*.ts of flint-chart 1.0.0 and pinned to the recorded fixture outcomes. Row values are read as
 /// given; upstream reads them after its temporal conversion, which changes no value these checks read.
 /// </summary>
 internal static class Excel

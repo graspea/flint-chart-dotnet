@@ -15,7 +15,7 @@ const pinned = (JSON.parse(readFileSync(new URL('../ir/flint-ir.json', import.me
  * below is the documented fact the probe backs, checked against that version's record; when a sync changes a fact
  * (the report lists it as a behavioural row), the maintainer moves this version, the expectations and the docs together.
  */
-const DOCUMENTED = '0.5.1';
+const DOCUMENTED = '1.0.0';
 
 // A fresh run against the installed flint-chart (the pinned version) equals its record, which `npm run generate` writes.
 describe('probes: record of the pinned version', () => {
@@ -70,7 +70,7 @@ describe(`probes: documented facts (flint-chart ${DOCUMENTED})`, () => {
     assert.deepEqual(throwing('semantic type "valueOf" on no field'), []);
   });
 
-  // source: tests/fixtures/flint-chart@0.5.1/probes.json (Excel's empty-data throw comes from a type requirement that untyped fields cannot meet
+  // source: tests/fixtures/flint-chart@1.0.0/probes.json (Excel's empty-data throw comes from a type requirement that untyped fields cannot meet
   // without rows; with explicit types the Bar Chart assembles on Excel too; see docs/validation-codes.md data_empty)
   it('finds no throw for empty data with explicit encoding types', () => {
     assert.deepEqual(throwingBackends('data values empty, typed encodings'), []);
@@ -94,15 +94,16 @@ describe(`probes: documented facts (flint-chart ${DOCUMENTED})`, () => {
     assert.deepEqual(results.themeBackends.unknownExtendsThrows, ['vegalite', 'plotly']);
   });
 
-  // source: design §5.3 table (TimeSpan temporal; TimeOnly, Guid, Uri, nested object nominal; single-number array quantitative)
+  // source: design §5.3 table (TimeOnly, Guid, Uri, nested object nominal; single-number array quantitative) and the
+  // flint-chart 1.0.0 record (TimeSpan nominal; 0.5.1 inferred it temporal, docs/row-data.md)
   it('infers the documented categories for the values .NET writes', () => {
     assert.deepEqual(results.valueInference, {
       'DateOnly "2024-01-15"': 'temporal',
       'Guid, digit-leading': 'nominal',
       'Guid, letter-leading': 'nominal',
       'TimeOnly "10:00:00"': 'nominal',
-      'TimeSpan "1.02:03:04"': 'temporal',
-      'TimeSpan "2.00:00:00"': 'temporal',
+      'TimeSpan "1.02:03:04"': 'nominal',
+      'TimeSpan "2.00:00:00"': 'nominal',
       'Uri': 'nominal',
       'bool': 'nominal',
       'empty string': 'quantitative',

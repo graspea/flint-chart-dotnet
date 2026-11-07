@@ -7,7 +7,7 @@ namespace Graspea.Flint.Tests.Validation;
 
 /// <summary>
 /// Every code of design §6 on a minimal document, with the severity its upstream fact implies (§10.3 unit: validation;
-/// §10.4 tests 16 and 17). Facts marked "probe" are recorded in tests/fixtures/flint-chart@0.5.1/probes.json.
+/// §10.4 tests 16 and 17). Facts marked "probe" are recorded in tests/fixtures/flint-chart@1.0.0/probes.json.
 /// </summary>
 public sealed partial class ChartValidatorTests
 {
@@ -163,7 +163,7 @@ public sealed partial class ChartValidatorTests
         Assert.That(ChartValidator.Validate(input, FlintBackend.VegaLite).IsValid, Is.True);
     }
 
-    // source: design §6 excel_unsupported and tests/fixtures/flint-chart@0.5.1/probe-expectations.jsonl (Excel reads an
+    // source: design §6 excel_unsupported and tests/fixtures/flint-chart@1.0.0/probe-expectations.jsonl (Excel reads an
     // array encoding as an unbound channel: a static series on y of a Line Chart throws, one on color assembles)
     [Test]
     public void Validate_StaticSeriesOnExcel_IsExcelUnsupportedWhereTheTemplateNeedsTheChannel()
@@ -389,7 +389,7 @@ public sealed partial class ChartValidatorTests
         Assert.That(Issues(input, null, "inconsistent_row_keys").Single().Path, Is.EqualTo("data.values[1]"));
     }
 
-    // source: tests/fixtures/flint-chart@0.5.1/probes.json nullHandling "row number, no temporal key" (a number row assembles when no key of
+    // source: tests/fixtures/flint-chart@1.0.0/probes.json nullHandling "row number, no temporal key" (a number row assembles when no key of
     // the first row is temporal; the MCP front door rejects it)
     [Test]
     public void Infos_RowNotObject()
@@ -398,7 +398,7 @@ public sealed partial class ChartValidatorTests
         AssertOne(input, null, "row_not_object", IssueSeverity.Info);
     }
 
-    // source: tests/fixtures/flint-chart@0.5.1/probes.json nullHandling "row null" and "row null first" (every backend throws reading a
+    // source: tests/fixtures/flint-chart@1.0.0/probes.json nullHandling "row null" and "row null first" (every backend throws reading a
     // key of a null row)
     [Test]
     public void Errors_NullRow_OnEveryBackend()
@@ -414,7 +414,7 @@ public sealed partial class ChartValidatorTests
         AssertOne(Bar(i => i.Data = ChartData.FromJson([null, new JsonObject { ["city"] = "A", ["revenue"] = 1 }])), null, "row_not_object", IssueSeverity.Error);
     }
 
-    // source: tests/fixtures/flint-chart@0.5.1/probes.json nullHandling "row number with temporal x" and "row number with an unbound
+    // source: tests/fixtures/flint-chart@1.0.0/probes.json nullHandling "row number with temporal x" and "row number with an unbound
     // temporal key" (convertTemporalData writes every temporal key of the first row back into each row)
     [Test]
     public void Errors_PrimitiveRow_WithATemporalKey()
@@ -430,7 +430,7 @@ public sealed partial class ChartValidatorTests
         AssertOne(unbound, null, "row_not_object", IssueSeverity.Error);
     }
 
-    // source: tests/fixtures/flint-chart@0.5.1/probes.json prototypeKeys (THEME_PRESETS["constructor"] and THEME_PRESETS["toString"] are
+    // source: tests/fixtures/flint-chart@1.0.0/probes.json prototypeKeys (THEME_PRESETS["constructor"] and THEME_PRESETS["toString"] are
     // truthy, so nothing throws)
     [Test]
     public void Validate_ThemeNamedLikeAnObjectPrototypeMember_IsNotUnknown()
@@ -440,7 +440,7 @@ public sealed partial class ChartValidatorTests
         Assert.That(ChartValidator.Validate(Bar(i => i.ThemeSpec = new ThemePreset("__proto__")), null).IsValid, Is.True);
     }
 
-    // source: tests/fixtures/flint-chart@0.5.1/probes.json prototypeKeys (`semanticType in TYPE_REGISTRY` holds for a name of
+    // source: tests/fixtures/flint-chart@1.0.0/probes.json prototypeKeys (`semanticType in TYPE_REGISTRY` holds for a name of
     // Object.prototype, which has no visEncodings: every backend throws when the field is bound or a key of the first row)
     [Test]
     public void Errors_SemanticTypeNamedLikeAnObjectPrototypeMember()
@@ -474,7 +474,8 @@ public sealed partial class ChartValidatorTests
         AssertOne(bySize, null, "sort_by_invalid", IssueSeverity.Warning);
     }
 
-    // source: flint-chart-mcp 0.5.1 server.js requiredChannels/hasEncodingBinding (x and y when the template declares both;
+    // source: flint-chart 1.0.0 flint-chart/validate requiredChannels/hasEncodingBinding, which the flint-chart-mcp 1.0.0
+    // front door runs (x and y when the template declares both;
     // metric and value on KPI Card; a binding is a non-blank field or aggregate count) and design §6 Info
     // required_channel_missing (the assemblers accept it)
     [Test]
@@ -505,7 +506,8 @@ public sealed partial class ChartValidatorTests
         AssertNone(Bar(), null, "data_values_and_url");
     }
 
-    // source: flint-chart-mcp 0.5.1 server.js MAX_DATA_ROWS = 1e5 (more rows are rejected) and design §6 Info too_many_rows
+    // source: flint-chart 1.0.0 flint-chart/validate DEFAULT_MAX_DATA_ROWS = 100000, the flint-chart-mcp 1.0.0 cap (more rows
+    // are rejected), and design §6 Info too_many_rows
     [Test]
     public void Infos_TooManyRows()
     {
@@ -612,6 +614,17 @@ public sealed partial class ChartValidatorTests
         Assert.That((issue.Path, issue.Field), Is.EqualTo(("data.values[1].v", "v")));
     }
 
+    // source: tests/fixtures/flint-chart@1.0.0/probes.json valueInference (TimeSpan "1.02:03:04" and "2.00:00:00" infer
+    // nominal; 0.5.1 inferred them temporal)
+    [Test]
+    public void Infos_TimespanAsString_SaysUpstreamReadsACategory()
+    {
+        var input = Bar(i => i.Data = ChartData.FromJson([new JsonObject { ["city"] = "A", ["revenue"] = 1, ["took"] = "2.00:00:00" }]));
+        var message = Issues(input, null, "timespan_as_string").Single().Message;
+        Assert.That(message, Does.Contain("nominal"));
+        Assert.That(message, Does.Not.Contain("temporal"));
+    }
+
     // source: design part 2 §5.3 (a time of day "10:00:00" infers nominal and a DateTimeOffset carries its offset, so
     // neither is reported; integers up to 2^53 are exact in JavaScript)
     [Test]
@@ -640,7 +653,7 @@ public sealed partial class ChartValidatorTests
         Assert.That(result.Issues.Select(i => i.Code), Is.EquivalentTo(new[] { "unknown_chart_type", "canvas_too_large" }));
     }
 
-    // source: Excel templates of flint-chart 0.5.1 (scatter.ts requireQuantitativeAxes; line.ts continuous color) with the
+    // source: Excel templates of flint-chart 1.0.0 (scatter.ts requireQuantitativeAxes; line.ts continuous color) with the
     // types upstream resolves from the registered semantic types (Category nominal, Amount quantitative)
     [Test]
     public void Excel_ValidateConditions_UseResolvedTypes()

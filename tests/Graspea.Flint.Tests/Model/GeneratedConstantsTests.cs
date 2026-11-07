@@ -17,7 +17,7 @@ public sealed class GeneratedConstantsTests
         Assert.That(value.Name, Is.EqualTo(upstream));
     }
 
-    // source: ir/flint-ir.json catalog.chartTypes (48 on 0.5.1, counted from the IR, not assumed)
+    // source: ir/flint-ir.json catalog.chartTypes (51 on 1.0.0, counted from the IR, not assumed)
     [Test]
     public void ChartType_HasOneConstantPerIrChartType()
     {

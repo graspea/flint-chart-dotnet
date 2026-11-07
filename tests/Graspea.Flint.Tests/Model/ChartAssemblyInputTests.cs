@@ -47,7 +47,7 @@ public sealed class ChartAssemblyInputTests
         Assert.That(FlintJson.Serialize(input), Is.EqualTo(WithoutData));
     }
 
-    // source: probe "data absent" (tests/fixtures/flint-chart@0.5.1/probe-expectations.jsonl: every backend throws
+    // source: probe "data absent" (tests/fixtures/flint-chart@1.0.0/probe-expectations.jsonl: every backend throws
     // "Cannot read properties of undefined (reading 'values')"), design §13.3.1 (data_missing fires when Data is null)
     [Test]
     public void Validate_WithoutData_ReportsDataMissing()
