@@ -81,6 +81,10 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
       .filter((n) => n.kind !== ts.SyntaxKind.UndefinedKeyword && !(ts.isLiteralTypeNode(n) && n.literal.kind === ts.SyntaxKind.NullKeyword))
       .map((n) => mapNode(n, path));
     if (members.length === 1) return members[0];
+    // `'a' | 'b' | string` is string to the checker; the literals are only editor hints.
+    if (members.some((m) => m.kind === 'string') && members.every((m) => m.kind === 'string' || (m.kind === 'literal' && typeof m.value === 'string'))) {
+      return { kind: 'string' };
+    }
     if (members.every((m) => m.kind === 'literal' && typeof m.value === 'string')) {
       return { kind: 'literalUnion', values: members.map((m) => (m as { value: string }).value) };
     }
@@ -151,12 +155,15 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
         return { kind: 'array', element: mapNode(args[0], `${path}[]`) };
       }
       if (symbol.name === 'Record' && args.length === 2) {
-        if (args[0].kind !== ts.SyntaxKind.StringKeyword) return { kind: 'unsupported', text: node.getText() };
+        // JSON keys are strings: a number key, or a set of string literals, is a string-keyed map on the wire.
+        const key = mapNode(args[0], path);
+        if (key.kind !== 'string' && key.kind !== 'number' && key.kind !== 'literalUnion') return { kind: 'unsupported', text: node.getText() };
         return { kind: 'record', value: mapNode(args[1], `${path}{*}`) };
       }
       if (symbol.name === 'Partial' && args.length === 1) {
         const inner = mapNode(args[0], path);
         if (inner.kind === 'ref') return { kind: 'partial', of: inner };
+        if (inner.kind === 'record') return inner; // every entry of a map is optional already
       }
       if (LIB_MAPPED.has(symbol.name)) {
         return { kind: 'mapped', text: node.getText(), props: propsOf(checker.getTypeFromTypeNode(node), path) };

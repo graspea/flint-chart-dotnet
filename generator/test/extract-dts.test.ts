@@ -199,3 +199,52 @@ describe('extract/dts', () => {
     }
   });
 });
+
+describe('extract/dts on a synthetic d.ts', () => {
+  /** Extracts a package whose index.d.ts declares the roots and core aliases plus `ThemeSpec { <members> }`. */
+  const extractTheme = (members: string): Record<string, IrNamedType> => {
+    const dir = mkdtempSync(join(tmpdir(), 'flint-dts-'));
+    try {
+      writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'fake', version: '0.0.0', types: 'index.d.ts' }));
+      writeFileSync(
+        join(dir, 'index.d.ts'),
+        [
+          'export interface AssembleOptions { continuousMarkCrossSection?: number; }',
+          `export interface ThemeSpec { ${members} }`,
+          'export interface ChartAssemblyInput { data?: number; chart_spec?: { baseSize?: number }; }',
+          'export interface ChartEncoding { x?: number; }',
+          'export interface SemanticAnnotation { x?: number; }',
+        ].join('\n'),
+      );
+      return extractTypes(dir);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  };
+  const member = (types: Record<string, IrNamedType>, name: string) =>
+    (types.ThemeSpec as { props: IrProp[] }).props.find((p) => p.name === name)!.type;
+
+  // source: flint-chart 1.0.0 d.ts ThemeInk.series.categoricalByCount (`Record<number, string[]>`); JSON object keys are
+  // strings, so a number-keyed record is a string-keyed map on the wire
+  it('records a number-keyed Record as a record', () => {
+    const types = extractTheme('byCount?: Record<number, string[]>;');
+    assert.deepEqual(member(types, 'byCount'), { kind: 'record', value: { kind: 'array', element: { kind: 'string' } } });
+  });
+
+  // source: flint-chart 1.0.0 d.ts ThemeInk.series.byMark (`Partial<Record<SeriesMarkFamily, {...}>>`, SeriesMarkFamily a
+  // string literal union): a map whose keys are a subset of the literals
+  it('records a Partial Record keyed by string literals as a record', () => {
+    const types = extractTheme("byMark?: Partial<Record<'line' | 'bar', { single?: string }>>;");
+    assert.deepEqual(member(types, 'byMark'), {
+      kind: 'record',
+      value: { kind: 'object', props: [{ name: 'single', optional: true, type: { kind: 'string' } }] },
+    });
+  });
+
+  // source: TypeScript handbook, union types (`'series' | 'text' | string` reduces to string); flint-chart 1.0.0 d.ts
+  // PointGeometry.ink
+  it('records a union of string literals and string as string', () => {
+    const types = extractTheme("ink?: 'series' | 'text' | string;");
+    assert.deepEqual(member(types, 'ink'), { kind: 'string' });
+  });
+});

@@ -137,6 +137,8 @@ Emission starts at two roots. `AssembleOptions` goes to `Graspea.Flint` (`Genera
 | `[number, number]` | `ThemeMarks.sizeRange` | → `double[]?` |
 | `T[]` / `Array<T>` | `furniture`, `placement`, `redundantChannels`, `dash`, … | → `T[]?` |
 | Nested object literal | for example `ThemeInk.series.status` | nested class `<Parent><Prop>` (`ThemeInkSeriesStatus`) |
+| `Record<number, T>`, `Record<'a' \| 'b', T>` and their `Partial` | for example 1.0.0 `ThemeInk.series.categoricalByCount`, `ThemeInk.series.byMark` | a record: JSON keys are strings, so → `Dictionary<string, T>` |
+| A union of string literals and `string` (`'series' \| 'text' \| string`) | for example 1.0.0 `PointGeometry.ink` | → `string?`, as the checker reduces it |
 | `any`, `never`, unions of objects | `ChartAssemblyInput.data`, `chartProperties`, `encodings` | parity-only types, never emitted, so no override |
 
 Named interfaces are keyed by their name in the IR. When two different interfaces with one name are reachable (for example from two declaration files), extraction fails and names both files, rather than mapping the second one onto the first one's shape.
