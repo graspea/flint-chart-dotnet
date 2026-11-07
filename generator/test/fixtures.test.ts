@@ -151,7 +151,9 @@ describe('extract/fixtures', () => {
   });
 
   // source: src/extract/probe-cases.ts (one case per rule; a case without the template on a backend is recorded there
-  // too) and tests/fixtures/flint-chart@0.5.1/probes.json (the layout backends throw on a static-series rule, Excel on every static series)
+  // too), tests/fixtures/flint-chart@0.5.1/probes.json (the layout backends throw on a static-series rule, Excel on every
+  // static series) and flint-chart 1.0.0 src/core/normalize-properties.ts sameOptionValue (an array value equal entry by
+  // entry to an array option is kept, with no warning)
   it('records the crafted cases on every backend that has the template', () => {
     const cases = lines('probe-cases.jsonl');
     const expectations = lines('probe-expectations.jsonl');
@@ -165,7 +167,7 @@ describe('extract/fixtures', () => {
       Object.entries(outcome('static series with one entry')).filter(([, o]) => (o as { throws: boolean }).throws).map(([b]) => b),
       ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel'],
     );
-    assert.deepEqual(outcome('option array value').vegalite, { throws: false, warnings: ['invalid-option-value'] });
+    assert.deepEqual(outcome('option array value').vegalite, { throws: false, warnings: [] });
   });
 
   // source: design §13.3.1 (an absent data is expected to throw like data: null, from input.data.values on undefined;
