@@ -12,6 +12,7 @@ export interface Overrides {
   hostStateKeys: string[];
   ignoredOptions: Record<string, string[]>;
   keepObsolete: string[];
+  pending: string[];
 }
 
 export function emptyOverrides(): Overrides {
@@ -25,6 +26,7 @@ export function emptyOverrides(): Overrides {
     hostStateKeys: [],
     ignoredOptions: {},
     keepObsolete: [],
+    pending: [],
   };
 }
 
@@ -71,7 +73,7 @@ export class OverrideUse {
     return this.take('docs', path, this.overrides.docs[path]);
   }
 
-  /** Throws for every entry of the given sections whose key matches `scope` and was never applied. */
+  /** Throws for every entry whose key matches `scope`, is not pending and was never applied. */
   assertAllUsed(scope: (key: string) => boolean): void {
     const all = [
       ...Object.keys(this.overrides.unions).map((k) => `unions:${k}`),
@@ -80,7 +82,11 @@ export class OverrideUse {
       ...Object.keys(this.overrides.renames).map((k) => `renames:${k}`),
       ...Object.keys(this.overrides.docs).map((k) => `docs:${k}`),
     ];
-    const stale = all.filter((entry) => scope(entry.slice(entry.indexOf(':') + 1)) && !this.used.has(entry));
+    const pending = new Set(this.overrides.pending);
+    const stale = all.filter((entry) => {
+      const key = entry.slice(entry.indexOf(':') + 1);
+      return scope(key) && !pending.has(key) && !this.used.has(entry);
+    });
     if (stale.length > 0) throw new Error(`overrides.json entries that match nothing: ${stale.join(', ')}.`);
   }
 

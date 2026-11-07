@@ -86,13 +86,17 @@ Generation fails, naming the IR path, on:
 - a construct the type mapping cannot map;
 - a member-name or class-name collision;
 - a property whose kind differs across the backends of one template;
-- an `overrides.json` entry that matches nothing.
+- an `overrides.json` entry that matches nothing, unless its path is listed in `pending`.
 - two generated type names that coincide (a builder, an enum or its value table), or an entry that takes the name of a hand-written `Chart` member (`Of`);
 - two option values of one discrete property that give the same enum member;
 - an enum name whose key repeats the template name (`RegressionRegressionMethod`), until `renames["<Template>/enum/<key>"]` names it;
 - a `PublicAPI.Shipped.txt` that ships an enum's `Default` as anything but 0, or two members of one enum with the same number.
 
 The fix is always one reviewed line in `generator/overrides.json`, which is validated against `overrides.schema.json`.
+
+A `unions` entry applies only where the type mapping cannot map the construct; a member the mapping maps (a string-literal union, for example) keeps its mapped type, and the entry then matches nothing.
+
+`pending` lists the IR paths of entries written ahead for a `flint-chart` version that is not pinned yet. Such an entry may match nothing; once the pin has a construct at the path that needs it, it applies like any other entry. So the upstream-sync bot never edits `overrides.json`: the entries for the next version are reviewed on `main` first. Remove a path from `pending` once the pin uses its entry.
 
 IR paths:
 - `Type.member.member` for object members;
@@ -133,12 +137,12 @@ Emission starts at two roots. `AssembleOptions` goes to `Graspea.Flint` (`Genera
 | `ThemeGuard`, `NumericGuard` | `ThemeVariant.when` | plain interfaces with optional members; mapped without an override |
 | `ThemeChartDefaults { [chartType: string]: … }` | `ThemeSpec.chartDefaults` | an interface with only a string index signature is a record → `Dictionary<string, …>` |
 | String-literal unions, including aliases such as `Presence`, `Frequency` and `LegendPlacement` | throughout the theme tree | aliases are inlined; → `string?`, with the literals listed in `<remarks>` |
+| `Record<number, T>`, `Record<'a' \| 'b', T>` and their `Partial` | for example 1.0.0 `ThemeInk.series.categoricalByCount`, `ThemeInk.series.byMark` | a record: JSON keys are strings, so → `Dictionary<string, T>` |
+| A union of string literals and `string` (`'series' \| 'text' \| string`) | for example 1.0.0 `PointGeometry.ink` | → `string?`, as the checker reduces it |
 | A single string literal (`swatch?: 'auto'`) | `ThemeLegend.swatch` | → `string?` with the value in `<remarks>` |
 | `[number, number]` | `ThemeMarks.sizeRange` | → `double[]?` |
 | `T[]` / `Array<T>` | `furniture`, `placement`, `redundantChannels`, `dash`, … | → `T[]?` |
 | Nested object literal | for example `ThemeInk.series.status` | nested class `<Parent><Prop>` (`ThemeInkSeriesStatus`) |
-| `Record<number, T>`, `Record<'a' \| 'b', T>` and their `Partial` | for example 1.0.0 `ThemeInk.series.categoricalByCount`, `ThemeInk.series.byMark` | a record: JSON keys are strings, so → `Dictionary<string, T>` |
-| A union of string literals and `string` (`'series' \| 'text' \| string`) | for example 1.0.0 `PointGeometry.ink` | → `string?`, as the checker reduces it |
 | `any`, `never`, unions of objects | `ChartAssemblyInput.data`, `chartProperties`, `encodings` | parity-only types, never emitted, so no override |
 
 Named interfaces are keyed by their name in the IR. When two different interfaces with one name are reachable (for example from two declaration files), extraction fails and names both files, rather than mapping the second one onto the first one's shape.

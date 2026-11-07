@@ -91,8 +91,6 @@ function buildOptions(ir: Ir, overrides: Overrides): { result: EmitResult; class
   };
 
   function mapType(t: IrType, path: string, owner: ClassPlan, propName: string): CsType {
-    const union = use.union(path);
-    if (union !== undefined) return union === 'JsonNode' ? JSON_NODE : { cs: union, api: union, value: VALUE_TYPES.has(union) };
     const dedup = use.dedup(path);
     if (dedup !== undefined) {
       const shape = t.kind === 'object' ? t.props.map((p) => `${p.name}${p.optional ? '?' : ''}:${p.type.kind}`).join(',') : t.kind;
@@ -159,8 +157,13 @@ function buildOptions(ir: Ir, overrides: Overrides): { result: EmitResult; class
         }
         return nested(props.sort((a, b) => ordinal(a.name, b.name)));
       }
-      default:
+      default: {
+        // Only here: a member the mapping maps keeps its type, so an entry written ahead for a wider upstream type
+        // (a pending path) leaves the pinned version's member as it is.
+        const union = use.union(path);
+        if (union !== undefined) return union === 'JsonNode' ? JSON_NODE : { cs: union, api: union, value: VALUE_TYPES.has(union) };
         return fail(path, `${t.kind}${'text' in t ? ` ${t.text}` : ''} (map it in overrides.json "unions")`);
+      }
     }
   }
 

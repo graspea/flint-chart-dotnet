@@ -58,6 +58,12 @@
         "uniqueItems": true
       }
     },
+    "pending": {
+      "description": "IR paths of entries written ahead for a flint-chart version that is not pinned yet: such an entry may match nothing. Once the pin has the path the entry applies like any other; remove the path from this list then.",
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
     "keepObsolete": {
       "description": "Rename paths whose old shipped name is kept as an [Obsolete] FLINT0002 member.",
       "type": "array",

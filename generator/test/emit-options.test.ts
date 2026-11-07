@@ -321,12 +321,38 @@ internal sealed partial class FlintMapJsonContext : JsonSerializerContext;
     const ir = irWith({ AssembleOptions: options([{ name: 'addTooltips', optional: true, type: { kind: 'boolean' } }]) });
     assert.throws(() => emitOptions(ir, overrides({ unions: { 'AssembleOptions.gone': 'JsonNode' } })), /AssembleOptions\.gone/);
   });
+
+  // source: overrides.schema.json "pending" (entries written ahead for a flint-chart version not pinned yet may match
+  // nothing; once the pin has the path they apply like any other entry)
+  it('accepts a pending override path that matches nothing and applies it once the path exists', () => {
+    const pending = overrides({ unions: { 'AssembleOptions.later': 'Graspea.Flint.ContinuousMarkCrossSection' }, pending: ['AssembleOptions.later'] });
+    const without = irWith({ AssembleOptions: options([{ name: 'addTooltips', optional: true, type: { kind: 'boolean' } }]) });
+    assert.doesNotThrow(() => emitOptions(without, pending));
+    const withIt = irWith({ AssembleOptions: options([{ name: 'later', optional: true, type: crossSection }]) });
+    assert.match(fileContent(emitOptions(withIt, pending), 'Options/AssembleOptions.g.cs'), /public Graspea\.Flint\.ContinuousMarkCrossSection\? Later/);
+  });
+
+  // source: overrides.schema.json "unions" (a C# type for a construct the type mapping cannot map): a member the mapping
+  // maps keeps its type, and the entry matches nothing
+  it('applies a unions override only to a member the type mapping cannot map', () => {
+    const ir = irWith({ AssembleOptions: options([{ name: 'weight', optional: true, type: { kind: 'literalUnion', values: ['regular', 'bold'] } }]) });
+    const entry = { unions: { 'AssembleOptions.weight': 'Graspea.Flint.Theming.TypeWeight' } };
+    assert.throws(() => emitOptions(ir, overrides(entry)), /unions:AssembleOptions\.weight/);
+    const content = fileContent(emitOptions(ir, overrides({ ...entry, pending: ['AssembleOptions.weight'] })), 'Options/AssembleOptions.g.cs');
+    assert.match(content, /public string\? Weight \{ get; set; \}/);
+  });
 });
 
 describe('overrides', () => {
   // source: design §7.2 (overrides.json validated against overrides.schema.json)
   it('rejects an unknown top-level key', () => {
     assert.throws(() => parseOverrides({ unionz: {} }), /unionz/);
+  });
+
+  // source: overrides.schema.json "pending" (an array of IR paths)
+  it('accepts pending paths and rejects a pending entry that is not a string', () => {
+    assert.deepEqual(parseOverrides({ pending: ['ThemeLabels.overflow'] }).pending, ['ThemeLabels.overflow']);
+    assert.throws(() => parseOverrides({ pending: [1] }), /pending/);
   });
 
   it('fills absent sections with empty values', () => {
