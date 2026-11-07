@@ -99,22 +99,5 @@
       "plotly"
     ]
   },
-  "pending": [
-    "BandGeometry.group.gap",
-    "BandGeometry.group.spacing",
-    "ThemeLabelFit.rowLimit",
-    "ThemeLabelFit.turnedLimit",
-    "ThemeLabels.overflow",
-    "ThemeMarks.group.gap",
-    "ThemeMarks.group.spacing",
-    "ThemeSource.credit.weight",
-    "ThemeSource.leadInWeight",
-    "ThemeStructure.baseline",
-    "ThemeStructure.frame",
-    "ThemeStructure.grid.category",
-    "ThemeStructure.grid.measure",
-    "ThemeStructure.grid.minor",
-    "ThemeStructure.grid.zero",
-    "TypeRole.weight"
-  ]
+  "pending": []
 }

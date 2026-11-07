@@ -204,7 +204,7 @@ The options emitter places every named object type before it emits anything: it 
 
 ## `overrides.json` entries written ahead for 1.0.0
 
-These `unions` entries are listed in `pending`: on 0.5.1 their paths are absent or string-literal unions (`TypeRole.weight`, `ThemeStructure.frame`, `baseline` and `grid.category/measure/zero`), which keep `string?`. The hand-written types live in `Graspea.Flint.Theming`; each has implicit conversions from its JSON forms, so `Weight = "bold"` and `Frame = "quiet"` still compile, and a converter that owns the wire shape (unknown object members go to `Extensions`).
+These `unions` entries were reviewed on `main` while 0.5.1 was pinned, listed in `pending`: on 0.5.1 their paths are absent or string-literal unions (`TypeRole.weight`, `ThemeStructure.frame`, `baseline` and `grid.category/measure/zero`), which keep `string?`. flint-chart 1.0.0 uses every one of them, so the sync that pins it empties `pending`. The hand-written types live in `Graspea.Flint.Theming`; each has implicit conversions from its JSON forms, so `Weight = "bold"` and `Frame = "quiet"` still compile, and a converter that owns the wire shape (unknown object members go to `Extensions`).
 
 | Entry | Type | 1.0.0 construct |
 |---|---|---|
