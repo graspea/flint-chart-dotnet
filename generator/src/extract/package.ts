@@ -17,7 +17,7 @@ export function flintPackageDir(): string {
   }
 }
 
-export function packageManifest(packageDir: string): { name: string; version: string; types: string } {
+export function packageManifest(packageDir: string): { name: string; version: string; types: string; exports?: Record<string, { types?: string }> } {
   return JSON.parse(readFileSync(join(packageDir, 'package.json'), 'utf8'));
 }
 

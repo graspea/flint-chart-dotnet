@@ -183,6 +183,16 @@ describe('extract/dts', () => {
   });
 
   // source: review D2-7 (the IR keys named types by name, so two interfaces with one name from different declaration
+  // source: flint-chart 1.0.0 dist/interactive (registry InteractionPresetOptions: one member per preset, keyed by the
+  // INTERACTION_PRESET_TYPES literals, "so the JSON shape and the code shape cannot drift apart") and ir/flint-ir.json
+  // InteractionEntry.type (those literals)
+  it('extracts the options of every interaction preset from the flint-chart/interactive entry point', () => {
+    const presetTypes = (prop('InteractionEntry', 'type').type as { values: string[] }).values;
+    assert.deepEqual(props('InteractionPresetOptions').map((p) => p.name), [...presetTypes].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)));
+    assert.deepEqual(prop('InteractionPresetOptions', 'navigate').type, { kind: 'ref', name: 'NavigateOptions' });
+    assert.equal(prop('InteractionPresetOptions', 'lasso-select').type.kind, 'mapped');
+  });
+
   // files would collapse into the first one's shape)
   it('fails when two different interfaces share a name', () => {
     const dir = mkdtempSync(join(tmpdir(), 'flint-dts-'));
@@ -291,5 +301,20 @@ describe('extract/dts on a synthetic d.ts', () => {
   it('keeps an indexed access that is not a set of string literals unsupported', () => {
     const types = extractTheme('size?: Sizes[number];', 'type Sizes = readonly [1, 2];');
     assert.deepEqual(member(types, 'size'), { kind: 'unsupported', text: 'Sizes[number]' });
+  });
+
+  // source: flint-chart 1.0.0 dist/interactive NavigateOptions.axes (`NavigationAxes | 'available'`, an alias of string
+  // literals widened by one more): one closed set; a union with other members keeps its members
+  it('records a literal alias widened by more literals as one closed literal union', () => {
+    const types = extractTheme("axes?: Axes | 'available'; frame?: Axes | { x: number };", "type Axes = 'x' | 'y';");
+    assert.deepEqual(member(types, 'axes'), { kind: 'literalUnion', values: ['x', 'y', 'available'] });
+    assert.equal(member(types, 'frame').kind, 'union');
+  });
+
+  // source: flint-chart 1.0.0 dist/interactive FilterControlsOptions.initial (`Readonly<Record<string, FilterValue>>`):
+  // a read-only map has the JSON shape of the map
+  it('records a Readonly Record as the record', () => {
+    const types = extractTheme('initial?: Readonly<Record<string, number>>;');
+    assert.deepEqual(member(types, 'initial'), { kind: 'record', value: { kind: 'number' } });
   });
 });

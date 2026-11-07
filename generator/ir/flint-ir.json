@@ -6555,6 +6555,68 @@
     ]
   },
   "types": {
+    "AccessibleNavigationOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Show a visible caption naming the focused element and its content. Defaults to true.",
+          "name": "caption",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Dim the marks outside the focused element, as a click highlight does. Defaults to true.",
+          "name": "emphasis",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "The most data fields read out for one mark. Defaults to 8.",
+          "name": "maxFields",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "The chart parts the walk reaches, in reading order. Defaults to every section.",
+          "name": "sections",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "titles",
+                "axes",
+                "legends",
+                "headers",
+                "data",
+                "labels"
+              ]
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
     "ArcGeometry": {
       "kind": "object",
       "props": [
@@ -7147,6 +7209,65 @@
         }
       ]
     },
+    "AxisHighlightOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Limits the preset to one axis; both discrete axes when unset.",
+          "name": "axis",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        {
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Defaults to 'click'.",
+          "name": "event",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "hover",
+              "click"
+            ]
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Gestures that return this interaction to its neutral state.",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
     "AxisRole": {
       "kind": "object",
       "props": [
@@ -7387,6 +7508,82 @@
           "optional": true,
           "type": {
             "kind": "number"
+          }
+        }
+      ]
+    },
+    "BrushZoomOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Defaults to 'xy'.",
+          "name": "axes",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "x",
+              "y",
+              "xy"
+            ]
+          }
+        },
+        {
+          "name": "guide",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "unsupported",
+                "text": "GestureGuideOptions<AreaGestureGuideStyle>"
+              },
+              {
+                "kind": "literal",
+                "value": false
+              }
+            ]
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Returns the viewport to the full frame. Defaults to ['double-click', 'escape'].",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "doc": "The flight home on reset. Defaults to 400 ms; `{ duration: 0 }` jumps.",
+          "name": "resetTransition",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "NavigationTransition"
+          }
+        },
+        {
+          "doc": "The zoom into the brushed region. Defaults to 400 ms; `{ duration: 0 }` jumps.",
+          "name": "transition",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "NavigationTransition"
           }
         }
       ]
@@ -8272,6 +8469,214 @@
         }
       ]
     },
+    "ClickGroupFocusOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "groupBy",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "string"
+              },
+              {
+                "element": {
+                  "kind": "string"
+                },
+                "kind": "array"
+              }
+            ]
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Gestures that return this interaction to its neutral state.",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
+    "ClickHighlightOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Gestures that return this interaction to its neutral state.",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "doc": "Semantic surfaces activated by this preset. Defaults to all three targets.",
+          "name": "targets",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "mark",
+                "legend",
+                "discreteAxis"
+              ]
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
+    "ContextActivateOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        }
+      ]
+    },
+    "ContextMenuItem": {
+      "doc": "One action the menu lists. The host performs it when the reader picks it.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "id",
+          "optional": false,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "label",
+          "optional": false,
+          "type": {
+            "kind": "string"
+          }
+        }
+      ]
+    },
+    "ContextMenuOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "How the reader picks the marks. Defaults to 'rectangle'. A rectangle or brush stays on screen to move or resize;\na click or a long press picks one mark; a right-click opens the menu on a mark without highlighting it.",
+          "name": "gesture",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "rectangle",
+              "lasso",
+              "brush-x",
+              "brush-y",
+              "click",
+              "right-click",
+              "long-press"
+            ]
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "The actions the menu lists. Picking one emits a `menu-select` event whose `item` is the action's id and whose target is the selected marks.",
+          "name": "items",
+          "optional": false,
+          "type": {
+            "element": {
+              "kind": "ref",
+              "name": "ContextMenuItem"
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "doc": "False draws nothing; the host draws its own menu from the selection events. Defaults to true.",
+          "name": "render",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "doc": "Gestures that clear the selection and close the menu.",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
     "ContinuousMarkCrossSection": {
       "kind": "union",
       "members": [
@@ -8325,6 +8730,858 @@
               }
             }
           ]
+        }
+      ]
+    },
+    "DoubleActivateOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Gestures that return this interaction to its neutral state.",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
+    "DragReorderOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "The order is a setting, so nothing resets it unless this list says so.",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
+    "FilterControlsOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Opacity of the marks that fail in `highlight` mode.",
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "The fields that get a control. Listed fields always get one. When absent, the\ncategorical, boolean, and temporal fields are chosen, up to four, skipping a\nfield another interaction already filters: the color field under `legend-toggle`,\na continuous axis field under `navigate` or `brush-zoom`.",
+          "name": "fields",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "union",
+              "members": [
+                {
+                  "kind": "string"
+                },
+                {
+                  "kind": "ref",
+                  "name": "FilterFieldOptions"
+                }
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Filters applied when the chart mounts.",
+          "name": "initial",
+          "optional": true,
+          "type": {
+            "kind": "record",
+            "value": {
+              "kind": "union",
+              "members": [
+                {
+                  "kind": "object",
+                  "props": [
+                    {
+                      "name": "in",
+                      "optional": false,
+                      "type": {
+                        "element": {
+                          "kind": "unknown"
+                        },
+                        "kind": "array"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "object",
+                  "props": [
+                    {
+                      "name": "range",
+                      "optional": false,
+                      "type": {
+                        "elements": [
+                          {
+                            "kind": "unknown"
+                          },
+                          {
+                            "kind": "unknown"
+                          }
+                        ],
+                        "kind": "tuple"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "doc": "`filter` removes the rows that fail; `highlight` keeps them and mutes their marks. Defaults to `filter`.",
+          "name": "mode",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "filter",
+              "highlight"
+            ]
+          }
+        },
+        {
+          "doc": "Defaults to `auto`.",
+          "name": "placement",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "auto",
+              "top",
+              "bottom"
+            ]
+          }
+        },
+        {
+          "doc": "False draws nothing; the host draws its own controls and drives the preset through `dispatch`. Defaults to true.",
+          "name": "render",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        }
+      ]
+    },
+    "FilterFieldOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Whether a single-choice dropdown offers All. Defaults to true, except in `filter` mode for a\nfield the chart needs to tell its rows apart (each value is another version of the same marks,\nsuch as a year or a population group): there All would draw every version at once, so the\nfield gets a dropdown that always holds one value, the first in the data unless `initial` sets it.",
+          "name": "all",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "name": "field",
+          "optional": false,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "The chip's name for the field. Defaults to the field name.",
+          "name": "label",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "widget",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "auto",
+              "checkboxes",
+              "select",
+              "range",
+              "toggle"
+            ]
+          }
+        }
+      ]
+    },
+    "HoverGroupFocusOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "The other groups' opacity under 'spotlight'. Defaults to 0.25.",
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "How the hovered group stands out. 'highlight' gives it its mark's hover cue and leaves the\nother groups as drawn; 'spotlight' also dims the other groups to `dimOpacity`; 'auto'\nhighlights a group drawn as a line and spotlights points, bars, and slices.\nDefaults to 'auto'.",
+          "name": "emphasis",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "auto",
+              "highlight",
+              "spotlight"
+            ]
+          }
+        },
+        {
+          "name": "groupBy",
+          "optional": false,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "string"
+              },
+              {
+                "element": {
+                  "kind": "string"
+                },
+                "kind": "array"
+              }
+            ]
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Nearest-mark hover radius in renderer pixels. Defaults to 8.",
+          "name": "tolerance",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        }
+      ]
+    },
+    "InspectIndexOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "The axis an index slice is read along. Defaults to the chart's index axis: the temporal one, else the discrete one beside a measure, else x.",
+          "name": "axis",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "x",
+              "y"
+            ]
+          }
+        },
+        {
+          "doc": "Show compact series-colored labels on value guides inside the plot. Defaults to true.",
+          "name": "displayValue",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "name": "guide",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "unsupported",
+                "text": "GestureGuideOptions<InspectGestureGuideStyle>"
+              },
+              {
+                "kind": "literal",
+                "value": false
+              }
+            ]
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Releases a locked series. Defaults to ['escape'].",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "name": "selector",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "select",
+                    "optional": false,
+                    "type": {
+                      "kind": "object",
+                      "props": [
+                        {
+                          "name": "key",
+                          "optional": false,
+                          "type": {
+                            "kind": "record",
+                            "value": {
+                              "kind": "unknown"
+                            }
+                          }
+                        },
+                        {
+                          "name": "visual",
+                          "optional": true,
+                          "type": {
+                            "kind": "mapped",
+                            "props": [
+                              {
+                                "name": "kind",
+                                "optional": true,
+                                "type": {
+                                  "kind": "literalUnion",
+                                  "values": [
+                                    "mark",
+                                    "path",
+                                    "region",
+                                    "widget",
+                                    "handle",
+                                    "legend",
+                                    "axis",
+                                    "chart",
+                                    "title",
+                                    "header"
+                                  ]
+                                }
+                              },
+                              {
+                                "name": "role",
+                                "optional": true,
+                                "type": {
+                                  "kind": "string"
+                                }
+                              }
+                            ],
+                            "text": "Partial<SemanticTarget['visual']>"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "select",
+                    "optional": false,
+                    "type": {
+                      "kind": "object",
+                      "props": [
+                        {
+                          "name": "visual",
+                          "optional": true,
+                          "type": {
+                            "kind": "mapped",
+                            "props": [
+                              {
+                                "name": "kind",
+                                "optional": true,
+                                "type": {
+                                  "kind": "literalUnion",
+                                  "values": [
+                                    "mark",
+                                    "path",
+                                    "region",
+                                    "widget",
+                                    "handle",
+                                    "legend",
+                                    "axis",
+                                    "chart",
+                                    "title",
+                                    "header"
+                                  ]
+                                }
+                              },
+                              {
+                                "name": "role",
+                                "optional": true,
+                                "type": {
+                                  "kind": "string"
+                                }
+                              }
+                            ],
+                            "text": "Partial<SemanticTarget['visual']>"
+                          }
+                        },
+                        {
+                          "name": "where",
+                          "optional": false,
+                          "type": {
+                            "kind": "record",
+                            "value": {
+                              "kind": "union",
+                              "members": [
+                                {
+                                  "kind": "object",
+                                  "props": [
+                                    {
+                                      "name": "in",
+                                      "optional": false,
+                                      "type": {
+                                        "element": {
+                                          "kind": "unknown"
+                                        },
+                                        "kind": "array"
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "kind": "object",
+                                  "props": [
+                                    {
+                                      "name": "range",
+                                      "optional": false,
+                                      "type": {
+                                        "elements": [
+                                          {
+                                            "kind": "unknown"
+                                          },
+                                          {
+                                            "kind": "unknown"
+                                          }
+                                        ],
+                                        "kind": "tuple"
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "doc": "Record field identifying a series; single-series policies switch through the legend.",
+          "name": "seriesBy",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Which series to present: all, the first series, or a preferred initial series.",
+          "name": "show",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "literal",
+                "value": "all"
+              },
+              {
+                "kind": "literal",
+                "value": "single"
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "series",
+                    "optional": false,
+                    "type": {
+                      "kind": "unknown"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "doc": "Near-axis acquisition radius as a plot-size fraction. Defaults to 0.01.",
+          "name": "tolerance",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        }
+      ]
+    },
+    "InspectOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Ordered modes cycled by wheel or context-menu gestures; mode is included automatically.",
+          "name": "cycle",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "union",
+              "members": [
+                {
+                  "kind": "literal",
+                  "value": "x"
+                },
+                {
+                  "kind": "literal",
+                  "value": "y"
+                },
+                {
+                  "kind": "literal",
+                  "value": "xy"
+                },
+                {
+                  "kind": "unsupported",
+                  "text": "`x${InspectOperator}`"
+                },
+                {
+                  "kind": "unsupported",
+                  "text": "`y${InspectOperator}`"
+                },
+                {
+                  "kind": "unsupported",
+                  "text": "`xy${InspectOperator}`"
+                },
+                {
+                  "kind": "unsupported",
+                  "text": "`x${InspectOperator};y${InspectOperator}`"
+                }
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Transient guide shown while inspecting; false disables visual feedback.",
+          "name": "guide",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "unsupported",
+                "text": "GestureGuideOptions<InspectGestureGuideStyle>"
+              },
+              {
+                "kind": "literal",
+                "value": false
+              }
+            ]
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "The axes the pointer reads, with an optional comparison per axis. Defaults to 'xy'.",
+          "name": "mode",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "literal",
+                "value": "x"
+              },
+              {
+                "kind": "literal",
+                "value": "y"
+              },
+              {
+                "kind": "literal",
+                "value": "xy"
+              },
+              {
+                "kind": "unsupported",
+                "text": "`x${InspectOperator}`"
+              },
+              {
+                "kind": "unsupported",
+                "text": "`y${InspectOperator}`"
+              },
+              {
+                "kind": "unsupported",
+                "text": "`xy${InspectOperator}`"
+              },
+              {
+                "kind": "unsupported",
+                "text": "`x${InspectOperator};y${InspectOperator}`"
+              }
+            ]
+          }
+        },
+        {
+          "name": "selector",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "select",
+                    "optional": false,
+                    "type": {
+                      "kind": "object",
+                      "props": [
+                        {
+                          "name": "key",
+                          "optional": false,
+                          "type": {
+                            "kind": "record",
+                            "value": {
+                              "kind": "unknown"
+                            }
+                          }
+                        },
+                        {
+                          "name": "visual",
+                          "optional": true,
+                          "type": {
+                            "kind": "mapped",
+                            "props": [
+                              {
+                                "name": "kind",
+                                "optional": true,
+                                "type": {
+                                  "kind": "literalUnion",
+                                  "values": [
+                                    "mark",
+                                    "path",
+                                    "region",
+                                    "widget",
+                                    "handle",
+                                    "legend",
+                                    "axis",
+                                    "chart",
+                                    "title",
+                                    "header"
+                                  ]
+                                }
+                              },
+                              {
+                                "name": "role",
+                                "optional": true,
+                                "type": {
+                                  "kind": "string"
+                                }
+                              }
+                            ],
+                            "text": "Partial<SemanticTarget['visual']>"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "select",
+                    "optional": false,
+                    "type": {
+                      "kind": "object",
+                      "props": [
+                        {
+                          "name": "visual",
+                          "optional": true,
+                          "type": {
+                            "kind": "mapped",
+                            "props": [
+                              {
+                                "name": "kind",
+                                "optional": true,
+                                "type": {
+                                  "kind": "literalUnion",
+                                  "values": [
+                                    "mark",
+                                    "path",
+                                    "region",
+                                    "widget",
+                                    "handle",
+                                    "legend",
+                                    "axis",
+                                    "chart",
+                                    "title",
+                                    "header"
+                                  ]
+                                }
+                              },
+                              {
+                                "name": "role",
+                                "optional": true,
+                                "type": {
+                                  "kind": "string"
+                                }
+                              }
+                            ],
+                            "text": "Partial<SemanticTarget['visual']>"
+                          }
+                        },
+                        {
+                          "name": "where",
+                          "optional": false,
+                          "type": {
+                            "kind": "record",
+                            "value": {
+                              "kind": "union",
+                              "members": [
+                                {
+                                  "kind": "object",
+                                  "props": [
+                                    {
+                                      "name": "in",
+                                      "optional": false,
+                                      "type": {
+                                        "element": {
+                                          "kind": "unknown"
+                                        },
+                                        "kind": "array"
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "kind": "object",
+                                  "props": [
+                                    {
+                                      "name": "range",
+                                      "optional": false,
+                                      "type": {
+                                        "elements": [
+                                          {
+                                            "kind": "unknown"
+                                          },
+                                          {
+                                            "kind": "unknown"
+                                          }
+                                        ],
+                                        "kind": "tuple"
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "doc": "Hit tolerance as a plot-size fraction. Defaults to 0.02 for XY and 0.01 otherwise.",
+          "name": "tolerance",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
         }
       ]
     },
@@ -8383,6 +9640,290 @@
         }
       ]
     },
+    "InteractionPresetOptions": {
+      "doc": "The options each preset type accepts in a spec. They are the factory option\ntypes, so the JSON shape and the code shape cannot drift apart. The one\ndifference: `click-annotate` loses `format`, which is a function.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "accessible-navigation",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "AccessibleNavigationOptions"
+          }
+        },
+        {
+          "name": "axis-highlight",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "AxisHighlightOptions"
+          }
+        },
+        {
+          "name": "brush-angle",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "SelectOptions"
+          }
+        },
+        {
+          "name": "brush-x",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "SelectOptions"
+          }
+        },
+        {
+          "name": "brush-y",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "SelectOptions"
+          }
+        },
+        {
+          "name": "brush-zoom",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "BrushZoomOptions"
+          }
+        },
+        {
+          "name": "click-annotate",
+          "optional": false,
+          "type": {
+            "kind": "mapped",
+            "props": [
+              {
+                "name": "dimOpacity",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "id",
+                "optional": true,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "doc": "Gestures that return this interaction to its neutral state.",
+                "name": "reset",
+                "optional": true,
+                "type": {
+                  "element": {
+                    "kind": "literalUnion",
+                    "values": [
+                      "click-none",
+                      "double-click",
+                      "escape"
+                    ]
+                  },
+                  "kind": "array"
+                }
+              }
+            ],
+            "text": "Omit<ClickAnnotateOptions, 'format'>"
+          }
+        },
+        {
+          "name": "click-group-focus",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "ClickGroupFocusOptions"
+          }
+        },
+        {
+          "name": "click-highlight",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "ClickHighlightOptions"
+          }
+        },
+        {
+          "name": "context-activate",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "ContextActivateOptions"
+          }
+        },
+        {
+          "name": "context-menu",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "ContextMenuOptions"
+          }
+        },
+        {
+          "name": "double-activate",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "DoubleActivateOptions"
+          }
+        },
+        {
+          "name": "drag-reorder",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "DragReorderOptions"
+          }
+        },
+        {
+          "name": "filter-controls",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "FilterControlsOptions"
+          }
+        },
+        {
+          "name": "hover-group-focus",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "HoverGroupFocusOptions"
+          }
+        },
+        {
+          "name": "inspect",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "InspectOptions"
+          }
+        },
+        {
+          "name": "inspect-index",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "InspectIndexOptions"
+          }
+        },
+        {
+          "name": "lasso-select",
+          "optional": false,
+          "type": {
+            "kind": "mapped",
+            "props": [
+              {
+                "name": "dimOpacity",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "doc": "Transient region shown during the gesture; false disables visual feedback.",
+                "name": "guide",
+                "optional": true,
+                "type": {
+                  "kind": "union",
+                  "members": [
+                    {
+                      "kind": "unsupported",
+                      "text": "GestureGuideOptions<AreaGestureGuideStyle>"
+                    },
+                    {
+                      "kind": "literal",
+                      "value": false
+                    }
+                  ]
+                }
+              },
+              {
+                "name": "id",
+                "optional": true,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "doc": "The marks the region lists: those it touches, or only those it contains. Defaults to 'intersect'.",
+                "name": "match",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "intersect",
+                    "contain"
+                  ]
+                }
+              },
+              {
+                "doc": "Gestures that return this interaction to its neutral state.",
+                "name": "reset",
+                "optional": true,
+                "type": {
+                  "element": {
+                    "kind": "literalUnion",
+                    "values": [
+                      "click-none",
+                      "double-click",
+                      "escape"
+                    ]
+                  },
+                  "kind": "array"
+                }
+              }
+            ],
+            "text": "Omit<SelectOptions, 'mode'>"
+          }
+        },
+        {
+          "name": "legend-toggle",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "LegendToggleOptions"
+          }
+        },
+        {
+          "name": "linked-brush",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "LinkedBrushOptions"
+          }
+        },
+        {
+          "name": "long-press",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "LongPressOptions"
+          }
+        },
+        {
+          "name": "navigate",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "NavigateOptions"
+          }
+        },
+        {
+          "name": "select",
+          "optional": false,
+          "type": {
+            "kind": "ref",
+            "name": "SelectOptions"
+          }
+        }
+      ]
+    },
     "InteractionSpec": {
       "doc": "How a chart behaves. Sits beside `chart_spec` and `theme_spec` in\n`ChartAssemblyInput`. Only the Vega-Lite interactive surface reads it; the\nassemblers and the static backends leave it untouched. Retained state is not\npart of it; a host applies that through the surface.",
       "kind": "object",
@@ -8421,6 +9962,41 @@
           "optional": true,
           "type": {
             "kind": "boolean"
+          }
+        }
+      ]
+    },
+    "LegendToggleOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "mutedOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Hidden series are a setting, so nothing resets them unless this list says so.",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
           }
         }
       ]
@@ -8495,6 +10071,281 @@
         {
           "name": "width",
           "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        }
+      ]
+    },
+    "LinkedBrushOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Defaults to 'rectangle'. A lasso has no stateful mode: its freehand region ends at the commit.",
+          "name": "brush",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "rectangle",
+              "lasso"
+            ]
+          }
+        },
+        {
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "groupBy",
+          "optional": false,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "string"
+              },
+              {
+                "element": {
+                  "kind": "string"
+                },
+                "kind": "array"
+              }
+            ]
+          }
+        },
+        {
+          "doc": "Transient region shown during the gesture; false disables visual feedback.",
+          "name": "guide",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "unsupported",
+                "text": "GestureGuideOptions<AreaGestureGuideStyle>"
+              },
+              {
+                "kind": "literal",
+                "value": false
+              }
+            ]
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "The marks the region lists: those it touches, or only those it contains. Defaults to 'intersect'.",
+          "name": "match",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "intersect",
+              "contain"
+            ]
+          }
+        },
+        {
+          "doc": "'stateful' keeps the region on screen and editable after the drag. Defaults to 'ephemeral'.",
+          "name": "mode",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "ephemeral",
+              "stateful"
+            ]
+          }
+        },
+        {
+          "doc": "Gestures that return this interaction to its neutral state.",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
+    "LongPressOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Defaults to 500.",
+          "name": "holdMs",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Gestures that return this interaction to its neutral state.",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
+    "NavigateOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "'available' navigates every axis the chart confirms. Defaults to 'available'.",
+          "name": "axes",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "x",
+              "y",
+              "xy",
+              "available"
+            ]
+          }
+        },
+        {
+          "name": "domainGuard",
+          "optional": true,
+          "type": {
+            "kind": "partial",
+            "of": {
+              "kind": "ref",
+              "name": "NavigationDomainGuard"
+            }
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Defaults to true.",
+          "name": "pan",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "doc": "Returns the viewport to the full frame. Defaults to ['double-click'].",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "doc": "The flight home on reset. Defaults to 400 ms; `{ duration: 0 }` jumps.",
+          "name": "resetTransition",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "NavigationTransition"
+          }
+        },
+        {
+          "doc": "Defaults to 0.002.",
+          "name": "wheelSensitivity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Defaults to true.",
+          "name": "zoom",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        }
+      ]
+    },
+    "NavigationDomainGuard": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "maxVisibleFraction",
+          "optional": false,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "minVisibleFraction",
+          "optional": false,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "overscrollFraction",
+          "optional": false,
+          "type": {
+            "kind": "number"
+          }
+        }
+      ]
+    },
+    "NavigationTransition": {
+      "doc": "How long a gesture-driven viewport change animates, in milliseconds; 0 turns the animation off.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "duration",
+          "optional": false,
           "type": {
             "kind": "number"
           }
@@ -8732,6 +10583,83 @@
           "type": {
             "element": {
               "kind": "string"
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
+    "SelectOptions": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "dimOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Transient region shown during the gesture; false disables visual feedback.",
+          "name": "guide",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "unsupported",
+                "text": "GestureGuideOptions<AreaGestureGuideStyle>"
+              },
+              {
+                "kind": "literal",
+                "value": false
+              }
+            ]
+          }
+        },
+        {
+          "name": "id",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "The marks the region lists: those it touches, or only those it contains. Defaults to 'intersect'.",
+          "name": "match",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "intersect",
+              "contain"
+            ]
+          }
+        },
+        {
+          "doc": "'stateful' keeps the region on screen and editable after the drag. Defaults to 'ephemeral'.",
+          "name": "mode",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "ephemeral",
+              "stateful"
+            ]
+          }
+        },
+        {
+          "doc": "Gestures that return this interaction to its neutral state.",
+          "name": "reset",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "literalUnion",
+              "values": [
+                "click-none",
+                "double-click",
+                "escape"
+              ]
             },
             "kind": "array"
           }

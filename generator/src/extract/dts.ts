@@ -8,6 +8,12 @@ import { packageManifest } from './package.ts';
 /** Exported upstream types the IR starts from: emitted (AssembleOptions, ThemeSpec) or parity-only. */
 export const ROOT_TYPES = ['AssembleOptions', 'ThemeSpec', 'ChartAssemblyInput', 'ChartEncoding', 'SemanticAnnotation'] as const;
 
+/**
+ * Types of the `flint-chart/interactive` entry point (package.json `exports["./interactive"].types`): the option shape of
+ * every interaction preset, keyed by its type name. Its members are the types the presets' factories take.
+ */
+export const INTERACTIVE_ROOT_TYPES = ['InteractionPresetOptions'] as const;
+
 /** Anonymous upstream types that the hand-written core names; extracted for the parity test only. */
 export const CORE_ALIASES: Readonly<Record<string, string>> = {
   ChartData: 'ChartAssemblyInput.data',
@@ -19,8 +25,11 @@ export const CORE_ALIASES: Readonly<Record<string, string>> = {
 const LIB_MAPPED = new Set(['Partial', 'Required', 'Readonly', 'Pick', 'Omit']);
 
 export function extractTypes(packageDir: string): Record<string, IrNamedType> {
-  const entry = join(packageDir, packageManifest(packageDir).types);
-  const program = ts.createProgram([entry], {
+  const manifest = packageManifest(packageDir);
+  const entry = join(packageDir, manifest.types);
+  const interactiveTypes = manifest.exports?.['./interactive']?.types;
+  const interactive = interactiveTypes ? join(packageDir, interactiveTypes) : undefined;
+  const program = ts.createProgram(interactive ? [entry, interactive] : [entry], {
     strict: true,
     noEmit: true,
     skipLibCheck: true,
@@ -34,6 +43,8 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
   const moduleSymbol = checker.getSymbolAtLocation(sourceFile);
   if (!moduleSymbol) throw new Error(`${entry} is not a module.`);
   const exported = new Map(checker.getExportsOfModule(moduleSymbol).map((s) => [s.name, s]));
+  const interactiveSymbol = interactive ? checker.getSymbolAtLocation(program.getSourceFile(interactive)!) : undefined;
+  const interactiveExports = new Map(interactiveSymbol ? checker.getExportsOfModule(interactiveSymbol).map((s) => [s.name, s]) : []);
 
   const resolve = (symbol: ts.Symbol): ts.Symbol =>
     symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
@@ -81,6 +92,11 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
       .filter((n) => n.kind !== ts.SyntaxKind.UndefinedKeyword && !(ts.isLiteralTypeNode(n) && n.literal.kind === ts.SyntaxKind.NullKeyword))
       .map((n) => mapNode(n, path));
     if (members.length === 1) return members[0];
+    // An alias of string literals widened by more literals (`Axes | 'available'`) is one closed set.
+    const literals = members.flatMap((m) => (m.kind === 'literalUnion' && !m.open ? m.values : m.kind === 'literal' && typeof m.value === 'string' ? [m.value] : []));
+    if (members.some((m) => m.kind === 'literalUnion') && members.every((m) => (m.kind === 'literalUnion' && !m.open) || (m.kind === 'literal' && typeof m.value === 'string'))) {
+      return { kind: 'literalUnion', values: [...new Set(literals)] };
+    }
     // `'a' | 'b' | string` takes any string; the literals are the documented values.
     if (members.some((m) => m.kind === 'string') && members.every((m) => m.kind === 'string' || (m.kind === 'literal' && typeof m.value === 'string'))) {
       return { kind: 'literalUnion', values: members.flatMap((m) => (m.kind === 'literal' ? [m.value as string] : [])), open: true };
@@ -177,6 +193,11 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
         if (inner.kind === 'ref') return { kind: 'partial', of: inner };
         if (inner.kind === 'record') return inner; // every entry of a map is optional already
       }
+      if (symbol.name === 'Readonly' && args.length === 1) {
+        // A read-only map or array has the JSON shape of the map or array.
+        const inner = mapNode(args[0], path);
+        if (inner.kind === 'record' || inner.kind === 'array') return inner;
+      }
       if (LIB_MAPPED.has(symbol.name)) {
         return { kind: 'mapped', text: node.getText(), props: propsOf(checker.getTypeFromTypeNode(node), path) };
       }
@@ -213,6 +234,12 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
   for (const name of ROOT_TYPES) {
     const symbol = exported.get(name);
     if (!symbol) throw new Error(`flint-chart does not export ${name}.`);
+    enqueue(resolve(symbol));
+  }
+  // Optional: a version without the interactive entry point (before 1.0.0) has no preset options.
+  for (const name of interactive ? INTERACTIVE_ROOT_TYPES : []) {
+    const symbol = interactiveExports.get(name);
+    if (!symbol) throw new Error(`flint-chart/interactive does not export ${name}.`);
     enqueue(resolve(symbol));
   }
   while (queue.length > 0) {
