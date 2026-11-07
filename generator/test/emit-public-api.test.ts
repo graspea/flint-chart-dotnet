@@ -65,6 +65,59 @@ describe('emit/public-api', () => {
     );
   });
 
+  // source: Microsoft.CodeAnalysis.PublicApiAnalyzers PublicApiAnalyzers.Help.md ("*REMOVED*" + the shipped line marks a
+  // shipped symbol removed in this release) and docs/generator.md "Removed public API" (the generator writes the line for a
+  // generated symbol it no longer emits or emits with another signature; a hand-written shipped symbol is not its line)
+  it('writes a *REMOVED* line for each shipped generated line a fresh run no longer emits', () => {
+    const shipped =
+      '#nullable enable\n' +
+      'Graspea.Flint.AssembleOptions\n' +
+      'Graspea.Flint.AssembleOptions.AddTooltips.get -> bool?\n' +
+      'Graspea.Flint.AssembleOptions.Gone.get -> double?\n' +
+      'Graspea.Flint.AssembleOptions.Mode.get -> string?\n' +
+      'Graspea.Flint.ChartType.Name.get -> string!\n' +
+      'const Graspea.Flint.FlintUpstream.Version = "0.4.0" -> string!\n' +
+      'static readonly Graspea.Flint.ChartType.GoneChart -> Graspea.Flint.ChartType\n';
+    const result = generated();
+    result.apiLines.push('Graspea.Flint.AssembleOptions.Mode.get -> Graspea.Flint.Mode?');
+    assert.equal(
+      unshippedText(shipped, '#nullable enable\n', result),
+      '#nullable enable\n' +
+        '*REMOVED*Graspea.Flint.AssembleOptions.Gone.get -> double?\n' +
+        '*REMOVED*Graspea.Flint.AssembleOptions.Mode.get -> string?\n' +
+        '*REMOVED*const Graspea.Flint.FlintUpstream.Version = "0.4.0" -> string!\n' +
+        '*REMOVED*static readonly Graspea.Flint.ChartType.GoneChart -> Graspea.Flint.ChartType\n' +
+        'Graspea.Flint.AssembleOptions.Mode.get -> Graspea.Flint.Mode?\n' +
+        'const Graspea.Flint.FlintUpstream.Version = "0.5.1" -> string!\n' +
+        'static readonly Graspea.Flint.ChartType.LineChart -> Graspea.Flint.ChartType\n',
+    );
+  });
+
+  // source: docs/generator.md "Removed public API" (a *REMOVED* line of a generated symbol is the generator's: it goes when
+  // the symbol is emitted again; one the generator cannot attribute, hand-written or of a type whose file is already gone,
+  // stays, so a second run keeps what the first one wrote)
+  it('drops its stale *REMOVED* lines and keeps the others', () => {
+    const shipped =
+      '#nullable enable\n' +
+      'Graspea.Flint.AssembleOptions\n' +
+      'Graspea.Flint.AssembleOptions.AddTooltips.get -> bool?\n' +
+      'Graspea.Flint.ChartType.Old.get -> string!\n' +
+      'Graspea.Flint.Theming.GoneType\n';
+    const unshipped =
+      '#nullable enable\n' +
+      '*REMOVED*Graspea.Flint.AssembleOptions.AddTooltips.get -> bool?\n' +
+      '*REMOVED*Graspea.Flint.ChartType.Old.get -> string!\n' +
+      '*REMOVED*Graspea.Flint.Theming.GoneType\n';
+    assert.equal(
+      unshippedText(shipped, unshipped, generated()),
+      '#nullable enable\n' +
+        '*REMOVED*Graspea.Flint.ChartType.Old.get -> string!\n' +
+        '*REMOVED*Graspea.Flint.Theming.GoneType\n' +
+        'const Graspea.Flint.FlintUpstream.Version = "0.5.1" -> string!\n' +
+        'static readonly Graspea.Flint.ChartType.LineChart -> Graspea.Flint.ChartType\n',
+    );
+  });
+
   // source: design §7.2 (each step is idempotent)
   it('is idempotent', () => {
     const once = unshippedText('#nullable enable\n', '#nullable enable\nGraspea.Flint.Channel\n', generated());
