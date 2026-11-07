@@ -9,8 +9,8 @@ namespace Graspea.Flint.ContractTests;
 /// <summary>
 /// The validator agrees with what the pinned assemblers did on every fixture, crafted case and backend (design §6
 /// contract, §10.3 recorded outcomes): a throw is reported as an Error whose code explains the recorded message, no throw
-/// means no throw-class Error, upstream's invalid-option-value warning is reported as invalid_option_value and the other
-/// way round, and validating for every backend is valid exactly when no backend with the template throws. Gate for the
+/// means no throw-class Error, upstream's invalid-option-value warning is reported as invalid_option_value and its
+/// invalid_sort warning as a sort_by_invalid Warning, each the other way round too, and validating for every backend is valid exactly when no backend with the template throws. Gate for the
 /// set of <see cref="FlintUpstream.Version"/>.
 /// </summary>
 [Category("Contract")]
@@ -87,6 +87,9 @@ public sealed class FixtureExpectationTests
                     var dropped = outcome["warnings"]!.AsArray().Any(w => w!.GetValue<string>() == "invalid-option-value");
                     Assert.That(issues.Any(i => i.Code == "invalid_option_value"), Is.EqualTo(dropped),
                         $"{backendId}: upstream {(dropped ? "drops" : "keeps")} the option values");
+                    var sortDropped = outcome["warnings"]!.AsArray().Any(w => w!.GetValue<string>() == "invalid_sort");
+                    Assert.That(issues.Any(i => i.Code == "sort_by_invalid" && i.Severity == IssueSeverity.Warning), Is.EqualTo(sortDropped),
+                        $"{backendId}: upstream {(sortDropped ? "drops" : "keeps")} the sort");
                 }
             }
 

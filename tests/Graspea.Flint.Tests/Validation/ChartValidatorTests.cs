@@ -454,24 +454,41 @@ public sealed partial class ChartValidatorTests
         AssertNone(Bar(i => i.SemanticTypes = new() { ["zz"] = new SemanticType("valueOf") }), null, "reserved_semantic_type");
     }
 
-    // source: src/vegalite/assemble.ts (a sortBy outside x/y/color that is not a JSON array: console.warn and no sort),
-    // src/echarts/assemble.ts (the failed JSON.parse is caught silently), src/echarts/templates/utils.ts and design §6
-    // sort_by_invalid (size and group, honoured by some ECharts templates, are Info on an ECharts target)
+    // source: tests/fixtures/flint-chart@1.0.0/probe-expectations.jsonl (the "sortBy …" and "sortOrder …" cases:
+    // invalid_sort on the four layout backends, none on Excel) and src/core/resolve-semantics.ts inspectEncodingSort
+    // (a data field sorts on Vega-Lite only; fieldSort is false on ECharts, Chart.js and Plotly)
     [Test]
     public void Warnings_SortByInvalid()
     {
-        var invalid = Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortBy = "revenue" });
-        AssertOne(invalid, null, "sort_by_invalid", IssueSeverity.Warning);
-        Assert.That(Issues(invalid, null, "sort_by_invalid").Single().Path, Is.EqualTo("chart_spec.encodings.x.sortBy"));
+        var bySize = Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortBy = "size" });
+        AssertOne(bySize, null, "sort_by_invalid", IssueSeverity.Warning);
+        Assert.That(Issues(bySize, null, "sort_by_invalid").Single().Path, Is.EqualTo("chart_spec.encodings.x.sortBy"));
+        AssertOne(bySize, FlintBackend.ECharts, "sort_by_invalid", IssueSeverity.Warning);
+        AssertNone(bySize, FlintBackend.Excel, "sort_by_invalid");
+
+        var byField = Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortBy = "cost" });
+        AssertNone(byField, FlintBackend.VegaLite, "sort_by_invalid");
+        AssertOne(byField, FlintBackend.Plotly, "sort_by_invalid", IssueSeverity.Warning);
 
         AssertNone(Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortBy = "y" }), null, "sort_by_invalid");
+        AssertOne(Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortBy = "color" }), null, "sort_by_invalid", IssueSeverity.Warning);
         AssertNone(Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortBy = SortBy.ExplicitOrder("Boston", "Seattle") }), null, "sort_by_invalid");
         AssertOne(Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortBy = "\"Boston\"" }), null, "sort_by_invalid", IssueSeverity.Warning);
+        AssertOne(Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortBy = "[1,null]" }), null, "sort_by_invalid", IssueSeverity.Warning);
 
-        var bySize = Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortBy = "size" });
-        AssertOne(bySize, FlintBackend.ECharts, "sort_by_invalid", IssueSeverity.Info);
-        AssertOne(bySize, FlintBackend.VegaLite, "sort_by_invalid", IssueSeverity.Warning);
-        AssertOne(bySize, null, "sort_by_invalid", IssueSeverity.Warning);
+        var order = Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortOrder = new SortOrder("zzz") });
+        Assert.That(Issues(order, null, "sort_by_invalid").Single().Path, Is.EqualTo("chart_spec.encodings.x.sortOrder"));
+    }
+
+    // source: src/core/resolve-semantics.ts inspectEncodingSort (the data fields are the keys of every row), so on rows not
+    // yet seen a sortBy that may name a field is undecided on Vega-Lite and still rejected on ECharts (fieldSort: false)
+    [Test]
+    public void Warnings_SortByInvalid_UndecidedWithoutRowKeys()
+    {
+        var input = Bar(i => i.ChartSpec.Encodings["x"] = new ChartEncoding { Field = "city", SortBy = "cost" });
+        var template = ChartTemplate.Create<JsonObject>(input);
+        Assert.That(template.Validate(FlintBackend.VegaLite).Issues.Where(i => i.Code == "sort_by_invalid"), Is.Empty);
+        Assert.That(template.Validate(FlintBackend.ECharts).Issues.Where(i => i.Code == "sort_by_invalid"), Has.Exactly(1).Items);
     }
 
     // source: flint-chart 1.0.0 flint-chart/validate requiredChannels/hasEncodingBinding, which the flint-chart-mcp 1.0.0

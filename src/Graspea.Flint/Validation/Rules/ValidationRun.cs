@@ -640,44 +640,101 @@ internal sealed partial class ValidationRun
         }
     }
 
-    /// <summary>Upstream sorts by <c>x</c>, <c>y</c>, <c>color</c> or a JSON array of values; anything else is ignored (Vega-Lite
-    /// logs <c>sort error</c>). Some ECharts templates also honour <c>size</c> and <c>group</c>.</summary>
+    /// <summary>
+    /// <c>repairEncodingSorts</c> of the pinned package (src/core/resolve-semantics.ts), which the four layout backends run
+    /// first: each <c>sortBy</c> and <c>sortOrder</c> that <c>inspectEncodingSort</c> rejects is dropped with the warning
+    /// <c>invalid_sort</c>, and the chart keeps its default order. Vega-Lite also sorts by a data field; ECharts, Chart.js
+    /// and Plotly reject one (<c>fieldSort: false</c>). Excel reads no sort hint.
+    /// </summary>
     private void SortByChecks(ChartSpec spec)
     {
-        if (targets.Length == 0)
+        var layout = targets.Where(LayoutBackends.Contains).ToArray();
+        if (layout.Length == 0)
         {
             return;
         }
 
+        // The data fields upstream knows: the keys of every object row; null when the rows are not read and the row type
+        // has no static shape.
+        IReadOnlySet<string>? fields = deferred is not null
+            ? deferred.Keys?.ToHashSet(StringComparer.Ordinal)
+            : (input.Data?.Values ?? []).OfType<JsonObject>().SelectMany(r => r.Select(p => p.Key)).ToHashSet(StringComparer.Ordinal);
         foreach (var (channel, value) in spec.Encodings ?? [])
         {
             for (var i = 0; i < (value?.Encodings.Count ?? 0); i++)
             {
-                if (value!.Encodings[i].SortBy is not { } sortBy || sortBy is "x" or "y" or "color" || IsJsonArray(sortBy))
+                var e = value!.Encodings[i];
+                var at = value.IsSeries ? $"chart_spec.encodings.{channel}[{i}]" : $"chart_spec.encodings.{channel}";
+                if (e.SortOrder?.Name is { } order && order is not ("ascending" or "descending"))
+                {
+                    PerTarget(Codes.SortByInvalid, $"{at}.sortOrder", b => LayoutBackends.Contains(b) ? IssueSeverity.Warning : null,
+                        (_, on) => $"sortOrder \"{order}\" is neither ascending nor descending; {string.Join(", ", on.Select(Id))} ignore it (invalid_sort).", channel);
+                }
+
+                if (e.SortBy is not { } sortBy)
                 {
                     continue;
                 }
 
-                var path = value.IsSeries ? $"chart_spec.encodings.{channel}[{i}].sortBy" : $"chart_spec.encodings.{channel}.sortBy";
-                PerTarget(Codes.SortByInvalid, path, b => b == FlintBackend.ECharts && sortBy is "size" or "group" ? IssueSeverity.Info : IssueSeverity.Warning,
-                    (severity, on) => severity == IssueSeverity.Warning
-                        ? $"sortBy \"{sortBy}\" is neither x, y, color nor a JSON array of values; {string.Join(", ", on.Select(Id))} ignore it."
-                        : $"sortBy \"{sortBy}\" is honoured only by some ECharts templates.",
+                var reasons = layout.ToDictionary(b => b, b => SortByReason(spec, sortBy, fields, fieldSort: b == FlintBackend.VegaLite));
+                PerTarget(Codes.SortByInvalid, $"{at}.sortBy", b => reasons.TryGetValue(b, out var r) && r is { Length: > 0 } ? IssueSeverity.Warning : null,
+                    (_, on) => reasons[on[0]]!.StartsWith("contains ", StringComparison.Ordinal) && !reasons[on[0]]!.StartsWith("contains no", StringComparison.Ordinal)
+                        ? $"sortBy \"{sortBy}\" {reasons[on[0]]}; {string.Join(", ", on.Select(Id))} ignore them (invalid_sort)."
+                        : $"sortBy \"{sortBy}\" {reasons[on[0]]}; {string.Join(", ", on.Select(Id))} drop it, and its sortOrder, and use the default order (invalid_sort).",
                     channel);
             }
         }
     }
 
-    private static bool IsJsonArray(string s)
+    /// <summary>
+    /// Why <c>inspectEncodingSort</c> rejects <paramref name="sortBy"/>, or <c>""</c> when it keeps it; null when that depends
+    /// on data fields the validator does not know.
+    /// </summary>
+    private static string? SortByReason(ChartSpec spec, string sortBy, IReadOnlySet<string>? fields, bool fieldSort)
     {
+        if (Js.Trim(sortBy).Length == 0)
+        {
+            return "is not a data field, mapped channel, or JSON category array";
+        }
+
+        if (sortBy is "x" or "y" or "color")
+        {
+            var mapped = spec.Encodings is { } encodings && encodings.TryGetValue(sortBy, out var binding) && binding is not null
+                && binding.Encodings.Any(t => t.Field is not null || t.Aggregate?.Name == "count");
+            return mapped ? string.Empty : "names a channel that is not mapped";
+        }
+
+        if (fields is null && fieldSort)
+        {
+            return null;
+        }
+
+        if (fields?.Contains(sortBy) == true)
+        {
+            return fieldSort ? string.Empty : "sorts by a raw data field, which this backend does not support";
+        }
+
+        JsonNode? parsed;
         try
         {
-            return JsonNode.Parse(s) is JsonArray;
+            parsed = JsonNode.Parse(sortBy);
         }
         catch (JsonException)
         {
-            return false;
+            return "is not a data field";
         }
+
+        if (parsed is not JsonArray values)
+        {
+            return "is not a data field or JSON category array";
+        }
+
+        // isCategoryValue: a string, a boolean or a finite number.
+        var valid = values.Count(v => Js.Kind(v) is JsonValueKind.String or JsonValueKind.True or JsonValueKind.False
+            || (Js.Kind(v) == JsonValueKind.Number && double.IsFinite(Js.NumberOf(v!))));
+        return valid == values.Count ? string.Empty
+            : valid == 0 ? "contains no valid category values"
+            : $"contains {values.Count - valid} invalid category value(s)";
     }
 
     /// <summary>The flint-chart MCP server requires x and y when the template declares both, and metric and value on a

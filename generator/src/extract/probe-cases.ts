@@ -39,6 +39,12 @@ const map = (projectionCenter: unknown): Doc => ({
 
 const series = (...entries: unknown[]) => entries;
 
+const sortBy = (value: string, change: (i: Doc) => void = () => {}): Doc =>
+  bar((i) => {
+    i.chart_spec.encodings.x.sortBy = value;
+    change(i);
+  });
+
 const cases: Array<[string, Doc, true?]> = [
   ['static series on x and y', line((i) => (i.chart_spec.encodings = { x: series({ field: 'city' }, { field: 'cost' }), y: series({ field: 'revenue' }, { field: 'cost' }) }))],
   ['static series on color', line((i) => (i.chart_spec.encodings.color = series({ field: 'revenue' }, { field: 'cost' })))],
@@ -87,6 +93,22 @@ const cases: Array<[string, Doc, true?]> = [
   ['semantic type named like an Object.prototype member on no field', bar((i) => (i.semantic_types = { zz: 'valueOf' }))],
   ['semantic type unregistered', bar((i) => (i.semantic_types = { revenue: 'Revenue' }))],
   ['data absent', bar((i) => delete i.data)],
+  ['sortBy x', sortBy('x')],
+  ['sortBy size', sortBy('size')],
+  ['sortBy blank', sortBy('  ')],
+  ['sortBy a data field', sortBy('cost')],
+  ['sortBy a field of a later row only', sortBy('cost', (i) => (i.data.values = [{ city: 'Seattle', revenue: 1 }, { city: 'Boston', revenue: 2, cost: 3 }]))],
+  ['sortBy color, color unbound', sortBy('color')],
+  ['sortBy color, color bound', sortBy('color', (i) => (i.chart_spec.encodings.color = { field: 'city' }))],
+  ['sortBy y, y counted', sortBy('y', (i) => (i.chart_spec.encodings.y = { aggregate: 'count' }))],
+  ['sortBy a JSON array of categories', sortBy('["Boston","Seattle"]')],
+  ['sortBy an empty JSON array', sortBy('[]')],
+  ['sortBy a JSON array with an invalid value', sortBy('[1,null]')],
+  ['sortBy a JSON array of invalid values', sortBy('[null,{"a":1}]')],
+  ['sortBy a JSON object', sortBy('{"a":1}')],
+  ['sortBy a JSON number', sortBy('5')],
+  ['sortOrder invalid', bar((i) => (i.chart_spec.encodings.x.sortOrder = 'zzz'))],
+  ['sortOrder valid', bar((i) => (i.chart_spec.encodings.x.sortOrder = 'descending'))],
 ];
 
 export function probeCases(): ProbeCase[] {

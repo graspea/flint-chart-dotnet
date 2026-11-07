@@ -92,7 +92,7 @@ describe('extract/fixtures', () => {
   });
 
   // source: design §10.3 fixture formats (manifest: case counts, integrity, seed 42, UTC, the upstream version),
-  // package.json (the pin), package-lock.json, src/extract/probe-cases.ts (38 crafted cases) and the committed
+  // package.json (the pin), package-lock.json, src/extract/probe-cases.ts (54 crafted cases) and the committed
   // tests/fixtures/flint-chart@<version>/manifest.json (the TestCases of the installed version; 934 on 0.5.1, part 01 §2)
   it('records the manifest', () => {
     const manifest = JSON.parse(readFileSync(join(folder, 'manifest.json'), 'utf8'));
@@ -102,7 +102,7 @@ describe('extract/fixtures', () => {
       cases: committedManifest.cases,
       excludedNondeterministic: [],
       integrity: lock.packages['node_modules/flint-chart'].integrity,
-      probeCases: 38,
+      probeCases: 54,
       seed: 42,
       tz: 'UTC',
       upstream: version,
@@ -157,7 +157,7 @@ describe('extract/fixtures', () => {
   it('records the crafted cases on every backend that has the template', () => {
     const cases = lines('probe-cases.jsonl');
     const expectations = lines('probe-expectations.jsonl');
-    assert.equal(cases.length, 38);
+    assert.equal(cases.length, 54);
     assert.deepEqual(expectations.map((e) => e.id), cases.map((c) => c.id));
     assert.equal(new Set(cases.map((c) => c.title)).size, cases.length);
     assert.ok(cases.every((c, i) => c.id === `Probe|#${i}`));
