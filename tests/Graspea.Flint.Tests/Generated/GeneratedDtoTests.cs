@@ -126,5 +126,6 @@ public sealed class GeneratedDtoTests
         : type == typeof(double) ? 1.0
         : type == typeof(bool) ? true
         : type == typeof(JsonNode) ? JsonValue.Create(1)
+        : type.IsArray ? Array.CreateInstance(type.GetElementType()!, 1)
         : Activator.CreateInstance(type)!;
 }
