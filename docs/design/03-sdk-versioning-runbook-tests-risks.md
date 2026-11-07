@@ -290,7 +290,7 @@ The first M2 test is `ChartBuilderTests.Encode_MemberExpression_ResolvesWireName
 | 15 | `compileDefaults` emitted as a flattened 29-property duplicate of `AssembleOptions` | duplicate surface in `Theming` | explicit; a hand-written wrapper with a flattening converter is an additive replacement in a breaking window |
 | 16 | No defaults, no applicability, no data inference modelled | users cannot ask what a property will do; rules that need a field's type skip untyped fields | out of scope by design |
 | 17 | Upstream CHANGELOG unreliable | cannot drive anything | the IR diff is the changelog |
-| 18 | `interaction_spec` and `validate` arrive only with the next upstream release | consumers wanting interactions wait | `Extensions` carries it today; typed automatically once generated from that release |
+| 18 | `interaction_spec` and `validate` arrive only with the next upstream release | consumers wanting interactions wait | resolved in flint-chart 1.0.0: `InteractionSpec` is generated from the IR (`Generated/Interaction`), its two boolean-or-object unions are hand-written; `flint-chart/validate` ships and is mapped in `docs/validation-codes.md` |
 | 19 | Newer-patch compatibility is an expectation, not a guarantee | the bot's forward-compat step records counts, it does not gate | 0 counter-examples in 11 transitions; a failed round-trip is visible in the sync PR body; the next SDK line follows within a day of the sync PR |
 | 20 | Package-validation baseline between two previews | the NuGet docs describe a stable baseline (**UNVERIFIED** for previews) | suppressions per intended pre-Stable break; re-check on the first `-preview.2` |
 

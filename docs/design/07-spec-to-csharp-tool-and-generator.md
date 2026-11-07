@@ -132,7 +132,9 @@ Calls follow input order (encodings, then chart properties, then title, subtitle
 | `theme_spec` preset | `.Theme(ThemePreset.Economist)`; unknown `.Theme(new ThemePreset("x"))` | FLINT114 for an unknown preset |
 | `theme_spec` object | `.Theme(new Theming.ThemeSpec { Ink = new() { … }, … })` | class and property names from the theming tables; maps as collection initialisers; unknown keys into `Extensions` |
 | `options` | `.Options(o => { o.MaxStretch = 1.5; o.ContinuousMarkCrossSection = ContinuousMarkCrossSection.Axes(1, 2, seriesCountAxis: SeriesCountAxis.Auto); })` | `background` and other undeclared keys into `o.Extensions` |
-| unknown top-level or `chart_spec` keys (`interaction_spec`) | `.Configure(d => (d.Extensions ??= new())["interaction_spec"] = Json("…"))` | FLINT140 (Info) names each key |
+| `interaction_spec` (flint-chart 1.0.0) | `.Interaction(new InteractionSpec { Interactions = [new InteractionEntry { Type = "navigate" }], AssistedTargeting = false })` | class and property names from the name tables; a value holding a null goes through `.Configure(d => d.InteractionSpec = …)` |
+| `chart_spec` `label`, `source`, `chrome` (flint-chart 1.0.0) | `.Label("Figure 2")`, `.Source("Survey")` or `.Source(new ChartSource { Text = "…", Href = "…" })`, `.Chrome(ChartChrome.None)` | |
+| unknown top-level or `chart_spec` keys (`annotations_spec`) | `.Configure(d => (d.Extensions ??= new())["annotations_spec"] = Json("…"))` | FLINT140 (Info) names each key |
 
 ##### 12.4.2 Model style (`--style model`)
 

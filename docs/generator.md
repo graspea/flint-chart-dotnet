@@ -138,7 +138,7 @@ All three numbers appear in upstream material. The generator takes the union, de
 
 ## Type mapping of the 0.5.1 d.ts
 
-Emission starts at two roots. `AssembleOptions` goes to `Graspea.Flint` (`Generated/Options`). `ThemeSpec` goes to `Graspea.Flint.Theming` (`Generated/Theming`, 53 classes). A named type reached from both roots goes to `Graspea.Flint` (`Generated/Options`), like the hand-written shared `ContinuousMarkCrossSection`; the namespace follows from which roots reach the type, not from the order the emitter meets it (see [Namespaces](#namespaces)). `ChartAssemblyInput`, `ChartEncoding` and `SemanticAnnotation` are extracted for the parity test only. So are the anonymous core types, stored under their SDK names: `ChartData`, `ChartSpec`, `ChartSize` and `ContinuousMarkCrossSection`.
+Emission starts at three roots. `AssembleOptions` goes to `Graspea.Flint` (`Generated/Options`). `ThemeSpec` goes to `Graspea.Flint.Theming` (`Generated/Theming`, 53 classes on 0.5.1). From 1.0.0, `InteractionSpec` (the type of `ChartAssemblyInput.interaction_spec`) goes to `Graspea.Flint` (`Generated/Interaction`). A named type reached from more than one root goes to `Graspea.Flint` (`Generated/Options`), like the hand-written shared `ContinuousMarkCrossSection`; the namespace follows from which roots reach the type, not from the order the emitter meets it (see [Namespaces](#namespaces)). `ChartAssemblyInput`, `ChartEncoding` and `SemanticAnnotation` are extracted for the parity test only. So are the anonymous core types, stored under their SDK names: `ChartData`, `ChartSpec`, `ChartSize` and `ContinuousMarkCrossSection`.
 
 | Construct found | Where | Decision |
 |---|---|---|
@@ -158,6 +158,7 @@ Emission starts at two roots. `AssembleOptions` goes to `Graspea.Flint` (`Genera
 | `[number, number]` | `ThemeMarks.sizeRange` | → `double[]?` |
 | `T[]` / `Array<T>` | `furniture`, `placement`, `redundantChannels`, `dash`, … | → `T[]?` |
 | Nested object literal | for example `ThemeInk.series.status` | nested class `<Parent><Prop>` (`ThemeInkSeriesStatus`) |
+| `(typeof NAMES)[number]` over a `readonly [...]` tuple of string literals | 1.0.0 `InteractionEntry.type` (`InteractionPresetType`) | the extractor resolves it through the checker into a closed literal union, in tuple order; → `string?` with the literals in `<remarks>`. Any other indexed access stays `unsupported` |
 | `any`, `never`, unions of objects | `ChartAssemblyInput.data`, `chartProperties`, `encodings` | parity-only types, never emitted, so no override |
 
 Named interfaces are keyed by their name in the IR. When two different interfaces with one name are reachable (for example from two declaration files), extraction fails and names both files, rather than mapping the second one onto the first one's shape.
@@ -178,7 +179,7 @@ Required upstream members are nullable too, because "omitted" and "null" are one
 
 ### Namespaces
 
-The options emitter places every named object type before it emits anything: it walks the IR from each root, without passing through the other root, and records which roots reach the type. Reached from one root, the type takes that root's namespace and folder; reached from both, `Graspea.Flint` and `Generated/Options`. A nested `<Parent><Prop>` class takes its parent's namespace, and every PublicAPI line names the type in that namespace. On 0.5.1 no named type is reached from both roots; on 1.0.0 `CanvasTreatment` is (`AssembleOptions.canvasTreatment` and `ThemeCompileDefaults.canvasTreatment`), so it is `Graspea.Flint.CanvasTreatment`.
+The options emitter places every named object type before it emits anything: it walks the IR from each root, without passing through another root, and records which roots reach the type. Reached from one root, the type takes that root's namespace and folder; reached from more than one, `Graspea.Flint` and `Generated/Options`. A nested `<Parent><Prop>` class takes its parent's namespace, and every PublicAPI line names the type in that namespace. On 0.5.1 no named type is reached from both roots; on 1.0.0 `CanvasTreatment` is (`AssembleOptions.canvasTreatment` and `ThemeCompileDefaults.canvasTreatment`), so it is `Graspea.Flint.CanvasTreatment`.
 
 ## `overrides.json` entries for 0.5.1
 
@@ -201,6 +202,13 @@ The options emitter places every named object type before it emits anything: it 
 | `backendsApplyingTheme` = vegalite, plotly | recorded probe: an unknown preset throws only there, and output changes only there |
 | `hostStateKeys` | the ten keys read even where undeclared (design §2); the list is not provably closed |
 | `ignoredOptions` | `maxStretchX/Y`, `bandStepFitCapacityX/Y` and `facetColumns` are overwritten by the four layout backends. The member docs of `AssembleOptions` and `ThemeCompileDefaults` say so, and the IR carries the list for the validator |
+
+## `overrides.json` entries for 1.0.0
+
+| Entry | Reason |
+|---|---|
+| `unions["InteractionSpec.assistedTargeting"]` = `Graspea.Flint.AssistedTargeting` | `boolean \| AssistedTargetingOptions`; the hand-written class carries the boolean form (`AssistedTargeting = false`) and the object form, whose `details` (`boolean \| TargetDetailsOptions`) is the hand-written `TargetDetails`. `CoreParityTests` pins both object forms to the IR |
+| `unions["InteractionEntry.options{*}"]` = `JsonNode` | `Record<string, any>`: each preset's options, whose per-type shape lives in `flint-chart/interactive` (`InteractionPresetSpec`), outside the IR |
 
 ## `overrides.json` entries written ahead for 1.0.0
 
