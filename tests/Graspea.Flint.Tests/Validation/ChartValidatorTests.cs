@@ -661,6 +661,45 @@ public sealed partial class ChartValidatorTests
         Assert.That(ChartValidator.Validate(line, FlintBackend.VegaLite).IsValid, Is.True);
     }
 
+    // source: flint-chart 1.0.0 resolveTemporalEncoding (dist/excel/index.js: a temporal field on color or group with at
+    // most 12 distinct values is ordinal) and grouped-bar.ts (continuous grouping, quantitative or temporal, throws);
+    // fixture "Grouped bar — region × % (by wave)" of tests/fixtures/flint-chart@1.0.0 (Excel assembles)
+    [Test]
+    public void Excel_GroupedBarDateGroup_IsContinuousOnlyAboveTwelveValues()
+    {
+        static ChartAssemblyInput Grouped(int dates) => new()
+        {
+            Data = ChartData.FromJson(new JsonArray(Enumerable.Range(0, 26).Select(n => (JsonNode)new JsonObject
+            {
+                ["region"] = n % 2 == 0 ? "N" : "S", ["share"] = n, ["day"] = $"2025-01-{n % dates + 1:D2}",
+            }).ToArray())),
+            ChartSpec = new ChartSpec { ChartType = ChartType.GroupedBarChart, Encodings = { ["x"] = "region", ["y"] = "share", ["group"] = "day" } },
+            SemanticTypes = new() { ["region"] = SemanticType.Category, ["share"] = SemanticType.Percentage, ["day"] = SemanticType.Date },
+        };
+
+        AssertNone(Grouped(12), FlintBackend.Excel, "excel_unsupported");
+        Assert.That(Issues(Grouped(13), FlintBackend.Excel, "excel_unsupported").Single().Channel, Is.EqualTo(new Channel("group")));
+    }
+
+    // source: flint-chart 1.0.0 resolveTemporalEncoding (a temporal x or y on a banded chart type such as Boxplot is ordinal
+    // when readsAsSnapshots, which needs Date.parse) and boxplot.ts (a temporal x throws); design §6 (an undecidable type
+    // reports no Error)
+    [Test]
+    public void Excel_BoxplotDateX_ReportsNoErrorWhileSnapshotsAreUndecided()
+    {
+        var input = Bar(i =>
+        {
+            i.ChartSpec.ChartType = ChartType.Boxplot;
+            i.Data = ChartData.FromJson(new JsonArray(Enumerable.Range(0, 20).Select(n => (JsonNode)new JsonObject
+            {
+                ["day"] = $"2025-01-{n % 4 + 1:D2}", ["revenue"] = n,
+            }).ToArray()));
+            i.ChartSpec.Encodings["x"] = "day";
+            i.SemanticTypes = new() { ["day"] = SemanticType.Date };
+        });
+        AssertNone(input, FlintBackend.Excel, "excel_unsupported");
+    }
+
     // source: design §6 (a rule that needs a type it cannot resolve skips): "Stage 1" parses as a date in V8 only, so
     // whether the column is temporal (an Excel throw for a line colour) cannot be decided without a JavaScript engine
     [Test]

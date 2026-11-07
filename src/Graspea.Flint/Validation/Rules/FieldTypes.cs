@@ -246,18 +246,29 @@ internal sealed partial class FieldTypes
             return FieldType.Ordinal;
         }
 
-        if (channel == "color" && DistinctCount(field) <= 12)
+        if (channel is "color" or "group" && DistinctCount(field) <= 12)
         {
             return FieldType.Ordinal;
         }
 
         return ValidateTemporalParsing(field, fromRegistry) switch
         {
-            true => FieldType.Temporal,
+            // ponytail: readsAsSnapshots (a few dated snapshots on a banded x or y read as ordinal) needs the Date.parse
+            // times of the values, so it stays undecided; port snapshotTime when a rule needs the exact answer.
+            true => channel is "x" or "y" && BandedChartTypes.Contains(input.ChartSpec?.ChartType.Name ?? string.Empty)
+                ? FieldType.TemporalOrOrdinal
+                : FieldType.Temporal,
             false => FieldType.Ordinal,
             null => FieldType.TemporalOrOrdinal,
         };
     }
+
+    /// <summary><c>BANDED_CHART_TYPES</c> of the pinned package (src/core/decisions.ts).</summary>
+    private static readonly HashSet<string> BandedChartTypes = new(StringComparer.Ordinal)
+    {
+        "Bar Chart", "Stacked Bar Chart", "Grouped Bar Chart", "Lollipop Chart", "Bar Table", "Waterfall Chart", "Pyramid Chart",
+        "Heatmap", "Boxplot", "Violin Plot", "Strip Plot", "Ranged Dot Plot",
+    };
 
     /// <summary><c>validateTemporalParsing</c>: up to 15 distinct defined values, enough of which look temporal.</summary>
     private bool? ValidateTemporalParsing(string field, bool fromRegistry)
