@@ -89,6 +89,7 @@ Generation fails, naming the IR path, on:
 - an `overrides.json` entry that matches nothing, unless its path is listed in `pending`.
 - two generated type names that coincide (a builder, an enum or its value table), or an entry that takes the name of a hand-written `Chart` member (`Of`);
 - two option values of one discrete property that give the same enum member;
+- an open literal union whose struct name is a generated class name, or a literal of it that gives no C# name or a member the struct declares (`Value`, `ToString`, `Equals`, `GetHashCode`) or another literal's member;
 - an enum name whose key repeats the template name (`RegressionRegressionMethod`), until `renames["<Template>/enum/<key>"]` names it;
 - a `PublicAPI.Shipped.txt` that ships an enum's `Default` as anything but 0, or two members of one enum with the same number.
 
@@ -137,8 +138,9 @@ Emission starts at two roots. `AssembleOptions` goes to `Graspea.Flint` (`Genera
 | `ThemeGuard`, `NumericGuard` | `ThemeVariant.when` | plain interfaces with optional members; mapped without an override |
 | `ThemeChartDefaults { [chartType: string]: … }` | `ThemeSpec.chartDefaults` | an interface with only a string index signature is a record → `Dictionary<string, …>` |
 | String-literal unions, including aliases such as `Presence`, `Frequency` and `LegendPlacement` | throughout the theme tree | aliases are inlined; → `string?`, with the literals listed in `<remarks>` |
-| `Record<number, T>`, `Record<'a' \| 'b', T>` and their `Partial` | for example 1.0.0 `ThemeInk.series.categoricalByCount`, `ThemeInk.series.byMark` | a record: JSON keys are strings, so → `Dictionary<string, T>` |
-| A union of string literals and `string` (`'series' \| 'text' \| string`) | for example 1.0.0 `PointGeometry.ink` | → `string?`, as the checker reduces it |
+| `Record<number, T>` | for example 1.0.0 `ThemeInk.series.categoricalByCount` | → `Dictionary<int, T>` with `IntKeyDictionaryConverter<T>`; the keys stay JSON strings in the integer's invariant form (`"3"`), and reading fails on a key of another form (`"03"`, `"2.5"`), which would not write back as itself |
+| `Record<'a' \| 'b', T>` and its `Partial` | for example 1.0.0 `ThemeInk.series.byMark` | → class `<Parent><Prop>` (`ThemeInkSeriesByMark`) with one member per key (`Bar`; `renames` at `<path>.<key>`), all of one value type: a named or scalar type as mapped, an object literal once as `<Parent><Prop>Value` (`ThemeInkSeriesByMarkValue`). A key outside the set goes to `Extensions`, as on every generated class |
+| A union of string literals and `string` (`'series' \| 'text' \| string`) | for example 1.0.0 `PointGeometry.ink`, `ThemeMarks.point.ink` | → an extensible string struct, see below |
 | A single string literal (`swatch?: 'auto'`) | `ThemeLegend.swatch` | → `string?` with the value in `<remarks>` |
 | `[number, number]` | `ThemeMarks.sizeRange` | → `double[]?` |
 | `T[]` / `Array<T>` | `furniture`, `placement`, `redundantChannels`, `dash`, … | → `T[]?` |
@@ -152,8 +154,10 @@ Note on `ThemeVariant.then`: the `interaction` member it inherits from `ThemeSpe
 Every generated class has these properties:
 - `sealed partial`, with `[JsonNumberHandling(Strict)]`;
 - every member nullable, with `[JsonPropertyName]` and `WhenWritingNull`;
-- `VerbatimKeyDictionaryConverter<T>` on map members and `JsonNodePassThroughConverter` on `JsonNode` members;
+- `VerbatimKeyDictionaryConverter<T>` on map members (`IntKeyDictionaryConverter<T>` on number-keyed ones) and `JsonNodePassThroughConverter` on `JsonNode` members;
 - a trailing `[JsonExtensionData] Dictionary<string, JsonElement>? Extensions`.
+
+A union of string literals and `string` takes any string; the literals are the documented values. It becomes a `public readonly partial record struct` in the namespace of its member's class, with a constructor from `string`, a `Value`, a static property per literal (`PointInk.Series`), implicit conversions from `string` and from `string?` (a null string gives null, so `Ink = "#333"`, `Ink = PointInk.Series` and `Ink = null` all compile), value equality, `ToString()` returning the string, and a converter `Graspea.Flint.Serialization.<Name>Converter` that writes the plain string. The struct is named Pascal(last segment of the owner's IR path) + Pascal(member): `ThemeMarks.point.ink` gives `PointInk`, `PointGeometry.ink` gives `PointGeometryInk`. Members with the same literals in the same order share one struct, named by the shortest of their names (then ordinal), so on 1.0.0 both are `PointInk`. The member remarks list each literal with its property. A new member with the same literals and a shorter name would rename the struct; `PublicAPI.Shipped.txt` then fails the build (RS0017).
 
 Every map value type (other than `JsonNode`) gets a `[JsonSerializable]` line in the generated `FlintMapJsonContext`, from which `VerbatimKeyDictionaryConverter<T>` resolves it; on 0.5.1 that is `Dictionary<string, JsonNode?>` (the `chartDefaults` values) and `string`, which is always listed.
 

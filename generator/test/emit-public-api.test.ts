@@ -82,5 +82,11 @@ describe('emit/public-api', () => {
       'public sealed partial class RegressionBuilder<TRow> : ChartBuilder<RegressionBuilder<TRow>, TRow>\n{\n}\n';
     assert.deepEqual(declaredPublicTypes(content), ['Graspea.Flint.RegressionRegressionMethod', 'Graspea.Flint.RegressionBuilder<TRow>']);
     assert.deepEqual(declaredPublicTypes('namespace Graspea.Flint;\n\npublic static partial class Chart\n{\n}\n'), []);
+    // source: the options emitter's open literal union files (a struct, and its converter)
+    assert.deepEqual(declaredPublicTypes('namespace Graspea.Flint.Theming;\n\npublic readonly partial record struct PointInk\n{\n}\n'), ['Graspea.Flint.Theming.PointInk']);
+    assert.deepEqual(
+      declaredPublicTypes('namespace Graspea.Flint.Serialization;\n\npublic sealed class PointInkConverter : JsonConverter<PointInk>\n{\n}\n'),
+      ['Graspea.Flint.Serialization.PointInkConverter'],
+    );
   });
 });

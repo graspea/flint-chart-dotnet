@@ -303,6 +303,125 @@ internal sealed partial class FlintMapJsonContext : JsonSerializerContext;
     assert.ok(!result.apiLines.some((l) => l.includes('FlintMapJsonContext')));
   });
 
+  // source: flint-chart 1.0.0 d.ts ThemeInk.series.categoricalByCount (`Record<number, string[]>`); maintainer decision on
+  // the flint-chart 1.0.0 sync: a number-keyed record is Dictionary<int, T>, its keys written as JSON strings
+  it('emits a number-keyed record as an int-keyed map with the int-key converter', () => {
+    const ir = irWith({
+      ThemeSpec: options([{ name: 'byCount', optional: true, type: { kind: 'record', key: 'number', value: { kind: 'array', element: { kind: 'string' } } } }]),
+    });
+    const result = emitOptions(ir, emptyOverrides());
+    const spec = fileContent(result, 'Theming/ThemeSpec.g.cs');
+    assert.match(spec, /\[JsonConverter\(typeof\(IntKeyDictionaryConverter<string\[\]>\)\)\]\n    public Dictionary<int, string\[\]>\? ByCount \{ get; set; \}/);
+    assert.ok(result.apiLines.includes('Graspea.Flint.Theming.ThemeSpec.ByCount.get -> System.Collections.Generic.Dictionary<int, string![]!>?'));
+    assert.match(fileContent(result, 'Json/FlintMapJsonContext.g.cs'), /\[JsonSerializable\(typeof\(string\[\]\)\)\]/);
+  });
+
+  // source: flint-chart 1.0.0 d.ts ThemeInk.series.byMark (`Partial<Record<SeriesMarkFamily, {single?; categorical?}>>`);
+  // maintainer decision on the flint-chart 1.0.0 sync: one property per key, all of one shared value type, the upstream doc
+  // kept on the member, unknown keys in Extensions
+  it('emits a literal-keyed record as a class with one member per key and one shared value class', () => {
+    const value: IrNamedType = { kind: 'object', props: [{ name: 'single', optional: true, type: { kind: 'string' } }] };
+    const ir = irWith({
+      ThemeSpec: options([{ name: 'byMark', optional: true, doc: 'Inks per mark family.', type: { kind: 'record', keys: ['line', 'step-area'], value } }]),
+    });
+    const result = emitOptions(ir, emptyOverrides());
+    assert.deepEqual(result.files.map((f) => f.path), [
+      'Json/FlintMapJsonContext.g.cs',
+      'Theming/ThemeSpec.g.cs',
+      'Theming/ThemeSpecByMark.g.cs',
+      'Theming/ThemeSpecByMarkValue.g.cs',
+    ]);
+    assert.match(fileContent(result, 'Theming/ThemeSpec.g.cs'), /\/\/\/ <summary>Inks per mark family\.<\/summary>\n(    \[.*\n)+    public ThemeSpecByMark\? ByMark \{ get; set; \}/);
+    const byMark = fileContent(result, 'Theming/ThemeSpecByMark.g.cs');
+    assert.match(byMark, /\[JsonPropertyName\("line"\)\]\n.*\n    public ThemeSpecByMarkValue\? Line \{ get; set; \}/);
+    assert.match(byMark, /\[JsonPropertyName\("step-area"\)\]\n.*\n    public ThemeSpecByMarkValue\? StepArea \{ get; set; \}/);
+    assert.match(byMark, /\[JsonExtensionData\]\n    public Dictionary<string, JsonElement>\? Extensions/);
+    assert.match(fileContent(result, 'Theming/ThemeSpecByMarkValue.g.cs'), /public string\? Single \{ get; set; \}/);
+    assert.ok(result.apiLines.includes('Graspea.Flint.Theming.ThemeSpecByMark.StepArea.get -> Graspea.Flint.Theming.ThemeSpecByMarkValue?'));
+    assert.deepEqual(result.ownedTypes, ['Graspea.Flint.Theming.ThemeSpec', 'Graspea.Flint.Theming.ThemeSpecByMark', 'Graspea.Flint.Theming.ThemeSpecByMarkValue']);
+  });
+
+  // source: as above; a value of a named or scalar type needs no value class, and renames apply to the key members
+  it('emits a literal-keyed record of a scalar value without a value class and renames a key member', () => {
+    const ir = irWith({ ThemeSpec: options([{ name: 'gaps', optional: true, type: { kind: 'record', keys: ['bar', 'arc'], value: { kind: 'number' } } }]) });
+    const result = emitOptions(ir, overrides({ renames: { 'ThemeSpec.gaps.arc': 'Slice' } }));
+    assert.deepEqual(result.files.map((f) => f.path), ['Json/FlintMapJsonContext.g.cs', 'Theming/ThemeSpec.g.cs', 'Theming/ThemeSpecGaps.g.cs']);
+    const gaps = fileContent(result, 'Theming/ThemeSpecGaps.g.cs');
+    assert.match(gaps, /public double\? Bar \{ get; set; \}/);
+    assert.match(gaps, /\[JsonPropertyName\("arc"\)\]\n.*\n    public double\? Slice \{ get; set; \}/);
+  });
+
+  // source: flint-chart 1.0.0 d.ts PointGeometry.ink and ThemeMarks.point.ink (both `'series' | 'text' | string`);
+  // maintainer decision on the flint-chart 1.0.0 sync: an extensible string struct with a static property per literal,
+  // an implicit conversion from string (null stays null) and a converter writing the plain string; identical literal sets
+  // share one struct, named from the member and its owner's last path segment, the shortest name winning
+  it('emits identical open literal unions as one string-backed struct named from the shortest owner and member', () => {
+    const ink: IrNamedType = { kind: 'literalUnion', values: ['series', 'text'], open: true };
+    const ir = irWith({
+      ThemeSpec: options([
+        { name: 'geometry', optional: true, type: { kind: 'ref', name: 'PointGeometry' } },
+        { name: 'marks', optional: true, type: { kind: 'object', props: [{ name: 'point', optional: true, type: { kind: 'object', props: [{ name: 'ink', optional: true, doc: 'The ink of a dot.', type: ink }] } }] } },
+      ]),
+      PointGeometry: options([{ name: 'ink', optional: true, type: ink }]),
+    });
+    const result = emitOptions(ir, emptyOverrides());
+    assert.deepEqual(result.files.map((f) => f.path), [
+      'Json/FlintMapJsonContext.g.cs',
+      'Json/PointInkConverter.g.cs',
+      'Theming/PointGeometry.g.cs',
+      'Theming/PointInk.g.cs',
+      'Theming/ThemeSpec.g.cs',
+      'Theming/ThemeSpecMarks.g.cs',
+      'Theming/ThemeSpecMarksPoint.g.cs',
+    ]);
+    assert.match(fileContent(result, 'Theming/PointGeometry.g.cs'), /\n    \[JsonPropertyName\("ink"\)\]\n.*\n    public PointInk\? Ink \{ get; set; \}/);
+    assert.match(fileContent(result, 'Theming/ThemeSpecMarksPoint.g.cs'), /\/\/\/ <summary>The ink of a dot\.<\/summary>\n    \/\/\/ <remarks><c>series<\/c> \(<c>PointInk\.Series<\/c>\), <c>text<\/c> \(<c>PointInk\.Text<\/c>\) or any other string\.<\/remarks>\n(    \[.*\n)+    public PointInk\? Ink \{ get; set; \}/);
+    const struct = fileContent(result, 'Theming/PointInk.g.cs');
+    assert.match(struct, /^namespace Graspea\.Flint\.Theming;$/m);
+    assert.match(struct, /\[JsonConverter\(typeof\(PointInkConverter\)\)\]\npublic readonly partial record struct PointInk\n/);
+    assert.match(struct, /public static PointInk Series \{ get; \} = new\("series"\);/);
+    assert.match(struct, /public static PointInk Text \{ get; \} = new\("text"\);/);
+    assert.match(struct, /public static implicit operator PointInk\(string value\) => new\(value\);/);
+    // a bare `null` here would bind to the string operator and throw (CS8625 under nullable)
+    assert.match(struct, /public static implicit operator PointInk\?\(string\? value\) => value is null \? default\(PointInk\?\) : new PointInk\(value\);/);
+    assert.match(struct, /public override string ToString\(\) => Value \?\? string\.Empty;/);
+    const converter = fileContent(result, 'Json/PointInkConverter.g.cs');
+    assert.match(converter, /^namespace Graspea\.Flint\.Serialization;$/m);
+    assert.match(converter, /public sealed class PointInkConverter : JsonConverter<PointInk>/);
+    for (const line of [
+      'Graspea.Flint.Theming.PointGeometry.Ink.get -> Graspea.Flint.Theming.PointInk?',
+      'Graspea.Flint.Theming.ThemeSpecMarksPoint.Ink.get -> Graspea.Flint.Theming.PointInk?',
+      'Graspea.Flint.Theming.PointInk',
+      'Graspea.Flint.Theming.PointInk.PointInk(string! value) -> void',
+      'static Graspea.Flint.Theming.PointInk.Series.get -> Graspea.Flint.Theming.PointInk',
+      'static Graspea.Flint.Theming.PointInk.implicit operator Graspea.Flint.Theming.PointInk(string! value) -> Graspea.Flint.Theming.PointInk',
+      'static Graspea.Flint.Theming.PointInk.implicit operator Graspea.Flint.Theming.PointInk?(string? value) -> Graspea.Flint.Theming.PointInk?',
+      'Graspea.Flint.Serialization.PointInkConverter',
+    ]) {
+      assert.ok(result.apiLines.includes(line), line);
+    }
+    assert.ok(result.ownedTypes.includes('Graspea.Flint.Theming.PointInk') && result.ownedTypes.includes('Graspea.Flint.Serialization.PointInkConverter'));
+  });
+
+  // source: design §7.6 failure policy (two generated type names that coincide fail generation, naming both paths)
+  it('fails when an open literal union struct takes the name of a generated class', () => {
+    const ir = irWith({
+      ThemeSpec: options([
+        { name: 'ink', optional: true, type: { kind: 'literalUnion', values: ['series'], open: true } },
+        { name: 'other', optional: true, type: { kind: 'ref', name: 'ThemeSpecInk' } },
+      ]),
+      ThemeSpecInk: options([]),
+    });
+    assert.throws(() => emitOptions(ir, emptyOverrides()), /"ThemeSpecInk": ThemeSpecInk and ThemeSpec\.ink/);
+  });
+
+  // source: C# identifiers (a literal whose Pascal name is empty, or a member name the struct declares, cannot be a property)
+  it('fails on an open literal union literal that gives no usable member name', () => {
+    const ir = (values: string[]) => irWith({ ThemeSpec: options([{ name: 'ink', optional: true, type: { kind: 'literalUnion', values, open: true } }]) });
+    assert.throws(() => emitOptions(ir(['#']), emptyOverrides()), /ThemeSpec\.ink/);
+    assert.throws(() => emitOptions(ir(['value']), emptyOverrides()), /ThemeSpec\.ink.*Value/);
+  });
+
   // source: design §5.1 (the converter always compiles against the context, so it exists without map members)
   it('emits FlintMapJsonContext with string alone when no member is a map', () => {
     const ir = irWith({ AssembleOptions: options([{ name: 'addTooltips', optional: true, type: { kind: 'boolean' } }]) });

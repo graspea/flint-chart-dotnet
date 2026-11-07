@@ -1,12 +1,14 @@
 // options / theming emitter (design §7.4): one sealed partial DTO class per IR object type, members in IR order,
 // [JsonPropertyName], WhenWritingNull, [JsonNumberHandling(Strict)], closed-generic VerbatimKeyDictionaryConverter<T>
-// on map members, and a trailing [JsonExtensionData] Extensions. Unmapped constructs fail with their IR path.
+// (IntKeyDictionaryConverter<T> for number keys) on map members, and a trailing [JsonExtensionData] Extensions. A record
+// keyed by string literals is a class with one member per key; an open literal union (`'a' | string`) is a string-backed
+// struct with its converter, one per literal set. Unmapped constructs fail with their IR path.
 // Also writes FlintMapJsonContext, which registers the map value types those converters resolve (design §5.1); it is a
 // context of its own because System.Text.Json reads [JsonSerializable] from one partial declaration only.
 import { ordinal, type Ir, type IrProp, type IrType } from '../ir.ts';
 import { pascal } from '../naming.ts';
 import { OverrideUse, type Overrides } from '../overrides.ts';
-import { docComment, emptyResult, header, type EmitResult } from './common.ts';
+import { csString, docComment, emptyResult, header, type EmitResult } from './common.ts';
 
 /** Emission roots: every class reachable from a root is emitted into that root's namespace and folder. */
 const ROOTS = [
@@ -27,7 +29,8 @@ interface CsType {
   value: boolean;
   /** JsonNode: nullable even as an element, because JSON null is a value. */
   node?: boolean;
-  /** For maps: the closed generic argument of VerbatimKeyDictionaryConverter<T>. */
+  /** For maps: the converter and its closed generic argument. */
+  converter?: 'VerbatimKeyDictionaryConverter' | 'IntKeyDictionaryConverter';
   converterArg?: string;
   remark?: string;
 }
@@ -38,8 +41,22 @@ interface ClassPlan {
   folder: string;
   path: string;
   doc?: string;
-  props: IrProp[];
+  /** `mapped`: the member type, already mapped (the keys of a literal-keyed record share one value type). */
+  props: Array<IrProp & { mapped?: CsType }>;
 }
+
+/** An open literal union (`'a' | 'b' | string`) and the members typed by it; identical literal sets share one struct. */
+interface OpenUnion {
+  values: string[];
+  /** Per member: its IR path, the name it proposes (owner's last path segment + member) and the owner's namespace and folder. */
+  uses: Array<{ path: string; name: string; namespace: string; folder: string }>;
+}
+
+/** The struct of an open literal union: its name, namespace and folder. */
+type OpenName = { name: string; namespace: string; folder: string };
+
+/** Members a string-backed struct declares itself, so no literal may take them. */
+const STRUCT_MEMBERS = new Set(['Value', 'ToString', 'Equals', 'GetHashCode', 'GetType', 'EqualityContract']);
 
 const JSON_NODE: CsType = { cs: 'JsonNode', api: 'System.Text.Json.Nodes.JsonNode', value: false, node: true };
 
@@ -58,6 +75,13 @@ export interface OptionClass {
   members: Array<{ wire: string; name: string; type: string }>;
 }
 
+/** A generated open literal union struct as the spec-to-C# name tables see it: its literals and their properties. */
+export interface OpenStruct {
+  /** Namespace-qualified name, such as `Graspea.Flint.Theming.PointInk`. */
+  name: string;
+  literals: Array<{ wire: string; member: string }>;
+}
+
 export function emitOptions(ir: Ir, overrides: Overrides): EmitResult {
   return buildOptions(ir, overrides).result;
 }
@@ -67,7 +91,36 @@ export function optionClasses(ir: Ir, overrides: Overrides): OptionClass[] {
   return buildOptions(ir, overrides).classes;
 }
 
-function buildOptions(ir: Ir, overrides: Overrides): { result: EmitResult; classes: OptionClass[] } {
+/** Every generated open literal union struct, by name. */
+export function openStructs(ir: Ir, overrides: Overrides): OpenStruct[] {
+  return buildOptions(ir, overrides).structs;
+}
+
+/** Two passes: the first finds every member of each open literal union, so the struct name can be chosen from all of them. */
+type Built = { result: EmitResult; classes: OptionClass[]; structs: OpenStruct[] };
+
+function buildOptions(ir: Ir, overrides: Overrides): Built {
+  const opens = new Map<string, OpenUnion>();
+  buildPass(ir, overrides, opens, undefined);
+  const names = new Map<string, OpenName>();
+  for (const [key, u] of opens) {
+    const best = [...u.uses].sort((a, b) => a.name.length - b.name.length || ordinal(a.name, b.name))[0];
+    names.set(key, { name: best.name, namespace: best.namespace, folder: best.folder });
+  }
+  return buildPass(ir, overrides, new Map(), names);
+}
+
+const openKey = (values: string[]) => values.join('\n');
+
+/** The last segment of an IR path, without `{*}` and `[]`: `ThemeMarks.point` -> `point`. */
+const lastSegment = (path: string) => path.split('.').at(-1)!.replace(/\{\*\}|\[\d*\]/g, '');
+
+function buildPass(
+  ir: Ir,
+  overrides: Overrides,
+  opens: Map<string, OpenUnion>,
+  openNames: Map<string, OpenName> | undefined,
+): Built {
   const use = new OverrideUse(overrides);
   const errors: string[] = [];
   const classes = new Map<string, ClassPlan>();
@@ -113,8 +166,22 @@ function buildOptions(ir: Ir, overrides: Overrides): { result: EmitResult; class
       case 'literal':
         if (typeof t.value === 'string') return { cs: 'string', api: 'string', value: false, remark: `Value: \`${t.value}\`.` };
         return fail(path, `non-string literal ${JSON.stringify(t.value)}`);
-      case 'literalUnion':
-        return { cs: 'string', api: 'string', value: false, remark: `One of: ${t.values.map((v) => `\`${v}\``).join(', ')}.` };
+      case 'literalUnion': {
+        if (!t.open) return { cs: 'string', api: 'string', value: false, remark: `One of: ${t.values.map((v) => `\`${v}\``).join(', ')}.` };
+        const key = openKey(t.values);
+        const u = opens.get(key) ?? { values: t.values, uses: [] };
+        opens.set(key, u);
+        u.uses.push({ path, name: pascal(lastSegment(owner.path)) + pascal(propName), namespace: owner.namespace, folder: owner.folder });
+        const named = openNames?.get(key);
+        if (!named) return { cs: 'string', api: 'string', value: false }; // first pass
+        const known = t.values.map((v) => `\`${v}\` (\`${named.name}.${literalMember(v) ?? '?'}\`)`);
+        return {
+          cs: named.name,
+          api: `${named.namespace}.${named.name}`,
+          value: true,
+          remark: `${known.length > 1 ? `${known.slice(0, -1).join(', ')}, ${known.at(-1)}` : known[0]} or any other string.`,
+        };
+      }
       case 'array': {
         const el = mapType(t.element, `${path}[]`, owner, propName);
         if (el.node) return fail(`${path}[]`, 'JsonNode array elements would be written with the caller\'s options');
@@ -125,11 +192,26 @@ function buildOptions(ir: Ir, overrides: Overrides): { result: EmitResult; class
         if (t.elements.every((e) => e.kind === 'number')) return { cs: 'double[]', api: 'double[]', value: false };
         return fail(path, 'tuple with non-number elements');
       case 'record': {
+        if (t.keys) {
+          // One member per key, all of one value type, mapped once (so an object value is one class, `<Record>Value`).
+          const keyed: ClassPlan = { name: owner.name + pascal(propName), namespace: owner.namespace, folder: owner.folder, path, props: [] };
+          const v = mapType(t.value, `${path}{*}`, keyed, 'value');
+          keyed.props = t.keys.map((k) => ({ name: k, optional: true, doc: `The entry for the \`${k}\` key.`, type: t.value, mapped: v }));
+          plan(keyed);
+          return { cs: keyed.name, api: `${keyed.namespace}.${keyed.name}`, value: false };
+        }
         const v = mapType(t.value, `${path}{*}`, owner, propName);
         const i = inner(v);
         // JsonNode values are written with WriteTo and never resolved from the context.
         if (!v.node) contextTypes.add(i.api.replace(/!/g, '').replace(/\?$/, ''));
-        return { cs: `Dictionary<string, ${i.cs}>`, api: `System.Collections.Generic.Dictionary<string!, ${i.api}>`, value: false, converterArg: i.cs };
+        const [key, keyApi] = t.key === 'number' ? ['int', 'int'] : ['string', 'string!'];
+        return {
+          cs: `Dictionary<${key}, ${i.cs}>`,
+          api: `System.Collections.Generic.Dictionary<${keyApi}, ${i.api}>`,
+          value: false,
+          converter: t.key === 'number' ? 'IntKeyDictionaryConverter' : 'VerbatimKeyDictionaryConverter',
+          converterArg: i.cs,
+        };
       }
       case 'object':
         return nested(t.props);
@@ -192,7 +274,7 @@ function buildOptions(ir: Ir, overrides: Overrides): { result: EmitResult; class
         continue;
       }
       names.set(name, path);
-      const t = mapType(p.type, path, c, p.name);
+      const t = p.mapped ?? mapType(p.type, path, c, p.name);
       shape.members.push({ wire: p.name, name, type: t.cs });
       const ignoredBy = OPTION_CLASSES.has(c.name) ? ir.catalog.ignoredOptions[p.name] : undefined;
       const remarks = [
@@ -201,7 +283,7 @@ function buildOptions(ir: Ir, overrides: Overrides): { result: EmitResult; class
         use.docs(path),
       ].filter((r): r is string => !!r);
       const attrs = [`[JsonPropertyName("${p.name}")]`, '[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]'];
-      if (t.converterArg) attrs.push(`[JsonConverter(typeof(VerbatimKeyDictionaryConverter<${t.converterArg}>))]`);
+      if (t.converterArg) attrs.push(`[JsonConverter(typeof(${t.converter}<${t.converterArg}>))]`);
       if (t.node) attrs.push('[JsonConverter(typeof(JsonNodePassThroughConverter))]');
       members.push(
         docComment('    ', p.doc ?? `The \`${p.name}\` member.`, remarks.join('\n\n') || undefined) +
@@ -229,6 +311,38 @@ function buildOptions(ir: Ir, overrides: Overrides): { result: EmitResult; class
     rendered.set(`${c.folder}/${c.name}.g.cs`, { content, api });
   }
 
+  const structs: string[] = [];
+  const structShapes: OpenStruct[] = [];
+  for (const [key, named] of openNames ?? []) {
+    const u = opens.get(key);
+    if (!u) continue;
+    const full = `${named.namespace}.${named.name}`;
+    const paths = [...new Set(u.uses.map((x) => x.path))];
+    const clash = classes.get(named.name)?.path ?? (structs.includes(full) ? '(another open literal union)' : undefined);
+    if (clash !== undefined) {
+      errors.push(`type name collision "${named.name}": ${clash} and ${paths.join(', ')}`);
+      continue;
+    }
+    const members = new Map<string, string>();
+    for (const v of u.values) {
+      const member = literalMember(v);
+      if (member === undefined) {
+        errors.push(`${paths[0]}: literal "${v}" gives no C# member name`);
+        continue;
+      }
+      if (STRUCT_MEMBERS.has(member) || member === named.name || members.has(member)) {
+        errors.push(`${paths[0]}: literal "${v}" gives the member name ${member}, which ${members.has(member) ? `"${members.get(member)}" also gives` : `the struct ${named.name} declares`}`);
+        continue;
+      }
+      members.set(member, v);
+    }
+    structs.push(full);
+    structShapes.push({ name: full, literals: [...members].map(([member, wire]) => ({ wire, member })) });
+    const struct = openStruct(ir, named, paths, members);
+    rendered.set(`${named.folder}/${named.name}.g.cs`, struct.type);
+    rendered.set(`Json/${named.name}Converter.g.cs`, struct.converter);
+  }
+
   // string keeps the context non-empty (the converter compiles against it) and is the commonest map value.
   contextTypes.add('string');
   rendered.set('Json/FlintMapJsonContext.g.cs', {
@@ -250,6 +364,93 @@ function buildOptions(ir: Ir, overrides: Overrides): { result: EmitResult; class
     result.files.push({ path, content });
     result.apiLines.push(...api);
   }
-  result.ownedTypes = [...classes.values()].map((c) => `${c.namespace}.${c.name}`).sort(ordinal);
-  return { result, classes: shapes.sort((a, b) => ordinal(a.name, b.name)) };
+  result.ownedTypes = [
+    ...[...classes.values()].map((c) => `${c.namespace}.${c.name}`),
+    ...structs,
+    ...structs.map((t) => `Graspea.Flint.Serialization.${t.slice(t.lastIndexOf('.') + 1)}Converter`),
+  ].sort(ordinal);
+  return { result, classes: shapes.sort((a, b) => ordinal(a.name, b.name)), structs: structShapes.sort((a, b) => ordinal(a.name, b.name)) };
+}
+
+/** The C# member of an open union literal: Pascal(literal), or undefined when the literal gives no name. */
+function literalMember(value: string): string | undefined {
+  try {
+    return pascal(value);
+  } catch {
+    return undefined;
+  }
+}
+
+/** The string-backed struct of an open literal union and its converter (the pattern of the constant structs, design §4.1). */
+function openStruct(
+  ir: Ir,
+  named: OpenName,
+  paths: string[],
+  members: Map<string, string>,
+): { type: { content: string; api: string[] }; converter: { content: string; api: string[] } } {
+  const { name, namespace } = named;
+  const full = `${namespace}.${name}`;
+  const statics = [...members].map(
+    ([member, value]) => `${docComment('    ', `The \`${value}\` value.`)}    public static ${name} ${member} { get; } = new(${csString(value)});\n`,
+  );
+  const type =
+    `${header(ir)}\nusing System.Text.Json.Serialization;\nusing Graspea.Flint.Serialization;\n\nnamespace ${namespace};\n\n` +
+    docComment(
+      '',
+      `A value of ${andList(paths.map((p) => `\`${p}\``))}: one of the values below or any other string, written verbatim.`,
+      'Any string converts implicitly; a null string gives null.',
+    ) +
+    `[JsonConverter(typeof(${name}Converter))]\npublic readonly partial record struct ${name}\n{\n` +
+    docComment('    ', 'Creates a value from its wire string.') +
+    `    /// <param name="value">The string, written verbatim.</param>\n` +
+    `    /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>\n` +
+    `    public ${name}(string value)\n    {\n        ArgumentNullException.ThrowIfNull(value);\n        Value = value;\n    }\n\n` +
+    statics.join('\n') +
+    '\n' +
+    docComment('    ', `The wire string; null only for \`default(${name})\`, which cannot be serialised.`) +
+    '    public string Value { get; }\n\n' +
+    docComment('    ', 'A value from its wire string.') +
+    '    /// <param name="value">The string, written verbatim.</param>\n' +
+    `    public static implicit operator ${name}(string value) => new(value);\n\n` +
+    docComment('    ', 'A value from its wire string; null for a null string.') +
+    '    /// <param name="value">The string, written verbatim, or null.</param>\n' +
+    `    public static implicit operator ${name}?(string? value) => value is null ? default(${name}?) : new ${name}(value);\n\n` +
+    docComment('    ', 'The wire string.') +
+    `    /// <returns><see cref="Value"/>, or an empty string for <c>default(${name})</c>.</returns>\n` +
+    '    public override string ToString() => Value ?? string.Empty;\n}\n';
+  const typeApi = [
+    full,
+    `${full}.${name}() -> void`,
+    `${full}.${name}(string! value) -> void`,
+    `${full}.Equals(${full} other) -> bool`,
+    `${full}.Value.get -> string!`,
+    `override ${full}.GetHashCode() -> int`,
+    `override ${full}.ToString() -> string!`,
+    `static ${full}.operator !=(${full} left, ${full} right) -> bool`,
+    `static ${full}.operator ==(${full} left, ${full} right) -> bool`,
+    `static ${full}.implicit operator ${full}(string! value) -> ${full}`,
+    `static ${full}.implicit operator ${full}?(string? value) -> ${full}?`,
+    ...[...members.keys()].map((m) => `static ${full}.${m}.get -> ${full}`),
+    `~override ${full}.Equals(object obj) -> bool`,
+  ];
+  const conv = `Graspea.Flint.Serialization.${name}Converter`;
+  const converter =
+    `${header(ir)}\nusing System.ComponentModel;\nusing System.Text.Json;\nusing System.Text.Json.Serialization;\nusing ${namespace};\n\n` +
+    'namespace Graspea.Flint.Serialization;\n\n' +
+    `/// <summary>Writes <see cref="${name}"/> as its string, verbatim. Infrastructure: public only so that a host\n` +
+    '/// source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>\n' +
+    `[EditorBrowsable(EditorBrowsableState.Never)]\npublic sealed class ${name}Converter : JsonConverter<${name}>\n{\n` +
+    '    /// <inheritdoc/>\n' +
+    `    public override ${name} Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>\n` +
+    `        StringBacked.Read(ref reader, static value => new ${name}(value));\n\n` +
+    '    /// <inheritdoc/>\n' +
+    `    public override void Write(Utf8JsonWriter writer, ${name} value, JsonSerializerOptions options) =>\n` +
+    `        StringBacked.Write<${name}>(writer, value.Value);\n}\n`;
+  const converterApi = [
+    conv,
+    `${conv}.${name}Converter() -> void`,
+    `override ${conv}.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> ${full}`,
+    `override ${conv}.Write(System.Text.Json.Utf8JsonWriter! writer, ${full} value, System.Text.Json.JsonSerializerOptions! options) -> void`,
+  ];
+  return { type: { content: type, api: typeApi }, converter: { content: converter, api: converterApi } };
 }
