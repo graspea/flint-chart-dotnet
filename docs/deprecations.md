@@ -17,7 +17,9 @@ Both diagnostics are warnings, never errors. To silence one for a member you sti
 | Member | IR path | Removed in flint-chart | Replacement | Deleted in |
 |---|---|---|---|---|
 
-No member is deprecated under FLINT0001 in the flint-chart 0.5.1 and 1.0.0 lines. flint-chart 1.0.0, an upstream major, retired the `includeZero_x/y` and `logScale_x/y` properties of KPI Card and Map (`generator/retired.json`); their builder methods were deleted in that breaking window instead of kept under FLINT0001, because the generator does not emit `[Obsolete]` for retired members yet (design §7.8). The `CHANGELOG.md` entry lists them.
+The generator emits the attribute from `generator/retired.json` ([generator.md](generator.md#retired-members)): a member upstream retires is kept under FLINT0001 while the pin is in the breaking line that retired it, and removed when the pin enters the next one. The sync pull request lists each retired member and what the SDK does with it under "Retired members"; the maintainer adds a row here for each one it keeps.
+
+No member is deprecated under FLINT0001 in the flint-chart 0.5.1 and 1.0.0 lines. flint-chart 1.0.0, an upstream major, retired the `includeZero_x/y` and `logScale_x/y` properties of KPI Card and Map; their builder methods were deleted in that breaking window instead of kept under FLINT0001 (maintainer decision), and their `generator/retired.json` entries record it with `deletedIn: "1.0.0"`. The validator reports a key set through `Property(...)` as `retired_member`. The `CHANGELOG.md` entry lists them.
 
 <a id="FLINT0002"></a>
 

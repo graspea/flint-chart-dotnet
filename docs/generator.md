@@ -25,7 +25,15 @@ cd .. && dotnet build -warnaserror && dotnet test -f net10.0
 
 `npm run generate` is deterministic: a second run, or a run from an empty `Generated/` and `ir/`, leaves `git status` clean. `generate -- --check` runs the same steps without writing: it fails when the IR, `retired.json`, a generated file (including a stale `*.g.cs`, and the files under `src/Graspea.Flint.CSharp/Generated/` written by the csharp-names emitter of [design part 7](design/07-spec-to-csharp-tool-and-generator.md) §12.7), `PublicAPI.Unshipped.txt`, a marked `README.md` section, `docs/package/AGENTS.md` or a fixture file would change, or when the `generator/package.json` pin differs from the installed version.
 
-Not implemented yet: the `[Obsolete]` emission of retired members (design §7.8); until it is, a retired member is dropped and leaves a `*REMOVED*` line ([Removed public API](#removed-public-api)).
+### Retired members
+
+`extract` appends every vanished chart type, backend template, channel, property, option value, semantic type and theme preset to `generator/retired.json` (design §7.8), with `lastSeenIn`, `retiredIn` and the removed IR node as `was`. `emit` reads the entries whose path the IR no longer has (`src/retired.ts`):
+
+- **Facades.** An entry is *obsolete* while the pin is in the breaking line it was retired in (design part 3 §8.4: `0.<minor>` before 1.0, `<major>` after it), so it lives at least the rest of that upstream minor line. The builders, enums, entries and constants put an obsolete member back from its `was` node and emit it under `[Obsolete("Removed in flint-chart <retiredIn>; ignored upstream. Deleted in the next breaking window.", DiagnosticId = "FLINT0001", UrlFormat = ".../docs/deprecations.md#{0}")]`, so it compiles with a warning and still writes its key. A member stays unmarked while another backend of the template still declares it; that backend's declaration is then the only one in its docs. An entry is *removed* once the pin enters the next breaking line, or when a maintainer set `deletedIn` (the version whose breaking window deleted it early); its member is no longer emitted and leaves a `*REMOVED*` line ([Removed public API](#removed-public-api)). An obsolete entry without `was` fails generation. The README and `docs/package/AGENTS.md` tables and the spec-to-C# name tables leave obsolete members out, so `flint-cs to-csharp` and the source generator write a retired key through `Property(...)` or `Encode(...)`.
+- **Validator.** Every entry, obsolete or removed, goes into `CatalogTables.Retired` and `Catalog.Retired` (IR path -> `retiredIn`), from which `ChartValidator` and the catalog checks report `retired_member` (FLINT117; [validation-codes.md](validation-codes.md)).
+- **Sync report.** "Retired members" lists each new entry with what the SDK does with it (kept under `[Obsolete]`, or removed), and each entry whose lifetime ends with the new version.
+
+An entry whose path is in the IR again (upstream restored the member) is ignored. On flint-chart 1.0.0 the eight entries of KPI Card and Map carry `deletedIn: "1.0.0"` ([deprecations.md](deprecations.md)), so no member is obsolete.
 
 ### Probes
 
@@ -381,7 +389,7 @@ It also writes `src/Graspea.Flint.CSharp/Generated/Catalog.g.cs`, what the catal
 backends, the backends that apply themes, the host-state keys, and per chart type and backend the template's channels
 and properties, with the property rows of the catalog tables below (kind, the JSON text of each discrete option with its
 label, the continuous range). The core's `CatalogCheck` runs the validator's rules that need no data over the spec's JSON;
-the tool prints its findings and the generator reports them as FLINT110 to FLINT116 and FLINT140.
+the tool prints its findings and the generator reports them as FLINT110 to FLINT117 and FLINT140.
 `CatalogCheckTests` compares its codes, severities and paths with `ChartValidator` on a template without row keys over
 every fixture and probe case.
 

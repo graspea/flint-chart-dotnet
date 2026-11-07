@@ -13,6 +13,8 @@ Tracks `flint-chart` 1.0.0 (npm), an upstream major and so a breaking window ([d
 - `ChartSpec.Label`, `ChartSpec.Source` (`ChartSource`: a string, or text with a link) and `ChartSpec.Chrome` (`ChartChrome`: `ChartChrome.None` or the parts to turn off), with `Label`, `Source` and `Chrome` on the builders.
 - `ChartEncoding.Title` (`ChannelTitle`: a name, or `ChannelTitle.None`, written as `null`, for no title), `Reverse`, `Mid`, `Domain`, `Bins` and `Colors`.
 - `SemanticAnnotation.Colors` and `SemanticAnnotation.Polarity` (`Polarity.HigherIsBetter`, `Polarity.LowerIsBetter`).
+- The validator code `retired_member` (Warning; FLINT117 in the catalog checks of `flint-cs` and `Graspea.Flint.Generators`) for a channel, chart property, option value or semantic type that `flint-chart` removed, naming the version.
+- From the next upstream retirement on, a member that `flint-chart` removes is kept under `[Obsolete]` with the diagnostic id FLINT0001 until the next breaking window ([docs/deprecations.md](docs/deprecations.md)).
 - `flint-cs to-csharp` and `Graspea.Flint.Generators` write these members typed; `interaction_spec` and `chart_spec.label`, `source` and `chrome` are no longer reported as unknown keys (FLINT140).
 
 ### Changed
@@ -24,7 +26,7 @@ Tracks `flint-chart` 1.0.0 (npm), an upstream major and so a breaking window ([d
 
 ### Removed
 
-- `KpiCardBuilder<TRow>` and `MapBuilder<TRow>`: `IncludeZeroX`, `IncludeZeroY`, `LogScaleX` and `LogScaleY`. `flint-chart` 1.0.0 dropped `includeZero_x/y` and `logScale_x/y` from both templates and ignores the keys; the methods are deleted in this breaking window rather than kept as FLINT0001 ([docs/deprecations.md](docs/deprecations.md)). `Property("includeZero_x", true)` still writes the key, which the validator reports as `unknown_chart_property`.
+- `KpiCardBuilder<TRow>` and `MapBuilder<TRow>`: `IncludeZeroX`, `IncludeZeroY`, `LogScaleX` and `LogScaleY`. `flint-chart` 1.0.0 dropped `includeZero_x/y` and `logScale_x/y` from both templates and ignores the keys; the methods are deleted in this breaking window rather than kept as FLINT0001 ([docs/deprecations.md](docs/deprecations.md)). `Property("includeZero_x", true)` still writes the key, which the validator reports as `retired_member`.
 - `ThemeLabels.Angle`, which `flint-chart` 1.0.0 removed.
 - `ThemeSpecInteraction` and `ThemeVariantThenInteraction`; see `ThemeInteraction` above.
 
