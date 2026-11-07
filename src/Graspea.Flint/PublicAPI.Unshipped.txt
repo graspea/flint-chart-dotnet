@@ -1,4 +1,6 @@
 #nullable enable
+Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>
+Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>.IntKeyDictionaryConverter() -> void
 Graspea.Flint.Serialization.LabelOverflowConverter
 Graspea.Flint.Serialization.LabelOverflowConverter.LabelOverflowConverter() -> void
 Graspea.Flint.Serialization.MinorGridSpecConverter
@@ -54,6 +56,8 @@ Graspea.Flint.Theming.ThemeLength.Text.get -> string?
 Graspea.Flint.Theming.TypeWeight
 Graspea.Flint.Theming.TypeWeight.Keyword.get -> string?
 Graspea.Flint.Theming.TypeWeight.Number.get -> double?
+override Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> System.Collections.Generic.Dictionary<int, T>!
+override Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>.Write(System.Text.Json.Utf8JsonWriter! writer, System.Collections.Generic.Dictionary<int, T>! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.LabelOverflowConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.LabelOverflow!
 override Graspea.Flint.Serialization.LabelOverflowConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.LabelOverflow! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.MinorGridSpecConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.MinorGridSpec!
