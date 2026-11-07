@@ -3,7 +3,18 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { diffIr } from '../src/diff.ts';
 import type { Ir } from '../src/ir.ts';
-import { assess, classifyIrDiff, classifyProbeDiff, gitBlobSha, labelsFor, removedApiLines, renderReport, suggestTag, trxCounts } from '../scripts/upstream-report.mjs';
+import {
+  assess,
+  classifyIrDiff,
+  classifyProbeDiff,
+  gitBlobSha,
+  labelsFor,
+  removedApiLines,
+  renderReport,
+  retirementRows,
+  suggestTag,
+  trxCounts,
+} from '../scripts/upstream-report.mjs';
 import { syntheticIr } from './support/synthetic-ir.ts';
 
 function pair() {
@@ -201,6 +212,24 @@ describe('upstream-report: labels and inputs', () => {
   });
 });
 
+describe('upstream-report: retired members', () => {
+  // source: design §7.8 and part 3 §8.4 (a new retirement is kept under [Obsolete]; an obsolete member is removed when the
+  // pin enters the next breaking line; a member a maintainer deleted stays removed)
+  it('says which retired members the SDK keeps under [Obsolete] and which it removes', () => {
+    const ledger = [
+      { path: 'a', lastSeenIn: '0.5.0', retiredIn: '0.5.1' },
+      { path: 'b', lastSeenIn: '0.5.1', retiredIn: '0.6.0' },
+      { path: 'c', lastSeenIn: '0.4.0', retiredIn: '0.5.0', deletedIn: '0.5.0' },
+    ];
+    assert.deepEqual(retirementRows(ledger, new Set(['a', 'c']), '0.5.1', '0.6.0'), [
+      { path: 'a', lastSeenIn: '0.5.0', retiredIn: '0.5.1', sdk: 'ended' },
+      { path: 'b', lastSeenIn: '0.5.1', retiredIn: '0.6.0', sdk: 'obsolete' },
+    ]);
+    const patch = [ledger[0], { path: 'd', lastSeenIn: '0.5.1', retiredIn: '0.5.2' }];
+    assert.deepEqual(retirementRows(patch, new Set(['a']), '0.5.1', '0.5.2'), [{ path: 'd', lastSeenIn: '0.5.1', retiredIn: '0.5.2', sdk: 'obsolete' }]);
+  });
+});
+
 describe('upstream-report: body', () => {
   const sha = (c: string) => c.repeat(40);
   const model = () => ({
@@ -224,7 +253,10 @@ describe('upstream-report: body', () => {
       { change: 'removed' as const, path: 'catalog.chartTypes[Line Chart].backends.vegalite.channels[color]', before: '"color"', severity: 'BREAKING' as const },
       { change: 'added' as const, path: 'catalog.themePresets[nyt]', after: '{…}', severity: 'additive' as const },
     ],
-    retired: [{ path: 'catalog.chartTypes[Line Chart].backends.vegalite.channels[color]', lastSeenIn: '0.5.1', retiredIn: '0.6.0' }],
+    retired: [
+      { path: 'catalog.chartTypes[Line Chart].backends.vegalite.channels[color]', lastSeenIn: '0.5.1', retiredIn: '0.6.0', sdk: 'obsolete' as const },
+      { path: 'catalog.semanticTypes[Week]', lastSeenIn: '0.4.0', retiredIn: '0.5.0', sdk: 'ended' as const },
+    ],
     stats: 'tests/fixtures: 3 files changed, 950 insertions(+)',
     removedApi: [] as string[],
     breakingWindow: true,
@@ -250,7 +282,10 @@ describe('upstream-report: body', () => {
       '### Severity summary\nBREAKING 1 · behavioural 0 · additive 1 · cosmetic 0\n',
       '### Channels\n| Change | IR path | Before | After | Severity |\n|---|---|---|---|---|\n| removed | `catalog.chartTypes[Line Chart].backends.vegalite.channels[color]` | `"color"` |  | BREAKING |\n',
       '### Theme presets\n',
-      '| `catalog.chartTypes[Line Chart].backends.vegalite.channels[color]` | 0.6.0 | 0.5.1 |',
+      '### Retired members (generator/retired.json)\n',
+      '| Entry | Vanished in | Last seen in | SDK member |\n|---|---|---|---|\n',
+      '| `catalog.chartTypes[Line Chart].backends.vegalite.channels[color]` | 0.6.0 | 0.5.1 | kept under `[Obsolete]` (FLINT0001) |',
+      '| `catalog.semanticTypes[Week]` | 0.5.0 | 0.4.0 | removed: its lifetime ended in this breaking window |',
       '### Fixtures and generated files\ntests/fixtures: 3 files changed, 950 insertions(+)\n',
       '1. Open the release pull request `release: v0.6.0.1-preview.1`',
       '2. `git tag v0.6.0.1-preview.1 <release PR merge sha> && git push origin v0.6.0.1-preview.1`',

@@ -13,6 +13,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { diffIr, flattenIr, retiredEntries } from '../src/diff.ts';
+import { retirementStatus } from '../src/retired.ts';
 import { changelogSection } from './release-check.mjs';
 import { fetchTextOrUndefined, run, runMain } from './gha.mjs';
 import { bumpKind, isBreakingWindow, isUpstreamVersion } from './versions.mjs';
@@ -99,6 +100,32 @@ export function assess({ rows, removedApi, window }) {
   };
 }
 
+/**
+ * What the regeneration does with each retired member (design §7.8, part 3 §8.4): a new ledger entry is kept under
+ * `[Obsolete]` (`obsolete`) or removed (`removed`); a known entry that was obsolete under the pin and is removed under the
+ * new version has reached the end of its lifetime (`ended`).
+ * @typedef {{ path: string, lastSeenIn: string, retiredIn: string, deletedIn?: string }} LedgerEntry
+ * @param {LedgerEntry[]} ledger the regenerated generator/retired.json @param {Set<string>} known the paths of the pin's ledger
+ * @param {string} pin @param {string} version
+ * @returns {Array<{ path: string, lastSeenIn: string, retiredIn: string, sdk: 'obsolete' | 'removed' | 'ended' }>}
+ */
+export function retirementRows(ledger, known, pin, version) {
+  const rows = [];
+  for (const e of ledger) {
+    const { path, lastSeenIn, retiredIn } = e;
+    const now = retirementStatus(e, version);
+    if (!known.has(path)) rows.push({ path, lastSeenIn, retiredIn, sdk: now });
+    else if (retirementStatus(e, pin) === 'obsolete' && now === 'removed') rows.push({ path, lastSeenIn, retiredIn, sdk: /** @type {const} */ ('ended') });
+  }
+  return rows;
+}
+
+const SDK_MEMBER = {
+  obsolete: 'kept under `[Obsolete]` (FLINT0001)',
+  removed: 'removed',
+  ended: 'removed: its lifetime ended in this breaking window',
+};
+
 /** @param {string} path */
 function areaOf(path) {
   if (path.startsWith('probes.')) return 'Behaviour probes';
@@ -180,7 +207,7 @@ const short = (/** @type {string} */ sha) => sha.slice(0, 8);
  *   upstreamRef: string, mcp: { version: string }, releaseNotes: boolean, skill: { old: string, new: string } | null,
  *   generation: string, generateLog: string, forward: { outcome: string, counts: { total: number, passed: number, failed: number } | null },
  *   tests: { dotnet: string, generator: string }, queued: string[], suggestedTag: string, stableTagForPin: string | null,
- *   rows: ClassifiedRow[], retired: { path: string, lastSeenIn: string, retiredIn: string }[], stats: string, changelog: string | undefined,
+ *   rows: ClassifiedRow[], retired: { path: string, lastSeenIn: string, retiredIn: string, sdk: 'obsolete' | 'removed' | 'ended' }[], stats: string, changelog: string | undefined,
  *   removedApi: string[], breakingWindow: boolean }} ReportModel
  * @param {ReportModel} m
  */
@@ -212,8 +239,10 @@ export function renderReport(m) {
   const retired =
     m.retired.length === 0
       ? ''
-      : '### Retired (retired.json additions)\n| Entry | Vanished in | Last seen in |\n|---|---|---|\n' +
-        m.retired.map((e) => `| ${cell(e.path)} | ${e.retiredIn} | ${e.lastSeenIn} |\n`).join('') +
+      : '### Retired members (generator/retired.json)\n' +
+        'New ledger entries, and members whose lifetime ends with this version (design part 3 §8.4); list each kept member in `docs/deprecations.md`.\n' +
+        '| Entry | Vanished in | Last seen in | SDK member |\n|---|---|---|---|\n' +
+        m.retired.map((e) => `| ${cell(e.path)} | ${e.retiredIn} | ${e.lastSeenIn} | ${SDK_MEMBER[e.sdk]} |\n`).join('') +
         '\n';
   const removedApi =
     m.removedApi.length === 0
@@ -285,7 +314,7 @@ async function main() {
   const removedApi = removedApiLines(run('git', ['show', `HEAD:${unshipped}`], { cwd: root }), read(unshipped));
   const breakingWindow = isBreakingWindow(pin, version);
   const known = new Set(JSON.parse(readFileSync(arg('--old-retired'), 'utf8')).map((/** @type {{ path: string }} */ e) => e.path));
-  const retired = JSON.parse(read('generator/retired.json')).filter((/** @type {{ path: string }} */ e) => !known.has(e.path));
+  const retired = retirementRows(JSON.parse(read('generator/retired.json')), known, pin, version);
   const mcpPin = JSON.parse(read('generator/mcp-pin.json'));
 
   const generation = process.env.GENERATION === 'ok' ? 'ok' : 'failed';
