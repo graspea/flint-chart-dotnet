@@ -343,6 +343,33 @@ public sealed partial class ChartValidatorTests
         AssertNone(Line(i => i.ChartSpec.ChartProperties = new() { ["interpolate"] = "zzz" }), FlintBackend.Excel, "invalid_option_value");
     }
 
+    // source: flint-chart 1.0.0 src/core/normalize-properties.ts sameOptionValue (an array equals an array option of the
+    // same length whose entries are each ===; any other value is compared with ===), probe "option array value" of
+    // tests/fixtures/flint-chart@1.0.0 (Map projectionCenter [10,50] is kept on vegalite and plotly) and the Map options
+    // of ir/flint-ir.json
+    [Test]
+    public void Warnings_InvalidOptionValue_ComparesArraysEntryByEntry()
+    {
+        static ChartAssemblyInput Map(JsonNode center) => new()
+        {
+            Data = ChartData.FromJson([new JsonObject { ["lon"] = 10, ["lat"] = 50 }]),
+            ChartSpec = new ChartSpec
+            {
+                ChartType = ChartType.Map,
+                Encodings = { ["longitude"] = new ChartEncoding { Field = "lon" }, ["latitude"] = new ChartEncoding { Field = "lat" } },
+                ChartProperties = new() { ["projectionCenter"] = center },
+            },
+        };
+
+        AssertNone(Map(new JsonArray(10, 50)), FlintBackend.VegaLite, "invalid_option_value");
+        AssertNone(Map(new JsonArray(10.0, 50)), FlintBackend.Plotly, "invalid_option_value");
+        AssertOne(Map(new JsonArray(10, 52)), FlintBackend.VegaLite, "invalid_option_value", IssueSeverity.Warning);
+        AssertOne(Map(new JsonArray(10, "50")), FlintBackend.VegaLite, "invalid_option_value", IssueSeverity.Warning);
+        AssertOne(Map(new JsonArray(10, 50, 0)), FlintBackend.VegaLite, "invalid_option_value", IssueSeverity.Warning);
+        AssertOne(Map(new JsonArray(new JsonArray(10), 50)), FlintBackend.VegaLite, "invalid_option_value", IssueSeverity.Warning);
+        AssertOne(Map(new JsonObject { ["0"] = 10, ["1"] = 50 }), FlintBackend.VegaLite, "invalid_option_value", IssueSeverity.Warning);
+    }
+
     // source: d.ts T:1994-2001 (aggregate literals) and design §6 Info invalid_literal (no recorded drop; probe p4
     // "aggregate median" assembles)
     [Test]

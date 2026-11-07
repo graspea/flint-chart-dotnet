@@ -520,33 +520,40 @@ internal sealed partial class ValidationRun
         }
     }
 
-    /// <summary><c>normalizeChartProperties</c>: a value equal (===) to an option value, or a string equal to an option label
-    /// ignoring case and surrounding whitespace.</summary>
+    /// <summary><c>normalizeChartProperties</c>: a value equal to an option value under <c>sameOptionValue</c> (===, or for
+    /// two arrays the same length with every entry ===), or a string equal to an option label ignoring case and surrounding
+    /// whitespace.</summary>
     private static bool Accepts(PropertyRow property, JsonNode value)
     {
-        var kind = Js.Kind(value);
         foreach (var option in property.Options ?? [])
         {
-            if (option is null || kind is JsonValueKind.Array or JsonValueKind.Object)
-            {
-                continue;
-            }
-
-            var optionValue = JsonNode.Parse(option);
-            var optionKind = Js.Kind(optionValue);
-            if (optionKind == kind && kind switch
-            {
-                JsonValueKind.String => optionValue!.GetValue<string>() == value.GetValue<string>(),
-                JsonValueKind.Number => Js.NumberOf(optionValue!) == Js.NumberOf(value),
-                _ => true,
-            })
+            if (option is not null && SameOptionValue(JsonNode.Parse(option), value))
             {
                 return true;
             }
         }
 
-        return kind == JsonValueKind.String && property.Labels is { } labels
+        return Js.Kind(value) == JsonValueKind.String && property.Labels is { } labels
             && labels.Any(l => string.Equals(l.ToLowerInvariant(), Js.Trim(value.GetValue<string>()).ToLowerInvariant(), StringComparison.Ordinal));
+    }
+
+    private static bool SameOptionValue(JsonNode? option, JsonNode value) =>
+        Js.Kind(option) == JsonValueKind.Array && Js.Kind(value) == JsonValueKind.Array
+            ? option!.AsArray().Count == value.AsArray().Count && option.AsArray().Select((entry, i) => StrictEquals(entry, value[i])).All(e => e)
+            : StrictEquals(option, value);
+
+    /// <summary>JavaScript <c>===</c> on JSON values: equal strings, equal numbers, the same boolean, both null; an object or an
+    /// array parsed from JSON is never === to another.</summary>
+    private static bool StrictEquals(JsonNode? a, JsonNode? b)
+    {
+        var kind = Js.Kind(a);
+        return kind == Js.Kind(b) && kind switch
+        {
+            JsonValueKind.String => a!.GetValue<string>() == b!.GetValue<string>(),
+            JsonValueKind.Number => Js.NumberOf(a!) == Js.NumberOf(b!),
+            JsonValueKind.True or JsonValueKind.False or JsonValueKind.Null => true,
+            _ => false,
+        };
     }
 
     private void LiteralChecks(ChartSpec spec)
