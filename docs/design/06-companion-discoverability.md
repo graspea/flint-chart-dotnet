@@ -74,9 +74,9 @@ Facts that shape the fields: Title is "not used for any display purposes" (NuGet
 
 **Description. Decided (decision 10 wording); the text for releases before M2:**
 
-> Unofficial, type-safe .NET SDK for Flint (flint-chart), Microsoft's visualization language for AI agents. Build Flint ChartAssemblyInput chart specs in C# with a typed model and serialize them to JSON with System.Text.Json; there are no other dependencies. flint-chart compiles that JSON to Vega-Lite, ECharts, Chart.js, Plotly or Excel charts. This package emits JSON only; it does not render charts. Not affiliated with or endorsed by Microsoft.
+> Unofficial, type-safe .NET SDK for Flint (flint-chart), Microsoft's visualization language for AI agents. Build Flint ChartAssemblyInput chart specs in C# with a typed model and serialize them to JSON with System.Text.Json; there are no other dependencies. flint-chart compiles that JSON to Vega-Lite, ECharts, Chart.js, Plotly or Excel charts, or to an Image-Charts image URL. This package emits JSON only; it does not render charts. Not affiliated with or endorsed by Microsoft.
 
-447 characters. With M2, "with a typed model" becomes "with a typed model or a fluent builder". The text deliberately contains both `chart` and `charts`, `ChartAssemblyInput`, `visualization`, `JSON`, `SDK`, `.NET`, `C#` and all five backend names, because any term the user types that matches nowhere removes the package from the result set and the README is not indexed.
+480 characters. With M2, "with a typed model" becomes "with a typed model or a fluent builder". The text deliberately contains both `chart` and `charts`, `ChartAssemblyInput`, `visualization`, `JSON`, `SDK`, `.NET`, `C#` and all six backend names, because any term the user types that matches nowhere removes the package from the result set and the README is not indexed.
 
 **PackageTags. Decided (23 tags, decision 11), exact string:**
 
@@ -129,7 +129,7 @@ The README is read in three places with different rules: GitHub (searched only w
 Type-safe C# model for [Flint](https://github.com/microsoft/flint-chart) (`flint-chart`),
 Microsoft's visualization language for AI agents. Flint.NET builds semantic chart specs in .NET and
 emits Flint `ChartAssemblyInput` JSON; `flint-chart` then compiles that JSON to Vega-Lite, ECharts,
-Chart.js, Plotly or Excel charts. This package emits JSON only and does not render charts. It is an
+Chart.js, Plotly or Excel charts, or to an Image-Charts image URL. This package emits JSON only and does not render charts. It is an
 independent project, not affiliated with or endorsed by Microsoft.
 
     dotnet add package Graspea.Flint --prerelease

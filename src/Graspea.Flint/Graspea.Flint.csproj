@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>Graspea.Flint</PackageId>
     <Title>Flint.NET</Title>
-    <Description>Unofficial, type-safe .NET SDK for Flint (flint-chart), Microsoft's visualization language for AI agents. Build Flint ChartAssemblyInput chart specs in C# with a typed model or a fluent builder and serialize them to JSON with System.Text.Json, and write the envelope that delivers fixed charts to a browser; there are no other dependencies. flint-chart compiles that JSON to Vega-Lite, ECharts, Chart.js, Plotly or Excel charts. This package emits JSON only; it does not render charts. Not affiliated with or endorsed by Microsoft.</Description>
+    <Description>Unofficial, type-safe .NET SDK for Flint (flint-chart), Microsoft's visualization language for AI agents. Build Flint ChartAssemblyInput chart specs in C# with a typed model or a fluent builder and serialize them to JSON with System.Text.Json, and write the envelope that delivers fixed charts to a browser; there are no other dependencies. flint-chart compiles that JSON to Vega-Lite, ECharts, Chart.js, Plotly or Excel charts, or to an Image-Charts image URL. This package emits JSON only; it does not render charts. Not affiliated with or endorsed by Microsoft.</Description>
     <RootNamespace>Graspea.Flint</RootNamespace>
     <IsAotCompatible>true</IsAotCompatible>
     <!-- C# 13 to apply OverloadResolutionPriority (design §13.5); no feature that needs runtime support net8 lacks. -->
