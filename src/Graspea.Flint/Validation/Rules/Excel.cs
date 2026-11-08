@@ -14,6 +14,9 @@ internal sealed record ThrowReason(string Message, string? Channel, bool FromRow
 /// throws inside <c>instantiate()</c> (histogram values, radar metrics). Hand-written from src/excel/assemble.ts and
 /// src/excel/templates/*.ts of flint-chart 1.0.0 and pinned to the recorded fixture outcomes. Row values are read as
 /// given; upstream reads them after its temporal conversion, which changes no value these checks read.
+/// A rule that reads a field's type is reported without the rows when the spec decides that type for every channel the
+/// rule reads (FieldTypes.SpecDecided; FieldTypes.ContinuityDecided for the rules that reject a continuous field); a rule
+/// that reads row values is not.
 /// </summary>
 internal static class Excel
 {
@@ -55,40 +58,46 @@ internal static class Excel
         switch (chartType)
         {
             case "Area Chart":
-                Add(NotQuantitative(T("y")), "requires a quantitative y field for a native Excel area chart", "y");
+                Add(NotQuantitative(T("y")), "requires a quantitative y field for a native Excel area chart", "y", !types.SpecDecided("y"));
                 break;
             case "Bar Chart":
-                Add(And(NotQuantitative(T("x")), NotQuantitative(T("y"))), "requires one quantitative measure axis for a native Excel bar chart");
+                Add(And(NotQuantitative(T("x")), NotQuantitative(T("y"))), "requires one quantitative measure axis for a native Excel bar chart", null, !(types.SpecDecided("x") && types.SpecDecided("y")));
                 break;
             case "Grouped Bar Chart":
-                Add(And(NotQuantitative(T("x")), NotQuantitative(T("y"))), "requires one quantitative measure axis for a native Excel bar chart");
-                Add(IsContinuous(T("group")), "does not support continuous grouping in a native Excel grouped bar chart", "group");
+                Add(And(NotQuantitative(T("x")), NotQuantitative(T("y"))), "requires one quantitative measure axis for a native Excel bar chart", null, !(types.SpecDecided("x") && types.SpecDecided("y")));
+                Add(IsContinuous(T("group")), "does not support continuous grouping in a native Excel grouped bar chart", "group", !types.ContinuityDecided("group"));
                 break;
             case "Stacked Bar Chart":
-                Add(And(NotQuantitative(T("x")), NotQuantitative(T("y"))), "requires one quantitative measure axis for a native Excel bar chart");
-                Add(IsContinuous(T("color")), "does not support continuous color in a native Excel stacked bar chart", "color");
+                Add(And(NotQuantitative(T("x")), NotQuantitative(T("y"))), "requires one quantitative measure axis for a native Excel bar chart", null, !(types.SpecDecided("x") && types.SpecDecided("y")));
+                Add(IsContinuous(T("color")), "does not support continuous color in a native Excel stacked bar chart", "color", !types.ContinuityDecided("color"));
                 break;
             case "Line Chart":
-                Add(NotQuantitative(T("y")), "requires a quantitative y field for a native Excel line chart", "y");
-                Add(IsContinuous(T("color")), "does not support continuous color on a native Excel line chart", "color");
+                Add(NotQuantitative(T("y")), "requires a quantitative y field for a native Excel line chart", "y", !types.SpecDecided("y"));
+                Add(IsContinuous(T("color")), "does not support continuous color on a native Excel line chart", "color", !types.ContinuityDecided("color"));
                 break;
             case "Scatter Plot":
-                Add(Or(NotQuantitative(T("x")), NotQuantitative(T("y"))), "requires quantitative x and y fields for a native Excel XY chart");
+                foreach (var axis in new[] { "x", "y" })
+                {
+                    Add(NotQuantitative(T(axis)), "requires quantitative x and y fields for a native Excel XY chart", axis, !types.SpecDecided(axis));
+                }
                 Add(F("shape") is not null, "does not support a shape encoding in native Excel charts", "shape", false);
-                Add(IsContinuous(T("color")), "does not support continuous color in a native Excel Scatter or Bubble chart", "color");
+                Add(IsContinuous(T("color")), "does not support continuous color in a native Excel Scatter or Bubble chart", "color", !types.ContinuityDecided("color"));
                 break;
             case "Connected Scatter Plot":
-                Add(Or(NotQuantitative(T("x")), NotQuantitative(T("y"))), "requires quantitative x and y fields for a native Excel XY chart");
+                foreach (var axis in new[] { "x", "y" })
+                {
+                    Add(NotQuantitative(T(axis)), "requires quantitative x and y fields for a native Excel XY chart", axis, !types.SpecDecided(axis));
+                }
                 Add(F("shape") is not null, "does not support a shape encoding in native Excel charts", "shape", false);
                 Add(F("order") is null, "requires an explicit order field for a native Excel connected scatter chart", "order", false);
                 Add(F("detail") is not null, "does not support an unlegended detail series in a native Excel connected scatter chart", "detail", false);
-                Add(IsContinuous(T("color")), "does not support continuous color in a native Excel connected scatter chart", "color");
+                Add(IsContinuous(T("color")), "does not support continuous color in a native Excel connected scatter chart", "color", !types.ContinuityDecided("color"));
                 break;
             case "Boxplot":
                 Add(F("x") is null, "requires a categorical x field for a native Excel box and whisker chart", "x", false);
-                Add(IsTemporal(T("x")), "requires a categorical x field for a native Excel box and whisker chart", "x");
+                Add(IsTemporal(T("x")), "requires a categorical x field for a native Excel box and whisker chart", "x", !types.SpecDecided("x"));
                 Add(F("y") is null, "requires a quantitative y field for a native Excel box and whisker chart", "y", false);
-                Add(NotQuantitative(T("y")), "requires a quantitative y field for a native Excel box and whisker chart", "y");
+                Add(NotQuantitative(T("y")), "requires a quantitative y field for a native Excel box and whisker chart", "y", !types.SpecDecided("y"));
                 Add(F("color") is not null, "does not yet support color-grouped native Excel box and whisker charts", "color", false);
                 Add(Property(input, "whiskerMethod") == "minmax", "does not support min-max whiskers", null, false);
                 break;
@@ -97,14 +106,14 @@ internal static class Excel
                 break;
             case "Funnel Chart":
                 Add(F("y") is null, "requires a categorical y stage field for a native Excel funnel chart", "y", false);
-                Add(IsQuantitative(T("y")), "requires a categorical y stage field for a native Excel funnel chart", "y");
-                Add(NotQuantitative(T("size")), "requires a quantitative size field for a native Excel funnel chart", "size");
+                Add(IsQuantitative(T("y")), "requires a categorical y stage field for a native Excel funnel chart", "y", !types.SpecDecided("y"));
+                Add(NotQuantitative(T("size")), "requires a quantitative size field for a native Excel funnel chart", "size", !types.SpecDecided("size"));
                 Add(NonNegativeViolated(F("size")), "requires non-negative values for a native Excel funnel chart", "size");
                 break;
             case "Histogram":
                 var valueChannel = F("x") is not null ? "x" : "y";
                 Add(F(valueChannel) is null, "requires a quantitative value field for a native Excel histogram", valueChannel, false);
-                Add(NotQuantitative(T(valueChannel)), "requires a quantitative value field for a native Excel histogram", valueChannel);
+                Add(NotQuantitative(T(valueChannel)), "requires a quantitative value field for a native Excel histogram", valueChannel, !types.SpecDecided(valueChannel));
                 Add(F(valueChannel) is { } histogramField && !rows.Any(r => Js.Get(r, histogramField, out var p) is var v && Js.IsFiniteNumber(v, p)),
                     "requires finite numeric values for a histogram", valueChannel);
                 break;
@@ -113,28 +122,28 @@ internal static class Excel
                 break;
             case "Radar Chart":
                 Add(F("x") is null, "requires a categorical metric x field for a native Excel radar chart", "x", false);
-                Add(Or(IsQuantitative(T("x")), IsTemporal(T("x"))), "requires a categorical metric x field for a native Excel radar chart", "x");
+                Add(Or(IsQuantitative(T("x")), IsTemporal(T("x"))), "requires a categorical metric x field for a native Excel radar chart", "x", !types.ContinuityDecided("x"));
                 Add(F("y") is null, "requires a quantitative y field for a native Excel radar chart", "y", false);
-                Add(NotQuantitative(T("y")), "requires a quantitative y field for a native Excel radar chart", "y");
-                Add(F("color") is not null ? IsContinuous(T("color")) : false, "requires a discrete color field for native Excel radar series", "color");
+                Add(NotQuantitative(T("y")), "requires a quantitative y field for a native Excel radar chart", "y", !types.SpecDecided("y"));
+                Add(F("color") is not null ? IsContinuous(T("color")) : false, "requires a discrete color field for native Excel radar series", "color", !types.ContinuityDecided("color"));
                 Add(F("y") is { } radarValue && rows.Any(r => Js.ToNumber(Js.Get(r, radarValue, out var p), p) < 0), "requires non-negative values for a native Excel radar chart", "y");
                 Add(F("x") is { } metric && rows.Select(r => Js.ToJsString(Js.Get(r, metric, out var p), p)).Distinct(StringComparer.Ordinal).Count() < 3,
                     "requires at least three metric axes for a radar chart", "x");
                 break;
             case "Sunburst Chart":
                 Add(F("color") is null, "requires a categorical color field for a native Excel sunburst chart", "color", false);
-                Add(IsQuantitative(T("color")), "requires a categorical color field for a native Excel sunburst chart", "color");
-                Add(NotQuantitative(T("size")), "requires a quantitative size field for a native Excel sunburst chart", "size");
-                Add(F("group") is not null ? IsQuantitative(T("group")) : false, "requires a categorical group field for a native Excel sunburst hierarchy", "group");
+                Add(IsQuantitative(T("color")), "requires a categorical color field for a native Excel sunburst chart", "color", !types.SpecDecided("color"));
+                Add(NotQuantitative(T("size")), "requires a quantitative size field for a native Excel sunburst chart", "size", !types.SpecDecided("size"));
+                Add(F("group") is not null ? IsQuantitative(T("group")) : false, "requires a categorical group field for a native Excel sunburst hierarchy", "group", !types.SpecDecided("group"));
                 Add(F("detail") is not null && F("group") is null, "requires a group field before detail in a native Excel sunburst hierarchy", "detail", false);
-                Add(F("detail") is not null ? IsQuantitative(T("detail")) : false, "requires a categorical detail field for a native Excel sunburst hierarchy", "detail");
+                Add(F("detail") is not null ? IsQuantitative(T("detail")) : false, "requires a categorical detail field for a native Excel sunburst hierarchy", "detail", !types.SpecDecided("detail"));
                 Add(NonNegativeViolated(F("size")), "requires non-negative values for a native Excel sunburst chart", "size");
                 break;
             case "Treemap":
                 Add(F("color") is null, "requires a categorical color field for a native Excel treemap", "color", false);
-                Add(IsQuantitative(T("color")), "requires a categorical color field for a native Excel treemap", "color");
-                Add(NotQuantitative(T("size")), "requires a quantitative size field for a native Excel treemap", "size");
-                Add(F("detail") is not null ? IsQuantitative(T("detail")) : false, "requires a categorical detail field for a native Excel treemap hierarchy", "detail");
+                Add(IsQuantitative(T("color")), "requires a categorical color field for a native Excel treemap", "color", !types.SpecDecided("color"));
+                Add(NotQuantitative(T("size")), "requires a quantitative size field for a native Excel treemap", "size", !types.SpecDecided("size"));
+                Add(F("detail") is not null ? IsQuantitative(T("detail")) : false, "requires a categorical detail field for a native Excel treemap hierarchy", "detail", !types.SpecDecided("detail"));
                 Add(NonNegativeViolated(F("size")), "requires non-negative values for a native Excel treemap", "size");
                 break;
             case "Waterfall Chart":
@@ -169,11 +178,11 @@ internal static class Excel
         var x = types.FieldOf("x");
         var xType = types.Of("x");
         add(x is null, "requires a temporal or ordered x field for a native Excel stock chart", "x", false);
-        add(xType == FieldType.Unknown ? null : xType is not (FieldType.Temporal or FieldType.Ordinal or FieldType.TemporalOrOrdinal), "requires a temporal or ordered x field for a native Excel stock chart", "x", true);
+        add(xType == FieldType.Unknown ? null : xType is not (FieldType.Temporal or FieldType.Ordinal or FieldType.TemporalOrOrdinal), "requires a temporal or ordered x field for a native Excel stock chart", "x", !types.SpecDecided("x"));
         foreach (var channel in PriceChannels)
         {
             add(types.FieldOf(channel) is null, $"requires a quantitative {channel} field for a native Excel stock chart", channel, false);
-            add(NotQuantitative(types.Of(channel)), $"requires a quantitative {channel} field for a native Excel stock chart", channel, true);
+            add(NotQuantitative(types.Of(channel)), $"requires a quantitative {channel} field for a native Excel stock chart", channel, !types.SpecDecided(channel));
         }
 
         add(types.FieldOf("color") is not null || types.FieldOf("group") is not null || types.FieldOf("detail") is not null,
@@ -262,7 +271,7 @@ internal static class Excel
 
         if (xMeasure == yMeasure)
         {
-            add(true, "requires exactly one quantitative measure axis for a native Excel pyramid chart", null, true);
+            add(true, "requires exactly one quantitative measure axis for a native Excel pyramid chart", null, !(types.SpecDecided("x") && types.SpecDecided("y")));
             return;
         }
 
@@ -271,7 +280,7 @@ internal static class Excel
         add(IsQuantitative(types.Of(category)), "requires a discrete category axis for a native Excel pyramid chart", category, true);
         var group = types.FieldOf("color");
         add(group is null, "requires a discrete color field for a native Excel pyramid chart", "color", false);
-        add(IsContinuous(types.Of("color")), "requires a discrete color field for a native Excel pyramid chart", "color", true);
+        add(IsContinuous(types.Of("color")), "requires a discrete color field for a native Excel pyramid chart", "color", !types.ContinuityDecided("color"));
         if (group is not null)
         {
             var groups = rows.Select(r => Js.Get(r, group, out var p) is var v && !Js.IsNullish(v, p) ? Js.SetKey(v, p) : null)
@@ -285,9 +294,9 @@ internal static class Excel
     private static void Waterfall(ChartAssemblyInput input, FieldTypes types, IReadOnlyList<JsonNode?> rows, Action<bool?, string, string?, bool> add)
     {
         add(types.FieldOf("x") is null, "requires a category x field for a native Excel waterfall chart", "x", false);
-        add(NotQuantitative(types.Of("y")), "requires a quantitative y field for a native Excel waterfall chart", "y", true);
+        add(NotQuantitative(types.Of("y")), "requires a quantitative y field for a native Excel waterfall chart", "y", !types.SpecDecided("y"));
         var roles = types.FieldOf("color");
-        add(roles is not null ? IsQuantitative(types.Of("color")) : false, "requires color to contain start/delta/end roles for a native Excel waterfall chart", "color", true);
+        add(roles is not null ? IsQuantitative(types.Of("color")) : false, "requires color to contain start/delta/end roles for a native Excel waterfall chart", "color", !types.SpecDecided("color"));
         var valueField = types.FieldOf("y");
         var values = valueField is null
             ? []
@@ -304,10 +313,10 @@ internal static class Excel
         }
         else
         {
-            var mode = Property(input, "totals") is ("none" or "first" or "last" or "both") and var explicitMode
-                ? explicitMode
-                : LastReconciles(values) ? "both" : "first";
-            add(mode is "last" or "both", "cannot mark a final total because Office.js does not expose Waterfall total-point semantics", null, true);
+            var explicitMode = Property(input, "totals") is "none" or "first" or "last" or "both" ? Property(input, "totals") : null;
+            var mode = explicitMode ?? (LastReconciles(values) ? "both" : "first");
+            // An explicit mode is used as given (resolveTotalsMode, src/chart-types/waterfall.ts:51-56): no row is read.
+            add(mode is "last" or "both", "cannot mark a final total because Office.js does not expose Waterfall total-point semantics", null, explicitMode is null);
         }
     }
 

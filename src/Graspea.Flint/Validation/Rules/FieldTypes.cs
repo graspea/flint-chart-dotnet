@@ -53,6 +53,28 @@ internal sealed partial class FieldTypes
     /// field").</summary>
     internal string? FieldOf(string channel) => Encoding(channel)?.Field is { Length: > 0 } field ? field : null;
 
+    /// <summary>
+    /// Whether the spec alone decides <see cref="Of"/> for <paramref name="channel"/>, so that no rows can change it: no
+    /// usable field (<see cref="FieldType.Absent"/>, or quantitative for a <c>count</c>), an <c>aggregate</c>
+    /// (quantitative), or an explicit <c>type</c> other than <c>quantitative</c>. Upstream an explicit type replaces the
+    /// decision of the semantic type and the values, and the ISO date hack turns only quantitative into temporal
+    /// (resolve-semantics.ts:547-564); an aggregate makes the channel quantitative (:583-589, :682-689). Left to the rows: a
+    /// field without type or aggregate, and an explicit quantitative type.
+    /// </summary>
+    internal bool SpecDecided(string channel)
+    {
+        if (Encoding(channel) is not { Field.Length: > 0 } e)
+        {
+            return true;
+        }
+
+        return e.Aggregate is { Name.Length: > 0 } || e.Type?.Name is { Length: > 0 } and not "quantitative";
+    }
+
+    /// <summary>Whether the spec alone decides <see cref="Tri.IsContinuous"/> of the channel: as <see cref="SpecDecided"/>, and
+    /// an explicit quantitative type, which ISO date-time values can only turn temporal, continuous too.</summary>
+    internal bool ContinuityDecided(string channel) => SpecDecided(channel) || Encoding(channel)?.Type?.Name == "quantitative";
+
     /// <summary><c>sem[ch]?.type</c>.</summary>
     internal FieldType Of(string channel)
     {

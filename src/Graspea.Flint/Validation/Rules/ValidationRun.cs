@@ -316,7 +316,9 @@ internal sealed partial class ValidationRun
             Add(because is not null ? IssueSeverity.Error : IssueSeverity.Info, code, urlOnly ? "data.url" : "data.values",
                 because is not null
                     ? $"{name} reads only data.values and has no rows: it {because}; {name} throws."
-                    : urlOnly ? $"{name} reads only data.values; the URL is not fetched and the chart has no rows." : $"data.values has no rows; {name} assembles an empty chart.");
+                    : urlOnly ? $"{name} reads only data.values; the URL is not fetched and the chart has no rows."
+                    : own.Count > 0 ? $"data.values has no rows, but {name} throws whatever the rows ({UnsupportedCode(b)})."
+                    : $"data.values has no rows; {name} assembles an empty chart.");
         }
 
         var others = targets.Where(t => !NativeBackends.Contains(t)).ToArray();

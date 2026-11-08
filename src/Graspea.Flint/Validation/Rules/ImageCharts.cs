@@ -8,7 +8,7 @@ namespace Graspea.Flint.Validation.Rules;
 /// axes, quantitative x and y on a Scatter Plot, a slice and a value field on a Pie or Donut Chart. Hand-written from
 /// src/image-charts/assemble.ts of flint-chart 1.0.1 and pinned to the recorded fixture outcomes. Every condition follows
 /// from the encodings alone except the quantitative x and y of a Scatter Plot: an axis with an explicit type other than
-/// quantitative is decided by the spec; any other axis reads the type inferred from the values.
+/// quantitative is decided by the spec (FieldTypes.SpecDecided); any other axis reads the type inferred from the values.
 /// </summary>
 internal static class ImageCharts
 {
@@ -56,7 +56,7 @@ internal static class ImageCharts
                 // One reason per axis: an axis whose type the spec decides is reported without the rows too.
                 foreach (var axis in new[] { "x", "y" })
                 {
-                    Add(NotQuantitative(types.Of(axis)), "requires quantitative x and y fields", axis, fromRowsOrTypes: !SpecDecided(types, axis));
+                    Add(NotQuantitative(types.Of(axis)), "requires quantitative x and y fields", axis, fromRowsOrTypes: !types.SpecDecided(axis));
                 }
             }
         }
@@ -85,10 +85,4 @@ internal static class ImageCharts
             ? (channel == "x" && Raw("color") is null) || (channel == "y" && Raw("size") is null && Raw("theta") is null)
             : channel == "group" && types.FieldOf("group") is not null;
     }
-
-    /// <summary>An explicit type other than quantitative, without an aggregate, is the resolved type whatever the rows are
-    /// (resolve-semantics.ts:549-550): the ISO hack only turns quantitative into temporal, and an aggregate forces
-    /// quantitative.</summary>
-    private static bool SpecDecided(FieldTypes types, string axis) =>
-        types.Encoding(axis) is { } e && e.Aggregate is not { Name.Length: > 0 } && e.Type?.Name is { Length: > 0 } and not "quantitative";
 }
