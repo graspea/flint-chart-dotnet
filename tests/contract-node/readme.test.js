@@ -19,7 +19,7 @@ describe('README quick start', () => {
   const backends = backendsWith(input.chart_spec.chartType);
 
   it('uses a template that every backend has', () => {
-    assert.deepEqual(backends, ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel']);
+    assert.deepEqual(backends, ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel', 'image-charts']);
   });
 
   for (const backend of backends) {

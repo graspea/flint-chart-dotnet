@@ -9,7 +9,7 @@
 Type-safe C# model and fluent builder for [Flint](https://github.com/microsoft/flint-chart) (`flint-chart`),
 Microsoft's visualization language for AI agents. Flint.NET builds semantic chart specs in .NET and
 emits Flint `ChartAssemblyInput` JSON; `flint-chart` then compiles that JSON to Vega-Lite, ECharts,
-Chart.js, Plotly or Excel charts. This package emits JSON only and does not render charts. It is an
+Chart.js, Plotly or Excel charts, or to an Image-Charts image URL. This package emits JSON only and does not render charts. It is an
 independent project, not affiliated with or endorsed by Microsoft.
 
     dotnet add package Graspea.Flint --prerelease
@@ -29,7 +29,7 @@ It is:
 It is not:
 
 - a renderer: it does not render charts and produces no image, SVG or HTML;
-- a port of flint-chart: it computes no layout and writes no Vega-Lite, ECharts, Chart.js, Plotly or Excel spec, which flint-chart does from the JSON;
+- a port of flint-chart: it computes no layout and writes no Vega-Lite, ECharts, Chart.js, Plotly or Excel spec and no Image-Charts URL, which flint-chart does from the JSON;
 - a Microsoft product: it is an unofficial, independent project.
 
 ## Install
@@ -96,7 +96,7 @@ string json = chart.ToJson();
 }
 ```
 
-Pass it to `flint-chart` (`assembleVegaLite(input)`, `assembleECharts(input)` and so on in JavaScript) or to the `flint-chart-mcp` server, which compile it for the chosen backend.
+Pass it to `flint-chart` (`assembleVegaLite(input)`, `assembleECharts(input)` and so on in JavaScript) or to the `flint-chart-mcp` server, which compile it for the chosen backend. `assembleImageCharts(input)` returns `{ type: 'image-charts', url }` instead of a spec: the values are written into an `https://image-charts.com` URL, so loading that image sends them to the Image-Charts service.
 
 ### Row field names
 
@@ -425,7 +425,7 @@ foreach (ValidationIssue issue in result.Issues)
 Console.WriteLine(doughnut.Validate(FlintBackend.ChartJs).IsValid); // True
 ```
 
-`Error` means that the flint-chart assembler for that backend throws, `Warning` that it silently drops or replaces part of the document, and `Info` anything else worth a look. `IsValid` means "no `Error`"; `ThrowIfInvalid()` throws a `FlintValidationException` that carries every issue. Without a backend, the document is checked for every backend that has its template. Every code and the upstream fact behind it: [docs/validation-codes.md](https://github.com/graspea/flint-chart-dotnet/blob/main/docs/validation-codes.md).
+`Error` means that the flint-chart assembler for that backend throws, `Warning` that it silently drops or replaces part of the document, and `Info` anything else worth a look. `IsValid` means "no `Error`"; `ThrowIfInvalid()` throws a `FlintValidationException` that carries every issue. Without a backend, the document is checked for every backend that has its template, Excel and Image-Charts included; pass the backend you render with to check only that one. Every code and the upstream fact behind it: [docs/validation-codes.md](https://github.com/graspea/flint-chart-dotnet/blob/main/docs/validation-codes.md).
 
 ### With the upstream MCP server
 
@@ -452,7 +452,7 @@ This section is also packed as `AGENTS.md` at the root of the NuGet package, nex
 
 ### Rules
 
-1. Graspea.Flint produces Flint `ChartAssemblyInput` JSON and never renders. There is no Render, Draw or ToSvg method; pass the JSON to `flint-chart`, which compiles it for Vega-Lite, ECharts, Chart.js, Plotly or Excel, or to the `flint-chart-mcp` server, which handles Vega-Lite, ECharts and Chart.js.
+1. Graspea.Flint produces Flint `ChartAssemblyInput` JSON and never renders. There is no Render, Draw or ToSvg method; pass the JSON to `flint-chart`, which compiles it for Vega-Lite, ECharts, Chart.js, Plotly or Excel, or into an Image-Charts image URL, or to the `flint-chart-mcp` server, which handles Vega-Lite, ECharts and Chart.js.
 2. Transform and aggregate the data in C# before building the chart; style the chart after Flint assembles it.
 3. Use the constants (`ChartType.LineChart`, `SemanticType.YearMonth`, `Channel.X`, `ThemePreset.Economist`) and the generated enums (`LineChartInterpolate.Monotone`) for known members, never free-form strings.
 4. A template that the constants do not list is not unsupported: use `Chart.Of(new ChartType("..."), rows)` or set `ChartSpec.ChartType` directly; `Validate` reports `unknown_chart_type` for the pinned flint-chart version.
@@ -529,7 +529,7 @@ A template that the constants do not list:
 ```csharp
 using Graspea.Flint.Validation;
 
-ChartAssemblyInput input = Chart.Of(new ChartType("Image Chart"), sales)
+ChartAssemblyInput input = Chart.Of(new ChartType("Word Cloud"), sales)
     .Encode(Channel.X, s => s.Region)
     .Build();
 ValidationResult result = ChartValidator.Validate(input); // unknown_chart_type (Error) for the pinned flint-chart
@@ -538,7 +538,8 @@ ValidationResult result = ChartValidator.Validate(input); // unknown_chart_type 
 ### Anti-patterns
 
 - Building Vega-Lite or ECharts options by hand "because Flint is just JSON".
-- Expecting `theme_spec` to apply on ECharts, Chart.js or Excel; only Vega-Lite and Plotly apply it (`theme_ignored_by_backend`).
+- Expecting `theme_spec` to apply on ECharts, Chart.js, Excel or Image-Charts; only Vega-Lite and Plotly apply it (`theme_ignored_by_backend`).
+- Assembling rows that must not leave your systems with Image-Charts (`assembleImageCharts`): the values are written into an `https://image-charts.com` URL and reach that service when the image loads.
 - Aggregating in the chart spec what can be aggregated in C# first.
 - Pinning `Graspea.Flint` to a version whose first three parts differ from the flint-chart version that renders the JSON.
 - Reading `IsValid` as "the chart looks right": the validator checks what the pinned assemblers throw on or drop, not the layout.

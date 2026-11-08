@@ -251,6 +251,19 @@ public sealed partial class LineChartBuilder<TRow> : ChartBuilder<LineChartBuild
     assert.match(content, /\/\/\/ var rows = new\[\] \{ new \{ Size = 1\.0 \}, new \{ Size = 2\.0 \} \};\n\/\/\/ string json = Chart\.Line\(rows\)\.Size\(r =&gt; r\.Size\)\.ToJson\(\);\n/);
   });
 
+  // source: src/excel and src/image-charts assemble.ts (a bound column or row throws where the template does not support
+  // facets, IR supportsFacets: false) and docs/validation-codes.md (the validator reports <id>_unsupported there)
+  it('names the backend code for a facet channel the backend throws on', () => {
+    const ir = syntheticIr();
+    ir.catalog.backends = ['vegalite', 'plotly', 'excel'];
+    ir.catalog.chartTypes[0].backends.vegalite!.channels.push('column');
+    ir.catalog.chartTypes[0].backends.plotly = { channels: ['x', 'y'], properties: [] };
+    ir.catalog.chartTypes[0].backends.excel!.supportsFacets = false;
+    const content = emitBuilders(ir, overrides()).files[0].content;
+    assert.ok(content.includes('/// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite; not by plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c> on plotly, and <c>excel_unsupported</c> on excel, which throws on a bound field.</summary>\n'));
+    assert.ok(content.includes('/// <summary>Binds the <c>color</c> channel to a field. Declared by vegalite; not by plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>\n'));
+  });
+
   // source: design §7.8 and part 3 §8.4 (a retired member is kept with [Obsolete(..., DiagnosticId = "FLINT0001")] and still
   // writes its key; the message text of §8.4)
   it('keeps a retired channel and property under [Obsolete] FLINT0001', () => {

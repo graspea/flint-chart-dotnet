@@ -55,6 +55,8 @@ export interface FluentTemplate {
   builder: string;
   entry: string;
   backends: string[];
+  /** The backends whose template throws on a bound `column` or `row` (IR `supportsFacets: false`). */
+  facetThrows: string[];
   channels: FluentChannel[];
   properties: FluentProperty[];
   obsoleteIn?: string;
@@ -162,7 +164,7 @@ export function fluentModel(ir: Ir, overrides: Overrides): FluentTemplate[] {
     });
 
     const templateObsolete = obsolete.get(base);
-    return { name: t.name, constant: constant(base, t.name), builder, entry, backends, channels, properties, ...(templateObsolete ? { obsoleteIn: templateObsolete } : {}) };
+    return { name: t.name, constant: constant(base, t.name), builder, entry, backends, facetThrows: backends.filter((b) => t.backends[b].supportsFacets === false), channels, properties, ...(templateObsolete ? { obsoleteIn: templateObsolete } : {}) };
   });
   return templates;
 }

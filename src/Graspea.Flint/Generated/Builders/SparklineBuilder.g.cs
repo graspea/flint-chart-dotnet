@@ -89,36 +89,36 @@ public sealed partial class SparklineBuilder<TRow> : ChartBuilder<SparklineBuild
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Detail(ChartEncoding encoding) => Encode(Channel.Detail, encoding);
 
-    /// <summary>Binds the <c>row</c> channel to a field. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to a field. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c> on plotly, and <c>image_charts_unsupported</c> on image-charts, which throws on a bound field.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Row(string field, SemanticType? semanticType = null) => Encode(Channel.Row, field, semanticType);
 
-    /// <summary>Binds the <c>row</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c> on plotly, and <c>image_charts_unsupported</c> on image-charts, which throws on a bound field.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Row(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Row, selector, semanticType);
 
-    /// <summary>Binds the <c>row</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c> on plotly, and <c>image_charts_unsupported</c> on image-charts, which throws on a bound field.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Row(ChartEncoding encoding) => Encode(Channel.Row, encoding);
 
-    /// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c> on plotly, and <c>image_charts_unsupported</c> on image-charts, which throws on a bound field.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Column(string field, SemanticType? semanticType = null) => Encode(Channel.Column, field, semanticType);
 
-    /// <summary>Binds the <c>column</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c> on plotly, and <c>image_charts_unsupported</c> on image-charts, which throws on a bound field.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Column(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Column, selector, semanticType);
 
-    /// <summary>Binds the <c>column</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c> on plotly, and <c>image_charts_unsupported</c> on image-charts, which throws on a bound field.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Column(ChartEncoding encoding) => Encode(Channel.Column, encoding);

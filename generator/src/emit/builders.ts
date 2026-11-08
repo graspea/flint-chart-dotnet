@@ -47,11 +47,21 @@ function channelMethods(t: FluentTemplate, self: string): { code: string; api: s
   const apiSelf = `Graspea.Flint.${t.builder}<TRow>`;
   for (const c of t.channels) {
     const support = declaredBy(t.backends, c.backends);
+    // A bound column or row throws on a backend whose template does not support facets; the validator reports it there as
+    // that backend's <id>_unsupported Error, not as unsupported_channel.
+    const throwing = c.channel === 'column' || c.channel === 'row' ? support.missing.filter((b) => t.facetThrows.includes(b)) : [];
+    const ignoring = support.missing.filter((b) => !throwing.includes(b));
+    const reports = [
+      ...(ignoring.length > 0 ? [`\`unsupported_channel\`${throwing.length > 0 ? ` on ${ignoring.join(', ')}` : ''}`] : []),
+      ...(throwing.length > 0
+        ? [`${throwing.map((b) => `\`${b.replace(/-/g, '_')}_unsupported\` on ${b}`).join(' and ')}, which ${throwing.length === 1 ? 'throws' : 'throw'} on a bound field`]
+        : []),
+    ].join(', and ');
     const tail = c.obsoleteIn
       ? retiredText(c.obsoleteIn, 'channel')
       : support.all
         ? `${support.text}.`
-        : `${support.text}, where \`Validate(backend)\` reports \`unsupported_channel\`.`;
+        : `${support.text}, where \`Validate(backend)\` reports ${reports}.`;
     const call = `Channel.${c.constant}`;
     const obsolete = c.obsoleteIn ? obsoleteAttribute(INDENT, c.obsoleteIn) : '';
     code +=

@@ -28,7 +28,7 @@ A lambda selector must be a plain member access (`r => r.Month`). Anything else 
 | `ChartData.FromRows(rows)`, `ChartData.FromRows(rows, rowOptions)` | reflection over the row type; not trimming- or AOT-safe (annotated with `RequiresUnreferencedCode` and `RequiresDynamicCode`) |
 | `ChartData.FromRows(rows, jsonTypeInfo)` | a `JsonTypeInfo<TRow>` from a source-generated `JsonSerializerContext`; trimming- and AOT-safe |
 | `ChartData.FromJson(jsonArray)` | rows that are already JSON |
-| `ChartData.FromUrl(url)` | a URL; flint-chart never fetches it, so the validator reports `data_url_not_fetched` (Info), and `data_url_only` on Excel |
+| `ChartData.FromUrl(url)` | a URL; flint-chart never fetches it, so the validator reports `data_url_not_fetched` (Info), and `data_url_only` on Excel and Image-Charts |
 
 The fluent entries have the same overloads: `Chart.Line(rows)`, `Chart.Line(rows, rowOptions)`, `Chart.Line(rows, jsonTypeInfo)` and `Chart.Line(chartData)`. A `JsonTypeInfo` (or `RowOptions`) that would drop `null` members, through `DefaultIgnoreCondition`, `[JsonIgnore(Condition = WhenWritingNull)]` or a custom `ShouldSerialize` predicate, is rejected with `ArgumentException`: a key missing from the first row breaks field detection upstream. So is metadata that writes numbers as strings (`JsonNumberHandling.WriteAsString`).
 

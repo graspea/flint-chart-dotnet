@@ -226,7 +226,7 @@ On page one the budget is 10,000 and 6,000 rows go out; on page two the budget i
 
 ## Start-up validation
 
-`ChartGroup.Validate(backend)` runs `Template.Validate(backend)` for each chart with the existing codes, re-pathed to manifest paths (`charts.<id>.input...`), and adds five Info codes with the prefix `fixed_` that flag what a fixed definition leaves to the rows present: a missing type, a missing explicit order, an aggregate, a host override and a fixed size. They are reported from this entry point only, never from `ChartValidator.Validate`. `IsValid` is unchanged; a host fails start-up on the `fixed_` prefix as in the sample above. Each code, its condition and the upstream fact behind it are in [validation-codes.md](validation-codes.md#fixed-definitions-chartgroupvalidate-only).
+`ChartGroup.Validate(backend)` runs `Template.Validate(backend)` for each chart with the existing codes, re-pathed to manifest paths (`charts.<id>.input...`), and adds five Info codes with the prefix `fixed_` that flag what a fixed definition leaves to the rows present: a missing type, a missing explicit order, an aggregate, a host override and a fixed size. They are reported from this entry point only, never from `ChartValidator.Validate`. `IsValid` is unchanged; a host fails start-up on the `fixed_` prefix as in the sample above. Each code, its condition and the upstream fact behind it are in [validation-codes.md](validation-codes.md#fixed-definitions-chartgroupvalidate-only). Validate for the backend the browser draws with, as the sample above does with `FlintBackend.ECharts`: without a backend the checks also cover Excel and Image-Charts, which the browser flow never uses, so an Error there, such as a faceted chart, fails start-up for a backend the page does not draw with.
 
 ## Browser
 
@@ -242,7 +242,7 @@ The browser side (fetch the manifest, collect a group's pages, draw once) is pla
 ## Limits and exposure
 
 - **Rows per chart.** Keep the merged rows of one chart at or below about 10,000, where assembly stays in tens of milliseconds. Above that, aggregate on the server; more pages do not help, and some engines overflow the call stack around 125,000 rows. The 10,000 guidance is per chart, across all its pages; `MaxRows` caps one part, so a host that pages caps the chart across its pages itself (see MaxRows above), and a host that caps a whole page sums its parts.
-- **Backends.** Image-Charts and Excel are outside the browser flow.
+- **Backends.** The browser flow assembles on Vega-Lite, ECharts, Chart.js and Plotly, the backends `mountChart` and `assembleForBackend` take. Excel is outside it, and so is Image-Charts: `assembleImageCharts` writes the rows into an `https://image-charts.com` URL, so loading the image sends them to that service. Never use it for delivered rows.
 - **Exposure.** Rows and withheld codes are data, never HTML: a client puts them into the page as text. Keep rows in memory only and clear them on sign-out; never keep the assembled option. Authorize every page request before reading the cursor.
 
 ## See also

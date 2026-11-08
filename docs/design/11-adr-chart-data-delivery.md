@@ -1,6 +1,6 @@
 ## ADR 16: chart data delivery for fixed chart definitions
 
-Status: **Accepted** (2026-11-08) by the owner, as owner decision 16 in the index's dated decision table (`00-index.md:32-38`); the owner settled D9.6 (streamed parts in v1, ADR-16.2) and D9.11 (no npm client, README guidance only, ADR-16.6) first, on the same day, and accepted the other outcomes as recorded below. Every decision is implemented on the development branch, as its outcome below states, and unreleased (`CHANGELOG.md`, section `[Unreleased]`). Decision ids ADR-16.1 to ADR-16.7 are numbered after that decision; each names the owner decision points of part 5 (§14.10, D9.n) it settles and the PRD requirements it serves. Design: part 5 of the SDK design ([09-browser-data-delivery.md](09-browser-data-delivery.md), §14). Requirements: the PRD ([10-prd-chart-data-delivery.md](10-prd-chart-data-delivery.md), N1-N11, FR-1 to FR-14, NFR-1 to NFR-9). Baseline: the SDK release `v1.0.1.1-preview.1` (`flint-chart` 1.0.1), plus M0a, the `scheme` union, of the 1.0.1 gaps it leaves; M0b, the Image-Charts backend, is deferred (§14.8.1). Paths follow the Paths paragraph of part 5.
+Status: **Accepted** (2026-11-08) by the owner, as owner decision 16 in the index's dated decision table (`00-index.md:32-38`); the owner settled D9.6 (streamed parts in v1, ADR-16.2) and D9.11 (no npm client, README guidance only, ADR-16.6) first, on the same day, and accepted the other outcomes as recorded below. Every decision is implemented on the development branch, as its outcome below states, and unreleased (`CHANGELOG.md`, section `[Unreleased]`). Decision ids ADR-16.1 to ADR-16.7 are numbered after that decision; each names the owner decision points of part 5 (§14.10, D9.n) it settles and the PRD requirements it serves. Design: part 5 of the SDK design ([09-browser-data-delivery.md](09-browser-data-delivery.md), §14). Requirements: the PRD ([10-prd-chart-data-delivery.md](10-prd-chart-data-delivery.md), N1-N11, FR-1 to FR-14, NFR-1 to NFR-9). Baseline: the SDK release `v1.0.1.1-preview.1` (`flint-chart` 1.0.1), plus M0a, the `scheme` union, of the 1.0.1 gaps it leaves; M0b, the Image-Charts backend, is outside this decision (§14.8.1). Paths follow the Paths paragraph of part 5.
 
 ### Context
 
@@ -169,7 +169,6 @@ The decisions are implemented when the release criteria of §14.8.6 hold: the te
 
 ### Follow-ups
 
-- M0b, the Image-Charts backend and the six-backend harness (§14.8.1), once the owner decides the curated channel list, new builder overloads in a same-upstream release, the default target set and the id.
 - The preview exit gate of the Delivery C# surface: stable API or `[Experimental("FLINTEXP002")]`, before the first stable release (D9.4).
 - The removal of `ChartEncoding.Scheme` in the release after `1.0.1.1-preview.2` (`docs/deprecations.md`, `FLINT0002`).
 - `fixed_order_missing` exemptions for built-in sequences and dates drawn as categories (§14.11).

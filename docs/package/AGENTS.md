@@ -8,7 +8,7 @@ This section is also packed as `AGENTS.md` at the root of the NuGet package, nex
 
 ### Rules
 
-1. Graspea.Flint produces Flint `ChartAssemblyInput` JSON and never renders. There is no Render, Draw or ToSvg method; pass the JSON to `flint-chart`, which compiles it for Vega-Lite, ECharts, Chart.js, Plotly or Excel, or to the `flint-chart-mcp` server, which handles Vega-Lite, ECharts and Chart.js.
+1. Graspea.Flint produces Flint `ChartAssemblyInput` JSON and never renders. There is no Render, Draw or ToSvg method; pass the JSON to `flint-chart`, which compiles it for Vega-Lite, ECharts, Chart.js, Plotly or Excel, or into an Image-Charts image URL, or to the `flint-chart-mcp` server, which handles Vega-Lite, ECharts and Chart.js.
 2. Transform and aggregate the data in C# before building the chart; style the chart after Flint assembles it.
 3. Use the constants (`ChartType.LineChart`, `SemanticType.YearMonth`, `Channel.X`, `ThemePreset.Economist`) and the generated enums (`LineChartInterpolate.Monotone`) for known members, never free-form strings.
 4. A template that the constants do not list is not unsupported: use `Chart.Of(new ChartType("..."), rows)` or set `ChartSpec.ChartType` directly; `Validate` reports `unknown_chart_type` for the pinned flint-chart version.
@@ -85,7 +85,7 @@ A template that the constants do not list:
 ```csharp
 using Graspea.Flint.Validation;
 
-ChartAssemblyInput input = Chart.Of(new ChartType("Image Chart"), sales)
+ChartAssemblyInput input = Chart.Of(new ChartType("Word Cloud"), sales)
     .Encode(Channel.X, s => s.Region)
     .Build();
 ValidationResult result = ChartValidator.Validate(input); // unknown_chart_type (Error) for the pinned flint-chart
@@ -94,7 +94,8 @@ ValidationResult result = ChartValidator.Validate(input); // unknown_chart_type 
 ### Anti-patterns
 
 - Building Vega-Lite or ECharts options by hand "because Flint is just JSON".
-- Expecting `theme_spec` to apply on ECharts, Chart.js or Excel; only Vega-Lite and Plotly apply it (`theme_ignored_by_backend`).
+- Expecting `theme_spec` to apply on ECharts, Chart.js, Excel or Image-Charts; only Vega-Lite and Plotly apply it (`theme_ignored_by_backend`).
+- Assembling rows that must not leave your systems with Image-Charts (`assembleImageCharts`): the values are written into an `https://image-charts.com` URL and reach that service when the image loads.
 - Aggregating in the chart spec what can be aggregated in C# first.
 - Pinning `Graspea.Flint` to a version whose first three parts differ from the flint-chart version that renders the JSON.
 - Reading `IsValid` as "the chart looks right": the validator checks what the pinned assemblers throw on or drop, not the layout.

@@ -270,13 +270,13 @@ public sealed partial class ReadmeExamplesTests
         var sales = Sales;
 
         #region readme:agents-unknown-template
-        ChartAssemblyInput input = Chart.Of(new ChartType("Image Chart"), sales)
+        ChartAssemblyInput input = Chart.Of(new ChartType("Word Cloud"), sales)
             .Encode(Channel.X, s => s.Region)
             .Build();
         ValidationResult result = ChartValidator.Validate(input); // unknown_chart_type (Error) for the pinned flint-chart
         #endregion
 
-        Assert.That(input.ChartSpec.ChartType.Name, Is.EqualTo("Image Chart"));
+        Assert.That(input.ChartSpec.ChartType.Name, Is.EqualTo("Word Cloud"));
         Assert.That(result.Issues, Has.Exactly(1).Matches<ValidationIssue>(i => i.Code == "unknown_chart_type" && i.Severity == IssueSeverity.Error));
     }
 

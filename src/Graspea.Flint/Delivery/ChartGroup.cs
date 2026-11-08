@@ -49,7 +49,8 @@ public sealed class ChartGroup
     /// <summary>Validates every chart's template for <paramref name="backend"/>. Each issue keeps its code and moves its path
     /// under the chart's input in the manifest, as <c>charts.&lt;id&gt;.input.&lt;path&gt;</c>. Issues come in the group's
     /// order, then each template's own order, followed by that chart's fixed-definition Info issues (<c>fixed_*</c>).</summary>
-    /// <param name="backend">The backend to validate for, or null for every backend.</param>
+    /// <param name="backend">The backend to validate for, or null for every backend that has the chart's template, Excel and
+    /// Image-Charts included; pass the backend the browser draws with.</param>
     /// <returns>The issues; <see cref="ValidationResult.IsValid"/> is false when any is an error.</returns>
     public ValidationResult Validate(FlintBackend? backend = null)
     {

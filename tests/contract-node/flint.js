@@ -26,15 +26,22 @@ export const BACKENDS = {
   chartjs: [flint.assembleChartjs, flint.cjsGetTemplateDef],
   plotly: [flint.assemblePlotly, flint.plGetTemplateDef],
   excel: [flint.assembleExcel, flint.excelGetTemplateDef],
+  // No template registry: the chart-type map is the gate (src/image-charts/chart-types.ts), read as an own key, because
+  // isImageChartsSupported uses `in`, which also finds Object.prototype names such as "constructor".
+  'image-charts': [flint.assembleImageCharts, (chartType) => Object.hasOwn(flint.IMAGE_CHARTS_TYPE_MAP, chartType)],
 };
 
-/** The backends whose template registry has the chart type. */
+/** The backends that have the chart type: a template registry entry, or a key of the Image-Charts chart-type map. */
 export const backendsWith = (chartType) => Object.keys(BACKENDS).filter((b) => BACKENDS[b][1](chartType));
 
 /** Assembles on one backend and returns the warnings as `code: message` lines. */
 export function assembleWarnings(backend, input) {
   const result = BACKENDS[backend][0](structuredClone(input));
-  // The four layout backends report on _warnings, the Excel artifact on its top-level warnings array.
-  const warnings = (backend === 'excel' ? result.warnings : result._warnings) ?? [];
+  if (backend === 'image-charts' && !(result.type === 'image-charts' && result.url?.startsWith('https://image-charts.com/chart?'))) {
+    throw new Error(`image-charts returned no Image-Charts URL: ${JSON.stringify(result).slice(0, 200)}`);
+  }
+  // The four layout backends report on _warnings, the Excel artifact on its top-level warnings array. The Image-Charts
+  // artifact ({ type, url }) has none; a top-level array a later flint-chart adds is read as Excel's is.
+  const warnings = (backend === 'excel' || backend === 'image-charts' ? result.warnings : result._warnings) ?? [];
   return warnings.map((w) => `${w.code}: ${w.message}`);
 }

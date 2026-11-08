@@ -19,7 +19,7 @@ cd .. && dotnet build -warnaserror && dotnet test -f net10.0
 
 | Step | What it does |
 |---|---|
-| `extract` | Sets `TZ=UTC` and loads `overrides.json`. Builds `IR.types` with the TypeScript checker, starting from `package.json` `types`, and `IR.catalog` from the runtime registries. Diffs the result against the committed IR and appends each removal to `retired.json`. Writes `ir/flint-ir.json` canonically: sorted keys, two-space indent, LF, trailing newline. |
+| `extract` | Sets `TZ=UTC` and loads `overrides.json`. Builds `IR.types` with the TypeScript checker, starting from `package.json` `types`, and `IR.catalog` from the runtime registries, plus a synthetic one for Image-Charts, which has no template registry: its chart types are the own keys of `IMAGE_CHARTS_TYPE_MAP` and its channels the `overrides.json` entry `imageChartsChannels`. It checks the sha256 of `src/image-charts/assemble.ts` and `chart-types.ts` against `imageChartsSource`. Diffs the result against the committed IR and appends each removal to `retired.json`. Writes `ir/flint-ir.json` canonically: sorted keys, two-space indent, LF, trailing newline. |
 | `emit` | Reads only the IR and `overrides.json`. Checks property kinds and the entry, builder, enum, channel and property names (design §7.6), then writes `Generated/Constants`, `Generated/Options`, `Generated/Theming`, `Generated/Json`, `Generated/Tables`, the fluent facades `Generated/Builders`, `Generated/Enums` and `Generated/Entries`, and `Generated/catalog.json` (the IR `catalog` node, canonical JSON, packed as `catalog/catalog.json`). Removes stale `*.g.cs` files and rewrites `PublicAPI.Unshipped.txt` (hand-written lines are kept; generated lines are owned by the generator, including the `*REMOVED*` lines of [Removed public API](#removed-public-api)). Rewrites the marked sections of `README.md` and writes `docs/package/AGENTS.md` (see [Documentation](#documentation)). Writes the spec-to-C# name tables `src/Graspea.Flint.CSharp/Generated/NameTables.g.cs` and `Catalog.g.cs` (see [Spec-to-C# name tables](#spec-to-c-name-tables)). |
 | `fixtures` | Runs in a process of its own (the seed and `TZ` are process-wide): `TZ=UTC`, Park-Miller seed 42 in place of `Math.random`, then `flint-chart/test-data`. Writes `cases.jsonl`, `expectations.jsonl`, `manifest.json` and the probe record `probes.json` ([Probes](#probes)) to `tests/fixtures/flint-chart@<version>/`, and an empty `known-failures.txt` when there is none ([fixtures.md](fixtures.md)). |
 
@@ -37,7 +37,7 @@ An entry whose path is in the IR again (upstream restored the member) is ignored
 
 ### Probes
 
-The `fixtures` step also records the runtime facts the design cites as probed (null handling, the backends that apply the theme, the inference of the values .NET writes, the `Date.parse` results the validator relies on, and the channel types of `resolveChannelSemantics` that the validator ports: snapshots, the rewritten `YearMonth` and `Date` spellings, the inferred date strings) per upstream version, in `tests/fixtures/flint-chart@<version>/probes.json`. `test/probes.test.ts` keeps the record of the pinned version equal to a fresh run, and pins the documented facts to the record of the version the design, `docs/validation-codes.md` and the validator describe (`DOCUMENTED` in the test, 1.0.0 today). The sync report diffs the pin's record against the new version's and lists each changed fact as a `behavioural` row under "Behaviour probes", which adds `needs-attention`; a changed fact does not fail `npm test`. The maintainer then decides whether the SDK follows it, and moves `DOCUMENTED`, its expectations, the docs and the validator together.
+The `fixtures` step also records the runtime facts the design cites as probed (null handling, the backends that apply the theme, the inference of the values .NET writes, the `Date.parse` results the validator relies on, and the channel types of `resolveChannelSemantics` that the validator ports: snapshots, the rewritten `YearMonth` and `Date` spellings, the inferred date strings) per upstream version, in `tests/fixtures/flint-chart@<version>/probes.json`. `test/probes.test.ts` keeps the record of the pinned version equal to a fresh run, and pins the documented facts to the record of the version the design, `docs/validation-codes.md` and the validator describe (`DOCUMENTED` in the test, 1.0.0 today; the Image-Charts facts are pinned to the 1.0.1 record in a block of their own). The sync report diffs the pin's record against the new version's and lists each changed fact as a `behavioural` row under "Behaviour probes", which adds `needs-attention`; a changed fact does not fail `npm test`. The maintainer then decides whether the SDK follows it, and moves `DOCUMENTED`, its expectations, the docs and the validator together.
 
 ### Removed public API
 
@@ -108,6 +108,9 @@ Generation fails, naming the IR path, on:
 - a member-name or class-name collision;
 - a property whose kind differs across the backends of one template;
 - an `overrides.json` entry that matches nothing, unless its path is listed in `pending`.
+- a chart type of `IMAGE_CHARTS_TYPE_MAP` without an `imageChartsChannels` entry; an entry for a chart type outside the map, unless `pending` lists `catalog.chartTypes[<name>].backends.image-charts`; a mapped chart type that no other backend has (Image-Charts would add a builder); a listed channel that is `column` or `row`, or that no other backend of the template declares (a builder would gain a member);
+- an Image-Charts source file (`src/image-charts/assemble.ts`, `src/image-charts/chart-types.ts`) whose sha256 differs from `imageChartsSource`: the throw rules (`src/Graspea.Flint/Validation/Rules/ImageCharts.cs`), `imageChartsChannels` and the channels the validator knows Image-Charts reads undeclared were reviewed against those files. Review them against the new files, then record the new values. A change in a `src/core` helper they call is not caught;
+- an `assemble*` export of the package that the catalog does not cover: a new backend without a template registry.
 - two generated type names that coincide (a builder, an enum or its value table), or an entry that takes the name of a hand-written `Chart` member (`Of`);
 - two option values of one discrete property that give the same enum member;
 - an open literal union whose struct name is a generated class name, or a literal of it that gives no C# name or a member the struct declares (`Value`, `ToString`, `Equals`, `GetHashCode`) or another literal's member;
@@ -247,6 +250,15 @@ These `unions` entries were reviewed on `main` while 0.5.1 was pinned, listed in
 | `TypeRole.weight`, `ThemeSource.leadInWeight`, `ThemeSource.credit.weight` | `TypeWeight` | `TypeWeight`: nine keywords or the numbers 100 to 900 |
 | `ThemeMarks.group.gap/spacing`, `BandGeometry.group.gap/spacing`, `ThemeLabelFit.rowLimit/turnedLimit` | `ThemeLength` | ``number \| `${number}px` `` (`GapSize`) and ``number \| `${number}%` `` |
 | `ThemeLabels.overflow` | `LabelOverflow` | `LabelFitStep \| LabelFitStep[]` |
+
+## `overrides.json` entries for 1.0.1
+
+| Entry | Reason |
+|---|---|
+| `imageChartsChannels` | Image-Charts has no template registry. Per chart type of `IMAGE_CHARTS_TYPE_MAP` it lists the channels `assembleImageCharts` reads that another backend of the template also declares, so no builder gains a member in a release of the same upstream version (`docs/versioning.md`): `x`, `y`, `color` on Bar, Stacked Bar, Line, Area, Radar Chart, Sparkline and Scatter Plot; `x`, `y`, `group`, `color` on Grouped Bar Chart; `size`, `color`, `theta` on Pie and Donut Chart. `column` and `row` are left out, because the assembler throws on a bound facet. `group` on the other chart types and the `x` and `y` fallbacks of Pie and Donut are read but declared by no other backend, so they are left out too; the validator does not report those as `unsupported_channel` (`ImageCharts.ReadsUndeclared`, mirrored in `CatalogCheck`) |
+| `imageChartsSource` | The sha256 of `src/image-charts/assemble.ts` and `src/image-charts/chart-types.ts` of flint-chart 1.0.1, the files the Image-Charts rules, `imageChartsChannels` and the validator's undeclared-read exemptions were written from. `extract` fails when the installed files differ ([Failure policy](#failure-policy)) |
+| `docs["AssembleOptions"]` | neither Excel nor Image-Charts reads `options` |
+| `docs["ThemeSpec"]` | Image-Charts ignores `theme_spec` too (recorded probe against 1.0.1) |
 
 ## Naming results on the 0.5.1 IR
 
@@ -417,9 +429,9 @@ every fixture and probe case.
 - the backends;
 - `BackendsApplyingTheme`, `HostStateKeys` and `IgnoredOptions`;
 - the channel union, the semantic types and the presets;
-- for every template on every backend: its channels, its declared properties, and for Excel `supportsFacets` and `hasValidate`;
+- for every template on every backend: its channels, its declared properties, for Excel `supportsFacets` and `hasValidate`, and for Image-Charts `supportsFacets`;
 - for every semantic type, its candidate encodings (`visEncodings`, from `getRegistryEntry`), from which the validator resolves an annotated field's type the way upstream does.
 
 Each property records its kind, its discrete option values as compact JSON (`null` = the omitted default) with their labels (upstream accepts a label in place of a value), and its continuous `min/max/step`. The constants emitter also gives each literal-union struct (`EncodingType`, `Aggregate`, `SortOrder`, `SeriesCountAxis`) an internal `Literals` set, against which the validator reports `invalid_literal`. The row types and the set/map helpers are hand-written in `src/Graspea.Flint/Model/CatalogTables.cs`.
 
-`supportsFacets` is derived from the template's declared `column`/`row` channels. It is false for all 18 Excel templates, because the Excel assembler throws on a bound facet.
+`supportsFacets` is derived from the template's declared `column`/`row` channels. It is false for all 18 Excel templates and all 10 Image-Charts templates, because both assemblers throw on a bound facet. An Image-Charts template also carries its `IMAGE_CHARTS_TYPE_MAP` entry as `typeMapping`, so that a sync diff shows a change of its chart family.

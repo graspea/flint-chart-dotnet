@@ -12,10 +12,21 @@ All notable changes to this project are documented in this file. The format foll
 - The README section "Charts in the browser" and [docs/delivery.md](docs/delivery.md); the SDK ships no npm package.
 - Delivery contract v1 ([docs/versioning.md](docs/versioning.md#the-delivery-contract)) is stable from this release: additive changes only.
 - `ChartEncoding.ColorScheme`, a `ColorScheme`: a scheme name or a list of colour stops, low end first (`ColorScheme = "viridis"` or `ColorScheme = new[] { "#c0392b", "#f2f2f2", "#2e75b6" }`). `FlintJson` now reads an array `scheme`, which threw `JsonException`; `flint-cs to-csharp` and `Graspea.Flint.Generators` write an array scheme typed, which was reported as `FLINT103`.
+- `FlintBackend.ImageCharts` (`image-charts`), the Image-Charts backend of `flint-chart` (`assembleImageCharts`), which returns an `https://image-charts.com` image URL instead of a spec. It has ten chart types: Bar, Grouped Bar, Stacked Bar, Line, Area, Pie, Donut and Radar Chart, Sparkline and Scatter Plot. Each declares the channels the assembler reads that the other backends of the template declare, so no builder gains a member. Validation does not report the channels the assembler reads that its template leaves out (`group`, and `x` and `y` on Pie and Donut Chart) as `unsupported_channel`. Loading the image sends the chart's values to that service; the browser delivery flow does not use it ([docs/delivery.md](docs/delivery.md#limits-and-exposure)).
+- The Error code `image_charts_unsupported` for what makes the Image-Charts assembler of `flint-chart` 1.0.1 throw: a bound `column` or `row`; no field on `x` or `y` of a Bar, Grouped Bar, Stacked Bar, Line, Area or Radar Chart or a Sparkline; a Pie or Donut Chart without a slice field (`color`, else `x`) or a value field (`size`, else `theta`, else `y`); and a Scatter Plot whose `x` or `y` is missing or not quantitative ([docs/validation-codes.md](docs/validation-codes.md)).
+
+### Changed
+
+- Validation without a backend (`ChartValidator.Validate(input)`, `Validate()` on a builder or a template, and `ChartGroup.Validate()`) now covers Image-Charts for its ten chart types, as it covers Excel: messages name `image-charts` among the backends, Infos such as `theme_ignored_by_backend`, `option_overridden_by_backend` and `data_empty` also report it, and an Image-Charts throw is an Error. A Sparkline, which has no Excel template, is now invalid without a backend when it binds `column` or `row`, or has no field on `x` or `y`: Image-Charts throws there, while Vega-Lite and Plotly assemble it. No other document of the `flint-chart` 1.0.1 fixtures changes its `IsValid`. Pass the backend you render with to check only that one.
+- The catalog lists `image-charts`: `catalog/catalog.json` in the package, the README chart catalog and the packed `AGENTS.md`; the generated builder docs say where a channel or property is not declared for it, and name `excel_unsupported` or `image_charts_unsupported` for a `column` or `row` that those backends throw on. The `flint-chart@1.0.1` fixtures record the Image-Charts outcomes and 23 new crafted cases.
 
 ### Deprecated
 
 - `ChartEncoding.Scheme` (`FLINT0002`, [docs/deprecations.md](docs/deprecations.md#FLINT0002)): use `ChartEncoding.ColorScheme`. It reads the scheme name and returns null when the scheme is a list of colour stops.
+
+### Fixed
+
+- `reserved_semantic_type` is no longer an Error on an Excel target for a field that only a static-series entry binds and that is not a key of the first row: Excel reads an array encoding as an unbound channel and never looks the annotation up. Image-Charts is validated the same way.
 
 ## [1.0.1.1-preview.1] - 2026-11-08
 
