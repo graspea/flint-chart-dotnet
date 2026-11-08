@@ -68,6 +68,16 @@
         "minItems": 1
       }
     },
+    "imageChartsReads": {
+      "description": "Chart type of IMAGE_CHARTS_TYPE_MAP -> the channels assembleImageCharts reads, as the read probe of src/extract/image-charts-reads.ts finds them: binding the channel to a text or a number field, or removing it from the base, changes the URL or the throw, under a base the chart type assembles from. extract fails when the probe finds other channels, so that a change in a src/core helper the fingerprinted Image-Charts files call is reviewed too: review the Image-Charts throw rules, imageChartsChannels and the undeclared-read exemptions, then record the probed channels. Every imageChartsChannels channel must be read. The keys must equal the map's keys, unless pending lists catalog.chartTypes[<type>].backends.image-charts.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 },
+        "uniqueItems": true,
+        "minItems": 1
+      }
+    },
     "imageChartsSource": {
       "description": "The reviewed sha256 (lowercase hex) of src/image-charts/assemble.ts and src/image-charts/chart-types.ts of the pinned flint-chart, the files the hand-written Image-Charts parts are read from: the throw rules (src/Graspea.Flint/Validation/Rules/ImageCharts.cs), imageChartsChannels and the channels the validator knows Image-Charts reads though its template leaves them undeclared. Extraction fails when the installed files differ; review those parts against the new files, then record the new values.",
       "type": "object",

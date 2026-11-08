@@ -64,6 +64,224 @@
     "Stage 1": "parses",
     "now": "NaN"
   },
+  "imageChartsReads": {
+    "bases": {
+      "slice and value": {
+        "color": {
+          "field": "category"
+        },
+        "size": {
+          "field": "measure"
+        }
+      },
+      "x and y measures": {
+        "x": {
+          "field": "measure"
+        },
+        "y": {
+          "field": "measure2"
+        }
+      },
+      "x category, y measure": {
+        "x": {
+          "field": "category"
+        },
+        "y": {
+          "field": "measure"
+        }
+      }
+    },
+    "reads": {
+      "Area Chart": {
+        "x and y measures": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ],
+        "x category, y measure": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ]
+      },
+      "Bar Chart": {
+        "x and y measures": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ],
+        "x category, y measure": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ]
+      },
+      "Donut Chart": {
+        "slice and value": [
+          "color",
+          "column",
+          "row",
+          "size"
+        ],
+        "x and y measures": [
+          "color",
+          "column",
+          "row",
+          "size",
+          "theta",
+          "x",
+          "y"
+        ],
+        "x category, y measure": [
+          "color",
+          "column",
+          "row",
+          "size",
+          "theta",
+          "x",
+          "y"
+        ]
+      },
+      "Grouped Bar Chart": {
+        "x and y measures": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ],
+        "x category, y measure": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ]
+      },
+      "Line Chart": {
+        "x and y measures": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ],
+        "x category, y measure": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ]
+      },
+      "Pie Chart": {
+        "slice and value": [
+          "color",
+          "column",
+          "row",
+          "size"
+        ],
+        "x and y measures": [
+          "color",
+          "column",
+          "row",
+          "size",
+          "theta",
+          "x",
+          "y"
+        ],
+        "x category, y measure": [
+          "color",
+          "column",
+          "row",
+          "size",
+          "theta",
+          "x",
+          "y"
+        ]
+      },
+      "Radar Chart": {
+        "x and y measures": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ],
+        "x category, y measure": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ]
+      },
+      "Scatter Plot": {
+        "x and y measures": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ]
+      },
+      "Sparkline": {
+        "x and y measures": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ],
+        "x category, y measure": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ]
+      },
+      "Stacked Bar Chart": {
+        "x and y measures": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ],
+        "x category, y measure": [
+          "color",
+          "column",
+          "group",
+          "row",
+          "x",
+          "y"
+        ]
+      }
+    }
+  },
   "nullHandling": {
     "channel null": {
       "chartjs": "throws",

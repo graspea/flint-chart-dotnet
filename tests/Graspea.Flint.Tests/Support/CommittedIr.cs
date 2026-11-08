@@ -13,6 +13,18 @@ public static class CommittedIr
 
     public static string[] Strings(JsonNode? array) => array!.AsArray().Select(n => n!.GetValue<string>()).ToArray();
 
+    private static readonly Lazy<JsonNode> ProbeRecord = new(() => JsonNode.Parse(File.ReadAllText(Path.Combine(RepositoryRoot(), "tests", "fixtures",
+        $"flint-chart@{Root["upstream"]!["version"]!.GetValue<string>()}", "probes.json")))!);
+
+    /// <summary>The generator's runtime probe record of the pinned version (tests/fixtures/flint-chart@&lt;pin&gt;/probes.json,
+    /// docs/generator.md "Probes"), an admissible source of expected values like the IR.</summary>
+    public static JsonNode Probes => ProbeRecord.Value;
+
+    /// <summary>The channels the read probe saw <c>assembleImageCharts</c> read on a chart type, under any of its bases
+    /// (probes.json <c>imageChartsReads.reads</c>).</summary>
+    public static string[] ImageChartsReads(string chartType) =>
+        Probes["imageChartsReads"]!["reads"]![chartType]!.AsObject().SelectMany(b => Strings(b.Value)).Distinct().ToArray();
+
     private static readonly Lazy<JsonArray> Ledger = new(() => JsonNode.Parse(File.ReadAllText(Path.Combine(RepositoryRoot(), "generator", "retired.json")))!.AsArray());
 
     private static readonly Lazy<(JsonNode Catalog, Dictionary<string, string> Obsolete)> Facade = new(BuildFacade);

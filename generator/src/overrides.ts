@@ -12,6 +12,7 @@ export interface Overrides {
   hostStateKeys: string[];
   ignoredOptions: Record<string, string[]>;
   imageChartsChannels: Record<string, string[]>;
+  imageChartsReads: Record<string, string[]>;
   imageChartsSource: Record<string, string>;
   keepObsolete: string[];
   pending: string[];
@@ -28,6 +29,7 @@ export function emptyOverrides(): Overrides {
     hostStateKeys: [],
     ignoredOptions: {},
     imageChartsChannels: {},
+    imageChartsReads: {},
     imageChartsSource: {},
     keepObsolete: [],
     pending: [],

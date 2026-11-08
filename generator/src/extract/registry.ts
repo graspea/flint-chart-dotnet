@@ -12,6 +12,7 @@ import {
   type IrSemanticType,
   type IrThemePreset,
 } from '../ir.ts';
+import { imageChartsReadErrors, probeImageChartsReads, readUnion } from './image-charts-reads.ts';
 
 /** Backend id -> registry exports, in the fixed backend order. */
 const BACKENDS: ReadonlyArray<{ id: string; all: string; byCategory?: string }> = [
@@ -46,6 +47,8 @@ export interface CatalogOverrides {
   ignoredOptions: Record<string, string[]>;
   /** Chart type of IMAGE_CHARTS_TYPE_MAP -> the channels its Image-Charts template declares. */
   imageChartsChannels: Record<string, string[]>;
+  /** Chart type of IMAGE_CHARTS_TYPE_MAP -> the channels assembleImageCharts reads, as the read probe finds them. */
+  imageChartsReads: Record<string, string[]>;
   /** Package-relative path -> the reviewed sha256 of an Image-Charts source file. */
   imageChartsSource: Record<string, string>;
   /** IR paths of entries written ahead for an upstream version that is not pinned yet. */
@@ -164,7 +167,8 @@ export function extractCatalog(flint: Record<string, unknown>, packageDir: strin
  * Object.prototype members), with the curated channels in the order the other backends declare them, no properties
  * (assembleImageCharts reads no chartProperties) and no facets (it throws on a bound column or row). Fails, naming every
  * entry, when the map and the overrides disagree, a curated
- * channel would give a builder a member, or an Image-Charts source file differs from its reviewed fingerprint.
+ * channel would give a builder a member, an Image-Charts source file differs from its reviewed fingerprint, or the
+ * channels the read probe finds assembleImageCharts reading differ from `imageChartsReads`.
  */
 function imageChartsTemplates(flint: Record<string, unknown>, packageDir: string, chartTypes: Map<string, IrChartType>, overrides: CatalogOverrides): void {
   const map = flint.IMAGE_CHARTS_TYPE_MAP as Record<string, Record<string, string | boolean>> | undefined;
@@ -196,9 +200,11 @@ function imageChartsTemplates(flint: Record<string, unknown>, packageDir: string
       errors.push(`imageChartsChannels["${name}"] matches no chart type of IMAGE_CHARTS_TYPE_MAP`);
     }
   }
-  // ponytail: a fingerprint, not a reading: any edit of these two files fails extraction until it is reviewed, but a
-  // change in a src/core helper they call (normalizeChartEncodingAliases, resolveChannelSemantics) passes unseen. A
-  // behavioural probe of the channels read per chart type would close that; add one if a sync ever slips through.
+  errors.push(...imageChartsReadErrors(readUnion(probeImageChartsReads(flint).reads), overrides.imageChartsReads, curated, pending));
+  // ponytail: the fingerprint catches an edit of these two files, the read probe above a change in a src/core helper
+  // they call that adds or drops a read. The probe toggles one catalog channel at a time on three rows under three
+  // bases, so a read that needs two more channels bound together, many rows (overflow filtering) or other values passes
+  // unseen; widen the bases in image-charts-reads.ts if a sync ever slips through.
   for (const file of IMAGE_CHARTS_SOURCES) {
     const actual = createHash('sha256').update(readFileSync(join(packageDir, file))).digest('hex');
     const reviewed = overrides.imageChartsSource[file];

@@ -200,6 +200,22 @@ describe('probes: Image-Charts facts (flint-chart 1.0.1)', () => {
     results = JSON.parse(readFileSync(record('1.0.1'), 'utf8')) as ProbeResults;
   });
 
+  // source: src/image-charts/assemble.ts of flint-chart 1.0.1 (column and row throw, :192-194; group, else a categorical
+  // color, is the series, :205-210; x is the slice when color has no field and y the value when neither size nor theta
+  // has one, :265-266; a Scatter Plot assembles only from quantitative x and y, :290-293), probed by
+  // src/extract/image-charts-reads.ts
+  it('records the channels assembleImageCharts reads per chart type and base', () => {
+    const axes = ['color', 'column', 'group', 'row', 'x', 'y'];
+    const partToWhole = ['color', 'column', 'row', 'size', 'theta', 'x', 'y'];
+    const both = { 'x and y measures': axes, 'x category, y measure': axes };
+    const slices = { 'slice and value': ['color', 'column', 'row', 'size'], 'x and y measures': partToWhole, 'x category, y measure': partToWhole };
+    assert.deepEqual(Object.keys(results.imageChartsReads.bases).sort(), ['slice and value', 'x and y measures', 'x category, y measure']);
+    assert.deepEqual(results.imageChartsReads.reads, {
+      'Area Chart': both, 'Bar Chart': both, 'Donut Chart': slices, 'Grouped Bar Chart': both, 'Line Chart': both,
+      'Pie Chart': slices, 'Radar Chart': both, 'Scatter Plot': { 'x and y measures': axes }, Sparkline: both, 'Stacked Bar Chart': both,
+    });
+  });
+
   // source: src/image-charts/assemble.ts (no category or measure resolves without encodings; a null channel is skipped;
   // only data.values is read, never data.url) and core convertTemporalData (the row shapes)
   it('finds the Image-Charts throws and what it tolerates', () => {

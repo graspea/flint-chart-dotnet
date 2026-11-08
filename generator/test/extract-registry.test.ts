@@ -7,7 +7,8 @@ import * as flint from 'flint-chart';
 import { extractCatalog } from '../src/extract/registry.ts';
 import { flintPackageDir } from '../src/extract/package.ts';
 import { loadOverrides } from '../src/overrides.ts';
-import type { Ir, IrCatalog } from '../src/ir.ts';
+import { catalogChannels } from '../src/extract/image-charts-reads.ts';
+import { ordinal, type Ir, type IrCatalog } from '../src/ir.ts';
 
 // Runs against the installed flint-chart. Facts cited from docs/design part 01 §2 and §10.4 test 3 were probed against
 // the 0.5.1 tarball; a count or list that changes between upstream versions is read from the committed IR of the pinned
@@ -23,8 +24,8 @@ describe('extract/registry', () => {
   const discretePairs = (c: IrCatalog) =>
     new Set(allProperties(c).filter(({ p }) => p.type === 'discrete').map(({ t, p }) => `${t.name}/${p.key}`));
 
-  const { imageChartsChannels, imageChartsSource } = loadOverrides(new URL('../overrides.json', import.meta.url).pathname);
-  const overrides = { backendsApplyingTheme: ['vegalite', 'plotly'], hostStateKeys: ['sort'], ignoredOptions: {}, imageChartsChannels, imageChartsSource };
+  const { imageChartsChannels, imageChartsReads, imageChartsSource } = loadOverrides(new URL('../overrides.json', import.meta.url).pathname);
+  const overrides = { backendsApplyingTheme: ['vegalite', 'plotly'], hostStateKeys: ['sort'], ignoredOptions: {}, imageChartsChannels, imageChartsReads, imageChartsSource };
   const extract = (module: Record<string, unknown>, change: Partial<typeof overrides> & { pending?: string[] } = {}) =>
     extractCatalog(module, flintPackageDir(), { ...overrides, ...change });
   const map = (flint as unknown as { IMAGE_CHARTS_TYPE_MAP: Record<string, Record<string, string | boolean>> }).IMAGE_CHARTS_TYPE_MAP;
@@ -64,6 +65,73 @@ describe('extract/registry', () => {
     assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, toString: ['x'] } }), /imageChartsChannels\["toString"\] matches no chart type/);
     assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, 'Bar Chart': ['x', 'y', 'size'] } }), /lists size, which no other backend/);
     assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, 'Bar Chart': ['x', 'y', 'column'] } }), /lists column, on which assembleImageCharts throws/);
+  });
+
+  // source: docs/generator.md "Failure policy" and src/extract/image-charts-reads.ts (the probe's candidate channels are
+  // the catalog's: flint.channels and every channel a registry template declares)
+  it('probes the channels of the catalog', () => {
+    assert.deepEqual([...catalogChannels(flint as unknown as Record<string, unknown>)].sort(ordinal), [...committed.channels].sort(ordinal));
+  });
+
+  // source: docs/generator.md "Failure policy" and src/extract/image-charts-reads.ts (the channels the probe finds
+  // assembleImageCharts reading are recorded in overrides.json imageChartsReads)
+  it('fails when the probed Image-Charts reads differ from imageChartsReads', () => {
+    const module = flint as unknown as Record<string, unknown>;
+    const bar = { ...imageChartsReads, 'Bar Chart': ['color', 'column', 'row', 'x', 'y'] };
+    assert.throws(
+      () => extract(module, { imageChartsReads: bar }),
+      /imageChartsReads\["Bar Chart"\] in overrides\.json records color, column, row, x, y, but the read probe finds color, column, group, row, x, y \(new: group; gone: none\): review the Image-Charts throw rules/,
+    );
+    const without = Object.fromEntries(Object.entries(imageChartsReads).filter(([k]) => k !== 'Sparkline'));
+    assert.throws(() => extract(module, { imageChartsReads: without }), /imageChartsReads\["Sparkline"\] is missing/);
+    assert.throws(() => extract(module, { imageChartsReads: { ...imageChartsReads, Heatmap: ['x'] } }), /imageChartsReads\["Heatmap"\] matches no chart type/);
+    assert.doesNotThrow(() => extract(module, { imageChartsReads: { ...imageChartsReads, Heatmap: ['x'] }, pending: ['catalog.chartTypes[Heatmap].backends.image-charts'] }));
+  });
+
+  // source: docs/generator.md "Failure policy" and src/extract/image-charts-reads.ts (a change in a src/core helper the
+  // fingerprinted files call is seen by behaviour, the fingerprint unchanged)
+  it('fails when a src/core change makes Image-Charts read a new channel, the fingerprint unchanged', () => {
+    const real = (flint as unknown as { assembleImageCharts: (i: any) => { type: string; url: string } }).assembleImageCharts;
+    const readsOpacity = {
+      ...(flint as unknown as Record<string, unknown>),
+      assembleImageCharts: (input: any) => {
+        const out = real(input);
+        return input.chart_spec.encodings?.opacity?.field ? { ...out, url: `${out.url}&chls=2` } : out;
+      },
+    };
+    assert.throws(
+      () => extract(readsOpacity),
+      (e: Error) => /imageChartsReads\["Bar Chart"\].*\(new: opacity; gone: none\)/.test(e.message) && !/has sha256/.test(e.message),
+    );
+  });
+
+  // source: docs/generator.md "Failure policy" and src/extract/image-charts-reads.ts (a curated channel the assembler
+  // ignores would hide an unsupported_channel)
+  it('fails on a curated Image-Charts channel the probe does not find read', () => {
+    const real = (flint as unknown as { assembleImageCharts: (i: any) => unknown }).assembleImageCharts;
+    const ignoresColor = {
+      ...(flint as unknown as Record<string, unknown>),
+      assembleImageCharts: (input: any) => {
+        if (input.chart_spec.chartType !== 'Bar Chart') return real(input);
+        const { color: _color, ...encodings } = input.chart_spec.encodings ?? {};
+        return real({ ...input, chart_spec: { ...input.chart_spec, encodings } });
+      },
+    };
+    assert.throws(() => extract(ignoresColor), /imageChartsChannels\["Bar Chart"\] lists color, which the read probe does not find read/);
+  });
+
+  // source: docs/generator.md "Failure policy" and src/extract/image-charts-reads.ts (a chart type that assembles from
+  // none of the bases cannot be probed)
+  it('fails on a chart type that assembles from none of the bases', () => {
+    const real = (flint as unknown as { assembleImageCharts: (i: any) => unknown }).assembleImageCharts;
+    const throwsOnRadar = {
+      ...(flint as unknown as Record<string, unknown>),
+      assembleImageCharts: (input: any) => {
+        if (input.chart_spec.chartType === 'Radar Chart') throw new Error('no');
+        return real(input);
+      },
+    };
+    assert.throws(() => extract(throwsOnRadar), /assembleImageCharts assembles "Radar Chart" from none of the read probe's bases/);
   });
 
   // source: docs/generator.md "Failure policy" (an Image-Charts source file that differs from its reviewed sha256 fails

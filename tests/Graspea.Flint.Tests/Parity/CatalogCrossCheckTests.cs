@@ -7,6 +7,7 @@ namespace Graspea.Flint.Tests.Parity;
 /// <summary>
 /// The compiled catalog tables against the committed IR, read through the validator and the structs (design §10.1
 /// rule 4, §10.4 test 15). Both sides come from the IR, so a failure here is an emitter bug (§9.3).
+/// The Image-Charts channels read though undeclared come from the probe record (CommittedIr.ImageChartsReads).
 /// </summary>
 public sealed class CatalogCrossCheckTests
 {
@@ -72,10 +73,10 @@ public sealed class CatalogCrossCheckTests
                             // source: supportsFacets false: both native assemblers throw on a bound facet
                             Assert.That(Has(result, unsupported, channel), Is.True, $"{id}: a bound {channel} throws");
                         }
-                        else if (id == "image-charts" && (chartType is "Pie Chart" or "Donut Chart" ? channel is "x" or "y" : channel == "group"))
+                        else if (id == "image-charts" && CommittedIr.ImageChartsReads(chartType).Contains(channel))
                         {
-                            // source: assemble.ts:205-210, :265-266 (read though undeclared: the series, and the slice and value
-                            // fallbacks, which the document's lone x and the bound channel never shadow)
+                            // source: probes.json imageChartsReads (read though undeclared; the document's lone x and the bound
+                            // channel never shadow a fallback, so the union over the bases applies; ImageChartsReadsTests checks each base)
                             Assert.That(Has(result, "unsupported_channel", channel), Is.False, $"{id}: {channel} is read");
                         }
                         else

@@ -170,6 +170,90 @@
       "color"
     ]
   },
+  "imageChartsReads": {
+    "Area Chart": [
+      "color",
+      "column",
+      "group",
+      "row",
+      "x",
+      "y"
+    ],
+    "Bar Chart": [
+      "color",
+      "column",
+      "group",
+      "row",
+      "x",
+      "y"
+    ],
+    "Donut Chart": [
+      "color",
+      "column",
+      "row",
+      "size",
+      "theta",
+      "x",
+      "y"
+    ],
+    "Grouped Bar Chart": [
+      "color",
+      "column",
+      "group",
+      "row",
+      "x",
+      "y"
+    ],
+    "Line Chart": [
+      "color",
+      "column",
+      "group",
+      "row",
+      "x",
+      "y"
+    ],
+    "Pie Chart": [
+      "color",
+      "column",
+      "row",
+      "size",
+      "theta",
+      "x",
+      "y"
+    ],
+    "Radar Chart": [
+      "color",
+      "column",
+      "group",
+      "row",
+      "x",
+      "y"
+    ],
+    "Scatter Plot": [
+      "color",
+      "column",
+      "group",
+      "row",
+      "x",
+      "y"
+    ],
+    "Sparkline": [
+      "color",
+      "column",
+      "group",
+      "row",
+      "x",
+      "y"
+    ],
+    "Stacked Bar Chart": [
+      "color",
+      "column",
+      "group",
+      "row",
+      "x",
+      "y"
+    ]
+  },
   "imageChartsSource": {
     "src/image-charts/assemble.ts": "703abf7b05f7a4917bcc5689f00da35c8e6d684997da46b340a92b93c8920c24",
     "src/image-charts/chart-types.ts": "455d017af24a1b1830051255e878eae24e9b28df47e7a406d2fe814afa65fef8"
