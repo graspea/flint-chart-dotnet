@@ -213,10 +213,10 @@ function logTail(log, version) {
     : tail;
 }
 
-/** A GFM table cell holding a code span: shortened, pipes escaped, a longer delimiter when the value has backticks. @param {string | undefined} v */
+/** A GFM table cell holding a code span: shortened, backslashes and pipes escaped (a GFM row splits on a pipe after an escaped backslash), a longer delimiter when the value has backticks. @param {string | undefined} v */
 function cell(v) {
   if (v === undefined) return '';
-  const text = (v.length > MAX_CELL ? `${v.slice(0, MAX_CELL)}…` : v).replace(/\|/g, '\\|');
+  const text = (v.length > MAX_CELL ? `${v.slice(0, MAX_CELL)}…` : v).replace(/[\\|]/g, '\\$&');
   return text.includes('`') ? `\`\` ${text} \`\`` : `\`${text}\``;
 }
 const outcome = (/** @type {string} */ o) => (o === 'success' ? 'PASS' : o === 'failure' ? 'FAIL' : o || 'not run');

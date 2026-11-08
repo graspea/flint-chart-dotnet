@@ -83,7 +83,7 @@ export function diffIr(before: unknown, after: unknown): DiffRow[] {
 
 export function diffMarkdown(rows: DiffRow[]): string {
   if (rows.length === 0) return 'No IR changes.\n';
-  const cell = (v?: string) => (v === undefined ? '' : `\`${v.replace(/\|/g, '\\|')}\``);
+  const cell = (v?: string) => (v === undefined ? '' : `\`${v.replace(/[\\|]/g, '\\$&')}\``);
   return (
     '| Change | IR path | Before | After |\n|---|---|---|---|\n' +
     rows.map((r) => `| ${r.change} | ${cell(r.path)} | ${cell(r.before)} | ${cell(r.after)} |\n`).join('')

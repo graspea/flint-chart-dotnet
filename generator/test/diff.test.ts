@@ -44,6 +44,11 @@ describe('diff', () => {
     assert.equal(diffMarkdown([]), 'No IR changes.\n');
   });
 
+  it('escapes backslashes before pipes so a cell cannot split the row', () => {
+    const row = diffMarkdown([{ change: 'changed', path: 'p', before: 'a\\|b', after: 'c\\' }]).split('\n')[2];
+    assert.equal(row, '| changed | `p` | `a\\\\\\|b` | `c\\\\` |');
+  });
+
   // source: design §7.8 (vanished chart types, channels, properties, option values, semantic types, presets are retired,
   // keyed by template and backend, with the version in which they vanished)
   it('turns catalog removals into retirement entries and ignores metadata', () => {
