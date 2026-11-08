@@ -729,9 +729,7 @@ internal sealed partial class ValidationRun
             return "is not a data field or JSON category array";
         }
 
-        // isCategoryValue: a string, a boolean or a finite number.
-        var valid = values.Count(v => Js.Kind(v) is JsonValueKind.String or JsonValueKind.True or JsonValueKind.False
-            || (Js.Kind(v) == JsonValueKind.Number && double.IsFinite(Js.NumberOf(v!))));
+        var valid = values.Count(IsCategoryValue);
         return valid == values.Count ? string.Empty
             : valid == 0 ? "contains no valid category values"
             : $"contains {values.Count - valid} invalid category value(s)";
@@ -761,7 +759,16 @@ internal sealed partial class ValidationRun
     }
 
     private static bool IsBound(EncodingValue? value) =>
-        value is not null && value.Encodings.Any(e => (e.Field is { } f && Js.Trim(f).Length > 0) || e.Aggregate?.Name == "count");
+        value is not null && value.Encodings.Any(IsBound);
+
+    /// <summary>An encoding entry with a non-blank field or a count aggregate.</summary>
+    internal static bool IsBound(ChartEncoding e) =>
+        (e.Field is { } f && Js.Trim(f).Length > 0) || e.Aggregate?.Name == "count";
+
+    /// <summary>Upstream <c>isCategoryValue</c>: a string, a boolean or a finite number.</summary>
+    internal static bool IsCategoryValue(JsonNode? node) =>
+        Js.Kind(node) is JsonValueKind.String or JsonValueKind.True or JsonValueKind.False
+        || (Js.Kind(node) == JsonValueKind.Number && double.IsFinite(Js.NumberOf(node!)));
 
     /// <summary>The layout backends overwrite the options in the catalog's <c>ignoredOptions</c>; the Excel backend reads no
     /// option.</summary>

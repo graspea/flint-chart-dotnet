@@ -2,6 +2,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Graspea.Flint;
+using Graspea.Flint.Delivery;
 using Graspea.Flint.Serialization;
 using Graspea.Flint.Tests.Support;
 using Graspea.Flint.Validation;
@@ -11,6 +12,10 @@ namespace Graspea.Flint.Tests.Readme;
 #region readme:sale
 public sealed record Sale(DateOnly Month, string Region, decimal Revenue);
 #endregion
+
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase, DefaultIgnoreCondition = JsonIgnoreCondition.Never, UseStringEnumConverter = true)]
+[JsonSerializable(typeof(Sale))]
+internal sealed partial class SalesJson : JsonSerializerContext;
 
 #region readme:reading
 public sealed record Reading([property: JsonPropertyName("station_id")] string StationId, double TemperatureC);
@@ -273,6 +278,33 @@ public sealed partial class ReadmeExamplesTests
 
         Assert.That(input.ChartSpec.ChartType.Name, Is.EqualTo("Image Chart"));
         Assert.That(result.Issues, Has.Exactly(1).Matches<ValidationIssue>(i => i.Code == "unknown_chart_type" && i.Severity == IssueSeverity.Error));
+    }
+
+    // source: README.md "Charts in the browser" and docs/delivery.md (a manifest, then one page per group, contract 1)
+    [Test]
+    public void ChartsInTheBrowser_WritesAManifestAndAPage()
+    {
+        var sales = Sales;
+
+        #region readme:delivery
+        ChartHandle<Sale> revenue = new("revenue-by-month",
+            Chart.Line(SalesJson.Default.Sale)
+                .X(s => s.Month, SemanticType.YearMonth).Y(s => s.Revenue, SemanticType.Amount).Color(s => s.Region)
+                .ToTemplate(),
+            maxRows: 10_000);
+        ChartHandle<Sale> restricted = new("restricted-sales", revenue.Template);
+        ChartGroup overview = new("overview", revenue, restricted);
+        ChartManifest manifest = ChartManifest.Create(overview);        // the same bytes for every caller: serve with ETag = the quoted manifest.Hash
+
+        DataPage page = new(overview, [revenue.Rows(sales), restricted.Withheld("forbidden")]);   // per request, after authorising
+        string json = page.ToJson();                                    // or page.WriteAsync(response.Body, ct)
+        #endregion
+
+        using var doc = System.Text.Json.JsonDocument.Parse(json);
+        Assert.That(doc.RootElement.GetProperty("contract").GetInt32(), Is.EqualTo(1));
+        Assert.That(doc.RootElement.GetProperty("charts").GetProperty("revenue-by-month").GetProperty("rows").GetArrayLength(), Is.EqualTo(4));
+        Assert.That(doc.RootElement.GetProperty("charts").GetProperty("restricted-sales").GetProperty("withheld").GetString(), Is.EqualTo("forbidden"));
+        Assert.That(manifest.Hash, Has.Length.EqualTo(64));
     }
 
     // source: this file's contract (every README C# block is a region of RegionFiles, and every region is in the README)

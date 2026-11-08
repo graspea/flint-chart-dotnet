@@ -133,3 +133,5 @@ Returning the document instead (`Results.Json(input)`, `TypedResults.Ok(input)`,
 ```csharp
 ChartValidator.Validate(Revenue.Bind(sampleRows), FlintBackend.VegaLite).ThrowIfInvalid();
 ```
+
+**Several fixed charts in a browser.** To show several fixed charts together, with one cached document of definitions and the rows per group, see [delivery.md](delivery.md). A streamed part there shares the truncation rule of the streamed data above (a failure after the first byte leaves a truncated, invalid document).

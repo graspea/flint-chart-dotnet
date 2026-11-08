@@ -6,6 +6,11 @@ All notable changes to this project are documented in this file. The format foll
 
 ### Added
 
+- `ChartTemplate<TRow>.ToJson()`, the template's stored document (no bound rows) as compact JSON text.
+- The `Graspea.Flint.Delivery` namespace for sending fixed charts to a browser: `ChartHandle`, `ChartPart` (materialised and streamed parts), `ChartGroup`, `ChartManifest`, `DataPage`, `DeliveryError`, `ChartRowLimitException` and `DeliveryContract`.
+- Five `fixed_*` Info codes that flag what a fixed definition leaves to the rows present, reported by `ChartGroup.Validate` only.
+- The README section "Charts in the browser" and [docs/delivery.md](docs/delivery.md); the SDK ships no npm package.
+- Delivery contract v1 ([docs/versioning.md](docs/versioning.md#the-delivery-contract)) is stable from this release: additive changes only.
 - `ChartEncoding.ColorScheme`, a `ColorScheme`: a scheme name or a list of colour stops, low end first (`ColorScheme = "viridis"` or `ColorScheme = new[] { "#c0392b", "#f2f2f2", "#2e75b6" }`). `FlintJson` now reads an array `scheme`, which threw `JsonException`; `flint-cs to-csharp` and `Graspea.Flint.Generators` write an array scheme typed, which was reported as `FLINT103`.
 
 ### Deprecated

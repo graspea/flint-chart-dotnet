@@ -25,6 +25,16 @@ public sealed class ValidationIssue
     /// <summary>The data field the issue concerns, if any.</summary>
     public string? Field { get; init; }
 
+    internal ValidationIssue WithPath(string path) => new()
+    {
+        Severity = Severity,
+        Code = Code,
+        Message = Message,
+        Path = path,
+        Channel = Channel,
+        Field = Field,
+    };
+
     /// <summary>The severity, code, path and message.</summary>
     /// <returns>A one-line description.</returns>
     public override string ToString() => $"{Severity} {Code} at {Path}: {Message}";

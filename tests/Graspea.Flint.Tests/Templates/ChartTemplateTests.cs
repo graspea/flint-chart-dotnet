@@ -237,4 +237,48 @@ public sealed class ChartTemplateTests
         var result = ChartValidator.Validate(template.Bind(sample!), FlintBackend.VegaLite);
         Assert.That(result.Issues.Select(i => i.Code), Has.Member("row_not_object"));
     }
+
+    // source: design §14.4.3 and §14.8.5 step 1; both are written by FlintJsonContext (FlintJson.cs:29, ChartTemplate.cs:40)
+    [Test]
+    public void ToJson_EqualsTheDocumentWithoutData()
+    {
+        var typed = Chain(Other).ToTemplate();
+        var d = typed.Bind(ChartData.FromUrl("x"));
+        d.Data = null;
+        Assert.That(System.Text.Encoding.UTF8.GetBytes(typed.ToJson()), Is.EqualTo(FlintJson.SerializeToUtf8Bytes(d)));
+
+        var spec = FlintJson.Deserialize(typed.ToJson());
+        var reflected = ChartTemplate.Create<Reading>(spec);
+        var r = reflected.Bind(ChartData.FromUrl("x"));
+        r.Data = null;
+        Assert.That(System.Text.Encoding.UTF8.GetBytes(reflected.ToJson()), Is.EqualTo(FlintJson.SerializeToUtf8Bytes(r)));
+    }
+
+    // source: design §14.4.3 (same writer, ChartBuilder.cs:414, :422)
+    [Test]
+    public void ToJson_EqualsTheDeferredBuilderToJson()
+    {
+        var builder = Chart.Line(StreamingContext.Default.Reading)
+            .X(r => r.Day, SemanticType.Date)
+            .Y(r => r.Value)
+            .Configure(i => i.Extensions = new() { ["note"] = System.Text.Json.JsonSerializer.SerializeToElement("a") });
+        Assert.That(builder.ToTemplate().ToJson(), Is.EqualTo(builder.ToJson()));
+    }
+
+    // source: ChartAssemblyInput.Copy.cs:7-12, WhenWritingNull on Data
+    [Test]
+    public void ToJson_HasNoDataKey()
+    {
+        Assert.That(JsonNode.Parse(Chain(Rows).ToTemplate().ToJson())!["data"], Is.Null);
+    }
+
+    // source: AGENTS.md / README rule 5 (Build()/ToJson() never validate)
+    [Test]
+    public void ToJson_NeverValidates()
+    {
+        var template = Chart.Line(ChartData.FromUrl("https://example.org/rows.json")).X("nope").Y("value").ToTemplate();
+        Assert.That(template.ToJson(), Does.Contain("nope"));
+        var unknown = FlintJson.Deserialize("""{"chart_spec":{"chartType":"nonsense"}}""");
+        Assert.That(ChartTemplate.Create<Reading>(unknown).ToJson(), Does.Contain("nonsense"));
+    }
 }

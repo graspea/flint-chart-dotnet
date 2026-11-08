@@ -147,6 +147,91 @@ tests or at start-up. A spec without `data`, such as a JSON file, is read by `Fl
 with `ChartTemplate.Create(spec, typeInfo)`. Memory bounds, cancellation, ASP.NET Core and the failure modes:
 [docs/row-data.md](https://github.com/graspea/flint-chart-dotnet/blob/main/docs/row-data.md#late-bound-asynchronous-and-streamed-rows).
 
+## Charts in the browser
+
+A dashboard whose chart definitions are fixed and whose rows change per request declares each chart once as a `ChartHandle`; the server sends the `ChartManifest` (every data-free spec) once, then one `DataPage` per group of charts, and the browser merges `data.values` into each spec and draws once, after the last page.
+
+```csharp
+using Graspea.Flint.Delivery;
+
+ChartHandle<Sale> revenue = new("revenue-by-month",
+    Chart.Line(SalesJson.Default.Sale)
+        .X(s => s.Month, SemanticType.YearMonth).Y(s => s.Revenue, SemanticType.Amount).Color(s => s.Region)
+        .ToTemplate(),
+    maxRows: 10_000);
+ChartHandle<Sale> restricted = new("restricted-sales", revenue.Template);
+ChartGroup overview = new("overview", revenue, restricted);
+ChartManifest manifest = ChartManifest.Create(overview);        // the same bytes for every caller: serve with ETag = the quoted manifest.Hash
+
+DataPage page = new(overview, [revenue.Rows(sales), restricted.Withheld("forbidden")]);   // per request, after authorising
+string json = page.ToJson();                                    // or page.WriteAsync(response.Body, ct)
+```
+
+`MaxRows` caps one part (the rows of one `Rows`, `RowsAsync` or `Stream` call), not a chart across pages; a host that pages caps the whole chart itself. The browser side is plain JavaScript on top of flint-chart; the SDK ships no npm package:
+
+```js
+// The README's browser guidance ("Charts in the browser"); the README block equals this file.
+// transport(request, signal) returns a parsed document. request: { kind: 'manifest' } | { kind: 'page', manifest, group, next }
+// A WebSocket host sends the manifest's hash in its own envelope.
+export const httpTransport = (base) => {
+  const tags = new WeakMap();                           // manifest object -> its ETag; pages carry it as `manifest`
+  return async (req, signal) => {
+    let url;
+    if (req.kind === 'manifest') url = `${base}/manifest`;
+    else {
+      url = `${base}/page?group=${encodeURIComponent(req.group)}`;
+      const tag = tags.get(req.manifest);
+      if (tag) url += `&manifest=${encodeURIComponent(tag)}`;
+      if (req.next) url += `&next=${encodeURIComponent(req.next)}`;
+    }
+    const res = await fetch(url, { signal, cache: req.kind === 'manifest' ? 'default' : 'no-store' });
+    const doc = await res.json();                       // an error document arrives with its status
+    if (req.kind === 'manifest' && doc !== null && typeof doc === 'object') tags.set(doc, res.headers.get('etag') ?? undefined);
+    return doc;
+  };                                                    // an aborted streamed page fails to parse: restart
+};
+
+// flint: the flint-chart version the client was built with; undefined skips the check
+export async function fetchManifest(transport, signal, flint) {
+  const m = await transport({ kind: 'manifest' }, signal);
+  if (m.error) throw Object.assign(new Error('delivery'), { code: m.error.code });
+  if (m.contract !== 1) throw new Error(`delivery contract ${m.contract}`);
+  if (flint !== undefined && m.flint !== flint) throw new Error(`charts for flint-chart ${m.flint}, client built with ${flint}`);
+  return m;
+}
+
+export async function collectGroup(transport, manifest, group, signal) {
+  const rows = Object.create(null), withheld = Object.create(null);   // ids are host-chosen keys
+  for (let next; ; ) {
+    const page = await transport({ kind: 'page', manifest, group, next }, signal);
+    if (page.error) throw Object.assign(new Error('delivery'), { code: page.error.code });   // restart from the manifest
+    if (page.contract !== 1 || page.group !== group) throw new Error('unexpected page');
+    for (const [id, part] of Object.entries(page.charts)) {
+      if (part.withheld !== undefined) { withheld[id] ??= part.withheld; delete rows[id]; }
+      else if (!(id in withheld)) rows[id] = (rows[id] ?? []).concat(part.rows);   // in order; never a spread
+    }
+    next = page.next;
+    if (next == null) break;
+  }
+  return { rows, withheld };                            // memory only; clear on sign-out
+}
+
+export const inputFor = (manifest, id, rows) => ({ ...manifest.charts[id].input, data: { values: rows } });
+```
+
+Pass the installed flint-chart version, injected at build time (for example a bundler define read from your `package.json`), as `fetchManifest`'s third argument, or omit it when server and client deploy from one commit; flint-chart exports no version. The transport keeps each manifest's `ETag` and sends the tag of the manifest the caller passes to `collectGroup` as the `manifest` query parameter of every page request, so two overlapping manifest loads cannot mix their tags: the host compares it with the ETag it serves for its current manifest (`"\"" + manifest.Hash + "\""`) and answers an error document (the samples use the code `stale`) when they differ, and the caller restarts from `fetchManifest` on any error code. A host that serves the charts cross-origin sends `Access-Control-Expose-Headers: ETag` on the manifest response, or the page cannot read the tag.
+
+| Step | Guidance |
+|---|---|
+| Draw once | after the last page, show an empty state when `withheld[id]` is set or `rows[id]` is empty; otherwise `mountChart(el, inputFor(manifest, id, rows[id]), { backend, availableSize: { width, height } })` from `flint-chart/interactive`, or `<FlintChart>` from `flint-chart/react` with the merged array passed once. For static or post-processed output use `assembleForBackend(backend, input)` from `flint-chart/validate` |
+| Not progressive | a prefix of the rows changes types, sizes, series and categories; do not assemble per page or with `values: []` |
+| Post-processing | ECharts: replace `tooltip.formatter` with one that escapes HTML, or set `tooltip.renderMode: 'richText'`. Vega-Lite: `stripPrivateKeys(spec)` before `JSON.stringify`, `structuredClone` or `postMessage`. Take colours from computed CSS after assembly |
+| Order | ECharts Line series and Heatmap categories follow row order, not `sortBy`: the server writes rows in the declared order; an explicit `sortBy` lists every category |
+| Keys | upstream takes field keys from the first row of the merged array; with typed rows every row has every key, so page order does not matter |
+| Caching | `ETag` / `If-None-Match` and a private cache on the manifest; `Cache-Control: no-store` on pages and errors |
+
+The wire contract, host samples for ASP.NET Core and other transports, streamed parts, limits and start-up validation: [docs/delivery.md](https://github.com/graspea/flint-chart-dotnet/blob/main/docs/delivery.md).
+
 ## Two API levels
 
 ### Fluent builder
@@ -375,6 +460,7 @@ This section is also packed as `AGENTS.md` at the root of the NuGet package, nex
 6. The package version `A.B.C.D` mirrors flint-chart `A.B.C`. Validate and render with that flint-chart version.
 7. Build a template once and bind rows per request: `Chart.Line(typeInfo)…ToTemplate()`, then `Bind`, `BindAsync` or `BindStream`. Stream large row sets with `BindStream` and `FlintJson.SerializeAsync`, and end database queries with `.AsAsyncEnumerable()` ([docs/row-data.md](https://github.com/graspea/flint-chart-dotnet/blob/main/docs/row-data.md)).
 8. A `ChartAssemblyInput` JSON document, such as one drafted and checked with `flint-chart-mcp`, becomes C# with the `flint-cs` tool (package `Graspea.Flint.Tool`, at the version of `Graspea.Flint`): `flint-cs to-csharp revenue.flint.json --data parameter --out RevenueChart.cs`. The output builds the same document; do not retype the JSON by hand. The tool is in preview ([src/Graspea.Flint.Tool/README.md](https://github.com/graspea/flint-chart-dotnet/blob/main/src/Graspea.Flint.Tool/README.md)). To keep editing the JSON instead, reference `Graspea.Flint.Generators` and mark a `static partial class` with `[FlintChart("revenue.flint.json")]`: the builder is generated at compile time and the build reports FLINT1xx for a spec that does not fit the catalog ([src/Graspea.Flint.Generators/README.md](https://github.com/graspea/flint-chart-dotnet/blob/main/src/Graspea.Flint.Generators/README.md)).
+9. Declare charts once as `ChartHandle`s in a `ChartGroup`; serve the `ChartManifest` on mount and one `DataPage` per group; the browser merges `data.values` and draws once after the last page ([docs/delivery.md](https://github.com/graspea/flint-chart-dotnet/blob/main/docs/delivery.md)).
 
 ### Canonical patterns
 

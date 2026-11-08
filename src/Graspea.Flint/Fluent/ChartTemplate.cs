@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Graspea.Flint.Serialization;
@@ -125,6 +126,16 @@ public sealed class ChartTemplate<TRow>
     /// <returns>The issues; <see cref="ValidationResult.IsValid"/> means no Error that can be decided without the rows.</returns>
     public ValidationResult Validate(FlintBackend? backend = null) =>
         ChartValidator.ValidateDeferred(FlintJson.Deserialize(spec), backend, new DeferredRows(keys, Template: true));
+
+    /// <summary>The stored document (no bound rows) as compact JSON text: the bytes stored at creation, decoded. A data member that a Configure action writes into Extensions is kept, and ChartHandle refuses such a template. Never validates.</summary>
+    /// <returns>The JSON text.</returns>
+    public string ToJson() => Encoding.UTF8.GetString(spec);
+
+    /// <summary>The stored document bytes; the memory is shared and must not be modified.</summary>
+    internal ReadOnlyMemory<byte> SpecUtf8 => spec;
+
+    /// <summary>The row metadata, or null when the template has none.</summary>
+    internal JsonTypeInfo<TRow>? RowTypeInfo => typeInfo;
 
     private JsonTypeInfo<TRow> Metadata() => typeInfo ?? throw new InvalidOperationException(NoMetadata);
 

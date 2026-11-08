@@ -1,6 +1,6 @@
 # Validation codes
 
-`ChartValidator.Validate(input, backend)` checks a `ChartAssemblyInput` against the pinned `flint-chart` version without running it. The design is in [part 2 §6](design/02-sdk-serialisation-validation-codegen.md). This page lists every code with its severity and the upstream fact behind it.
+`ChartValidator.Validate(input, backend)` checks a `ChartAssemblyInput` against the pinned `flint-chart` version without running it. `ChartGroup.Validate` runs the same checks on every chart of a delivery group and adds five more Info codes for fixed definitions (below); it reports manifest paths. The design is in [part 2 §6](design/02-sdk-serialisation-validation-codegen.md). This page lists every code with its severity and the upstream fact behind it.
 
 ```csharp
 var result = ChartValidator.Validate(input, FlintBackend.Excel);
@@ -22,7 +22,7 @@ result.ThrowIfInvalid();   // FlintValidationException carrying every issue
 
 **Rows not yet seen.** A document with streamed data (`ChartData.Stream`, `ChartTemplate.BindStream`) and a template (`ChartTemplate.Validate`) are validated without reading a row. The spec rules run. The key rules (`unknown_field`, `series_field_missing`, `semantic_type_without_field` and the row-key part of `reserved_semantic_type`) run on the keys the row type writes when its shape is static, and are skipped for dictionary, `JsonNode`, `object` or polymorphic rows. `series_field_missing` is then a Warning, because upstream throws only once `data` has rows. The row-content rules and the field types inferred from values are skipped, which `rows_not_inspected` reports. A template is not reported as `data_missing`. So on streamed data or a template, `IsValid` means "no Error that can be decided without the rows". Validate a sample with every rule: `ChartValidator.Validate(template.Bind(sampleRows), backend)`.
 
-**Paths** are wire paths: `chart_spec.encodings.x`, `chart_spec.encodings.y[1].type` (an entry of a static series), `semantic_types.revenue`, `data.values[3]`, `chart_spec.chartProperties.interpolate`. Keys are written verbatim.
+**Paths** are wire paths: `chart_spec.encodings.x`, `chart_spec.encodings.y[1].type` (an entry of a static series), `semantic_types.revenue`, `data.values[3]`, `chart_spec.chartProperties.interpolate`. Keys are written verbatim. `ChartGroup.Validate` reports manifest paths instead: `charts.<id>.input.<wire path>`, such as `charts.sales.input.chart_spec.encodings.x.type`.
 
 **Upstream version.** The upstream facts below, and the probes they cite, describe flint-chart 1.0.0: a probe is the record `tests/fixtures/flint-chart@1.0.0/probes.json` ([generator.md](generator.md#probes)). A later upstream version that changes one is listed in its sync pull request; the validator follows it only when this page does.
 
@@ -86,6 +86,22 @@ The row-value infos of [part 2 §5.3](design/02-sdk-serialisation-validation-cod
 | `timespan_as_string` | A `TimeSpan` of a day or more (`"1.02:03:04"`), which flint-chart 1.0.0 infers as nominal (probe `valueInference`), so each value is a category rather than a duration; 0.5.1 inferred it as temporal. A shorter one looks like a time of day (`"10:00:00"`), which may be one, and is not reported. |
 | `null_in_temporal_field` | A `null` in a field annotated with a semantic type whose encodings include `temporal`. |
 | `nested_value` | A nested object or array, which upstream reads as a nominal value. |
+
+## Fixed definitions (ChartGroup.Validate only)
+
+A chart delivered as a fixed definition plus separately sent rows is assembled in the browser from the rows present at that moment. These five Info codes list what that leaves to inference. `ChartGroup.Validate` reports them after each chart's template issues; `ChartValidator` and `ChartTemplate.Validate` never do. They never change `IsValid`. Paths are manifest paths, `charts.<id>.input.<wire path>`. A profile-compliant chart (explicit types, an explicit order on every nominal channel, no aggregate, no sizes, no host overrides) reports none of them.
+
+| Code | Condition | flint-chart 1.0.1 fact |
+|---|---|---|
+| `fixed_type_missing` | An encoding entry is bound (a non-blank `field`, or `aggregate: count`) and has no `type`. Path `...encodings.<ch>.type`. | The type is inferred from the rows present (`src/core/decisions.ts:442-453`, `src/core/resolve-semantics.ts:549-550`), so it can change with the rows. |
+| `fixed_order_missing` | The entry's `type` is `nominal` or `ordinal` and `sortBy` is not a JSON array holding at least one category value (a string, a boolean or a finite number). Path `...encodings.<ch>.sortBy`. | Only an array of category values survives as an explicit order (`src/core/resolve-semantics.ts:109-165`); otherwise the categories follow the rows present. |
+| `fixed_aggregate` | The entry has an `aggregate`. Path `...encodings.<ch>.aggregate`. | The browser aggregates the rows present (`src/core/aggregate.ts:104`); send final values instead. |
+| `fixed_host_override` | `chartProperties` holds `chartType`, `arrange` or `pivot` with a non-null value. Path `...chartProperties.<key>`. | These are host-state overrides, applied only when the chart passes its gate and otherwise reverted silently (`src/core/pivot.ts:821-822`, `:919-930`, `:964`). |
+| `fixed_size` | `baseSize` or `canvasSize` is set. Path `...baseSize`, `...canvasSize`. | In the browser the layout follows the container (`src/core/compute-layout.ts:495-546`). |
+
+For a static-series entry the path is `...encodings.<ch>[i].<member>`.
+
+**Known false positive.** `fixed_order_missing` also fires for a field whose categories upstream orders itself without an array: the built-in ordinal sequences (month, day, quarter, direction), and dates used as categories. The fix is an explicit order that lists every category (`SortBy.ExplicitOrder`).
 
 ## How a rule reads a field's type
 

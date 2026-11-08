@@ -24,11 +24,11 @@ internal abstract class StreamedRows
     internal abstract bool IsAsynchronous { get; }
 
     /// <summary>Claims the rows for one write; a second or concurrent claim throws.</summary>
-    internal void Claim()
+    internal void Claim(string message = AlreadyWritten)
     {
         if (Interlocked.Exchange(ref claimed, 1) != 0)
         {
-            throw new InvalidOperationException(AlreadyWritten);
+            throw new InvalidOperationException(message);
         }
     }
 

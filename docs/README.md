@@ -1,10 +1,11 @@
 # Documentation
 
-The [repository README](../README.md) is the user guide: install, quick start, the two API levels, the chart catalog, validation, the section for AI agents and the version mapping. The pages here go into detail.
+The [repository README](../README.md) is the user guide: install, quick start, the two API levels, the chart catalog, validation, the section for AI agents and the version mapping. The pages here go into detail, including delivering fixed charts to a browser ([delivery.md](delivery.md)).
 
 | Page | For | Content |
 |---|---|---|
 | [row-data.md](row-data.md) | users | how rows become `data.values`: field names, overloads, how each .NET type is written |
+| [delivery.md](delivery.md) | users | fixed charts in a browser: contract v1, host samples, browser flow, limits, security |
 | [validation-codes.md](validation-codes.md) | users | every validation code, its severity and the upstream fact behind it |
 | [versioning.md](versioning.md) | users | the four-part version, previews, what a release may change, compatibility with other flint-chart versions |
 | [deprecations.md](deprecations.md) | users | the `FLINT0001` and `FLINT0002` warnings and the deprecated members |

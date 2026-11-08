@@ -1,13 +1,60 @@
 #nullable enable
 Graspea.Flint.ChartEncoding.ColorScheme.get -> Graspea.Flint.ColorScheme?
 Graspea.Flint.ChartEncoding.ColorScheme.set -> void
+Graspea.Flint.ChartTemplate<TRow>.ToJson() -> string!
 Graspea.Flint.ColorScheme
 Graspea.Flint.ColorScheme.Name.get -> string?
 Graspea.Flint.ColorScheme.Stops.get -> string![]?
+Graspea.Flint.Delivery.ChartGroup
+Graspea.Flint.Delivery.ChartGroup.ChartGroup(string! name, params Graspea.Flint.Delivery.ChartHandle![]! charts) -> void
+Graspea.Flint.Delivery.ChartGroup.Charts.get -> System.Collections.Generic.IReadOnlyList<Graspea.Flint.Delivery.ChartHandle!>!
+Graspea.Flint.Delivery.ChartGroup.Name.get -> string!
+Graspea.Flint.Delivery.ChartGroup.Validate(Graspea.Flint.FlintBackend? backend = null) -> Graspea.Flint.Validation.ValidationResult!
+Graspea.Flint.Delivery.ChartHandle
+Graspea.Flint.Delivery.ChartHandle.Id.get -> string!
+Graspea.Flint.Delivery.ChartHandle.MaxRows.get -> int?
+Graspea.Flint.Delivery.ChartHandle.Withheld(string! code) -> Graspea.Flint.Delivery.ChartPart!
+Graspea.Flint.Delivery.ChartHandle<TRow>
+Graspea.Flint.Delivery.ChartHandle<TRow>.ChartHandle(string! id, Graspea.Flint.ChartTemplate<TRow>! template, int? maxRows = null) -> void
+Graspea.Flint.Delivery.ChartHandle<TRow>.Rows(System.Collections.Generic.IEnumerable<TRow>! rows) -> Graspea.Flint.Delivery.ChartPart!
+Graspea.Flint.Delivery.ChartHandle<TRow>.RowsAsync(System.Collections.Generic.IAsyncEnumerable<TRow>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Graspea.Flint.Delivery.ChartPart!>
+Graspea.Flint.Delivery.ChartHandle<TRow>.Stream(System.Collections.Generic.IAsyncEnumerable<TRow>! rows) -> Graspea.Flint.Delivery.ChartPart!
+Graspea.Flint.Delivery.ChartHandle<TRow>.Template.get -> Graspea.Flint.ChartTemplate<TRow>!
+Graspea.Flint.Delivery.ChartManifest
+Graspea.Flint.Delivery.ChartManifest.Groups.get -> System.Collections.Generic.IReadOnlyList<Graspea.Flint.Delivery.ChartGroup!>!
+Graspea.Flint.Delivery.ChartManifest.Hash.get -> string!
+Graspea.Flint.Delivery.ChartManifest.ToJson() -> string!
+Graspea.Flint.Delivery.ChartManifest.Utf8Bytes.get -> System.ReadOnlyMemory<byte>
+Graspea.Flint.Delivery.ChartManifest.WriteTo(System.Text.Json.Utf8JsonWriter! writer) -> void
+Graspea.Flint.Delivery.ChartPart
+Graspea.Flint.Delivery.ChartPart.Chart.get -> Graspea.Flint.Delivery.ChartHandle!
+Graspea.Flint.Delivery.ChartPart.IsStreamed.get -> bool
+Graspea.Flint.Delivery.ChartPart.WithheldCode.get -> string?
+Graspea.Flint.Delivery.ChartRowLimitException
+Graspea.Flint.Delivery.ChartRowLimitException.Chart.get -> Graspea.Flint.Delivery.ChartHandle!
+Graspea.Flint.Delivery.ChartRowLimitException.Limit.get -> int
+Graspea.Flint.Delivery.DataPage
+Graspea.Flint.Delivery.DataPage.Charts.get -> System.Collections.Generic.IReadOnlyList<Graspea.Flint.Delivery.ChartPart!>!
+Graspea.Flint.Delivery.DataPage.DataPage(Graspea.Flint.Delivery.ChartGroup! group, System.Collections.Generic.IReadOnlyList<Graspea.Flint.Delivery.ChartPart!>! charts, string? next = null) -> void
+Graspea.Flint.Delivery.DataPage.Group.get -> Graspea.Flint.Delivery.ChartGroup!
+Graspea.Flint.Delivery.DataPage.Next.get -> string?
+Graspea.Flint.Delivery.DataPage.ToJson() -> string!
+Graspea.Flint.Delivery.DataPage.ToUtf8Bytes() -> byte[]!
+Graspea.Flint.Delivery.DataPage.WriteAsync(System.IO.Stream! utf8Json, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Graspea.Flint.Delivery.DataPage.WriteTo(System.Text.Json.Utf8JsonWriter! writer) -> void
+Graspea.Flint.Delivery.DeliveryContract
+Graspea.Flint.Delivery.DeliveryError
+Graspea.Flint.Delivery.DeliveryError.Code.get -> string!
+Graspea.Flint.Delivery.DeliveryError.DeliveryError(string! code) -> void
+Graspea.Flint.Delivery.DeliveryError.ToJson() -> string!
+Graspea.Flint.Delivery.DeliveryError.ToUtf8Bytes() -> byte[]!
+Graspea.Flint.Delivery.DeliveryError.WriteTo(System.Text.Json.Utf8JsonWriter! writer) -> void
 Graspea.Flint.Serialization.ColorSchemeConverter
 Graspea.Flint.Serialization.ColorSchemeConverter.ColorSchemeConverter() -> void
+const Graspea.Flint.Delivery.DeliveryContract.Version = 1 -> int
 override Graspea.Flint.ColorScheme.ToString() -> string!
 override Graspea.Flint.Serialization.ColorSchemeConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ColorScheme!
 override Graspea.Flint.Serialization.ColorSchemeConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ColorScheme! value, System.Text.Json.JsonSerializerOptions! options) -> void
 static Graspea.Flint.ColorScheme.implicit operator Graspea.Flint.ColorScheme?(string![]? stops) -> Graspea.Flint.ColorScheme?
 static Graspea.Flint.ColorScheme.implicit operator Graspea.Flint.ColorScheme?(string? name) -> Graspea.Flint.ColorScheme?
+static Graspea.Flint.Delivery.ChartManifest.Create(params Graspea.Flint.Delivery.ChartGroup![]! groups) -> Graspea.Flint.Delivery.ChartManifest!

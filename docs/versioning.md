@@ -45,7 +45,7 @@ A release consists of three packages, packed from the same tag with the same ver
 `Graspea.Flint.Tool` .NET tool and the `Graspea.Flint.Generators` source generator. Each carries the catalog of that
 release. Install the tool and reference the generator at the version of `Graspea.Flint` your project references; the
 generator package depends on exactly that version. The version grammar, the preview label and the table above apply to
-the library's API. The tool and the generator have contracts of their own, below, whose stability does not follow the
+the library's API. The tool, the generator and the delivery envelope have contracts of their own, below, whose stability does not follow the
 version label: one release can carry a stable library and a tool or generator in preview.
 
 ## The flint-cs tool
@@ -81,6 +81,18 @@ change in any release, with a changelog line per change. Using them is the compi
 opts in with `<NoWarn>$(NoWarn);FLINTEXP001</NoWarn>`. A later release declares the contract stable in its changelog
 entry and stops emitting the marker; from then on the rules above apply to it, and the `NoWarn` entry has no effect and
 can be removed. The tool's and the generator's contracts are declared stable independently (design part 7, §12.8).
+
+## The delivery contract
+
+The documents that `Graspea.Flint.Delivery` writes (the manifest, the data page and the error document, described in [delivery.md](delivery.md)) are a wire contract with its own number, `contract`, which every document carries. It is 1.
+
+- **What is frozen.** From its first stable declaration: the member names, their shapes and meanings, and the rule that readers ignore unknown members at every level. The eight rules of delivery.md ("Wire contract v1") change additively only: a new optional member may appear in any release.
+- **When `contract` bumps.** On a removal, a rename or a change of meaning. A reader that sees a `contract` it does not know refuses the document.
+- **Declaration.** Wire contract v1 is declared stable in the CHANGELOG entry of its first release, in the same way as the tool and the generator.
+- **The C# surface** of the namespace follows the preview rule above: it may still change between previews, and where the old and the new shape can coexist the old one is kept as `[Obsolete]` for one release first.
+- **`Hash`** is the lowercase hex SHA-256 of the stored manifest bytes. It is deterministic for the same definitions under the same SDK version and runtime serialisation. No canonical hash across runtimes or across semantically equal documents is promised.
+- **`flint`** in the manifest is `FlintUpstream.Version`. The manifest bytes, and so `Hash`, therefore change with every upstream version.
+- **Preview exit gate.** Before the first stable release the maintainers decide whether the Delivery C# surface becomes stable API or is marked `[Experimental("FLINTEXP002")]`, as the source generator's surface is marked today.
 
 ## Wire format
 

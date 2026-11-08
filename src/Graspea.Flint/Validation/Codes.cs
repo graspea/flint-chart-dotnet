@@ -51,4 +51,11 @@ internal static class Codes
     internal const string NullInTemporalField = "null_in_temporal_field";
     internal const string NestedValue = "nested_value";
     internal const string RowsNotInspected = "rows_not_inspected";
+
+    // Info, ChartGroup.Validate only (design §14.7).
+    internal const string FixedTypeMissing = "fixed_type_missing";
+    internal const string FixedOrderMissing = "fixed_order_missing";
+    internal const string FixedAggregate = "fixed_aggregate";
+    internal const string FixedHostOverride = "fixed_host_override";
+    internal const string FixedSize = "fixed_size";
 }
