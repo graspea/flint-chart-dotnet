@@ -17,7 +17,7 @@ namespace Graspea.Flint.ContractTests;
 [Category("Expectations")]
 public sealed class FixtureExpectationTests
 {
-    private static readonly string[] BackendIds = ["vegalite", "echarts", "chartjs", "plotly", "excel"];
+    private static readonly string[] BackendIds = ["vegalite", "echarts", "chartjs", "plotly", "excel", "image-charts"];
 
     /// <summary>The codes that stand for an assembler throw (design §10.3).</summary>
     private static readonly HashSet<string> ThrowClass = new(StringComparer.Ordinal)
@@ -48,6 +48,8 @@ public sealed class FixtureExpectationTests
         // flint-chart 1.0.0 vegalite: the same registry miss, met first by the temporal parser lookup
         (new("^parsers is not iterable"), ["reserved_semantic_type"]),
         (new("^Excel backend "), ["excel_unsupported", "data_empty", "data_url_only", "encodings_empty", "missing_encodings"]),
+        // flint-chart 1.0.1 excel: the two throws inside instantiate() (src/excel/templates/radar.ts, histogram.ts)
+        (new("^Excel (radar chart|histogram) requires "), ["excel_unsupported"]),
     ];
 
     public static IEnumerable<TestCaseData> CurrentFixtures() =>
@@ -69,6 +71,11 @@ public sealed class FixtureExpectationTests
             foreach (var (backendId, outcome) in outcomes)
             {
                 var backend = (FlintBackend)Array.IndexOf(BackendIds, backendId);
+                if (backend == FlintBackend.ImageCharts)
+                {
+                    continue; // The Image-Charts rules are not ported yet.
+                }
+
                 var issues = ChartValidator.Validate(input, backend).Issues;
                 var errors = issues.Where(i => i.Severity == IssueSeverity.Error && ThrowClass.Contains(i.Code)).ToArray();
                 var hasTemplate = issues.All(i => i.Code != "chart_type_not_on_backend");

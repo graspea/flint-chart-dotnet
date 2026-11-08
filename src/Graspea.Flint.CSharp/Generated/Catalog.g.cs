@@ -5,7 +5,7 @@ namespace Graspea.Flint.CSharp;
 
 internal static partial class Catalog
 {
-    internal static readonly string[] Backends = ["vegalite", "echarts", "chartjs", "plotly", "excel"];
+    internal static readonly string[] Backends = ["vegalite", "echarts", "chartjs", "plotly", "excel", "image-charts"];
 
     internal static readonly string[] BackendsApplyingTheme = ["vegalite", "plotly"];
 
@@ -43,6 +43,7 @@ internal static partial class Catalog
                 new("stackMode", CatalogPropertyKind.Discrete, [null, "\"normalize\"", "\"layered\""], ["Stacked (default)", "Normalize (100%)", "Layered (overlap)"], null, null),
             ]),
             new("excel", ["x", "y", "color"], []),
+            new("image-charts", ["x", "y", "color"], []),
         ]),
         new("Bar Chart",
         [
@@ -67,6 +68,7 @@ internal static partial class Catalog
                 new("cornerRadius", CatalogPropertyKind.Continuous, null, null, 0, 15),
             ]),
             new("excel", ["x", "y", "color"], []),
+            new("image-charts", ["x", "y", "color"], []),
         ]),
         new("Bar Table",
         [
@@ -249,6 +251,7 @@ internal static partial class Catalog
                 new("sortSlices", CatalogPropertyKind.Discrete, ["\"none\"", "\"descending\"", "\"ascending\""], ["Data order", "Largest first", "Smallest first"], null, null),
             ]),
             new("excel", ["color", "size", "theta"], []),
+            new("image-charts", ["size", "color", "theta"], []),
         ]),
         new("Doughnut Chart",
         [
@@ -360,6 +363,7 @@ internal static partial class Catalog
             ]),
             new("plotly", ["x", "y", "group", "color", "column", "row"], []),
             new("excel", ["x", "y", "group"], []),
+            new("image-charts", ["x", "y", "group", "color"], []),
         ]),
         new("Heatmap",
         [
@@ -436,6 +440,7 @@ internal static partial class Catalog
                 new("showPoints", CatalogPropertyKind.Binary, null, null, null, null),
             ]),
             new("excel", ["x", "y", "color", "strokeDash"], []),
+            new("image-charts", ["x", "y", "color"], []),
         ]),
         new("Lollipop Chart",
         [
@@ -530,6 +535,7 @@ internal static partial class Catalog
                 new("sortSlices", CatalogPropertyKind.Discrete, ["\"none\"", "\"descending\"", "\"ascending\""], ["Data order", "Largest first", "Smallest first"], null, null),
             ]),
             new("excel", ["color", "size", "theta"], []),
+            new("image-charts", ["size", "color", "theta"], []),
         ]),
         new("Pyramid Chart",
         [
@@ -571,6 +577,7 @@ internal static partial class Catalog
                 new("filled", CatalogPropertyKind.Discrete, ["true", "false"], ["Filled (default)", "Outline only"], null, null),
             ]),
             new("excel", ["x", "y", "color"], []),
+            new("image-charts", ["x", "y", "color"], []),
         ]),
         new("Range Area Chart",
         [
@@ -699,6 +706,7 @@ internal static partial class Catalog
                 new("opacity", CatalogPropertyKind.Continuous, null, null, 0.1, 1),
             ]),
             new("excel", ["x", "y", "color", "size"], []),
+            new("image-charts", ["x", "y", "color"], []),
         ]),
         new("Slope Chart",
         [
@@ -733,6 +741,7 @@ internal static partial class Catalog
                 new("baseline", CatalogPropertyKind.Discrete, ["\"mean\"", "\"zero\"", "\"median\"", "\"none\""], ["Average", "Zero", "Median", "None"], null, null),
                 new("trendWidth", CatalogPropertyKind.Continuous, null, null, 80, 600),
             ]),
+            new("image-charts", ["x", "y", "color"], []),
         ]),
         new("Stacked Bar Chart",
         [
@@ -752,6 +761,7 @@ internal static partial class Catalog
                 new("stackMode", CatalogPropertyKind.Discrete, [null, "\"normalize\""], ["Stacked (default)", "Normalize (100%)"], null, null),
             ]),
             new("excel", ["x", "y", "color"], []),
+            new("image-charts", ["x", "y", "color"], []),
         ]),
         new("Streamgraph",
         [

@@ -32,6 +32,13 @@ const line = (change: (i: Doc) => void = () => {}): Doc =>
     change(i);
   });
 
+/** The same document as another chart type. */
+const chart = (chartType: string, change: (i: Doc) => void = () => {}): Doc =>
+  bar((i) => {
+    i.chart_spec.chartType = chartType;
+    change(i);
+  });
+
 const map = (projectionCenter: unknown): Doc => ({
   data: { values: [{ lon: 10, lat: 50 }, { lon: 14, lat: 52 }] },
   chart_spec: { chartType: 'Map', encodings: { longitude: { field: 'lon' }, latitude: { field: 'lat' } }, chartProperties: { projectionCenter } },
@@ -124,6 +131,41 @@ const cases: Array<[string, Doc, true?]> = [
   ['boxplot x of 12 consecutive YearMonth numbers', boxplot(Array.from({ length: 12 }, (_, i) => 202401 + i), 'YearMonth')],
   ['boxplot x of 3 YearMonth numbers', boxplot([202501, 202503, 202507], 'YearMonth')],
   ['boxplot x of 12 YearMonth spellings', boxplot(['Jan 2024', 'Feb 2024', 'Mar 2024', 'Apr 2024', 'May 2024', 'Jun 2024', 'Jul 2024', 'Aug 2024', 'Sep 2024', 'Oct 2024', 'Nov 2024', 'Dec 2024'], 'YearMonth')],
+  ['sparkline faceted on column', chart('Sparkline', (i) => (i.chart_spec.encodings.column = { field: 'city' }))],
+  ['sparkline without y', chart('Sparkline', (i) => delete i.chart_spec.encodings.y)],
+  ['pie from x and y', chart('Pie Chart')],
+  ['pie with a slice field and no value', chart('Pie Chart', (i) => (i.chart_spec.encodings = { color: { field: 'city' } }))],
+  ['pie with color unbound, x and size', chart('Pie Chart', (i) => (i.chart_spec.encodings = { color: { type: 'nominal' }, x: { field: 'city' }, size: { field: 'revenue' } }))],
+  ['pie with an empty color field, x and size', chart('Pie Chart', (i) => (i.chart_spec.encodings = { color: { field: '' }, x: { field: 'city' }, size: { field: 'revenue' } }))],
+  ['radar with two metrics', chart('Radar Chart')],
+  ['scatter without rows', chart('Scatter Plot', (i) => {
+    i.data = { values: [] };
+    i.chart_spec.encodings = { x: { field: 'revenue' }, y: { field: 'cost' } };
+  })],
+  ['scatter with data url only', chart('Scatter Plot', (i) => {
+    i.data = { url: 'https://example.com/rows.json' };
+    i.chart_spec.encodings = { x: { field: 'revenue' }, y: { field: 'cost' } };
+  })],
+  ['facet bound with an empty field', bar((i) => (i.chart_spec.encodings.column = { field: '' }))],
+  ['donut with a slice field and no value', chart('Donut Chart', (i) => (i.chart_spec.encodings = { color: { field: 'city' } }))],
+  ['area without y', chart('Area Chart', (i) => delete i.chart_spec.encodings.y)],
+  ['radar without x', chart('Radar Chart', (i) => delete i.chart_spec.encodings.x)],
+  ['stacked bar from x and color', chart('Stacked Bar Chart', (i) => (i.chart_spec.encodings = { x: { field: 'city' }, color: { field: 'city' } }))],
+  ['grouped bar from y and group', chart('Grouped Bar Chart', (i) => (i.chart_spec.encodings = { y: { field: 'revenue' }, group: { field: 'city' } }))],
+  ['scatter without y', chart('Scatter Plot', (i) => (i.chart_spec.encodings = { x: { field: 'revenue' } }))],
+  ['scatter without x', chart('Scatter Plot', (i) => (i.chart_spec.encodings = { y: { field: 'cost' } }))],
+  ['pie faceted on row', chart('Pie Chart', (i) => (i.chart_spec.encodings = { color: { field: 'city' }, size: { field: 'revenue' }, row: { field: 'city' } }))],
+  ['donut faceted on column', chart('Donut Chart', (i) => (i.chart_spec.encodings = { color: { field: 'city' }, size: { field: 'revenue' }, column: { field: 'city' } }))],
+  ['stacked bar faceted on row', chart('Stacked Bar Chart', (i) => {
+    i.chart_spec.encodings.color = { field: 'city' };
+    i.chart_spec.encodings.row = { field: 'city' };
+  })],
+  ['grouped bar faceted on column', chart('Grouped Bar Chart', (i) => {
+    i.chart_spec.encodings.group = { field: 'city' };
+    i.chart_spec.encodings.column = { field: 'city' };
+  })],
+  ['pie with an empty size field and theta', chart('Pie Chart', (i) => (i.chart_spec.encodings = { color: { field: 'city' }, size: { field: '' }, theta: { field: 'revenue' } }))],
+  ['pie with an empty theta field and y', chart('Pie Chart', (i) => (i.chart_spec.encodings = { color: { field: 'city' }, theta: { field: '' }, y: { field: 'revenue' } }))],
 ];
 
 export function probeCases(): ProbeCase[] {

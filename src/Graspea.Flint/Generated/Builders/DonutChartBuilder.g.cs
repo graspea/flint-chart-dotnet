@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 
 namespace Graspea.Flint;
 
-/// <summary>Builds a <c>Donut Chart</c> document; backends: vegalite, plotly, excel. Start with <c>Chart.Donut(rows)</c>.</summary>
+/// <summary>Builds a <c>Donut Chart</c> document; backends: vegalite, plotly, excel, image-charts. Start with <c>Chart.Donut(rows)</c>.</summary>
 /// <typeparam name="TRow">The row type.</typeparam>
 /// <example>
 /// <code>
@@ -55,78 +55,78 @@ public sealed partial class DonutChartBuilder<TRow> : ChartBuilder<DonutChartBui
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> Color(ChartEncoding encoding) => Encode(Channel.Color, encoding);
 
-    /// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite; not by plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite; not by plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> Column(string field, SemanticType? semanticType = null) => Encode(Channel.Column, field, semanticType);
 
-    /// <summary>Binds the <c>column</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> Column(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Column, selector, semanticType);
 
-    /// <summary>Binds the <c>column</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> Column(ChartEncoding encoding) => Encode(Channel.Column, encoding);
 
-    /// <summary>Binds the <c>row</c> channel to a field. Declared by vegalite; not by plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to a field. Declared by vegalite; not by plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> Row(string field, SemanticType? semanticType = null) => Encode(Channel.Row, field, semanticType);
 
-    /// <summary>Binds the <c>row</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> Row(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Row, selector, semanticType);
 
-    /// <summary>Binds the <c>row</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> Row(ChartEncoding encoding) => Encode(Channel.Row, encoding);
 
-    /// <summary>Binds the <c>theta</c> channel to a field. Declared by excel; not by vegalite, plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>theta</c> channel to a field. Declared by excel, image-charts; not by vegalite, plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> Theta(string field, SemanticType? semanticType = null) => Encode(Channel.Theta, field, semanticType);
 
-    /// <summary>Binds the <c>theta</c> channel to the field a row member is written as. Declared by excel; not by vegalite, plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>theta</c> channel to the field a row member is written as. Declared by excel, image-charts; not by vegalite, plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> Theta(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Theta, selector, semanticType);
 
-    /// <summary>Binds the <c>theta</c> channel to an encoding with any of its members. Declared by excel; not by vegalite, plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>theta</c> channel to an encoding with any of its members. Declared by excel, image-charts; not by vegalite, plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> Theta(ChartEncoding encoding) => Encode(Channel.Theta, encoding);
 
-    /// <summary>Sets the <c>independentYAxis</c> chart property ("Independent Y"). Declared by vegalite; not by plotly, excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>independentYAxis</c> chart property ("Independent Y"). Declared by vegalite; not by plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> IndependentYAxis(bool value) => Property("independentYAxis", value);
 
-    /// <summary>Sets the <c>innerRadius</c> chart property ("Donut"). Declared by vegalite, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>innerRadius</c> chart property ("Donut"). Declared by vegalite, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value; vegalite: 0 to 100, step 5; plotly: 20 to 80, step 5.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> InnerRadius(double value) => Property("innerRadius", value);
 
-    /// <summary>Sets the <c>labelType</c> chart property ("Labels"). Declared by plotly; not by vegalite, excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>labelType</c> chart property ("Labels"). Declared by plotly; not by vegalite, excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value; <c>Default</c> omits the key.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> LabelType(DonutChartLabelType value) => Property("labelType", DonutChartLabelTypeValues.ToJson(value));
 
-    /// <summary>Sets the <c>showValueLabels</c> chart property ("Values"). Declared by vegalite; not by plotly, excel. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
+    /// <summary>Sets the <c>showValueLabels</c> chart property ("Values"). Declared by vegalite; not by plotly, excel, image-charts. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> ShowValueLabels(bool value) => Property("showValueLabels", value);
 
-    /// <summary>Sets the <c>sortSlices</c> chart property ("Sort slices"). Declared by vegalite, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>sortSlices</c> chart property ("Sort slices"). Declared by vegalite, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value; <c>Default</c> omits the key.</param>
     /// <returns>This builder.</returns>
     public DonutChartBuilder<TRow> SortSlices(DonutChartSortSlices value) => Property("sortSlices", DonutChartSortSlicesValues.ToJson(value));

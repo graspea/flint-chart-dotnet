@@ -5,7 +5,8 @@
       "echarts",
       "chartjs",
       "plotly",
-      "excel"
+      "excel",
+      "image-charts"
     ],
     "backendsApplyingTheme": [
       "vegalite",
@@ -220,6 +221,19 @@
             "supportsFacets": false,
             "typeMapping": {
               "vertical": "Area"
+            }
+          },
+          "image-charts": {
+            "channels": [
+              "x",
+              "y",
+              "color"
+            ],
+            "properties": [],
+            "supportsFacets": false,
+            "typeMapping": {
+              "area": true,
+              "cht": "lc"
             }
           },
           "plotly": {
@@ -486,6 +500,19 @@
             "typeMapping": {
               "horizontal": "BarClustered",
               "vertical": "ColumnClustered"
+            }
+          },
+          "image-charts": {
+            "channels": [
+              "x",
+              "y",
+              "color"
+            ],
+            "properties": [],
+            "supportsFacets": false,
+            "typeMapping": {
+              "cht": "bvg",
+              "horizontal": "bhg"
             }
           },
           "plotly": {
@@ -1682,6 +1709,19 @@
               "vertical": "Doughnut"
             }
           },
+          "image-charts": {
+            "channels": [
+              "size",
+              "color",
+              "theta"
+            ],
+            "properties": [],
+            "supportsFacets": false,
+            "typeMapping": {
+              "cht": "pd",
+              "noAxes": true
+            }
+          },
           "plotly": {
             "category": "Circular",
             "channels": [
@@ -2353,6 +2393,20 @@
               "vertical": "ColumnClustered"
             }
           },
+          "image-charts": {
+            "channels": [
+              "x",
+              "y",
+              "group",
+              "color"
+            ],
+            "properties": [],
+            "supportsFacets": false,
+            "typeMapping": {
+              "cht": "bvg",
+              "horizontal": "bhg"
+            }
+          },
           "plotly": {
             "category": "Bar",
             "channels": [
@@ -2795,6 +2849,18 @@
             "supportsFacets": false,
             "typeMapping": {
               "vertical": "Line"
+            }
+          },
+          "image-charts": {
+            "channels": [
+              "x",
+              "y",
+              "color"
+            ],
+            "properties": [],
+            "supportsFacets": false,
+            "typeMapping": {
+              "cht": "lc"
             }
           },
           "plotly": {
@@ -3832,6 +3898,19 @@
               "vertical": "Pie"
             }
           },
+          "image-charts": {
+            "channels": [
+              "size",
+              "color",
+              "theta"
+            ],
+            "properties": [],
+            "supportsFacets": false,
+            "typeMapping": {
+              "cht": "p",
+              "noAxes": true
+            }
+          },
           "plotly": {
             "category": "Circular",
             "channels": [
@@ -4088,6 +4167,19 @@
             "supportsFacets": false,
             "typeMapping": {
               "vertical": "RadarMarkers"
+            }
+          },
+          "image-charts": {
+            "channels": [
+              "x",
+              "y",
+              "color"
+            ],
+            "properties": [],
+            "supportsFacets": false,
+            "typeMapping": {
+              "cht": "r",
+              "radar": true
             }
           },
           "plotly": {
@@ -4995,6 +5087,19 @@
               "xy": true
             }
           },
+          "image-charts": {
+            "channels": [
+              "x",
+              "y",
+              "color"
+            ],
+            "properties": [],
+            "supportsFacets": false,
+            "typeMapping": {
+              "cht": "lxy",
+              "xy": true
+            }
+          },
           "plotly": {
             "category": "Scatter & Point",
             "channels": [
@@ -5161,6 +5266,18 @@
       },
       {
         "backends": {
+          "image-charts": {
+            "channels": [
+              "x",
+              "y",
+              "color"
+            ],
+            "properties": [],
+            "supportsFacets": false,
+            "typeMapping": {
+              "cht": "ls"
+            }
+          },
           "plotly": {
             "category": "Tables & KPIs",
             "channels": [
@@ -5365,6 +5482,19 @@
             "typeMapping": {
               "horizontal": "BarStacked",
               "vertical": "ColumnStacked"
+            }
+          },
+          "image-charts": {
+            "channels": [
+              "x",
+              "y",
+              "color"
+            ],
+            "properties": [],
+            "supportsFacets": false,
+            "typeMapping": {
+              "cht": "bvs",
+              "horizontal": "bhs"
             }
           },
           "plotly": {

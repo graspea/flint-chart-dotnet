@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 
 namespace Graspea.Flint;
 
-/// <summary>Builds a <c>Line Chart</c> document; backends: vegalite, echarts, chartjs, plotly, excel. Start with <c>Chart.Line(rows)</c>.</summary>
+/// <summary>Builds a <c>Line Chart</c> document; backends: vegalite, echarts, chartjs, plotly, excel, image-charts. Start with <c>Chart.Line(rows)</c>.</summary>
 /// <typeparam name="TRow">The row type.</typeparam>
 /// <example>
 /// <code>
@@ -72,132 +72,132 @@ public sealed partial class LineChartBuilder<TRow> : ChartBuilder<LineChartBuild
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Color(ChartEncoding encoding) => Encode(Channel.Color, encoding);
 
-    /// <summary>Binds the <c>strokeDash</c> channel to a field. Declared by vegalite, echarts, plotly, excel; not by chartjs, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>strokeDash</c> channel to a field. Declared by vegalite, echarts, plotly, excel; not by chartjs, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> StrokeDash(string field, SemanticType? semanticType = null) => Encode(Channel.StrokeDash, field, semanticType);
 
-    /// <summary>Binds the <c>strokeDash</c> channel to the field a row member is written as. Declared by vegalite, echarts, plotly, excel; not by chartjs, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>strokeDash</c> channel to the field a row member is written as. Declared by vegalite, echarts, plotly, excel; not by chartjs, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> StrokeDash(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.StrokeDash, selector, semanticType);
 
-    /// <summary>Binds the <c>strokeDash</c> channel to an encoding with any of its members. Declared by vegalite, echarts, plotly, excel; not by chartjs, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>strokeDash</c> channel to an encoding with any of its members. Declared by vegalite, echarts, plotly, excel; not by chartjs, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> StrokeDash(ChartEncoding encoding) => Encode(Channel.StrokeDash, encoding);
 
-    /// <summary>Binds the <c>detail</c> channel to a field. Declared by vegalite; not by echarts, chartjs, plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>detail</c> channel to a field. Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Detail(string field, SemanticType? semanticType = null) => Encode(Channel.Detail, field, semanticType);
 
-    /// <summary>Binds the <c>detail</c> channel to the field a row member is written as. Declared by vegalite; not by echarts, chartjs, plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>detail</c> channel to the field a row member is written as. Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Detail(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Detail, selector, semanticType);
 
-    /// <summary>Binds the <c>detail</c> channel to an encoding with any of its members. Declared by vegalite; not by echarts, chartjs, plotly, excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>detail</c> channel to an encoding with any of its members. Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Detail(ChartEncoding encoding) => Encode(Channel.Detail, encoding);
 
-    /// <summary>Binds the <c>opacity</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>opacity</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Opacity(string field, SemanticType? semanticType = null) => Encode(Channel.Opacity, field, semanticType);
 
-    /// <summary>Binds the <c>opacity</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>opacity</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Opacity(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Opacity, selector, semanticType);
 
-    /// <summary>Binds the <c>opacity</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>opacity</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Opacity(ChartEncoding encoding) => Encode(Channel.Opacity, encoding);
 
-    /// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Column(string field, SemanticType? semanticType = null) => Encode(Channel.Column, field, semanticType);
 
-    /// <summary>Binds the <c>column</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Column(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Column, selector, semanticType);
 
-    /// <summary>Binds the <c>column</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Column(ChartEncoding encoding) => Encode(Channel.Column, encoding);
 
-    /// <summary>Binds the <c>row</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Row(string field, SemanticType? semanticType = null) => Encode(Channel.Row, field, semanticType);
 
-    /// <summary>Binds the <c>row</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Row(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Row, selector, semanticType);
 
-    /// <summary>Binds the <c>row</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Row(ChartEncoding encoding) => Encode(Channel.Row, encoding);
 
-    /// <summary>Sets the <c>includeZero_x</c> chart property ("Zero X"). Declared by vegalite; not by echarts, chartjs, plotly, excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>includeZero_x</c> chart property ("Zero X"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> IncludeZeroX(bool value) => Property("includeZero_x", value);
 
-    /// <summary>Sets the <c>includeZero_y</c> chart property ("Zero Y"). Declared by vegalite; not by echarts, chartjs, plotly, excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>includeZero_y</c> chart property ("Zero Y"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> IncludeZeroY(bool value) => Property("includeZero_y", value);
 
-    /// <summary>Sets the <c>independentYAxis</c> chart property ("Independent Y"). Declared by vegalite; not by echarts, chartjs, plotly, excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>independentYAxis</c> chart property ("Independent Y"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> IndependentYAxis(bool value) => Property("independentYAxis", value);
 
-    /// <summary>Sets the <c>interpolate</c> chart property ("Curve"). Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>interpolate</c> chart property ("Curve"). Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value; <c>Default</c> omits the key.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> Interpolate(LineChartInterpolate value) => Property("interpolate", LineChartInterpolateValues.ToJson(value));
 
-    /// <summary>Sets the <c>logScale_x</c> chart property ("Log X"). Declared by vegalite; not by echarts, chartjs, plotly, excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>logScale_x</c> chart property ("Log X"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> LogScaleX(bool value) => Property("logScale_x", value);
 
-    /// <summary>Sets the <c>logScale_y</c> chart property ("Log Y"). Declared by vegalite; not by echarts, chartjs, plotly, excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>logScale_y</c> chart property ("Log Y"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> LogScaleY(bool value) => Property("logScale_y", value);
 
-    /// <summary>Sets the <c>showPoints</c> chart property ("Points"). Declared by vegalite, echarts, plotly; not by chartjs, excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>showPoints</c> chart property ("Points"). Declared by vegalite, echarts, plotly; not by chartjs, excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> ShowPoints(bool value) => Property("showPoints", value);
 
-    /// <summary>Sets the <c>xAxisType</c> chart property ("X as"). Declared by vegalite; not by echarts, chartjs, plotly, excel. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
+    /// <summary>Sets the <c>xAxisType</c> chart property ("X as"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
     /// <param name="value">The value; <c>Default</c> omits the key.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> XAxisType(LineChartXAxisType value) => Property("xAxisType", LineChartXAxisTypeValues.ToJson(value));
 
-    /// <summary>Sets the <c>yAxisType</c> chart property ("Y as"). Declared by vegalite; not by echarts, chartjs, plotly, excel. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
+    /// <summary>Sets the <c>yAxisType</c> chart property ("Y as"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
     /// <param name="value">The value; <c>Default</c> omits the key.</param>
     /// <returns>This builder.</returns>
     public LineChartBuilder<TRow> YAxisType(LineChartYAxisType value) => Property("yAxisType", LineChartYAxisTypeValues.ToJson(value));

@@ -58,6 +58,14 @@ describe('upstream-report: severity', () => {
     });
   });
 
+  // source: companion part 1, Severity, and part 9 §14.8.1 (a removed template of the hyphenated image-charts backend is
+  // retired like any other, so it is BREAKING)
+  it('classifies the removal of an image-charts template as BREAKING', () => {
+    const { before, after } = pair();
+    before.catalog.chartTypes[0].backends['image-charts'] = { channels: ['x', 'y'], properties: [] };
+    assert.deepEqual(severities(before, after), { 'catalog.chartTypes[Line Chart].backends.image-charts': 'BREAKING' });
+  });
+
   // source: companion part 1, Severity (behavioural: validation tightened without a type change; a property kind change
   // is a narrowed input type)
   it('classifies range changes as behavioural and a property kind change as BREAKING', () => {
@@ -315,6 +323,13 @@ describe('upstream-report: body', () => {
     assert.ok(!body.includes('### Generation log'));
     assert.ok(!body.includes('### Input types'));
     assert.ok(!body.includes('### Removed public API'));
+  });
+
+  // source: part 9 §14.8.1 (a row of the hyphenated image-charts backend is filed under Chart types)
+  it('files a template row of the image-charts backend under Chart types', () => {
+    const path = 'catalog.chartTypes[Line Chart].backends.image-charts';
+    const body = renderReport({ ...model(), rows: [{ change: 'removed' as const, path, before: '{}', severity: 'BREAKING' as const }] });
+    assert.ok(body.includes(`### Chart types\n| Change | IR path | Before | After | Severity |\n|---|---|---|---|---|\n| removed | \`${path}\``), body);
   });
 
   // source: docs/generator.md "Probes" (changed facts are listed as behavioural rows in their own area)

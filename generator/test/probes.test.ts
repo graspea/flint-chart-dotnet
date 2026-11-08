@@ -189,3 +189,30 @@ describe(`probes: documented facts (flint-chart ${DOCUMENTED})`, () => {
     });
   });
 });
+
+// Image-Charts joined the SDK on flint-chart 1.0.1 (design part 9 §14.8.1); its facts are pinned to that record, which
+// docs/validation-codes.md cites.
+describe('probes: Image-Charts facts (flint-chart 1.0.1)', () => {
+  let results: ProbeResults;
+  const imageCharts = (probe: string) => results.nullHandling[probe]!['image-charts'];
+
+  before(() => {
+    results = JSON.parse(readFileSync(record('1.0.1'), 'utf8')) as ProbeResults;
+  });
+
+  // source: src/image-charts/assemble.ts (no category or measure resolves without encodings; a null channel is skipped;
+  // only data.values is read, never data.url) and core convertTemporalData (the row shapes)
+  it('finds the Image-Charts throws and what it tolerates', () => {
+    for (const probe of ['data null', 'encodings missing', 'encodings empty', 'encoding field null', 'chartType unknown', 'row null', 'row null first', 'row number with temporal x', 'row number with an unbound temporal key']) {
+      assert.equal(imageCharts(probe), 'throws', probe);
+    }
+    for (const probe of ['channel null', 'data values empty', 'data url only', 'theme_spec null', 'row number, no temporal key']) {
+      assert.equal(imageCharts(probe), 'ok', probe);
+    }
+  });
+
+  // source: src/image-charts/assemble.ts (theme_spec is never read)
+  it('finds that Image-Charts applies no theme', () => {
+    for (const [fact, backends] of Object.entries(results.themeBackends)) assert.ok(!backends.includes('image-charts'), fact);
+  });
+});

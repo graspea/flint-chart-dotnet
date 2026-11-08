@@ -177,6 +177,7 @@ export async function runProbes(): Promise<ProbeResults> {
     chartjs: flint.assembleChartjs,
     plotly: flint.assemblePlotly,
     excel: flint.assembleExcel,
+    'image-charts': flint.assembleImageCharts,
   };
   const outcome = (b: Backend, input: Input): Outcome => {
     try {

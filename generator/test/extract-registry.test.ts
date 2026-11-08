@@ -1,9 +1,12 @@
 import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import * as flint from 'flint-chart';
 import { extractCatalog } from '../src/extract/registry.ts';
 import { flintPackageDir } from '../src/extract/package.ts';
+import { loadOverrides } from '../src/overrides.ts';
 import type { Ir, IrCatalog } from '../src/ir.ts';
 
 // Runs against the installed flint-chart. Facts cited from docs/design part 01 §2 and §10.4 test 3 were probed against
@@ -20,17 +23,93 @@ describe('extract/registry', () => {
   const discretePairs = (c: IrCatalog) =>
     new Set(allProperties(c).filter(({ p }) => p.type === 'discrete').map(({ t, p }) => `${t.name}/${p.key}`));
 
+  const { imageChartsChannels, imageChartsSource } = loadOverrides(new URL('../overrides.json', import.meta.url).pathname);
+  const overrides = { backendsApplyingTheme: ['vegalite', 'plotly'], hostStateKeys: ['sort'], ignoredOptions: {}, imageChartsChannels, imageChartsSource };
+  const extract = (module: Record<string, unknown>, change: Partial<typeof overrides> & { pending?: string[] } = {}) =>
+    extractCatalog(module, flintPackageDir(), { ...overrides, ...change });
+  const map = (flint as unknown as { IMAGE_CHARTS_TYPE_MAP: Record<string, Record<string, string | boolean>> }).IMAGE_CHARTS_TYPE_MAP;
+
   before(() => {
-    catalog = extractCatalog(flint as unknown as Record<string, unknown>, flintPackageDir(), {
-      backendsApplyingTheme: ['vegalite', 'plotly'],
-      hostStateKeys: ['sort'],
-      ignoredOptions: {},
-    });
+    catalog = extract(flint as unknown as Record<string, unknown>);
   });
 
-  // source: registries (vl/ec/cjs/pl/excelAllTemplateDefs), design §2
-  it('lists the five backends in the fixed order', () => {
-    assert.deepEqual(catalog.backends, ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel']);
+  // source: registries (vl/ec/cjs/pl/excelAllTemplateDefs), design §2, and IMAGE_CHARTS_TYPE_MAP (src/image-charts/chart-types.ts),
+  // appended last (design part 9 §14.8.1)
+  it('lists the six backends in the fixed order, Image-Charts last', () => {
+    assert.deepEqual(catalog.backends, ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel', 'image-charts']);
+  });
+
+  // source: src/image-charts/chart-types.ts (the ten own keys of IMAGE_CHARTS_TYPE_MAP), src/image-charts/assemble.ts
+  // (no chartProperties read; a bound column or row throws) and overrides.json imageChartsChannels
+  it('derives the Image-Charts templates from the chart-type map and the curated channels', () => {
+    const withImageCharts = catalog.chartTypes.filter((t) => 'image-charts' in t.backends).map((t) => t.name);
+    assert.deepEqual(withImageCharts, Object.keys(map).sort());
+    for (const name of withImageCharts) {
+      const t = catalog.chartTypes.find((c) => c.name === name)!;
+      const others = Object.entries(t.backends).filter(([b]) => b !== 'image-charts').flatMap(([, b]) => b.channels);
+      const template = t.backends['image-charts'];
+      assert.deepEqual(template, { channels: [...new Set(others)].filter((c) => imageChartsChannels[name].includes(c)), properties: [], typeMapping: map[name], supportsFacets: false }, name);
+      assert.ok(template.channels.every((c) => others.includes(c)), `${name}: no builder gains a member`);
+    }
+  });
+
+  // source: docs/generator.md "Failure policy" (an Image-Charts entry that disagrees with the chart-type map, or that
+  // would give a builder a member, fails generation; pending lists an entry written ahead)
+  it('fails on Image-Charts channels that disagree with the chart-type map', () => {
+    const module = flint as unknown as Record<string, unknown>;
+    const without = (name: string) => Object.fromEntries(Object.entries(imageChartsChannels).filter(([k]) => k !== name));
+    assert.throws(() => extract(module, { imageChartsChannels: without('Sparkline') }), /imageChartsChannels\["Sparkline"\] is missing/);
+    assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, Heatmap: ['x'] } }), /imageChartsChannels\["Heatmap"\] matches no chart type/);
+    assert.doesNotThrow(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, Heatmap: ['x'] }, pending: ['catalog.chartTypes[Heatmap].backends.image-charts'] }));
+    assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, toString: ['x'] } }), /imageChartsChannels\["toString"\] matches no chart type/);
+    assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, 'Bar Chart': ['x', 'y', 'size'] } }), /lists size, which no other backend/);
+    assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, 'Bar Chart': ['x', 'y', 'column'] } }), /lists column, on which assembleImageCharts throws/);
+  });
+
+  // source: docs/generator.md "Failure policy" (an Image-Charts source file that differs from its reviewed sha256 fails
+  // extraction until the rules, imageChartsChannels and the consumed-channel exemptions are reviewed) and the installed
+  // src/image-charts/assemble.ts and chart-types.ts
+  it('fails when an Image-Charts source differs from the reviewed fingerprint', () => {
+    const module = flint as unknown as Record<string, unknown>;
+    for (const file of ['src/image-charts/assemble.ts', 'src/image-charts/chart-types.ts']) {
+      assert.equal(imageChartsSource[file], createHash('sha256').update(readFileSync(join(flintPackageDir(), file))).digest('hex'), file);
+    }
+    const changed = { ...imageChartsSource, 'src/image-charts/assemble.ts': '0'.repeat(64) };
+    assert.throws(
+      () => extract(module, { imageChartsSource: changed }),
+      /src\/image-charts\/assemble\.ts has sha256 [0-9a-f]{64}, but imageChartsSource in overrides\.json records 0{64}: review src\/Graspea\.Flint\/Validation\/Rules\/ImageCharts\.cs, imageChartsChannels and the consumed-channel exemptions .*then update the fingerprint/,
+    );
+    const missing = Object.fromEntries(Object.entries(imageChartsSource).filter(([k]) => k !== 'src/image-charts/chart-types.ts'));
+    assert.throws(() => extract(module, { imageChartsSource: missing }), /src\/image-charts\/chart-types\.ts has sha256 [0-9a-f]{64}, but imageChartsSource in overrides\.json records none/);
+  });
+
+  // source: src/image-charts/assemble.ts of flint-chart 1.0.1: what assembleImageCharts reads (x, y, color and group on
+  // the axes and Scatter families, :187-210 and :258-380; color, x, size, theta and y on Pie and Donut, :265-266; column
+  // and row only to throw, :192-194), intersected with what another backend of the template declares
+  // (docs/generator.md imageChartsChannels); read but left out: group outside Grouped Bar Chart, x and y on Pie and Donut
+  it('pins the curated Image-Charts channels of flint-chart 1.0.1', () => {
+    const expected: Record<string, string[]> = {
+      'Area Chart': ['x', 'y', 'color'],
+      'Bar Chart': ['x', 'y', 'color'],
+      'Donut Chart': ['size', 'color', 'theta'],
+      'Grouped Bar Chart': ['x', 'y', 'group', 'color'],
+      'Line Chart': ['x', 'y', 'color'],
+      'Pie Chart': ['size', 'color', 'theta'],
+      'Radar Chart': ['x', 'y', 'color'],
+      'Scatter Plot': ['x', 'y', 'color'],
+      Sparkline: ['x', 'y', 'color'],
+      'Stacked Bar Chart': ['x', 'y', 'color'],
+    };
+    assert.deepEqual(Object.keys(map).sort(), Object.keys(expected).sort());
+    for (const [name, channels] of Object.entries(expected)) {
+      const template = catalog.chartTypes.find((t) => t.name === name)!.backends['image-charts'];
+      assert.deepEqual([...template.channels].sort(), [...channels].sort(), name);
+    }
+  });
+
+  // source: the assemble* exports of the pinned flint-chart (a backend without a template registry fails loudly)
+  it('fails on an assembler export the catalog does not cover', () => {
+    assert.throws(() => extract({ ...(flint as unknown as Record<string, unknown>), assembleNewBackend: () => ({}) }), /Unknown assemblers: assembleNewBackend/);
   });
 
   // source: ir/flint-ir.json catalog.chartTypes (the chart types of the pinned version; design §2 on 0.5.1: 48, Vega-Lite

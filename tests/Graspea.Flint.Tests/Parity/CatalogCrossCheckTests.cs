@@ -10,7 +10,7 @@ namespace Graspea.Flint.Tests.Parity;
 /// </summary>
 public sealed class CatalogCrossCheckTests
 {
-    private static readonly string[] BackendIds = ["vegalite", "echarts", "chartjs", "plotly", "excel"];
+    private static readonly string[] BackendIds = ["vegalite", "echarts", "chartjs", "plotly", "excel", "image-charts"];
 
     private static FlintBackend Backend(string id) => (FlintBackend)Array.IndexOf(BackendIds, id);
 

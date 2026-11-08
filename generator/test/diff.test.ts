@@ -79,4 +79,18 @@ describe('diff', () => {
       },
     ]);
   });
+
+  // source: design §7.8 and part 9 §14.8.1 (a backend id may contain a hyphen: image-charts)
+  it('retires a template and a channel of a backend whose id has a hyphen', () => {
+    const { before, after } = pair();
+    before.catalog.chartTypes[0].backends['image-charts'] = { channels: ['x', 'y', 'color'], properties: [] };
+    after.catalog.chartTypes[0].backends['image-charts'] = { channels: ['x', 'y'], properties: [] };
+    assert.deepEqual(retiredEntries(diffIr(before, after), '0.5.1', '0.6.0'), [
+      { path: 'catalog.chartTypes[Line Chart].backends.image-charts.channels[color]', lastSeenIn: '0.5.1', retiredIn: '0.6.0' },
+    ]);
+    delete after.catalog.chartTypes[0].backends['image-charts'];
+    assert.deepEqual(retiredEntries(diffIr(before, after), '0.5.1', '0.6.0'), [
+      { path: 'catalog.chartTypes[Line Chart].backends.image-charts', lastSeenIn: '0.5.1', retiredIn: '0.6.0' },
+    ]);
+  });
 });

@@ -10,7 +10,7 @@ using Graspea.Flint.Serialization;
 namespace Graspea.Flint;
 
 /// <summary>The <c>AssembleOptions</c> object.</summary>
-/// <remarks>The Excel backend reads no member of these options.</remarks>
+/// <remarks>The Excel and Image-Charts backends read no member of these options.</remarks>
 [JsonNumberHandling(JsonNumberHandling.Strict)]
 public sealed partial class AssembleOptions
 {

@@ -64,10 +64,10 @@
     "catalog.themePresets[powerbi]": "PowerBi"
   },
   "docs": {
-    "AssembleOptions": "The Excel backend reads no member of these options.",
+    "AssembleOptions": "The Excel and Image-Charts backends read no member of these options.",
     "AssembleOptions.maxStretch": "When this member is absent, the flint-chart 1.0.0 layout uses 1.5 (DEFAULT_MAX_STRETCH, src/core/compute-layout.ts:180), not the 2 stated above.",
     "ThemeCompileDefaults.maxStretch": "When this member is absent, the flint-chart 1.0.0 layout uses 1.5 (DEFAULT_MAX_STRETCH, src/core/compute-layout.ts:180), not the 2 stated above.",
-    "ThemeSpec": "Applied by the Vega-Lite and Plotly backends; the ECharts, Chart.js and Excel backends ignore theme_spec (recorded probe against flint-chart 1.0.0)."
+    "ThemeSpec": "Applied by the Vega-Lite and Plotly backends; the ECharts, Chart.js, Excel and Image-Charts backends ignore theme_spec (recorded probe against flint-chart 1.0.1)."
   },
   "backendsApplyingTheme": [
     "vegalite",
@@ -116,6 +116,63 @@
       "chartjs",
       "plotly"
     ]
+  },
+  "imageChartsChannels": {
+    "Area Chart": [
+      "x",
+      "y",
+      "color"
+    ],
+    "Bar Chart": [
+      "x",
+      "y",
+      "color"
+    ],
+    "Donut Chart": [
+      "color",
+      "size",
+      "theta"
+    ],
+    "Grouped Bar Chart": [
+      "x",
+      "y",
+      "group",
+      "color"
+    ],
+    "Line Chart": [
+      "x",
+      "y",
+      "color"
+    ],
+    "Pie Chart": [
+      "size",
+      "color",
+      "theta"
+    ],
+    "Radar Chart": [
+      "x",
+      "y",
+      "color"
+    ],
+    "Scatter Plot": [
+      "x",
+      "y",
+      "color"
+    ],
+    "Sparkline": [
+      "x",
+      "y",
+      "color"
+    ],
+    "Stacked Bar Chart": [
+      "x",
+      "y",
+      "color"
+    ]
+  },
+  "imageChartsSource": {
+    "src/image-charts/assemble.ts": "703abf7b05f7a4917bcc5689f00da35c8e6d684997da46b340a92b93c8920c24",
+    "src/image-charts/chart-types.ts": "455d017af24a1b1830051255e878eae24e9b28df47e7a406d2fe814afa65fef8"
   },
   "pending": []
 }

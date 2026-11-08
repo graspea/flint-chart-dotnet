@@ -109,7 +109,7 @@ ValidationResult result = ChartValidator.Validate(input); // unknown_chart_type 
 
 ### Identifiers (flint-chart 1.0.1)
 
-- Backends: `FlintBackend.VegaLite`, `FlintBackend.ECharts`, `FlintBackend.ChartJs`, `FlintBackend.Plotly`, `FlintBackend.Excel`.
+- Backends: `FlintBackend.VegaLite`, `FlintBackend.ECharts`, `FlintBackend.ChartJs`, `FlintBackend.Plotly`, `FlintBackend.Excel`, `FlintBackend.ImageCharts`.
 - Chart types: 51 `ChartType` constants, each with a fluent entry (`ChartType.LineChart` and `Chart.Line(rows)`); see the chart catalog.
 - Channels: `Channel.X`, `Channel.Y`, `Channel.X2`, `Channel.Y2`, `Channel.Id`, `Channel.Color`, `Channel.Opacity`, `Channel.Size`, `Channel.Shape`, `Channel.StrokeDash`, `Channel.Column`, `Channel.Row`, `Channel.Latitude`, `Channel.Longitude`, `Channel.Radius`, `Channel.Detail`, `Channel.Group`, `Channel.Open`, `Channel.High`, `Channel.Low`, `Channel.Close`, `Channel.Angle`, `Channel.Order`, `Channel.Metric`, `Channel.Value`, `Channel.Goal`, `Channel.Theta`.
 - Semantic types: 44 `SemanticType` constants (`SemanticType.YearMonth`); see the semantic types.
@@ -120,12 +120,12 @@ ValidationResult result = ChartValidator.Validate(input); // unknown_chart_type 
 
 ## Chart catalog (flint-chart 1.0.1)
 
-flint-chart 1.0.1 declares 51 chart types. Backend ids map to `FlintBackend`: `vegalite` = `FlintBackend.VegaLite`, `echarts` = `FlintBackend.ECharts`, `chartjs` = `FlintBackend.ChartJs`, `plotly` = `FlintBackend.Plotly`, `excel` = `FlintBackend.Excel`. Channels and properties are wire names, the union over the backends of the template; `Validate(backend)` reports one that the target backend does not declare (`unsupported_channel`, `unknown_chart_property`).
+flint-chart 1.0.1 declares 51 chart types. Backend ids map to `FlintBackend`: `vegalite` = `FlintBackend.VegaLite`, `echarts` = `FlintBackend.ECharts`, `chartjs` = `FlintBackend.ChartJs`, `plotly` = `FlintBackend.Plotly`, `excel` = `FlintBackend.Excel`, `image-charts` = `FlintBackend.ImageCharts`. Channels and properties are wire names, the union over the backends of the template; `Validate(backend)` reports one that the target backend does not declare (`unsupported_channel`, `unknown_chart_property`).
 
 | Chart type | Constant and entry | Backends | Channels | Properties |
 |---|---|---|---|---|
-| Area Chart | `ChartType.AreaChart`, `Chart.Area` | vegalite, echarts, chartjs, plotly, excel | x, y, color, opacity, column, row | independentYAxis, interpolate, opacity, stackMode, xAxisType, yAxisType |
-| Bar Chart | `ChartType.BarChart`, `Chart.Bar` | vegalite, echarts, chartjs, plotly, excel | x, y, color, opacity, column, row | cornerRadius, independentYAxis, showValueLabels, xAxisType, yAxisType |
+| Area Chart | `ChartType.AreaChart`, `Chart.Area` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, opacity, column, row | independentYAxis, interpolate, opacity, stackMode, xAxisType, yAxisType |
+| Bar Chart | `ChartType.BarChart`, `Chart.Bar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, opacity, column, row | cornerRadius, independentYAxis, showValueLabels, xAxisType, yAxisType |
 | Bar Table | `ChartType.BarTable`, `Chart.BarTable` | vegalite, plotly | y, x, color, column, row | independentYAxis, maxRows, showPercent |
 | Boxplot | `ChartType.Boxplot`, `Chart.Boxplot` | vegalite, echarts, plotly, excel | x, y, color, opacity, column, row | dodge, includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, showOutliers, showPoints, whiskerMethod |
 | Bubble Chart | `ChartType.BubbleChart`, `Chart.Bubble` | chartjs | x, y, size, color, opacity, column, row | opacity |
@@ -138,35 +138,35 @@ flint-chart 1.0.1 declares 51 chart types. Backend ids map to `FlintBackend`: `v
 | Connected Scatter Plot | `ChartType.ConnectedScatterPlot`, `Chart.ConnectedScatter` | vegalite, echarts, chartjs, plotly, excel | x, y, order, color, detail, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y |
 | Density Contour | `ChartType.DensityContour`, `Chart.DensityContour` | plotly | x, y, column, row | binCount, showPoints |
 | Density Plot | `ChartType.DensityPlot`, `Chart.Density` | vegalite, echarts, plotly | x, color, column, row | bandwidth, independentYAxis, opacity, stackMode |
-| Donut Chart | `ChartType.DonutChart`, `Chart.Donut` | vegalite, plotly, excel | size, color, column, row, theta | independentYAxis, innerRadius, labelType, showValueLabels, sortSlices |
+| Donut Chart | `ChartType.DonutChart`, `Chart.Donut` | vegalite, plotly, excel, image-charts | size, color, column, row, theta | independentYAxis, innerRadius, labelType, showValueLabels, sortSlices |
 | Doughnut Chart | `ChartType.DoughnutChart`, `Chart.Doughnut` | chartjs | size, color, column, row | innerRadius, sortSlices |
 | ECDF Plot | `ChartType.EcdfPlot`, `Chart.Ecdf` | vegalite, echarts, chartjs, plotly | x, color, detail, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, showPoints |
 | Funnel Chart | `ChartType.FunnelChart`, `Chart.Funnel` | echarts, plotly, excel | y, size | gap, orient, sort |
 | Gantt Chart | `ChartType.GanttChart`, `Chart.Gantt` | vegalite, echarts, chartjs, plotly | y, x, x2, color, detail, column, row | cornerRadius, includeZero_x, includeZero_y, independentYAxis, intervalLabels, logScale_x, logScale_y, taskHeight |
 | Gauge Chart | `ChartType.GaugeChart`, `Chart.Gauge` | echarts, plotly | size, column | max, min, showProgress |
-| Grouped Bar Chart | `ChartType.GroupedBarChart`, `Chart.GroupedBar` | vegalite, echarts, chartjs, plotly, excel | x, y, group, color, column, row | dodge, independentYAxis, showValueLabels |
+| Grouped Bar Chart | `ChartType.GroupedBarChart`, `Chart.GroupedBar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, group, color, column, row | dodge, independentYAxis, showValueLabels |
 | Heatmap | `ChartType.Heatmap`, `Chart.Heatmap` | vegalite, echarts, plotly | x, y, color, column, row | independentYAxis, showValueLabels, xAxisType, yAxisType |
 | Histogram | `ChartType.Histogram`, `Chart.Histogram` | vegalite, echarts, chartjs, plotly, excel | x, color, column, row | binCount, independentYAxis |
 | KPI Card | `ChartType.KpiCard`, `Chart.KpiCard` | vegalite, plotly | metric, value, goal | behindThreshold, layout, style |
-| Line Chart | `ChartType.LineChart`, `Chart.Line` | vegalite, echarts, chartjs, plotly, excel | x, y, color, strokeDash, detail, opacity, column, row | includeZero_x, includeZero_y, independentYAxis, interpolate, logScale_x, logScale_y, showPoints, xAxisType, yAxisType |
+| Line Chart | `ChartType.LineChart`, `Chart.Line` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, strokeDash, detail, opacity, column, row | includeZero_x, includeZero_y, independentYAxis, interpolate, logScale_x, logScale_y, showPoints, xAxisType, yAxisType |
 | Lollipop Chart | `ChartType.LollipopChart`, `Chart.Lollipop` | vegalite, echarts, chartjs, plotly | x, y, color, column, row | dotSize, independentYAxis, showValueLabels, xAxisType, yAxisType |
 | Map | `ChartType.Map`, `Chart.Map` | vegalite, plotly | longitude, latitude, color, size, opacity | projection, projectionCenter, region |
 | Marginal Plot | `ChartType.MarginalPlot`, `Chart.Marginal` | vegalite | x, y, color, size, shape, opacity | bandwidth, binCount, includeZero_x, includeZero_y, logScale_x, logScale_y, marginal, opacity, showOutliers, stackMode, whiskerMethod |
 | Network Graph | `ChartType.NetworkGraph`, `Chart.NetworkGraph` | echarts | x, y, size | layout |
 | Parallel Coordinates | `ChartType.ParallelCoordinates`, `Chart.ParallelCoordinates` | echarts | color, detail | (none) |
-| Pie Chart | `ChartType.PieChart`, `Chart.Pie` | vegalite, echarts, chartjs, plotly, excel | size, color, column, row, theta | cornerRadius, independentYAxis, innerRadius, labelType, showValueLabels, sortSlices |
+| Pie Chart | `ChartType.PieChart`, `Chart.Pie` | vegalite, echarts, chartjs, plotly, excel, image-charts | size, color, column, row, theta | cornerRadius, independentYAxis, innerRadius, labelType, showValueLabels, sortSlices |
 | Pyramid Chart | `ChartType.PyramidChart`, `Chart.Pyramid` | vegalite, echarts, plotly, excel | x, y, color | showValueLabels |
-| Radar Chart | `ChartType.RadarChart`, `Chart.Radar` | vegalite, echarts, chartjs, plotly, excel | x, y, color, column, row | fillOpacity, filled, includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, shape, strokeWidth |
+| Radar Chart | `ChartType.RadarChart`, `Chart.Radar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, column, row | fillOpacity, filled, includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, shape, strokeWidth |
 | Range Area Chart | `ChartType.RangeAreaChart`, `Chart.RangeArea` | vegalite, echarts, chartjs, plotly | x, y, y2, color, column, row | independentYAxis, interpolate, opacity |
 | Ranged Dot Plot | `ChartType.RangedDotPlot`, `Chart.RangedDot` | vegalite, echarts, plotly | x, y, color | includeZero_x, includeZero_y, logScale_x, logScale_y |
 | Regression | `ChartType.Regression`, `Chart.Regression` | vegalite, echarts, plotly | x, y, size, color, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, opacity, polyOrder, regressionMethod |
 | Ridgeline Plot | `ChartType.RidgelinePlot`, `Chart.Ridgeline` | vegalite | x, y, color | bandwidth, colorBy, interpolate, markAt, opacity, order, overlap, perspective, skew, tailCut, tilt, valueMax |
 | Rose Chart | `ChartType.RoseChart`, `Chart.Rose` | vegalite, echarts, chartjs, plotly | x, y, color, column, row | alignment, independentYAxis, padAngle, showValueLabels, sortSlices |
 | Sankey Diagram | `ChartType.SankeyDiagram`, `Chart.SankeyDiagram` | echarts | x, y, size | nodeGap, nodeWidth, orient |
-| Scatter Plot | `ChartType.ScatterPlot`, `Chart.Scatter` | vegalite, echarts, chartjs, plotly, excel | x, y, color, size, shape, detail, opacity, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, opacity |
+| Scatter Plot | `ChartType.ScatterPlot`, `Chart.Scatter` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, size, shape, detail, opacity, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, opacity |
 | Slope Chart | `ChartType.SlopeChart`, `Chart.Slope` | vegalite, echarts, chartjs, plotly | x, y, color, detail, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, showSeriesInLabel, showText |
-| Sparkline | `ChartType.Sparkline`, `Chart.Sparkline` | vegalite, plotly | x, y, color, detail, row, column | baseline, includeZero_x, includeZero_y, interpolate, logScale_x, logScale_y, trendWidth |
-| Stacked Bar Chart | `ChartType.StackedBarChart`, `Chart.StackedBar` | vegalite, echarts, chartjs, plotly, excel | x, y, color, column, row | independentYAxis, showValueLabels, stackMode |
+| Sparkline | `ChartType.Sparkline`, `Chart.Sparkline` | vegalite, plotly, image-charts | x, y, color, detail, row, column | baseline, includeZero_x, includeZero_y, interpolate, logScale_x, logScale_y, trendWidth |
+| Stacked Bar Chart | `ChartType.StackedBarChart`, `Chart.StackedBar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, column, row | independentYAxis, showValueLabels, stackMode |
 | Streamgraph | `ChartType.Streamgraph`, `Chart.Streamgraph` | vegalite, echarts, plotly | x, y, color, column, row | independentYAxis, interpolate |
 | Strip Plot | `ChartType.StripPlot`, `Chart.Strip` | vegalite, echarts, chartjs, plotly | x, y, color, size, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, opacity, pointSize, stepWidth |
 | Sunburst Chart | `ChartType.SunburstChart`, `Chart.Sunburst` | echarts, excel | color, size, detail, group | innerRadius, labelRotate |

@@ -46,6 +46,7 @@ internal sealed partial class ValidationRun
         FlintBackend.ChartJs => "chartjs",
         FlintBackend.Plotly => "plotly",
         FlintBackend.Excel => "excel",
+        FlintBackend.ImageCharts => "image-charts",
         _ => b.ToString(),
     };
 

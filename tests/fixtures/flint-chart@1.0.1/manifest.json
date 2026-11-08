@@ -2,7 +2,7 @@
   "cases": 956,
   "excludedNondeterministic": [],
   "integrity": "sha512-8buLTEwj+DLAufo/2/QZEBU8v+78shKWjj8sWW0tGXQ92UlE7zJoOvJ+CxCO77MY5bRM86ohUrcl/5CMoh3GuQ==",
-  "probeCases": 60,
+  "probeCases": 83,
   "seed": 42,
   "tz": "UTC",
   "upstream": "1.0.1"

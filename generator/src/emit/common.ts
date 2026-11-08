@@ -45,6 +45,7 @@ const BACKEND_MEMBERS: Readonly<Record<string, string>> = {
   chartjs: 'ChartJs',
   plotly: 'Plotly',
   excel: 'Excel',
+  'image-charts': 'ImageCharts',
 };
 
 export function backendMember(id: string): string {

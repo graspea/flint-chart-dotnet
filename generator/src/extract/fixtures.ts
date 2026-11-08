@@ -1,5 +1,5 @@
 // Fixtures and expectations (design §7.9, §10.3): flint-chart/test-data TestCases mapped to ChartAssemblyInput
-// documents, the crafted cases of probe-cases.ts, and the outcome of each of the five assemblers on each of them.
+// documents, the crafted cases of probe-cases.ts, and the outcome of each of the six assemblers on each of them.
 //
 // Determinism: TZ=UTC and a Park-Miller generator (seed 42) installed in place of Math.random before
 // flint-chart/test-data is imported. Both are process-wide, so extractFixtures() must run in a fresh process
@@ -11,7 +11,7 @@ export const FIXTURE_SEED = 42;
 export const FIXTURE_TZ = 'UTC';
 
 /** The fixed backend order of the IR (design §7.3). */
-export const BACKENDS = ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel'] as const;
+export const BACKENDS = ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel', 'image-charts'] as const;
 export type Backend = (typeof BACKENDS)[number];
 
 /** The parts of the upstream `TestCase` (dist/types-2j8bDxoT.d.ts) the mapping reads or drops. */
@@ -108,10 +108,11 @@ export function mapTestCase(tc: TestCaseLike): Input {
   return input;
 }
 
-const GROUP_PREFIX: Record<string, Backend> = { 'ECharts: ': 'echarts', 'Chart.js: ': 'chartjs', 'Plotly: ': 'plotly' };
+const GROUP_PREFIX: Record<string, Backend> = { 'ECharts: ': 'echarts', 'Chart.js: ': 'chartjs', 'Plotly: ': 'plotly', 'Image-Charts: ': 'image-charts' };
 
 /**
- * The backend the upstream gallery shows a group on: the group prefix (`ECharts: `, `Chart.js: `, `Plotly: `), else
+ * The backend the upstream gallery shows a group on: the group prefix (`ECharts: `, `Chart.js: `, `Plotly: `,
+ * `Image-Charts: `), else
  * Vega-Lite; when that backend lacks the template, the first backend in the fixed order that has it.
  */
 export function defaultBackend(group: string, backendsWithTemplate: readonly string[]): Backend {
@@ -125,7 +126,8 @@ export function defaultBackend(group: string, backendsWithTemplate: readonly str
 
 /**
  * Runs one assembler on a copy of the input: a throw with its message, or the sorted distinct warning codes
- * (`_warnings` on the four layout backends, the top-level `warnings` array of the Excel artifact).
+ * (`_warnings` on the four layout backends, the top-level `warnings` array of the Excel artifact; the Image-Charts
+ * artifact, `{ type, url }`, has none).
  */
 export function recordOutcome(assemble: (input: Input) => unknown, input: Input): Outcome {
   let result: unknown;
@@ -159,12 +161,16 @@ export async function extractFixtures(upstream: { version: string; integrity: st
   const { TEST_GENERATORS } = (await import('flint-chart/test-data')) as unknown as {
     TEST_GENERATORS: Record<string, () => TestCaseLike[]>;
   };
+  const imageChartsTypes = flint.IMAGE_CHARTS_TYPE_MAP as unknown as Record<string, unknown>;
   const assemblers: Record<Backend, [Assembler, TemplateLookup]> = {
     vegalite: [flint.assembleVegaLite, flint.vlGetTemplateDef],
     echarts: [flint.assembleECharts, flint.ecGetTemplateDef],
     chartjs: [flint.assembleChartjs, flint.cjsGetTemplateDef],
     plotly: [flint.assemblePlotly, flint.plGetTemplateDef],
     excel: [flint.assembleExcel, flint.excelGetTemplateDef],
+    // No template registry: an own key of the chart-type map (isImageChartsSupported uses `in`, which also finds
+    // Object.prototype members such as "constructor").
+    'image-charts': [flint.assembleImageCharts, (chartType) => Object.hasOwn(imageChartsTypes, chartType)],
   };
 
   const cases: CaseLine[] = [];

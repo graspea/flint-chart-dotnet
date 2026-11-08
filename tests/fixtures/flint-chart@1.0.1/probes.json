@@ -69,6 +69,7 @@
       "chartjs": "throws",
       "echarts": "throws",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -76,6 +77,7 @@
       "chartjs": "throws",
       "echarts": "throws",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -83,6 +85,7 @@
       "chartjs": "throws",
       "echarts": "throws",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -90,6 +93,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "throws",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -97,6 +101,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "throws",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -104,6 +109,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -111,6 +117,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -118,6 +125,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -125,6 +133,7 @@
       "chartjs": "throws",
       "echarts": "throws",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -132,6 +141,7 @@
       "chartjs": "throws",
       "echarts": "throws",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -139,6 +149,7 @@
       "chartjs": "throws",
       "echarts": "throws",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -146,6 +157,7 @@
       "chartjs": "throws",
       "echarts": "throws",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -153,6 +165,7 @@
       "chartjs": "throws",
       "echarts": "throws",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -160,6 +173,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -167,6 +181,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -174,6 +189,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -181,6 +197,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -188,6 +205,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -195,6 +213,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -202,6 +221,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -209,6 +229,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -216,6 +237,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -223,6 +245,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -230,6 +253,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -237,6 +261,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     }
@@ -246,6 +271,7 @@
       "chartjs": "throws",
       "echarts": "throws",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -253,6 +279,7 @@
       "chartjs": "throws",
       "echarts": "throws",
       "excel": "throws",
+      "image-charts": "throws",
       "plotly": "throws",
       "vegalite": "throws"
     },
@@ -260,6 +287,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -267,6 +295,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     },
@@ -274,6 +303,7 @@
       "chartjs": "ok",
       "echarts": "ok",
       "excel": "ok",
+      "image-charts": "ok",
       "plotly": "ok",
       "vegalite": "ok"
     }

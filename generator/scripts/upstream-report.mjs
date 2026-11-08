@@ -131,7 +131,7 @@ const SDK_MEMBER = {
 function areaOf(path) {
   if (path.startsWith('probes.')) return 'Behaviour probes';
   if (path.startsWith('types.')) return 'Input types';
-  if (/^catalog\.chartTypes\[[^\]]+\](\.backends\.[a-z]+)?$/.test(path)) return 'Chart types';
+  if (/^catalog\.chartTypes\[[^\]]+\](\.backends\.[a-z][a-z-]*)?$/.test(path)) return 'Chart types';
   if (path.includes('.channels[') || path.startsWith('catalog.channels[')) return 'Channels';
   if (path.includes('.properties[')) return 'Properties';
   if (path.startsWith('catalog.semanticTypes')) return 'Semantic types';

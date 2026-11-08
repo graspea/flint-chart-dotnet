@@ -1,4 +1,5 @@
 // Runtime registries of flint-chart -> IR.catalog (design §7.1, §7.3). Counts are derived, never assumed.
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
@@ -21,11 +22,34 @@ const BACKENDS: ReadonlyArray<{ id: string; all: string; byCategory?: string }> 
   { id: 'excel', all: 'excelAllTemplateDefs' },
 ];
 
+/** Image-Charts has no template registry: its chart types are the own keys of IMAGE_CHARTS_TYPE_MAP, its channels the
+ * curated `imageChartsChannels` of overrides.json (docs/generator.md). It follows the registry backends. */
+const IMAGE_CHARTS = 'image-charts';
+/** The Image-Charts sources whose reviewed sha256 overrides.json records (`imageChartsSource`). */
+const IMAGE_CHARTS_SOURCES = ['src/image-charts/assemble.ts', 'src/image-charts/chart-types.ts'];
+
+/** The assembler exports the catalog covers: one per backend above, Image-Charts, and the dispatcher. */
+const KNOWN_ASSEMBLERS = new Set([
+  'assembleVegaLite',
+  'assembleECharts',
+  'assembleChartjs',
+  'assemblePlotly',
+  'assembleExcel',
+  'assembleImageCharts',
+  'assembleForBackend',
+]);
+
 /** Catalog facts that come from overrides.json rather than from the package (design §7.3). */
 export interface CatalogOverrides {
   backendsApplyingTheme: string[];
   hostStateKeys: string[];
   ignoredOptions: Record<string, string[]>;
+  /** Chart type of IMAGE_CHARTS_TYPE_MAP -> the channels its Image-Charts template declares. */
+  imageChartsChannels: Record<string, string[]>;
+  /** Package-relative path -> the reviewed sha256 of an Image-Charts source file. */
+  imageChartsSource: Record<string, string>;
+  /** IR paths of entries written ahead for an upstream version that is not pinned yet. */
+  pending?: string[];
 }
 
 interface TemplateDef {
@@ -70,6 +94,8 @@ export function extractCatalog(flint: Record<string, unknown>, packageDir: strin
   const known = new Set(BACKENDS.map((b) => b.all));
   const unknown = Object.keys(flint).filter((k) => k.endsWith('AllTemplateDefs') && !known.has(k));
   if (unknown.length > 0) throw new Error(`Unknown backend registries: ${unknown.join(', ')}. Add them to src/extract/registry.ts.`);
+  const assemblers = Object.keys(flint).filter((k) => /^assemble[A-Z]/.test(k) && !KNOWN_ASSEMBLERS.has(k));
+  if (assemblers.length > 0) throw new Error(`Unknown assemblers: ${assemblers.join(', ')}. Add their backend to src/extract/registry.ts.`);
 
   const chartTypes = new Map<string, IrChartType>();
   for (const backend of BACKENDS) {
@@ -99,6 +125,8 @@ export function extractCatalog(flint: Record<string, unknown>, packageDir: strin
     }
   }
 
+  imageChartsTemplates(flint, packageDir, chartTypes, overrides);
+
   const coreChannels = flint.channels as readonly string[];
   const declared = new Set([...chartTypes.values()].flatMap((t) => Object.values(t.backends).flatMap((b) => b.channels)));
   const channels = [...coreChannels, ...[...declared].filter((c) => !coreChannels.includes(c)).sort(ordinal)];
@@ -120,7 +148,7 @@ export function extractCatalog(flint: Record<string, unknown>, packageDir: strin
     .sort((a, b) => ordinal(a.id, b.id));
 
   return {
-    backends: BACKENDS.map((b) => b.id),
+    backends: [...BACKENDS.map((b) => b.id), IMAGE_CHARTS],
     backendsApplyingTheme: [...overrides.backendsApplyingTheme],
     hostStateKeys: [...overrides.hostStateKeys],
     ignoredOptions: { ...overrides.ignoredOptions },
@@ -129,4 +157,63 @@ export function extractCatalog(flint: Record<string, unknown>, packageDir: strin
     semanticTypes,
     themePresets,
   };
+}
+
+/**
+ * The Image-Charts templates: one per own key of IMAGE_CHARTS_TYPE_MAP (never an `in` lookup, which finds
+ * Object.prototype members), with the curated channels in the order the other backends declare them, no properties
+ * (assembleImageCharts reads no chartProperties) and no facets (it throws on a bound column or row). Fails, naming every
+ * entry, when the map and the overrides disagree, a curated
+ * channel would give a builder a member, or an Image-Charts source file differs from its reviewed fingerprint.
+ */
+function imageChartsTemplates(flint: Record<string, unknown>, packageDir: string, chartTypes: Map<string, IrChartType>, overrides: CatalogOverrides): void {
+  const map = flint.IMAGE_CHARTS_TYPE_MAP as Record<string, Record<string, string | boolean>> | undefined;
+  if (map === null || typeof map !== 'object') throw new Error('flint-chart exports no IMAGE_CHARTS_TYPE_MAP; update src/extract/registry.ts.');
+  const curated = overrides.imageChartsChannels;
+  const pending = new Set(overrides.pending ?? []);
+  const errors: string[] = [];
+  for (const name of Object.keys(map)) {
+    if (!Object.hasOwn(curated, name)) {
+      errors.push(`imageChartsChannels["${name}"] is missing (IMAGE_CHARTS_TYPE_MAP has the chart type; its channels are curated)`);
+      continue;
+    }
+    const chartType = chartTypes.get(name);
+    if (!chartType) {
+      errors.push(`catalog.chartTypes[${name}].backends.${IMAGE_CHARTS}: no other backend has the chart type, so a builder would be added`);
+      continue;
+    }
+    const union = new Set(Object.values(chartType.backends).flatMap((b) => b.channels));
+    for (const channel of curated[name]) {
+      if (channel === 'column' || channel === 'row') {
+        errors.push(`imageChartsChannels["${name}"] lists ${channel}, on which assembleImageCharts throws`);
+      } else if (!union.has(channel)) {
+        errors.push(`imageChartsChannels["${name}"] lists ${channel}, which no other backend of the template declares, so a builder would gain a member`);
+      }
+    }
+  }
+  for (const name of Object.keys(curated)) {
+    if (!Object.hasOwn(map, name) && !pending.has(`catalog.chartTypes[${name}].backends.${IMAGE_CHARTS}`)) {
+      errors.push(`imageChartsChannels["${name}"] matches no chart type of IMAGE_CHARTS_TYPE_MAP`);
+    }
+  }
+  // ponytail: a fingerprint, not a reading: any edit of these two files fails extraction until it is reviewed, but a
+  // change in a src/core helper they call (normalizeChartEncodingAliases, resolveChannelSemantics) passes unseen. A
+  // behavioural probe of the channels read per chart type would close that; add one if a sync ever slips through.
+  for (const file of IMAGE_CHARTS_SOURCES) {
+    const actual = createHash('sha256').update(readFileSync(join(packageDir, file))).digest('hex');
+    const reviewed = overrides.imageChartsSource[file];
+    if (actual !== reviewed) {
+      errors.push(
+        `${file} has sha256 ${actual}, but imageChartsSource in overrides.json records ${reviewed ?? 'none'}: review src/Graspea.Flint/Validation/Rules/ImageCharts.cs, imageChartsChannels and the consumed-channel exemptions (ImageCharts.ReadsUndeclared and its mirror in src/Graspea.Flint.CSharp/Spec/CatalogCheck.cs) against the new file, then update the fingerprint`,
+      );
+    }
+  }
+  if (errors.length > 0) throw new Error(`Image-Charts templates: ${errors.join('; ')}.`);
+
+  for (const name of Object.keys(map)) {
+    const chartType = chartTypes.get(name)!;
+    const union = [...new Set(Object.values(chartType.backends).flatMap((b) => b.channels))];
+    const channels = union.filter((c) => curated[name].includes(c));
+    chartType.backends[IMAGE_CHARTS] = { channels, properties: [], typeMapping: { ...map[name] }, supportsFacets: false };
+  }
 }

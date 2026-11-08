@@ -33,7 +33,7 @@ internal sealed class TemplateRow
 
     internal FrozenDictionary<string, PropertyRow> Properties { get; }
 
-    /// <summary>False where the backend throws on a bound <c>column</c>/<c>row</c> (Excel).</summary>
+    /// <summary>False where the backend throws on a bound <c>column</c>/<c>row</c> (Excel, Image-Charts).</summary>
     internal bool SupportsFacets { get; }
 
     /// <summary>The Excel template has a <c>validate()</c> that rejects some inputs.</summary>

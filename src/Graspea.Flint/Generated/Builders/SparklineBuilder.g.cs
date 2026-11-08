@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 
 namespace Graspea.Flint;
 
-/// <summary>Builds a <c>Sparkline</c> document; backends: vegalite, plotly. Start with <c>Chart.Sparkline(rows)</c>.</summary>
+/// <summary>Builds a <c>Sparkline</c> document; backends: vegalite, plotly, image-charts. Start with <c>Chart.Sparkline(rows)</c>.</summary>
 /// <typeparam name="TRow">The row type.</typeparam>
 /// <example>
 /// <code>
@@ -72,88 +72,88 @@ public sealed partial class SparklineBuilder<TRow> : ChartBuilder<SparklineBuild
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Color(ChartEncoding encoding) => Encode(Channel.Color, encoding);
 
-    /// <summary>Binds the <c>detail</c> channel to a field. Declared by every backend of the template.</summary>
+    /// <summary>Binds the <c>detail</c> channel to a field. Declared by vegalite, plotly; not by image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Detail(string field, SemanticType? semanticType = null) => Encode(Channel.Detail, field, semanticType);
 
-    /// <summary>Binds the <c>detail</c> channel to the field a row member is written as. Declared by every backend of the template.</summary>
+    /// <summary>Binds the <c>detail</c> channel to the field a row member is written as. Declared by vegalite, plotly; not by image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Detail(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Detail, selector, semanticType);
 
-    /// <summary>Binds the <c>detail</c> channel to an encoding with any of its members. Declared by every backend of the template.</summary>
+    /// <summary>Binds the <c>detail</c> channel to an encoding with any of its members. Declared by vegalite, plotly; not by image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Detail(ChartEncoding encoding) => Encode(Channel.Detail, encoding);
 
-    /// <summary>Binds the <c>row</c> channel to a field. Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to a field. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Row(string field, SemanticType? semanticType = null) => Encode(Channel.Row, field, semanticType);
 
-    /// <summary>Binds the <c>row</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Row(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Row, selector, semanticType);
 
-    /// <summary>Binds the <c>row</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Row(ChartEncoding encoding) => Encode(Channel.Row, encoding);
 
-    /// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Column(string field, SemanticType? semanticType = null) => Encode(Channel.Column, field, semanticType);
 
-    /// <summary>Binds the <c>column</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to the field a row member is written as. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Column(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Column, selector, semanticType);
 
-    /// <summary>Binds the <c>column</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to an encoding with any of its members. Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Column(ChartEncoding encoding) => Encode(Channel.Column, encoding);
 
-    /// <summary>Sets the <c>baseline</c> chart property ("Reference line"). Declared by every backend of the template.</summary>
+    /// <summary>Sets the <c>baseline</c> chart property ("Reference line"). Declared by vegalite, plotly; not by image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value; <c>Default</c> omits the key.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Baseline(SparklineBaseline value) => Property("baseline", SparklineBaselineValues.ToJson(value));
 
-    /// <summary>Sets the <c>includeZero_x</c> chart property ("Zero X"). Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>includeZero_x</c> chart property ("Zero X"). Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> IncludeZeroX(bool value) => Property("includeZero_x", value);
 
-    /// <summary>Sets the <c>includeZero_y</c> chart property ("Zero Y"). Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>includeZero_y</c> chart property ("Zero Y"). Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> IncludeZeroY(bool value) => Property("includeZero_y", value);
 
-    /// <summary>Sets the <c>interpolate</c> chart property ("Curve"). Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>interpolate</c> chart property ("Curve"). Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value; <c>Default</c> omits the key.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> Interpolate(SparklineInterpolate value) => Property("interpolate", SparklineInterpolateValues.ToJson(value));
 
-    /// <summary>Sets the <c>logScale_x</c> chart property ("Log X"). Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>logScale_x</c> chart property ("Log X"). Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> LogScaleX(bool value) => Property("logScale_x", value);
 
-    /// <summary>Sets the <c>logScale_y</c> chart property ("Log Y"). Declared by vegalite; not by plotly, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>logScale_y</c> chart property ("Log Y"). Declared by vegalite; not by plotly, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> LogScaleY(bool value) => Property("logScale_y", value);
 
-    /// <summary>Sets the <c>trendWidth</c> chart property ("Sparkline width"). Declared by every backend of the template.</summary>
+    /// <summary>Sets the <c>trendWidth</c> chart property ("Sparkline width"). Declared by vegalite, plotly; not by image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value; 80 to 600, step 10.</param>
     /// <returns>This builder.</returns>
     public SparklineBuilder<TRow> TrendWidth(double value) => Property("trendWidth", value);

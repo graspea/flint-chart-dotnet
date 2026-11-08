@@ -92,7 +92,7 @@ describe('extract/fixtures', () => {
   });
 
   // source: design §10.3 fixture formats (manifest: case counts, integrity, seed 42, UTC, the upstream version),
-  // package.json (the pin), package-lock.json, src/extract/probe-cases.ts (60 crafted cases) and the committed
+  // package.json (the pin), package-lock.json, src/extract/probe-cases.ts (83 crafted cases) and the committed
   // tests/fixtures/flint-chart@<version>/manifest.json (the TestCases of the installed version; 934 on 0.5.1, part 01 §2)
   it('records the manifest', () => {
     const manifest = JSON.parse(readFileSync(join(folder, 'manifest.json'), 'utf8'));
@@ -102,7 +102,7 @@ describe('extract/fixtures', () => {
       cases: committedManifest.cases,
       excludedNondeterministic: [],
       integrity: lock.packages['node_modules/flint-chart'].integrity,
-      probeCases: 60,
+      probeCases: 83,
       seed: 42,
       tz: 'UTC',
       upstream: version,
@@ -133,7 +133,7 @@ describe('extract/fixtures', () => {
   // echarts 866, chartjs 743, plotly 894 and Excel 219 of 695) and the committed
   // tests/fixtures/flint-chart@<version>/expectations.jsonl (the counts of the installed version)
   it('records the per-backend outcomes', () => {
-    const backends = ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel'];
+    const backends = ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel', 'image-charts'];
     const tally = (expectations: { backends: Record<string, { throws: boolean }> }[]) => {
       const count = (b: string, pick: (o: { throws: boolean }) => boolean) =>
         expectations.filter((e) => e.backends[b] && pick(e.backends[b])).length;
@@ -148,6 +148,7 @@ describe('extract/fixtures', () => {
     assert.deepEqual(fresh, tally(linesIn(committedFolder, 'expectations.jsonl')));
     for (const b of backends.slice(0, 4)) assert.equal(fresh.throws[b], 0, b);
     assert.ok(fresh.throws.excel > 0 && fresh.throws.excel < fresh.applicable.excel);
+    assert.ok(fresh.throws['image-charts'] > 0 && fresh.throws['image-charts'] < fresh.applicable['image-charts']);
   });
 
   // source: src/extract/probe-cases.ts (one case per rule; a case without the template on a backend is recorded there
@@ -157,17 +158,44 @@ describe('extract/fixtures', () => {
   it('records the crafted cases on every backend that has the template', () => {
     const cases = lines('probe-cases.jsonl');
     const expectations = lines('probe-expectations.jsonl');
-    assert.equal(cases.length, 60);
+    assert.equal(cases.length, 83);
     assert.deepEqual(expectations.map((e) => e.id), cases.map((c) => c.id));
     assert.equal(new Set(cases.map((c) => c.title)).size, cases.length);
     assert.ok(cases.every((c, i) => c.id === `Probe|#${i}`));
     const outcome = (title: string) => expectations[cases.findIndex((c) => c.title === title)].backends;
-    assert.deepEqual(Object.keys(outcome('chart type unknown')), ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel']);
-    assert.deepEqual(
-      Object.entries(outcome('static series with one entry')).filter(([, o]) => (o as { throws: boolean }).throws).map(([b]) => b),
-      ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel'],
-    );
+    const all = ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel', 'image-charts'];
+    const throwing = (title: string) => Object.entries(outcome(title)).filter(([, o]) => (o as { throws: boolean }).throws).map(([b]) => b);
+    assert.deepEqual(Object.keys(outcome('chart type unknown')), all);
+    assert.deepEqual(throwing('static series with one entry'), all);
     assert.deepEqual(outcome('option array value').vegalite, { throws: false, warnings: [] });
+    // source: src/image-charts/assemble.ts (faceting and the category/measure throw on every chart type; the slice and
+    // value fall through color, else x, and size, else theta, else y; no radar metric count)
+    assert.deepEqual(throwing('sparkline faceted on column'), ['image-charts']);
+    assert.deepEqual(throwing('sparkline without y'), ['image-charts']);
+    assert.deepEqual(throwing('pie with color unbound, x and size'), ['excel']);
+    assert.deepEqual(throwing('radar with two metrics'), ['excel']);
+    assert.deepEqual(throwing('scatter without rows'), ['excel', 'image-charts']);
+    assert.deepEqual(throwing('facet bound with an empty field'), []);
+    // source: the same rules on the other chart families: the axes rule on Area, Radar, Stacked and Grouped Bar Chart,
+    // the unbound Scatter axes, faceting on Pie, Donut, Stacked and Grouped Bar Chart, the Donut slice and value, and the
+    // value order size, then theta, then y (an empty field does not fall through); Excel throws on each too
+    for (const title of [
+      'donut with a slice field and no value',
+      'area without y',
+      'radar without x',
+      'stacked bar from x and color',
+      'grouped bar from y and group',
+      'scatter without y',
+      'scatter without x',
+      'pie faceted on row',
+      'donut faceted on column',
+      'stacked bar faceted on row',
+      'grouped bar faceted on column',
+      'pie with an empty size field and theta',
+      'pie with an empty theta field and y',
+    ]) {
+      assert.deepEqual(throwing(title), ['excel', 'image-charts'], title);
+    }
   });
 
   // source: design §13.3.1 (an absent data is expected to throw like data: null, from input.data.values on undefined;
@@ -178,7 +206,7 @@ describe('extract/fixtures', () => {
     const index = cases.findIndex((c) => c.title === 'data absent');
     assert.equal('data' in cases[index].input, false);
     const backends = expectations[index].backends as Record<string, { throws: boolean; error?: string }>;
-    assert.deepEqual(Object.keys(backends), ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel']);
+    assert.deepEqual(Object.keys(backends), ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel', 'image-charts']);
     for (const [backend, outcome] of Object.entries(backends)) {
       assert.equal(outcome.throws, true, backend);
       assert.match(outcome.error ?? '', /^Cannot read properties of undefined \(reading 'values'\)/, backend);

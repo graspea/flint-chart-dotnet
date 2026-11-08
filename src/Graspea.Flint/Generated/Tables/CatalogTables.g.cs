@@ -7,7 +7,7 @@ namespace Graspea.Flint;
 
 internal static partial class CatalogTables
 {
-    internal static readonly FlintBackend[] Backends = [FlintBackend.VegaLite, FlintBackend.ECharts, FlintBackend.ChartJs, FlintBackend.Plotly, FlintBackend.Excel];
+    internal static readonly FlintBackend[] Backends = [FlintBackend.VegaLite, FlintBackend.ECharts, FlintBackend.ChartJs, FlintBackend.Plotly, FlintBackend.Excel, FlintBackend.ImageCharts];
 
     internal static readonly FrozenSet<FlintBackend> BackendsApplyingTheme = BackendSet(FlintBackend.VegaLite, FlintBackend.Plotly);
 
@@ -107,7 +107,11 @@ internal static partial class CatalogTables
                 ["x", "y", "color"],
                 [],
                 supportsFacets: false,
-                hasValidate: true)))),
+                hasValidate: true)),
+            (FlintBackend.ImageCharts, new TemplateRow(
+                ["x", "y", "color"],
+                [],
+                supportsFacets: false)))),
         ("Bar Chart", ByBackend(
             (FlintBackend.VegaLite, new TemplateRow(
                 ["x", "y", "color", "opacity", "column", "row"],
@@ -137,7 +141,11 @@ internal static partial class CatalogTables
                 ["x", "y", "color"],
                 [],
                 supportsFacets: false,
-                hasValidate: true)))),
+                hasValidate: true)),
+            (FlintBackend.ImageCharts, new TemplateRow(
+                ["x", "y", "color"],
+                [],
+                supportsFacets: false)))),
         ("Bar Table", ByBackend(
             (FlintBackend.VegaLite, new TemplateRow(
                 ["y", "x", "color", "column", "row"],
@@ -349,7 +357,11 @@ internal static partial class CatalogTables
                 ["color", "size", "theta"],
                 [],
                 supportsFacets: false,
-                hasValidate: false)))),
+                hasValidate: false)),
+            (FlintBackend.ImageCharts, new TemplateRow(
+                ["size", "color", "theta"],
+                [],
+                supportsFacets: false)))),
         ("Doughnut Chart", ByBackend(
             (FlintBackend.ChartJs, new TemplateRow(
                 ["size", "color", "column", "row"],
@@ -474,7 +486,11 @@ internal static partial class CatalogTables
                 ["x", "y", "group"],
                 [],
                 supportsFacets: false,
-                hasValidate: true)))),
+                hasValidate: true)),
+            (FlintBackend.ImageCharts, new TemplateRow(
+                ["x", "y", "group", "color"],
+                [],
+                supportsFacets: false)))),
         ("Heatmap", ByBackend(
             (FlintBackend.VegaLite, new TemplateRow(
                 ["x", "y", "color", "column", "row"],
@@ -565,7 +581,11 @@ internal static partial class CatalogTables
                 ["x", "y", "color", "strokeDash"],
                 [],
                 supportsFacets: false,
-                hasValidate: true)))),
+                hasValidate: true)),
+            (FlintBackend.ImageCharts, new TemplateRow(
+                ["x", "y", "color"],
+                [],
+                supportsFacets: false)))),
         ("Lollipop Chart", ByBackend(
             (FlintBackend.VegaLite, new TemplateRow(
                 ["x", "y", "color", "column", "row"],
@@ -665,7 +685,11 @@ internal static partial class CatalogTables
                 ["color", "size", "theta"],
                 [],
                 supportsFacets: false,
-                hasValidate: false)))),
+                hasValidate: false)),
+            (FlintBackend.ImageCharts, new TemplateRow(
+                ["size", "color", "theta"],
+                [],
+                supportsFacets: false)))),
         ("Pyramid Chart", ByBackend(
             (FlintBackend.VegaLite, new TemplateRow(
                 ["x", "y", "color"],
@@ -719,7 +743,11 @@ internal static partial class CatalogTables
                 ["x", "y", "color"],
                 [],
                 supportsFacets: false,
-                hasValidate: true)))),
+                hasValidate: true)),
+            (FlintBackend.ImageCharts, new TemplateRow(
+                ["x", "y", "color"],
+                [],
+                supportsFacets: false)))),
         ("Range Area Chart", ByBackend(
             (FlintBackend.VegaLite, new TemplateRow(
                 ["x", "y", "y2", "color", "column", "row"],
@@ -861,7 +889,11 @@ internal static partial class CatalogTables
                 ["x", "y", "color", "size"],
                 [],
                 supportsFacets: false,
-                hasValidate: true)))),
+                hasValidate: true)),
+            (FlintBackend.ImageCharts, new TemplateRow(
+                ["x", "y", "color"],
+                [],
+                supportsFacets: false)))),
         ("Slope Chart", ByBackend(
             (FlintBackend.VegaLite, new TemplateRow(
                 ["x", "y", "color", "detail", "column", "row"],
@@ -900,7 +932,11 @@ internal static partial class CatalogTables
                 [
                     new PropertyRow("baseline", PropertyKind.Discrete, Options: ["\"mean\"", "\"zero\"", "\"median\"", "\"none\""], Labels: ["Average", "Zero", "Median", "None"]),
                     new PropertyRow("trendWidth", PropertyKind.Continuous, Min: 80, Max: 600, Step: 10),
-                ])))),
+                ])),
+            (FlintBackend.ImageCharts, new TemplateRow(
+                ["x", "y", "color"],
+                [],
+                supportsFacets: false)))),
         ("Stacked Bar Chart", ByBackend(
             (FlintBackend.VegaLite, new TemplateRow(
                 ["x", "y", "color", "column", "row"],
@@ -926,7 +962,11 @@ internal static partial class CatalogTables
                 ["x", "y", "color"],
                 [],
                 supportsFacets: false,
-                hasValidate: true)))),
+                hasValidate: true)),
+            (FlintBackend.ImageCharts, new TemplateRow(
+                ["x", "y", "color"],
+                [],
+                supportsFacets: false)))),
         ("Streamgraph", ByBackend(
             (FlintBackend.VegaLite, new TemplateRow(
                 ["x", "y", "color", "column", "row"],

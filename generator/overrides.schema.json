@@ -58,6 +58,26 @@
         "uniqueItems": true
       }
     },
+    "imageChartsChannels": {
+      "description": "Image-Charts has no template registry: chart type (an own key of IMAGE_CHARTS_TYPE_MAP) -> the channels its template declares, which are the channels assembleImageCharts reads that another backend of the template also declares, so that no builder gains a member. column and row are left out (the assembler throws on a bound facet). The keys must equal the map's keys, unless pending lists catalog.chartTypes[<type>].backends.image-charts; copied into IR catalog.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string", "minLength": 1 },
+        "uniqueItems": true,
+        "minItems": 1
+      }
+    },
+    "imageChartsSource": {
+      "description": "The reviewed sha256 (lowercase hex) of src/image-charts/assemble.ts and src/image-charts/chart-types.ts of the pinned flint-chart, the files the hand-written Image-Charts parts are read from: the throw rules (src/Graspea.Flint/Validation/Rules/ImageCharts.cs), imageChartsChannels and the channels the validator knows Image-Charts reads though its template leaves them undeclared. Extraction fails when the installed files differ; review those parts against the new files, then record the new values.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["src/image-charts/assemble.ts", "src/image-charts/chart-types.ts"],
+      "properties": {
+        "src/image-charts/assemble.ts": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "src/image-charts/chart-types.ts": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
     "pending": {
       "description": "IR paths of entries written ahead for a flint-chart version that is not pinned yet: such an entry may match nothing. Once the pin has the path the entry applies like any other; remove the path from this list then.",
       "type": "array",

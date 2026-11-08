@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 
 namespace Graspea.Flint;
 
-/// <summary>Builds a <c>Bar Chart</c> document; backends: vegalite, echarts, chartjs, plotly, excel. Start with <c>Chart.Bar(rows)</c>.</summary>
+/// <summary>Builds a <c>Bar Chart</c> document; backends: vegalite, echarts, chartjs, plotly, excel, image-charts. Start with <c>Chart.Bar(rows)</c>.</summary>
 /// <typeparam name="TRow">The row type.</typeparam>
 /// <example>
 /// <code>
@@ -72,78 +72,78 @@ public sealed partial class BarChartBuilder<TRow> : ChartBuilder<BarChartBuilder
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> Color(ChartEncoding encoding) => Encode(Channel.Color, encoding);
 
-    /// <summary>Binds the <c>opacity</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>opacity</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> Opacity(string field, SemanticType? semanticType = null) => Encode(Channel.Opacity, field, semanticType);
 
-    /// <summary>Binds the <c>opacity</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>opacity</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> Opacity(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Opacity, selector, semanticType);
 
-    /// <summary>Binds the <c>opacity</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>opacity</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> Opacity(ChartEncoding encoding) => Encode(Channel.Opacity, encoding);
 
-    /// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> Column(string field, SemanticType? semanticType = null) => Encode(Channel.Column, field, semanticType);
 
-    /// <summary>Binds the <c>column</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> Column(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Column, selector, semanticType);
 
-    /// <summary>Binds the <c>column</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>column</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> Column(ChartEncoding encoding) => Encode(Channel.Column, encoding);
 
-    /// <summary>Binds the <c>row</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to a field. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="field">The field: a key of the rows, used verbatim.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> Row(string field, SemanticType? semanticType = null) => Encode(Channel.Row, field, semanticType);
 
-    /// <summary>Binds the <c>row</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to the field a row member is written as. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="selector">A property or field of the row, such as <c>r =&gt; r.Month</c>.</param>
     /// <param name="semanticType">When set, also annotates the field in <c>semantic_types</c>.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> Row(Expression<Func<TRow, object?>> selector, SemanticType? semanticType = null) => Encode(Channel.Row, selector, semanticType);
 
-    /// <summary>Binds the <c>row</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
+    /// <summary>Binds the <c>row</c> channel to an encoding with any of its members. Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unsupported_channel</c>.</summary>
     /// <param name="encoding">The encoding; the builder keeps a copy.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> Row(ChartEncoding encoding) => Encode(Channel.Row, encoding);
 
-    /// <summary>Sets the <c>cornerRadius</c> chart property ("Corners"). Declared by vegalite, echarts, chartjs, plotly; not by excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>cornerRadius</c> chart property ("Corners"). Declared by vegalite, echarts, chartjs, plotly; not by excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value; 0 to 15, step 1.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> CornerRadius(double value) => Property("cornerRadius", value);
 
-    /// <summary>Sets the <c>independentYAxis</c> chart property ("Independent Y"). Declared by vegalite; not by echarts, chartjs, plotly, excel, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
+    /// <summary>Sets the <c>independentYAxis</c> chart property ("Independent Y"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts, where <c>Validate(backend)</c> reports <c>unknown_chart_property</c>.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> IndependentYAxis(bool value) => Property("independentYAxis", value);
 
-    /// <summary>Sets the <c>showValueLabels</c> chart property ("Values"). Declared by vegalite; not by echarts, chartjs, plotly, excel. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
+    /// <summary>Sets the <c>showValueLabels</c> chart property ("Values"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
     /// <param name="value">The value.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> ShowValueLabels(bool value) => Property("showValueLabels", value);
 
-    /// <summary>Sets the <c>xAxisType</c> chart property ("X as"). Declared by vegalite; not by echarts, chartjs, plotly, excel. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
+    /// <summary>Sets the <c>xAxisType</c> chart property ("X as"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
     /// <param name="value">The value; <c>Default</c> omits the key.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> XAxisType(BarChartXAxisType value) => Property("xAxisType", BarChartXAxisTypeValues.ToJson(value));
 
-    /// <summary>Sets the <c>yAxisType</c> chart property ("Y as"). Declared by vegalite; not by echarts, chartjs, plotly, excel. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
+    /// <summary>Sets the <c>yAxisType</c> chart property ("Y as"). Declared by vegalite; not by echarts, chartjs, plotly, excel, image-charts. It is a host-state key, read even where undeclared, so <c>Validate(backend)</c> does not report it.</summary>
     /// <param name="value">The value; <c>Default</c> omits the key.</param>
     /// <returns>This builder.</returns>
     public BarChartBuilder<TRow> YAxisType(BarChartYAxisType value) => Property("yAxisType", BarChartYAxisTypeValues.ToJson(value));

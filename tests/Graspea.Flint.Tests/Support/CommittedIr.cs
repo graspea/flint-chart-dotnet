@@ -58,7 +58,7 @@ public static class CommittedIr
     private static string Name(JsonNode? node, string key) => node![key]!.GetValue<string>();
 
     /// <summary>Puts a retired node back at its path; false when the IR has it (upstream restored it) or has no parent for it.</summary>
-    private static bool PutBack(JsonNode catalog, string path, JsonNode was)
+    internal static bool PutBack(JsonNode catalog, string path, JsonNode was)
     {
         var c = System.Text.RegularExpressions.Regex.Match(path, @"^catalog\.(channels|semanticTypes|themePresets)\[([^\]]+)\]$");
         if (c.Success)
@@ -75,7 +75,12 @@ public static class CommittedIr
         }
 
         var m = System.Text.RegularExpressions.Regex.Match(path,
-            @"^catalog\.chartTypes\[([^\]]+)\](?:\.backends\.([a-z]+)(?:\.channels\[([^\]]+)\]|\.properties\[([^\]]+)\](?:\.options\[(.+)\])?)?)?$");
+            @"^catalog\.chartTypes\[([^\]]+)\](?:\.backends\.([a-z][a-z-]*)(?:\.channels\[([^\]]+)\]|\.properties\[([^\]]+)\](?:\.options\[(.+)\])?)?)?$");
+        if (!m.Success)
+        {
+            throw new InvalidOperationException($"generator/retired.json: {path} is not a path the facades can keep.");
+        }
+
         var chartTypes = catalog["chartTypes"]!.AsArray();
         var template = chartTypes.SingleOrDefault(t => Name(t, "name") == m.Groups[1].Value);
         if (!m.Groups[2].Success)

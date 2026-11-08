@@ -28,7 +28,7 @@ export function retirementStatus(entry: RetiredEntry, pin: string): 'obsolete' |
   return entry.deletedIn === undefined && breakingLine(entry.retiredIn) === breakingLine(pin) ? 'obsolete' : 'removed';
 }
 
-const TEMPLATE = /^catalog\.chartTypes\[([^\]]+)\](?:\.backends\.([a-z]+)(?:\.channels\[([^\]]+)\]|\.properties\[([^\]]+)\](?:\.options\[(.+)\])?)?)?$/;
+const TEMPLATE = /^catalog\.chartTypes\[([^\]]+)\](?:\.backends\.([a-z][a-z-]*)(?:\.channels\[([^\]]+)\]|\.properties\[([^\]]+)\](?:\.options\[(.+)\])?)?)?$/;
 const CONSTANT = /^catalog\.(channels|semanticTypes|themePresets)\[([^\]]+)\]$/;
 
 /** The id an IR option has in an IR path (`=<JSON value>`, or `omitted`), as `diffIr` writes it. */

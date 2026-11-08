@@ -52,7 +52,9 @@ public sealed partial class ChartValidatorTests
             FlintBackend.ECharts => "echarts",
             FlintBackend.ChartJs => "chartjs",
             FlintBackend.Plotly => "plotly",
-            _ => "excel",
+            FlintBackend.Excel => "excel",
+            FlintBackend.ImageCharts => "image-charts",
+            _ => throw new ArgumentOutOfRangeException(nameof(backend)),
         };
         var template = CommittedIr.Catalog["chartTypes"]!.AsArray().Single(t => t!["name"]!.GetValue<string>() == chartType)!["backends"]![id];
         return template?["properties"]!.AsArray().SingleOrDefault(p => p!["key"]!.GetValue<string>() == key);

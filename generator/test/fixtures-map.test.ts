@@ -87,7 +87,7 @@ describe('extract/fixtures mapping', () => {
 });
 
 describe('extract/fixtures default backend', () => {
-  const all = ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel'];
+  const all = ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel', 'image-charts'];
 
   // source: docs/fixtures.md (the generator group prefix names the gallery backend; the rest are Vega-Lite groups)
   it('follows the group prefix, else Vega-Lite', () => {
@@ -95,6 +95,7 @@ describe('extract/fixtures default backend', () => {
     assert.equal(defaultBackend('ECharts: Bar', all), 'echarts');
     assert.equal(defaultBackend('Chart.js: Bar', all), 'chartjs');
     assert.equal(defaultBackend('Plotly: Core Templates', all), 'plotly');
+    assert.equal(defaultBackend('Image-Charts: Core Templates', all), 'image-charts');
   });
 
   // source: docs/fixtures.md (falls back to the first backend in the fixed order that has the template)
@@ -115,6 +116,11 @@ describe('extract/fixtures outcome', () => {
   it('records the top-level warnings array of the Excel artifact', () => {
     const outcome = recordOutcome(() => ({ warnings: [{ code: 'excel-radar-fill-unsupported' }] }), {});
     assert.deepEqual(outcome, { throws: false, warnings: ['excel-radar-fill-unsupported'] });
+  });
+
+  // source: src/image-charts/assemble.ts (the artifact is { type: 'image-charts', url }, with no warnings member)
+  it('records no warnings for the Image-Charts artifact', () => {
+    assert.deepEqual(recordOutcome(() => ({ type: 'image-charts', url: 'https://image-charts.com/chart?cht=bvg' }), {}), { throws: false, warnings: [] });
   });
 
   // source: design §10.3 fixture formats (a throw is recorded with its message)

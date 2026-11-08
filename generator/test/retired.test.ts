@@ -50,6 +50,9 @@ describe('retired', () => {
     const obsolete = new Map([['catalog.chartTypes[Pie].backends.excel', '0.5.1']]);
     assert.equal(obsoleteIn(obsolete, 'catalog.chartTypes[Pie].backends.excel.properties[k].options[="a"]'), '0.5.1');
     assert.equal(obsoleteIn(obsolete, 'catalog.chartTypes[Pie].backends.vegalite.channels[x]'), undefined);
+    // A backend id with a hyphen (image-charts) is a backend path too.
+    const hyphen = new Map([['catalog.chartTypes[Pie].backends.image-charts', '1.0.1']]);
+    assert.equal(obsoleteIn(hyphen, 'catalog.chartTypes[Pie].backends.image-charts.channels[color]'), '1.0.1');
   });
 
   // source: design §7.8 (an entry within its lifetime is emitted from its snapshot)

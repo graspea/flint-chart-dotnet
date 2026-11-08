@@ -91,7 +91,7 @@ export function diffMarkdown(rows: DiffRow[]): string {
 }
 
 const RETIRABLE = [
-  /^catalog\.chartTypes\[[^\]]+\](\.backends\.[a-z]+(\.channels\[[^\]]+\]|\.properties\[[^\]]+\](\.options\[[^\]]+\])?)?)?$/,
+  /^catalog\.chartTypes\[[^\]]+\](\.backends\.[a-z][a-z-]*(\.channels\[[^\]]+\]|\.properties\[[^\]]+\](\.options\[[^\]]+\])?)?)?$/,
   /^catalog\.(channels|semanticTypes|themePresets)\[[^\]]+\]$/,
 ];
 

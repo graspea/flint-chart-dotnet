@@ -49,6 +49,7 @@ Graspea.Flint.Delivery.DeliveryError.DeliveryError(string! code) -> void
 Graspea.Flint.Delivery.DeliveryError.ToJson() -> string!
 Graspea.Flint.Delivery.DeliveryError.ToUtf8Bytes() -> byte[]!
 Graspea.Flint.Delivery.DeliveryError.WriteTo(System.Text.Json.Utf8JsonWriter! writer) -> void
+Graspea.Flint.FlintBackend.ImageCharts = 5 -> Graspea.Flint.FlintBackend
 Graspea.Flint.Serialization.ColorSchemeConverter
 Graspea.Flint.Serialization.ColorSchemeConverter.ColorSchemeConverter() -> void
 const Graspea.Flint.Delivery.DeliveryContract.Version = 1 -> int

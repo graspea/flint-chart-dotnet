@@ -5,10 +5,10 @@ namespace Graspea.Flint;
 
 public readonly partial record struct ChartType
 {
-    /// <summary>The <c>Area Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel.</summary>
+    /// <summary>The <c>Area Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel, image-charts.</summary>
     public static readonly ChartType AreaChart = new("Area Chart");
 
-    /// <summary>The <c>Bar Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel.</summary>
+    /// <summary>The <c>Bar Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel, image-charts.</summary>
     public static readonly ChartType BarChart = new("Bar Chart");
 
     /// <summary>The <c>Bar Table</c> template; backends: vegalite, plotly.</summary>
@@ -47,7 +47,7 @@ public readonly partial record struct ChartType
     /// <summary>The <c>Density Plot</c> template; backends: vegalite, echarts, plotly.</summary>
     public static readonly ChartType DensityPlot = new("Density Plot");
 
-    /// <summary>The <c>Donut Chart</c> template; backends: vegalite, plotly, excel.</summary>
+    /// <summary>The <c>Donut Chart</c> template; backends: vegalite, plotly, excel, image-charts.</summary>
     public static readonly ChartType DonutChart = new("Donut Chart");
 
     /// <summary>The <c>Doughnut Chart</c> template; backends: chartjs.</summary>
@@ -65,7 +65,7 @@ public readonly partial record struct ChartType
     /// <summary>The <c>Gauge Chart</c> template; backends: echarts, plotly.</summary>
     public static readonly ChartType GaugeChart = new("Gauge Chart");
 
-    /// <summary>The <c>Grouped Bar Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel.</summary>
+    /// <summary>The <c>Grouped Bar Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel, image-charts.</summary>
     public static readonly ChartType GroupedBarChart = new("Grouped Bar Chart");
 
     /// <summary>The <c>Heatmap</c> template; backends: vegalite, echarts, plotly.</summary>
@@ -77,7 +77,7 @@ public readonly partial record struct ChartType
     /// <summary>The <c>KPI Card</c> template; backends: vegalite, plotly.</summary>
     public static readonly ChartType KpiCard = new("KPI Card");
 
-    /// <summary>The <c>Line Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel.</summary>
+    /// <summary>The <c>Line Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel, image-charts.</summary>
     public static readonly ChartType LineChart = new("Line Chart");
 
     /// <summary>The <c>Lollipop Chart</c> template; backends: vegalite, echarts, chartjs, plotly.</summary>
@@ -95,13 +95,13 @@ public readonly partial record struct ChartType
     /// <summary>The <c>Parallel Coordinates</c> template; backends: echarts.</summary>
     public static readonly ChartType ParallelCoordinates = new("Parallel Coordinates");
 
-    /// <summary>The <c>Pie Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel.</summary>
+    /// <summary>The <c>Pie Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel, image-charts.</summary>
     public static readonly ChartType PieChart = new("Pie Chart");
 
     /// <summary>The <c>Pyramid Chart</c> template; backends: vegalite, echarts, plotly, excel.</summary>
     public static readonly ChartType PyramidChart = new("Pyramid Chart");
 
-    /// <summary>The <c>Radar Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel.</summary>
+    /// <summary>The <c>Radar Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel, image-charts.</summary>
     public static readonly ChartType RadarChart = new("Radar Chart");
 
     /// <summary>The <c>Range Area Chart</c> template; backends: vegalite, echarts, chartjs, plotly.</summary>
@@ -122,16 +122,16 @@ public readonly partial record struct ChartType
     /// <summary>The <c>Sankey Diagram</c> template; backends: echarts.</summary>
     public static readonly ChartType SankeyDiagram = new("Sankey Diagram");
 
-    /// <summary>The <c>Scatter Plot</c> template; backends: vegalite, echarts, chartjs, plotly, excel.</summary>
+    /// <summary>The <c>Scatter Plot</c> template; backends: vegalite, echarts, chartjs, plotly, excel, image-charts.</summary>
     public static readonly ChartType ScatterPlot = new("Scatter Plot");
 
     /// <summary>The <c>Slope Chart</c> template; backends: vegalite, echarts, chartjs, plotly.</summary>
     public static readonly ChartType SlopeChart = new("Slope Chart");
 
-    /// <summary>The <c>Sparkline</c> template; backends: vegalite, plotly.</summary>
+    /// <summary>The <c>Sparkline</c> template; backends: vegalite, plotly, image-charts.</summary>
     public static readonly ChartType Sparkline = new("Sparkline");
 
-    /// <summary>The <c>Stacked Bar Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel.</summary>
+    /// <summary>The <c>Stacked Bar Chart</c> template; backends: vegalite, echarts, chartjs, plotly, excel, image-charts.</summary>
     public static readonly ChartType StackedBarChart = new("Stacked Bar Chart");
 
     /// <summary>The <c>Streamgraph</c> template; backends: vegalite, echarts, plotly.</summary>

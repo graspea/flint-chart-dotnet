@@ -26,6 +26,7 @@ describe('enum wire values against flint-chart', () => {
       chartjs: flint.assembleChartjs,
       plotly: flint.assemblePlotly,
       excel: flint.assembleExcel,
+      'image-charts': flint.assembleImageCharts,
     };
     const enums = fluentModel(ir, loadOverrides(new URL('../overrides.json', import.meta.url).pathname)).flatMap((t) =>
       t.properties.flatMap((p) => (p.enum ? [p.enum] : [])),

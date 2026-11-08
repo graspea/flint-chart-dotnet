@@ -11,6 +11,8 @@ export interface Overrides {
   backendsApplyingTheme: string[];
   hostStateKeys: string[];
   ignoredOptions: Record<string, string[]>;
+  imageChartsChannels: Record<string, string[]>;
+  imageChartsSource: Record<string, string>;
   keepObsolete: string[];
   pending: string[];
 }
@@ -25,6 +27,8 @@ export function emptyOverrides(): Overrides {
     backendsApplyingTheme: [],
     hostStateKeys: [],
     ignoredOptions: {},
+    imageChartsChannels: {},
+    imageChartsSource: {},
     keepObsolete: [],
     pending: [],
   };
