@@ -134,14 +134,14 @@ internal sealed class CatalogCheck
             var path = $"chart_spec.encodings.{channel}";
             if (member.Value.IsNull)
             {
-                PerTarget("channel_null", path, member.Value, t => t.Backend == "excel" ? SpecSeverity.Info : SpecSeverity.Error,
+                PerTarget("channel_null", path, member.Value, t => t.Backend is "excel" or "image-charts" ? SpecSeverity.Info : SpecSeverity.Error,
                     (severity, on) => severity == SpecSeverity.Error
                         ? $"The \"{channel}\" encoding is null; {string.Join(", ", on)} throw."
-                        : $"The \"{channel}\" encoding is null; excel ignores it.");
+                        : $"The \"{channel}\" encoding is null; {string.Join(", ", on)} {(on.Count == 1 ? "ignores" : "ignore")} it.");
                 continue;
             }
 
-            if (_targets.Length > 0 && !_targets.Any(t => Array.IndexOf(t.Channels, channel) >= 0))
+            if (_targets.Length > 0 && !_targets.Any(t => Array.IndexOf(t.Channels, channel) >= 0 || ImageChartsReads(t, encodings, channel)))
             {
                 var retiredOn = _targets.Where(t => Retired(t, $"channels[{channel}]") is not null).ToList();
                 if (retiredOn.Count > 0)
@@ -156,6 +156,24 @@ internal sealed class CatalogCheck
                 }
             }
         }
+    }
+
+    /// <summary>A channel the Image-Charts template leaves undeclared but the assembler reads, as the validator's
+    /// <c>ImageCharts.ReadsUndeclared</c> (the core cannot see it): <c>group</c> with a field on every chart type but Pie
+    /// and Donut, and on those two <c>x</c> when <c>color</c> has no field and <c>y</c> when neither <c>size</c> nor
+    /// <c>theta</c> has one; only a missing field falls through (absent, <c>null</c>, an array, no <c>field</c>), an empty
+    /// one does not.</summary>
+    private bool ImageChartsReads(BackendTemplateRow t, JsonItem encodings, string channel)
+    {
+        if (t.Backend != "image-charts")
+        {
+            return false;
+        }
+
+        string? Raw(string ch) => encodings.Get(ch) is { } value ? FieldOf(value) : null;
+        return ChartTypeName is "Pie Chart" or "Donut Chart"
+            ? (channel == "x" && Raw("color") is null) || (channel == "y" && Raw("size") is null && Raw("theta") is null)
+            : channel == "group" && Raw("group") is { Length: > 0 };
     }
 
     /// <summary>The throw conditions of upstream's <c>normalizeStaticSeries</c> that need no rows, in its order; the first

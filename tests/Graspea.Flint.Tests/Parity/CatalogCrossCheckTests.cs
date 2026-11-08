@@ -36,7 +36,8 @@ public sealed class CatalogCrossCheckTests
         CommittedIr.Catalog["chartTypes"]!.AsArray().Single(t => t!["name"]!.GetValue<string>() == name)!;
 
     // source: ir/flint-ir.json catalog.chartTypes[name].backends (which backends have the template, the channels each
-    // declares) and catalog.channels (the union, design §6 unsupported_channel and excel_unsupported for Excel)
+    // declares) and catalog.channels (the union, design §6 unsupported_channel, and excel_unsupported for Excel and
+    // image_charts_unsupported for Image-Charts)
     [TestCaseSource(nameof(ChartTypes))]
     public void CompiledTables_EqualIr(string chartType)
     {
@@ -63,9 +64,24 @@ public sealed class CatalogCrossCheckTests
                     {
                         Assert.That(Has(result, "unsupported_channel", channel), Is.False, $"{id}: {channel} is declared");
                     }
-                    else if (id == "excel")
+                    else if (id is "excel" or "image-charts")
                     {
-                        Assert.That(Has(result, "unsupported_channel", channel) || Has(result, "excel_unsupported", channel), Is.True, $"{id}: {channel} is not declared");
+                        var unsupported = id == "excel" ? "excel_unsupported" : "image_charts_unsupported";
+                        if (channel is "column" or "row" && backends[id]!["supportsFacets"]?.GetValue<bool>() == false)
+                        {
+                            // source: supportsFacets false: both native assemblers throw on a bound facet
+                            Assert.That(Has(result, unsupported, channel), Is.True, $"{id}: a bound {channel} throws");
+                        }
+                        else if (id == "image-charts" && (chartType is "Pie Chart" or "Donut Chart" ? channel is "x" or "y" : channel == "group"))
+                        {
+                            // source: assemble.ts:205-210, :265-266 (read though undeclared: the series, and the slice and value
+                            // fallbacks, which the document's lone x and the bound channel never shadow)
+                            Assert.That(Has(result, "unsupported_channel", channel), Is.False, $"{id}: {channel} is read");
+                        }
+                        else
+                        {
+                            Assert.That(Has(result, "unsupported_channel", channel) || Has(result, unsupported, channel), Is.True, $"{id}: {channel} is not declared");
+                        }
                     }
                     else if (CommittedIr.RetiredIn($"catalog.chartTypes[{chartType}].backends.{id}.channels[{channel}]") is not null)
                     {
@@ -149,7 +165,7 @@ public sealed class CatalogCrossCheckTests
     }
 
     // source: ir/flint-ir.json catalog.backends (FlintBackend follows the fixed order) and catalog.channels (the union
-    // contains theta, declared only by the Excel Pie and Donut templates)
+    // contains theta, declared only by the Excel and Image-Charts Pie and Donut templates)
     [Test]
     public void CompiledTables_EqualIr_BackendsAndChannelUnion()
     {

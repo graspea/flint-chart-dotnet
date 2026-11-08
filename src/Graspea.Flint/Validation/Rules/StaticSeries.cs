@@ -7,8 +7,8 @@ internal sealed record SeriesViolation(string Code, string Message, string Chann
 /// <summary>
 /// The throw conditions of <c>normalizeStaticSeries</c> (src/core/static-series.ts of the pinned package), which the
 /// four layout backends run (design §6 <c>series_*</c>). The checks run in upstream's order and the first that holds is
-/// reported, because upstream throws there. Excel does not run them: it reads an array encoding as an unbound channel, so its
-/// template rules (<see cref="Excel"/>) decide.
+/// reported, because upstream throws there. Excel and Image-Charts do not run them: they read an array encoding as an unbound
+/// channel, so their own rules (<see cref="Excel"/>, <see cref="ImageCharts"/>) decide.
 /// </summary>
 internal static class StaticSeries
 {

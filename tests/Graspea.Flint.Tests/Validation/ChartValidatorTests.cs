@@ -99,23 +99,33 @@ public sealed partial class ChartValidatorTests
         AssertOne(Bar(i => i.ChartSpec.Encodings = null!), FlintBackend.ECharts, "missing_encodings", IssueSeverity.Error);
     }
 
-    // source: probe "encodings empty" (throws on Excel only)
+    // source: probe "encodings empty" (throws on Excel only, of the five backends the 1.0.0 record covers; the 1.0.1
+    // record adds Image-Charts, which throws too)
     [Test]
-    public void Validate_EmptyEncodings_IsErrorOnExcelOnly()
+    public void Validate_EmptyEncodings_IsErrorOnNativeBackends()
     {
         var input = Bar(i => i.ChartSpec.Encodings.Clear());
         AssertOne(input, FlintBackend.Excel, "encodings_empty", IssueSeverity.Error);
+        AssertOne(input, FlintBackend.ImageCharts, "encodings_empty", IssueSeverity.Error);
         AssertOne(input, FlintBackend.VegaLite, "encodings_empty", IssueSeverity.Info);
         AssertOne(input, null, "encodings_empty", IssueSeverity.Error);
+
+        // source: docs/validation-codes.md encodings_empty; the Excel text is unchanged where Image-Charts is no target
+        Assert.That(Issues(input, FlintBackend.Excel, "encodings_empty").Single().Message,
+            Is.EqualTo("Encodings are empty; Excel throws (it needs a quantitative measure). Throws on excel."));
+        Assert.That(Issues(input, null, "encodings_empty").Single().Message,
+            Is.EqualTo("Encodings are empty; Excel throws (it needs a quantitative measure) and Image-Charts throws (it needs a category and a measure, or a slice and a value). Throws on excel, image-charts."));
     }
 
-    // source: probe "channel null" (throws on vegalite, echarts, chartjs and plotly; Excel accepts it)
+    // source: probe "channel null" (throws on vegalite, echarts, chartjs and plotly; Excel accepts it, and so does
+    // Image-Charts in the 1.0.1 record)
     [Test]
-    public void Validate_NullChannel_IsErrorExceptOnExcel()
+    public void Validate_NullChannel_IsErrorExceptOnNativeBackends()
     {
         var input = Bar(i => i.ChartSpec.Encodings["color"] = null!);
         AssertOne(input, FlintBackend.VegaLite, "channel_null", IssueSeverity.Error);
         AssertOne(input, FlintBackend.Excel, "channel_null", IssueSeverity.Info);
+        AssertOne(input, FlintBackend.ImageCharts, "channel_null", IssueSeverity.Info);
         Assert.That(Issues(input, FlintBackend.Excel, "channel_null").Single().Channel, Is.EqualTo(Channel.Color));
     }
 
@@ -126,13 +136,15 @@ public sealed partial class ChartValidatorTests
         AssertOne(Bar(i => i.Data = null!), FlintBackend.Plotly, "data_missing", IssueSeverity.Error);
     }
 
-    // source: probe "data values empty" (Excel throws: untyped fields cannot be quantitative without rows) and
-    // "data values empty, typed encodings" (no throw anywhere)
+    // source: probe "data values empty" (Excel throws: untyped fields cannot be quantitative without rows; Image-Charts
+    // assembles this Bar Chart in the 1.0.1 record, it throws without rows only on a Scatter Plot) and "data values
+    // empty, typed encodings" (no throw anywhere)
     [Test]
     public void Validate_EmptyData_IsErrorOnExcelOnly()
     {
         var untyped = Bar(i => i.Data = ChartData.FromJson([]));
         AssertOne(untyped, FlintBackend.Excel, "data_empty", IssueSeverity.Error);
+        AssertOne(untyped, FlintBackend.ImageCharts, "data_empty", IssueSeverity.Info);
         AssertOne(untyped, FlintBackend.VegaLite, "data_empty", IssueSeverity.Info);
 
         var typed = Bar(i =>
@@ -145,12 +157,14 @@ public sealed partial class ChartValidatorTests
         Assert.That(ChartValidator.Validate(typed).IsValid, Is.True);
     }
 
-    // source: probe "data url only" (Excel throws; the other backends never fetch the URL) and design §6 data_url_only
+    // source: probe "data url only" (Excel throws; the other backends never fetch the URL; Image-Charts, which reads only
+    // data.values too, assembles this Bar Chart in the 1.0.1 record) and design §6 data_url_only
     [Test]
     public void Validate_UrlOnlyData_IsErrorOnExcelOnly()
     {
         var input = Bar(i => i.Data = ChartData.FromUrl("https://example.com/rows.json"));
         AssertOne(input, FlintBackend.Excel, "data_url_only", IssueSeverity.Error);
+        AssertOne(input, FlintBackend.ImageCharts, "data_url_only", IssueSeverity.Info);
         AssertOne(input, FlintBackend.VegaLite, "data_url_not_fetched", IssueSeverity.Info);
         AssertNone(input, FlintBackend.VegaLite, "data_url_only");
     }

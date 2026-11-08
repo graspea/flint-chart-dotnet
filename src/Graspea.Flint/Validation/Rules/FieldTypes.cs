@@ -49,7 +49,8 @@ internal sealed partial class FieldTypes
             ? value.Encodings[0]
             : null;
 
-    /// <summary><c>encodings[ch]?.field</c> as the Excel assembler reads it (null and empty are both "no field").</summary>
+    /// <summary><c>encodings[ch]?.field</c> as the Excel and Image-Charts assemblers read it (null and empty are both "no
+    /// field").</summary>
     internal string? FieldOf(string channel) => Encoding(channel)?.Field is { Length: > 0 } field ? field : null;
 
     /// <summary><c>sem[ch]?.type</c>.</summary>

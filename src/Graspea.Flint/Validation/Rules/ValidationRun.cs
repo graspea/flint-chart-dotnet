@@ -23,6 +23,10 @@ internal sealed partial class ValidationRun
 
     private static readonly FlintBackend[] LayoutBackends = [FlintBackend.VegaLite, FlintBackend.ECharts, FlintBackend.ChartJs, FlintBackend.Plotly];
 
+    /// <summary>The backends that assemble natively, without the layout pipeline: no static series, no sort repair, no
+    /// option, theme or chart property read; each has hand-written throw rules (<see cref="Excel"/>, <see cref="ImageCharts"/>).</summary>
+    private static readonly FlintBackend[] NativeBackends = [FlintBackend.Excel, FlintBackend.ImageCharts];
+
     private readonly ChartAssemblyInput input;
     private readonly FlintBackend? backend;
 
@@ -50,6 +54,14 @@ internal sealed partial class ValidationRun
         _ => b.ToString(),
     };
 
+    /// <summary>The name a message gives a native backend.</summary>
+    private static string Name(FlintBackend b) => b switch
+    {
+        FlintBackend.Excel => "Excel",
+        FlintBackend.ImageCharts => "Image-Charts",
+        _ => Id(b),
+    };
+
     internal List<ValidationIssue> Run()
     {
         if (input.Data is null && deferred is not { Template: true })
@@ -68,7 +80,7 @@ internal sealed partial class ValidationRun
 
         ResolveTemplate(spec);
         var types = new FieldTypes(input);
-        var excelReasons = ExcelReasons(types);
+        var reasons = NativeReasons(types);
 
         if (spec.Encodings is null)
         {
@@ -76,7 +88,7 @@ internal sealed partial class ValidationRun
         }
         else
         {
-            EncodingChecks(spec, excelReasons);
+            EncodingChecks(spec, types, reasons);
             if (targets.Any(LayoutBackends.Contains))
             {
                 foreach (var v in StaticSeries.Evaluate(input, types, deferred?.Keys))
@@ -89,11 +101,11 @@ internal sealed partial class ValidationRun
 
         if (deferred is null)
         {
-            DataChecks(excelReasons);
+            DataChecks(reasons);
         }
         else
         {
-            DeferredChecks(excelReasons);
+            DeferredChecks(reasons);
         }
 
         RowChecks();
@@ -129,16 +141,23 @@ internal sealed partial class ValidationRun
 
     private static FlintBackend[] Ordered(IEnumerable<FlintBackend> backends) => CatalogTables.Backends.Where(backends.Contains).ToArray();
 
-    /// <summary>The Excel throw reasons; without the rows only those that follow from the spec alone.</summary>
-    private List<ExcelReason> ExcelReasons(FieldTypes types)
+    /// <summary>The throw reasons of each native target, in backend order; without the rows only those that follow from
+    /// the spec alone.</summary>
+    private Dictionary<FlintBackend, List<ThrowReason>> NativeReasons(FieldTypes types)
     {
-        if (!targets.Contains(FlintBackend.Excel) || input.ChartSpec.Encodings is not { Count: > 0 } || (input.Data is null && deferred is null))
+        var reasons = new Dictionary<FlintBackend, List<ThrowReason>>();
+        if (input.ChartSpec.Encodings is not { Count: > 0 } || (input.Data is null && deferred is null))
         {
-            return [];
+            return reasons;
         }
 
-        var reasons = Excel.Evaluate(input, types, template[FlintBackend.Excel]);
-        return deferred is null ? reasons : [.. reasons.Where(r => !r.FromRowsOrTypes)];
+        foreach (var b in targets.Where(NativeBackends.Contains))
+        {
+            var all = b == FlintBackend.Excel ? Excel.Evaluate(input, types, template[b]) : ImageCharts.Evaluate(input, types);
+            reasons[b] = deferred is null ? all : [.. all.Where(r => !r.FromRowsOrTypes)];
+        }
+
+        return reasons;
     }
 
     /// <summary>The keys of <c>data[0]</c> when they are known: the keys of an object first row, or the metadata keys of
@@ -146,12 +165,15 @@ internal sealed partial class ValidationRun
     private IReadOnlyList<string>? Keys =>
         deferred is not null ? deferred.Keys : input.Data?.Values is [JsonObject, ..] ? input.Data.FirstRowKeys : null;
 
-    /// <summary>Without the rows: the Excel reasons that follow from the spec, and one Info naming what was not checked.</summary>
-    private void DeferredChecks(List<ExcelReason> excelReasons)
+    /// <summary>Without the rows: the native reasons that follow from the spec, and one Info naming what was not checked.</summary>
+    private void DeferredChecks(Dictionary<FlintBackend, List<ThrowReason>> reasons)
     {
-        foreach (var reason in excelReasons)
+        foreach (var (b, list) in reasons)
         {
-            AddExcel(reason);
+            foreach (var reason in list)
+            {
+                AddNative(b, reason);
+            }
         }
 
         var source = deferred!.Template ? "A template has no rows yet" : "The rows are streamed and not read by validation";
@@ -159,19 +181,19 @@ internal sealed partial class ValidationRun
             ? " The row shape is dynamic, so unknown_field, series_field_missing and the row-key part of reserved_semantic_type are skipped too."
             : " Fields are checked against the keys the row type writes.";
         Add(IssueSeverity.Info, Codes.RowsNotInspected, "data",
-            $"{source}; the row checks are skipped: row_not_object, inconsistent_row_keys, too_many_rows, data_empty, null_in_temporal_field, large_integer, unspecified_datetime, timespan_as_string, nested_value, and the field types inferred from values that the Excel rules and series_nominal_entry read.{keys} Validate a sample with every rule: ChartValidator.Validate(template.Bind(rows), backend).");
+            $"{source}; the row checks are skipped: row_not_object, inconsistent_row_keys, too_many_rows, data_empty, null_in_temporal_field, large_integer, unspecified_datetime, timespan_as_string, nested_value, and the field types inferred from values that the Excel and Image-Charts rules and series_nominal_entry read.{keys} Validate a sample with every rule: ChartValidator.Validate(template.Bind(rows), backend).");
     }
 
     private bool HasRows => input.Data?.Values is { Count: > 0 };
 
-    private void EncodingChecks(ChartSpec spec, List<ExcelReason> excelReasons)
+    private void EncodingChecks(ChartSpec spec, FieldTypes types, Dictionary<FlintBackend, List<ThrowReason>> reasons)
     {
         var encodings = spec.Encodings;
         if (encodings.Count == 0)
         {
-            PerTarget(Codes.EncodingsEmpty, "chart_spec.encodings", b => b == FlintBackend.Excel ? IssueSeverity.Error : IssueSeverity.Info,
+            PerTarget(Codes.EncodingsEmpty, "chart_spec.encodings", b => NativeBackends.Contains(b) ? IssueSeverity.Error : IssueSeverity.Info,
                 (severity, on) => severity == IssueSeverity.Error
-                    ? $"Encodings are empty; Excel throws (it needs a quantitative measure). {Throws(on)}"
+                    ? $"Encodings are empty; {string.Join(" and ", on.Select(b => $"{Name(b)} throws ({Needs(b)})"))}. {Throws(on)}"
                     : $"Encodings are empty; {string.Join(", ", on.Select(Id))} assemble an empty chart.");
         }
 
@@ -180,44 +202,56 @@ internal sealed partial class ValidationRun
             var path = $"chart_spec.encodings.{channel}";
             if (value is null)
             {
-                PerTarget(Codes.ChannelNull, path, b => b == FlintBackend.Excel ? IssueSeverity.Info : IssueSeverity.Error,
+                PerTarget(Codes.ChannelNull, path, b => NativeBackends.Contains(b) ? IssueSeverity.Info : IssueSeverity.Error,
                     (severity, on) => severity == IssueSeverity.Error
                         ? $"The \"{channel}\" encoding is null. {Throws(on)}"
-                        : $"The \"{channel}\" encoding is null; Excel ignores it.",
+                        : $"The \"{channel}\" encoding is null; {string.Join(" and ", on.Select(Name))} {(on.Length == 1 ? "ignores" : "ignore")} it.",
                     channel);
                 continue;
             }
 
-            UnsupportedChannel(channel, path, excelReasons);
+            UnsupportedChannel(channel, path, types, reasons);
             if (!value.IsSeries)
             {
                 UnknownField(channel, path, value.Encodings[0]);
             }
         }
 
-        if (input.Data is { } data && data.Values is { Count: > 0 } && targets.Contains(FlintBackend.Excel))
+        if (HasRows)
         {
-            foreach (var reason in excelReasons)
+            foreach (var (b, list) in reasons)
             {
-                AddExcel(reason);
+                foreach (var reason in list)
+                {
+                    AddNative(b, reason);
+                }
             }
         }
     }
 
-    private void AddExcel(ExcelReason reason) =>
-        Add(IssueSeverity.Error, Codes.ExcelUnsupported, reason.Channel is { } ch ? $"chart_spec.encodings.{ch}" : "chart_spec",
-            $"Excel {reason.Message}; Excel throws.", reason.Channel);
+    /// <summary>Why a native backend throws on empty encodings, for <c>encodings_empty</c>.</summary>
+    private static string Needs(FlintBackend b) =>
+        b == FlintBackend.Excel ? "it needs a quantitative measure" : "it needs a category and a measure, or a slice and a value";
 
-    private void UnsupportedChannel(string channel, string path, List<ExcelReason> excelReasons)
+    private static string UnsupportedCode(FlintBackend b) => b == FlintBackend.Excel ? Codes.ExcelUnsupported : Codes.ImageChartsUnsupported;
+
+    private void AddNative(FlintBackend b, ThrowReason reason) =>
+        Add(IssueSeverity.Error, UnsupportedCode(b), reason.Channel is { } ch ? $"chart_spec.encodings.{ch}" : "chart_spec",
+            $"{Name(b)} {reason.Message}; {Name(b)} throws.", reason.Channel);
+
+    private void UnsupportedChannel(string channel, string path, FieldTypes types, Dictionary<FlintBackend, List<ThrowReason>> reasons)
     {
         if (targets.Length == 0)
         {
             return;
         }
 
+        // A declared channel, or one Image-Charts reads though its curated template leaves it out (ImageCharts.ReadsUndeclared).
+        bool Reads(FlintBackend t) => template[t].Channels.Contains(channel) || (t == FlintBackend.ImageCharts && ImageCharts.ReadsUndeclared(input, types, channel));
+
         if (backend is { } b)
         {
-            if (template[b].Channels.Contains(channel) || (b == FlintBackend.Excel && excelReasons.Any(r => r.Channel == channel)))
+            if (Reads(b) || (reasons.TryGetValue(b, out var own) && own.Any(r => r.Channel == channel)))
             {
                 return;
             }
@@ -230,8 +264,7 @@ internal sealed partial class ValidationRun
             return;
         }
 
-        var declaring = targets.Where(t => template[t].Channels.Contains(channel)).ToArray();
-        if (declaring.Length == 0 && !RetiredChannel(targets, channel, path))
+        if (!targets.Any(Reads) && !RetiredChannel(targets, channel, path))
         {
             Add(IssueSeverity.Warning, Codes.UnsupportedChannel, path, $"No backend's template of \"{input.ChartSpec.ChartType.Name}\" declares \"{channel}\"; it is ignored.", channel);
         }
@@ -261,7 +294,7 @@ internal sealed partial class ValidationRun
         Add(IssueSeverity.Warning, Codes.UnknownField, $"{path}.field", $"\"{field}\" is not {where}; the encoding resolves to nothing.", channel, field);
     }
 
-    private void DataChecks(List<ExcelReason> excelReasons)
+    private void DataChecks(Dictionary<FlintBackend, List<ThrowReason>> reasons)
     {
         if (input.Data is not { } data || targets.Length == 0 || HasRows)
         {
@@ -269,24 +302,24 @@ internal sealed partial class ValidationRun
         }
 
         var urlOnly = data.Url is not null && data.Values is null;
-        var rowReasons = excelReasons.Where(r => r.FromRowsOrTypes).ToArray();
-        foreach (var reason in excelReasons.Where(r => !r.FromRowsOrTypes))
-        {
-            AddExcel(reason);
-        }
-
-        var excelThrows = rowReasons.Length > 0;
         var code = urlOnly ? Codes.DataUrlOnly : Codes.DataEmpty;
-        if (targets.Contains(FlintBackend.Excel))
+        foreach (var b in targets.Where(NativeBackends.Contains))
         {
-            var because = excelThrows ? rowReasons[0].Message : null;
-            Add(excelThrows ? IssueSeverity.Error : IssueSeverity.Info, code, urlOnly ? "data.url" : "data.values",
-                excelThrows
-                    ? $"Excel reads only data.values and has no rows: it {because}; Excel throws."
-                    : urlOnly ? "Excel reads only data.values; the URL is not fetched and the chart has no rows." : "data.values has no rows; Excel assembles an empty chart.");
+            var own = reasons.GetValueOrDefault(b) ?? [];
+            foreach (var reason in own.Where(r => !r.FromRowsOrTypes))
+            {
+                AddNative(b, reason);
+            }
+
+            var because = own.FirstOrDefault(r => r.FromRowsOrTypes)?.Message;
+            var name = Name(b);
+            Add(because is not null ? IssueSeverity.Error : IssueSeverity.Info, code, urlOnly ? "data.url" : "data.values",
+                because is not null
+                    ? $"{name} reads only data.values and has no rows: it {because}; {name} throws."
+                    : urlOnly ? $"{name} reads only data.values; the URL is not fetched and the chart has no rows." : $"data.values has no rows; {name} assembles an empty chart.");
         }
 
-        var others = targets.Where(t => t != FlintBackend.Excel).ToArray();
+        var others = targets.Where(t => !NativeBackends.Contains(t)).ToArray();
         if (others.Length > 0)
         {
             Add(IssueSeverity.Info, urlOnly ? Codes.DataUrlNotFetched : Codes.DataEmpty, urlOnly ? "data.url" : "data.values",
@@ -440,7 +473,11 @@ internal sealed partial class ValidationRun
         }
 
         var keys = Keys;
-        var bound = (input.ChartSpec?.Encodings ?? []).Values.SelectMany(v => v?.Encodings ?? []).Select(e => e.Field).OfType<string>().ToHashSet(StringComparer.Ordinal);
+        // Excel and Image-Charts read a static series as an unbound channel and never look up the annotation of its entries;
+        // the layout backends do (normalizeStaticSeries). An empty target set (template unresolved) keeps every entry.
+        var nativeOnly = targets.Length > 0 && targets.All(NativeBackends.Contains);
+        var bound = (input.ChartSpec?.Encodings ?? []).Values.Where(v => v is not null && !(nativeOnly && v.IsSeries))
+            .SelectMany(v => v!.Encodings).Select(e => e.Field).OfType<string>().ToHashSet(StringComparer.Ordinal);
         foreach (var (field, annotation) in input.SemanticTypes)
         {
             if (annotation?.Type.Name is { } reserved && Js.ObjectPrototypeKeys.Contains(reserved) && (bound.Contains(field) || keys?.Contains(field) == true))
@@ -645,7 +682,7 @@ internal sealed partial class ValidationRun
     /// <c>repairEncodingSorts</c> of the pinned package (src/core/resolve-semantics.ts), which the four layout backends run
     /// first: each <c>sortBy</c> and <c>sortOrder</c> that <c>inspectEncodingSort</c> rejects is dropped with the warning
     /// <c>invalid_sort</c>, and the chart keeps its default order. Vega-Lite also sorts by a data field; ECharts, Chart.js
-    /// and Plotly reject one (<c>fieldSort: false</c>). Excel reads no sort hint.
+    /// and Plotly reject one (<c>fieldSort: false</c>). Excel and Image-Charts read no sort hint.
     /// </summary>
     private void SortByChecks(ChartSpec spec)
     {
@@ -771,8 +808,8 @@ internal sealed partial class ValidationRun
         Js.Kind(node) is JsonValueKind.String or JsonValueKind.True or JsonValueKind.False
         || (Js.Kind(node) == JsonValueKind.Number && double.IsFinite(Js.NumberOf(node!)));
 
-    /// <summary>The layout backends overwrite the options in the catalog's <c>ignoredOptions</c>; the Excel backend reads no
-    /// option.</summary>
+    /// <summary>The layout backends overwrite the options in the catalog's <c>ignoredOptions</c>; the native backends (Excel,
+    /// Image-Charts) read no option.</summary>
     private void OptionChecks()
     {
         if (input.Options is null || targets.Length == 0)
@@ -784,7 +821,7 @@ internal sealed partial class ValidationRun
         foreach (var (key, _) in options)
         {
             PerTarget(Codes.OptionOverriddenByBackend, $"options.{key}",
-                b => b == FlintBackend.Excel || (CatalogTables.IgnoredOptions.TryGetValue(key, out var on) && on.Contains(b)) ? IssueSeverity.Info : null,
+                b => NativeBackends.Contains(b) || (CatalogTables.IgnoredOptions.TryGetValue(key, out var on) && on.Contains(b)) ? IssueSeverity.Info : null,
                 (_, on) => $"{string.Join(", ", on.Select(Id))} {(on.Length == 1 ? "does" : "do")} not use \"{key}\"; the option has no effect there.");
         }
     }

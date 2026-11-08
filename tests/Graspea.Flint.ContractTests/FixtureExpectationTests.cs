@@ -25,7 +25,7 @@ public sealed class FixtureExpectationTests
         "unknown_chart_type", "chart_type_not_on_backend", "missing_encodings", "channel_null", "data_missing", "unknown_theme_preset",
         "series_multiple_channels", "series_channel_not_xy", "series_too_few", "series_duplicate_field", "series_field_missing",
         "series_color_bound", "series_nominal_entry", "data_empty", "data_url_only", "encodings_empty", "excel_unsupported",
-        "row_not_object", "reserved_semantic_type",
+        "image_charts_unsupported", "row_not_object", "reserved_semantic_type",
     };
 
     private static readonly string[] SeriesCodes =
@@ -38,7 +38,7 @@ public sealed class FixtureExpectationTests
     private static readonly (Regex Message, string[] Codes)[] ErrorCodes =
     [
         (new("^(Static series|Each static series entry|Cannot use static series)"), SeriesCodes),
-        (new(@"^Unknown (ECharts |Chart\.js |Plotly )?chart type|^Excel backend does not support chart type"), ["unknown_chart_type", "chart_type_not_on_backend"]),
+        (new(@"^Unknown (ECharts |Chart\.js |Plotly )?chart type|^(Excel|Image-Charts) backend does not support chart type"), ["unknown_chart_type", "chart_type_not_on_backend"]),
         (new("^Unknown theme"), ["unknown_theme_preset"]),
         (new(@"^Cannot read properties of (null|undefined) \(reading 'values'\)"), ["data_missing"]),
         (new(@"^Cannot read properties of null \(reading 'field'\)"), ["channel_null"]),
@@ -50,13 +50,14 @@ public sealed class FixtureExpectationTests
         (new("^Excel backend "), ["excel_unsupported", "data_empty", "data_url_only", "encodings_empty", "missing_encodings"]),
         // flint-chart 1.0.1 excel: the two throws inside instantiate() (src/excel/templates/radar.ts, histogram.ts)
         (new("^Excel (radar chart|histogram) requires "), ["excel_unsupported"]),
+        (new("^Image-Charts backend "), ["image_charts_unsupported", "data_empty", "data_url_only", "encodings_empty", "missing_encodings"]),
     ];
 
     public static IEnumerable<TestCaseData> CurrentFixtures() =>
         Fixtures.Cases(FlintUpstream.Version).Values.Select(c => new TestCaseData(false, c.Id).SetName($"Validator_AgreesWithRecordedOutcome({c.Name})"))
             .Concat(Fixtures.ProbeCases(FlintUpstream.Version).Values.Select(c => new TestCaseData(true, c.Id).SetName($"Validator_AgreesWithRecordedOutcome({c.Name})")));
 
-    // source: tests/fixtures/flint-chart@<FlintUpstream.Version>/expectations.jsonl and probe-expectations.jsonl (the five
+    // source: tests/fixtures/flint-chart@<FlintUpstream.Version>/expectations.jsonl and probe-expectations.jsonl (the six
     // assemblers run by fixtures.ts on the corpus and on the crafted cases of probe-cases.ts)
     [TestCaseSource(nameof(CurrentFixtures))]
     public void Validator_AgreesWithRecordedOutcome(bool crafted, string id)
@@ -71,11 +72,6 @@ public sealed class FixtureExpectationTests
             foreach (var (backendId, outcome) in outcomes)
             {
                 var backend = (FlintBackend)Array.IndexOf(BackendIds, backendId);
-                if (backend == FlintBackend.ImageCharts)
-                {
-                    continue; // The Image-Charts rules are not ported yet.
-                }
-
                 var issues = ChartValidator.Validate(input, backend).Issues;
                 var errors = issues.Where(i => i.Severity == IssueSeverity.Error && ThrowClass.Contains(i.Code)).ToArray();
                 var hasTemplate = issues.All(i => i.Code != "chart_type_not_on_backend");

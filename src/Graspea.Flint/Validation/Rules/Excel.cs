@@ -4,9 +4,9 @@ using static Graspea.Flint.Validation.Rules.Tri;
 
 namespace Graspea.Flint.Validation.Rules;
 
-/// <summary>One reason the Excel assembler throws. <see cref="FromRowsOrTypes"/> is false for reasons that follow from the
-/// encodings and chart properties alone (they hold whatever the rows are).</summary>
-internal sealed record ExcelReason(string Message, string? Channel, bool FromRowsOrTypes);
+/// <summary>One reason the Excel or the Image-Charts assembler throws. <see cref="FromRowsOrTypes"/> is false for reasons
+/// that follow from the encodings and chart properties alone (they hold whatever the rows are).</summary>
+internal sealed record ThrowReason(string Message, string? Channel, bool FromRowsOrTypes);
 
 /// <summary>
 /// The throw conditions of <c>assembleExcel</c> in the pinned package (design §6 <c>excel_unsupported</c>): faceting,
@@ -24,9 +24,9 @@ internal static class Excel
 
     private static readonly string[] PriceChannels = ["open", "high", "low", "close"];
 
-    internal static List<ExcelReason> Evaluate(ChartAssemblyInput input, FieldTypes types, TemplateRow template)
+    internal static List<ThrowReason> Evaluate(ChartAssemblyInput input, FieldTypes types, TemplateRow template)
     {
-        var reasons = new List<ExcelReason>();
+        var reasons = new List<ThrowReason>();
         var chartType = input.ChartSpec.ChartType.Name;
         var encodings = input.ChartSpec.Encodings;
         var rows = types.Rows;
@@ -37,7 +37,7 @@ internal static class Excel
         {
             if (condition == true)
             {
-                reasons.Add(new ExcelReason(message, channel, fromRowsOrTypes));
+                reasons.Add(new ThrowReason(message, channel, fromRowsOrTypes));
             }
         }
 

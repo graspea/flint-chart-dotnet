@@ -148,7 +148,8 @@ public sealed class FlintJsonTests
     }
 
     // source: design §4.1 (Encodings = new(): an absent member reads as {}) and probe "encodings missing" / "encodings
-    // empty" (absent throws everywhere, {} only on Excel); the default is kept, so only an explicit null stays missing
+    // empty" (absent throws everywhere, {} on Excel and Image-Charts); the default is kept, so only an explicit null
+    // stays missing
     [Test]
     public void Deserialize_AbsentEncodings_ReadsAsEmpty_ExplicitNullStaysMissing()
     {

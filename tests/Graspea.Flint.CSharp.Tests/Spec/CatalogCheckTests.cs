@@ -39,6 +39,24 @@ public sealed class CatalogCheckTests
         Assert.That(issues.Select(Describe), Is.EqualTo(new[] { "FLINT111 unsupported_channel Warning chart_spec.encodings.goal @1:70" }));
     }
 
+    // source: ValidationRun.UnsupportedChannel and ImageCharts.ReadsUndeclared (Image-Charts reads group with a field as the
+    // series, and on a Pie or Donut Chart x without a color field and y without a size or theta field, though its template
+    // does not declare them; flint-chart 1.0.1 src/image-charts/assemble.ts:205-210, :265-266), the same as the validator
+    [TestCase("Line Chart", "{\"x\":\"a\",\"y\":\"b\",\"group\":\"c\"}", "")]
+    [TestCase("Line Chart", "{\"x\":\"a\",\"y\":\"b\",\"group\":{\"type\":\"nominal\"}}", "chart_spec.encodings.group")]
+    [TestCase("Pie Chart", "{\"x\":\"a\",\"y\":\"b\"}", "")]
+    [TestCase("Pie Chart", "{\"color\":\"a\",\"x\":\"a\",\"size\":\"b\",\"y\":\"b\"}", "chart_spec.encodings.x chart_spec.encodings.y")]
+    [TestCase("Donut Chart", "{\"color\":\"\",\"x\":\"a\",\"theta\":\"b\"}", "chart_spec.encodings.x")]
+    [TestCase("Pie Chart", "{\"color\":\"a\",\"size\":\"b\",\"group\":\"a\"}", "chart_spec.encodings.group")]
+    public void Run_ChannelImageChartsReads_IsNotFlint111(string chartType, string encodings, string expected)
+    {
+        var json = Doc(chartType, encodings);
+        var core = Check(json).Where(i => i.Code == "unsupported_channel").Select(i => i.Path);
+        var validator = ChartTemplate.Create<JsonObject>(FlintJson.Deserialize(json)).Validate().Issues.Where(i => i.Code == "unsupported_channel").Select(i => i.Path);
+        Assert.That(string.Join(" ", core), Is.EqualTo(expected));
+        Assert.That(string.Join(" ", validator), Is.EqualTo(expected));
+    }
+
     // source: ValidationRun.PropertyChecks and Accepts (normalizeChartProperties: a value equal to an option value, or a
     // label ignoring case and surrounding whitespace)
     [TestCase("\"wobbly\"", 1)]

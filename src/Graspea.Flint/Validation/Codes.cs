@@ -21,6 +21,7 @@ internal static class Codes
     internal const string DataEmpty = "data_empty";
     internal const string DataUrlOnly = "data_url_only";
     internal const string ExcelUnsupported = "excel_unsupported";
+    internal const string ImageChartsUnsupported = "image_charts_unsupported";
     internal const string RowNotObject = "row_not_object";
     internal const string ReservedSemanticType = "reserved_semantic_type";
 
