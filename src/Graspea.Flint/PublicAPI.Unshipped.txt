@@ -1,1 +1,13 @@
 #nullable enable
+Graspea.Flint.ChartEncoding.ColorScheme.get -> Graspea.Flint.ColorScheme?
+Graspea.Flint.ChartEncoding.ColorScheme.set -> void
+Graspea.Flint.ColorScheme
+Graspea.Flint.ColorScheme.Name.get -> string?
+Graspea.Flint.ColorScheme.Stops.get -> string![]?
+Graspea.Flint.Serialization.ColorSchemeConverter
+Graspea.Flint.Serialization.ColorSchemeConverter.ColorSchemeConverter() -> void
+override Graspea.Flint.ColorScheme.ToString() -> string!
+override Graspea.Flint.Serialization.ColorSchemeConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ColorScheme!
+override Graspea.Flint.Serialization.ColorSchemeConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ColorScheme! value, System.Text.Json.JsonSerializerOptions! options) -> void
+static Graspea.Flint.ColorScheme.implicit operator Graspea.Flint.ColorScheme?(string![]? stops) -> Graspea.Flint.ColorScheme?
+static Graspea.Flint.ColorScheme.implicit operator Graspea.Flint.ColorScheme?(string? name) -> Graspea.Flint.ColorScheme?

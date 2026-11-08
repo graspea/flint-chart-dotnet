@@ -33,10 +33,20 @@ public sealed partial class ChartEncoding
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? SortBy { get; set; }
 
-    /// <summary>The <c>scheme</c> member: a colour scheme name; <c>default</c> means none.</summary>
+    /// <summary>The <c>scheme</c> member: a colour scheme name (<c>default</c> means none) or the colour stops, low end first.</summary>
     [JsonPropertyName("scheme")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string? Scheme { get; set; }
+    public ColorScheme? ColorScheme { get; set; }
+
+    /// <summary>The scheme name of <see cref="ColorScheme"/>; null when the scheme is a list of colour stops. Never written
+    /// as a member of its own.</summary>
+    [JsonIgnore]
+    [Obsolete("Use ChartEncoding.ColorScheme, which also holds an array of colour stops.", DiagnosticId = "FLINT0002", UrlFormat = "https://github.com/graspea/flint-chart-dotnet/blob/main/docs/deprecations.md#{0}")]
+    public string? Scheme
+    {
+        get => ColorScheme?.Name;
+        set => ColorScheme = value;
+    }
 
     /// <summary>The <c>title</c> member: the name the channel's axis or key prints, in place of the field's; <see cref="ChannelTitle.None"/> prints none.</summary>
     [JsonPropertyName("title")]

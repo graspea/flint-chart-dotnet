@@ -51,7 +51,7 @@ public sealed class CoreParityTests
         Aggregate = Aggregate.Sum,
         SortOrder = SortOrder.Descending,
         SortBy = "y",
-        Scheme = "default",
+        ColorScheme = new[] { "#c0392b", "#2e75b6" },
         Title = "Revenue",
         Reverse = true,
         Mid = 0,
@@ -177,6 +177,21 @@ public sealed class CoreParityTests
                     Assert.That(value.GetValueKind(), Is.AnyOf(ExpectedKinds(p["type"]!)), $"JSON kind of {name}");
                 }
             }
+        }
+    }
+
+    // source: generator/ir/flint-ir.json types.ChartEncoding.props[scheme]: a union of exactly string and string[]
+    [Test]
+    public void ChartEncodingScheme_IrUnionIsStringAndStringArray_LibraryAcceptsAndWritesBoth()
+    {
+        var scheme = CommittedIr.Root["types"]!["ChartEncoding"]!["props"]!.AsArray().First(p => p!["name"]!.GetValue<string>() == "scheme")!["type"]!;
+        Assert.That(scheme["kind"]!.GetValue<string>(), Is.EqualTo("union"));
+        var members = scheme["members"]!.AsArray();
+        Assert.That(members.Select(m => m!["kind"]!.GetValue<string>()), Is.EqualTo(new[] { "string", "array" }));
+        Assert.That(members[1]!["element"]!["kind"]!.GetValue<string>(), Is.EqualTo("string"));
+        foreach (var json in new[] { """{"scheme":"viridis"}""", """{"scheme":["#000","#fff"]}""" })
+        {
+            Assert.That(JsonSerializer.Serialize(JsonSerializer.Deserialize<ChartEncoding>(json)), Is.EqualTo(json));
         }
     }
 

@@ -8,7 +8,7 @@ namespace Graspea.Flint.Tests.Serialization;
 public sealed class CoreMembersTests
 {
     private const string Document =
-        """{"data":{"values":[{"region":"North","margin":4}]},"semantic_types":{"margin":{"semanticType":"Percentage","colors":{"North":"#0793AB"},"polarity":"higher-is-better"}},"chart_spec":{"chartType":"Bar Chart","label":"Figure 2","encodings":{"x":{"field":"region","title":null},"color":{"field":"margin","title":"Margin","reverse":true,"mid":0,"domain":[-10,10],"bins":5,"colors":{"Win":"#2a9d8f"}}},"source":{"text":"Open data","href":"https://example.com/data"},"chrome":false},"interaction_spec":{"assistedTargeting":{"details":{"fields":["region"],"maxRows":3},"maxDistance":24},"interactions":[{"options":{"axes":"x","pan":false},"type":"navigate"}],"keyboardTargeting":true}}""";
+        """{"data":{"values":[{"region":"North","margin":4}]},"semantic_types":{"margin":{"semanticType":"Percentage","colors":{"North":"#0793AB"},"polarity":"higher-is-better"}},"chart_spec":{"chartType":"Bar Chart","label":"Figure 2","encodings":{"x":{"field":"region","title":null},"color":{"field":"margin","scheme":["#c0392b","#f2f2f2","#2e75b6"],"title":"Margin","reverse":true,"mid":0,"domain":[-10,10],"bins":5,"colors":{"Win":"#2a9d8f"}}},"source":{"text":"Open data","href":"https://example.com/data"},"chrome":false},"interaction_spec":{"assistedTargeting":{"details":{"fields":["region"],"maxRows":3},"maxDistance":24},"interactions":[{"options":{"axes":"x","pan":false},"type":"navigate"}],"keyboardTargeting":true}}""";
 
     private static ChartAssemblyInput Input() => new()
     {
@@ -24,7 +24,7 @@ public sealed class CoreMembersTests
             Encodings =
             {
                 ["x"] = new ChartEncoding { Field = "region", Title = ChannelTitle.None },
-                ["color"] = new ChartEncoding { Field = "margin", Title = "Margin", Reverse = true, Mid = 0, Domain = [-10, 10], Bins = 5, Colors = new() { ["Win"] = "#2a9d8f" } },
+                ["color"] = new ChartEncoding { Field = "margin", ColorScheme = new[] { "#c0392b", "#f2f2f2", "#2e75b6" }, Title = "Margin", Reverse = true, Mid = 0, Domain = [-10, 10], Bins = 5, Colors = new() { ["Win"] = "#2a9d8f" } },
             },
             Source = new ChartSource { Text = "Open data", Href = "https://example.com/data" },
             Chrome = ChartChrome.None,

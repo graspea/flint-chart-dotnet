@@ -335,7 +335,9 @@ internal sealed class ValueWriter
                 ("aggregate", { } v) => $"Aggregate = {Constant("Aggregate", v, NameTables.Aggregate(v))}",
                 ("sortOrder", { } v) => $"SortOrder = {Constant("SortOrder", v, NameTables.SortOrder(v))}",
                 ("sortBy", { } v) => $"SortBy = {CSharpText.StringLiteral(v)}",
-                ("scheme", { } v) => $"Scheme = {CSharpText.StringLiteral(v)}",
+                ("scheme", { } v) => $"ColorScheme = {CSharpText.StringLiteral(v)}",
+                ("scheme", null) when member.Value.IsArray && member.Value.Items.All(i => i.IsString) =>
+                    $"ColorScheme = new string[] {{ {string.Join(", ", member.Value.Items.Select(i => CSharpText.StringLiteral(i.Value!)))} }}",
                 ("title", { } v) => $"Title = {CSharpText.StringLiteral(v)}",
                 ("title", null) when member.Value.IsNull => $"Title = {Flint("ChannelTitle")}.None",
                 ("reverse", null) => Typed(member.Value, "bool") is { } reverse ? $"Reverse = {reverse}" : null,

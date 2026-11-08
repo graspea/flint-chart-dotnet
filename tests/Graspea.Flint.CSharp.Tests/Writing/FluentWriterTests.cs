@@ -108,9 +108,18 @@ public sealed class FluentWriterTests
     {
         var chain = Chain(Convert(Doc("Bar Chart", "{\"x\":{\"field\":\"a\",\"type\":\"temporal\",\"sortOrder\":\"descending\",\"sortBy\":\"x\",\"scheme\":\"blues\",\"k\":1},\"y\":{\"field\":\"b\",\"aggregate\":\"median\"},\"color\":{\"aggregate\":\"count\"}}")));
 
-        Assert.That(chain, Does.Contain(".X(new ChartEncoding { Field = \"a\", Type = EncodingType.Temporal, SortOrder = SortOrder.Descending, SortBy = \"x\", Scheme = \"blues\", Extensions = new() { [\"k\"] = Json(\"1\") } })"));
+        Assert.That(chain, Does.Contain(".X(new ChartEncoding { Field = \"a\", Type = EncodingType.Temporal, SortOrder = SortOrder.Descending, SortBy = \"x\", ColorScheme = \"blues\", Extensions = new() { [\"k\"] = Json(\"1\") } })"));
         Assert.That(chain, Does.Contain(".Y(new ChartEncoding { Field = \"b\", Aggregate = new Aggregate(\"median\") })"));
         Assert.That(chain, Does.Contain(".Color(new ChartEncoding { Aggregate = Aggregate.Count })"));
+    }
+
+    // source: CS9174 on a collection expression for a non-constructible class; types.ts:58-62 (scheme?: string | string[])
+    [Test]
+    public void Convert_ArrayScheme_WritesTypedStringArray()
+    {
+        var chain = Chain(Convert(Doc("Bar Chart", "{\"color\":{\"field\":\"a\",\"scheme\":[\"#000\",\"#fff\"]}}")));
+
+        Assert.That(chain, Does.Contain(".Color(new ChartEncoding { Field = \"a\", ColorScheme = new string[] { \"#000\", \"#fff\" } })"));
     }
 
     // source: design §12.4.1 (two or more plain, distinct fields on x or y -> Series with selectors; any other array ->

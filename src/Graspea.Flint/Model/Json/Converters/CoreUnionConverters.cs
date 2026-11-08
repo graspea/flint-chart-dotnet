@@ -104,6 +104,55 @@ public sealed class ChannelTitleConverter : JsonConverter<ChannelTitle>
     }
 }
 
+/// <summary>Wire form <c>string | string[]</c> of <see cref="ColorScheme"/>. Infrastructure: public only so that a host
+/// source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public sealed class ColorSchemeConverter : JsonConverter<ColorScheme>
+{
+    /// <inheritdoc/>
+    public override ColorScheme Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        switch (reader.TokenType)
+        {
+            case JsonTokenType.String:
+                return reader.GetString()!;
+            case JsonTokenType.StartArray:
+                var stops = new List<string>();
+                while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
+                {
+                    if (reader.TokenType != JsonTokenType.String)
+                    {
+                        throw new JsonException("An encoding scheme must be a string or an array of strings.");
+                    }
+
+                    stops.Add(reader.GetString()!);
+                }
+
+                return stops.ToArray();
+            default:
+                throw new JsonException("An encoding scheme must be a string or an array of strings.");
+        }
+    }
+
+    /// <inheritdoc/>
+    public override void Write(Utf8JsonWriter writer, ColorScheme value, JsonSerializerOptions options)
+    {
+        if (value.Name is { } name)
+        {
+            writer.WriteStringValue(name);
+            return;
+        }
+
+        writer.WriteStartArray();
+        foreach (var stop in value.Stops ?? [])
+        {
+            writer.WriteStringValue(stop);
+        }
+
+        writer.WriteEndArray();
+    }
+}
+
 /// <summary>Wire form <c>boolean | {details?, indicator?, maxDistance?}</c> of <see cref="AssistedTargeting"/>.
 /// Infrastructure: public only so that a host source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
 [EditorBrowsable(EditorBrowsableState.Never)]

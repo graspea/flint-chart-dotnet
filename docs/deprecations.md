@@ -29,5 +29,4 @@ No member is deprecated under FLINT0001 in the flint-chart 0.5.1 and 1.0.0 lines
 
 | Member | Replacement | Deprecated in | Deleted in |
 |---|---|---|---|
-
-No member is deprecated under FLINT0002 yet.
+| `ChartEncoding.Scheme` | `ChartEncoding.ColorScheme` | `1.0.1.1-preview.2` | the release after it |

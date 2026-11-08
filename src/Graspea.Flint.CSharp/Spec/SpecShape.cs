@@ -168,9 +168,15 @@ internal static class SpecShape
     {
         foreach (var member in value.Members)
         {
+            if (member.Key == "scheme")
+            {
+                Require(member.Value.IsNull || member.Value.IsString || (member.Value.IsArray && member.Value.Items.All(i => i.IsString)), member.Value, $"{path}.scheme", $"{path}.scheme must be a string or an array of strings.");
+                continue;
+            }
+
             var type = member.Key switch
             {
-                "field" or "sortBy" or "scheme" or "title" => "string",
+                "field" or "sortBy" or "title" => "string",
                 "type" or "aggregate" or "sortOrder" => Literal,
                 "reverse" => "bool",
                 "mid" or "bins" => "double",

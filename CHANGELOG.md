@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+### Added
+
+- `ChartEncoding.ColorScheme`, a `ColorScheme`: a scheme name or a list of colour stops, low end first (`ColorScheme = "viridis"` or `ColorScheme = new[] { "#c0392b", "#f2f2f2", "#2e75b6" }`). `FlintJson` now reads an array `scheme`, which threw `JsonException`; `flint-cs to-csharp` and `Graspea.Flint.Generators` write an array scheme typed, which was reported as `FLINT103`.
+
+### Deprecated
+
+- `ChartEncoding.Scheme` (`FLINT0002`, [docs/deprecations.md](docs/deprecations.md#FLINT0002)): use `ChartEncoding.ColorScheme`. It reads the scheme name and returns null when the scheme is a list of colour stops.
+
 ## [1.0.1.1-preview.1] - 2026-11-08
 
 Tracks `flint-chart` 1.0.1 (npm). `flint-chart` 1.0.0 is an upstream major and so a breaking window ([docs/versioning.md](docs/versioning.md)); this preview covers 1.0.0 and 1.0.1, and no release tracks 1.0.0 alone. 1.0.1 changes no catalog, option or theme member (no IR changes besides the version); its fixes (the Plotly line curve, the MCP server) are in the upstream renderers, not in the document the SDK writes.

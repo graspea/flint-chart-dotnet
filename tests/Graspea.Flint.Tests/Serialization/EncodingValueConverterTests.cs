@@ -39,7 +39,17 @@ public sealed class EncodingValueConverterTests
         var value = Read(json);
         Assert.That(value.Encodings[0].Type, Is.EqualTo(EncodingType.Temporal));
         Assert.That(value.Encodings[0].SortBy, Is.EqualTo("y"));
-        Assert.That(value.Encodings[0].Scheme, Is.EqualTo("default"));
+        Assert.That(value.Encodings[0].ColorScheme!.Name, Is.EqualTo("default"));
+        Assert.That(JsonSerializer.Serialize(value), Is.EqualTo(json));
+    }
+
+    // source: types.ts:58-62 (scheme?: string | string[])
+    [Test]
+    public void Object_WithStopsScheme_RoundTrips()
+    {
+        const string json = """{"field":"x","scheme":["#c0392b","#2e75b6"]}""";
+        var value = Read(json);
+        Assert.That(value.Encodings[0].ColorScheme!.Stops, Is.EqualTo(new[] { "#c0392b", "#2e75b6" }));
         Assert.That(JsonSerializer.Serialize(value), Is.EqualTo(json));
     }
 
