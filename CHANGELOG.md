@@ -4,7 +4,266 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
-Tracks `flint-chart` 1.0.0 (npm), an upstream major and so a breaking window ([docs/versioning.md](docs/versioning.md)). The release pull request sets the version heading and adds the IR diff table of the sync pull request.
+## [1.0.1.1-preview.1] - 2026-11-08
+
+Tracks `flint-chart` 1.0.1 (npm). `flint-chart` 1.0.0 is an upstream major and so a breaking window ([docs/versioning.md](docs/versioning.md)); this preview covers 1.0.0 and 1.0.1, and no release tracks 1.0.0 alone. 1.0.1 changes no catalog, option or theme member (no IR changes besides the version); its fixes (the Plotly line curve, the MCP server) are in the upstream renderers, not in the document the SDK writes.
+
+<details>
+<summary>IR diff, flint-chart 0.5.1 → 1.0.0 (from the sync pull request; BREAKING 28 · behavioural 2 · additive 155 · cosmetic 31)</summary>
+
+**Chart types**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| added | `catalog.chartTypes[Marginal Plot]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Ridgeline Plot]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Table]` |  | `{…}` | additive |
+
+**Channels**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| added | `catalog.chartTypes[Grouped Bar Chart].backends.vegalite.channels[color]` |  | `"color"` | additive |
+| added | `catalog.chartTypes[Line Chart].backends.echarts.channels[strokeDash]` |  | `"strokeDash"` | additive |
+| added | `catalog.chartTypes[Scatter Plot].backends.vegalite.channels[detail]` |  | `"detail"` | additive |
+
+**Properties**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[level]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[projectionCenter]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[projection]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Density Plot].backends.vegalite.properties[opacity]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Density Plot].backends.vegalite.properties[stackMode]` |  | `{…}` | additive |
+| removed | `catalog.chartTypes[KPI Card].backends.vegalite.properties[includeZero_x]` | `{…}` |  | BREAKING |
+| removed | `catalog.chartTypes[KPI Card].backends.vegalite.properties[includeZero_y]` | `{…}` |  | BREAKING |
+| removed | `catalog.chartTypes[KPI Card].backends.vegalite.properties[logScale_x]` | `{…}` |  | BREAKING |
+| removed | `catalog.chartTypes[KPI Card].backends.vegalite.properties[logScale_y]` | `{…}` |  | BREAKING |
+| removed | `catalog.chartTypes[Map].backends.vegalite.properties[includeZero_x]` | `{…}` |  | BREAKING |
+| removed | `catalog.chartTypes[Map].backends.vegalite.properties[includeZero_y]` | `{…}` |  | BREAKING |
+| removed | `catalog.chartTypes[Map].backends.vegalite.properties[logScale_x]` | `{…}` |  | BREAKING |
+| removed | `catalog.chartTypes[Map].backends.vegalite.properties[logScale_y]` | `{…}` |  | BREAKING |
+| added | `catalog.chartTypes[Violin Plot].backends.vegalite.properties[widths]` |  | `{…}` | additive |
+
+**Theme presets**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| added | `catalog.themePresets[apple]` |  | `{…}` | additive |
+| added | `catalog.themePresets[bbc]` |  | `{…}` | additive |
+| changed | `catalog.themePresets[datawrapper].description` | `"Embedded web chart: narrow column, plain headline and deck, a rule under the footer."` | `"Embedded web chart: Roboto, a plain headline and description, values on bars and no value axis."` | cosmetic |
+| added | `catalog.themePresets[de-stijl]` |  | `{…}` | additive |
+| added | `catalog.themePresets[material]` |  | `{…}` | additive |
+
+**Input types**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| added | `types.ArcGeometry.props[hole]` |  | `{…}` | additive |
+| added | `types.ArcGeometry.props[order]` |  | `{…}` | additive |
+| added | `types.ArcGeometry.props[startAngle]` |  | `{…}` | additive |
+| added | `types.AreaGeometry.props[fill]` |  | `{…}` | additive |
+| removed | `types.AssembleOptions.doc` | `"Options for the chart assembly function.\nIncludes layout tuning parameters — all have sensible def…` |  | cosmetic |
+| added | `types.AssembleOptions.props[aspectTolerance]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[bandBalance]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[canvasFit]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[canvasRefit]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[canvasTreatment]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[cellGrowth]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[facetGapColumn]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[facetGapRow]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[labelStep]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[liveLayoutSignal]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[minLabelFontSize]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[rowNamesAbove]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[targetAspect]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[themeDecisions]` |  | `{…}` | additive |
+| added | `types.AssistedTargetingOptions` |  | `{…}` | additive |
+| added | `types.AxisRole.props[color]` |  | `{…}` | additive |
+| changed | `types.AxisRole.props[placement].doc` | `` "`opposite` = the far side of the plot (top for x, right for y)." `` | `` "Which side of the plot the axis sits on (AX1):\n- `opposite` — the far side, whichever way the axis… `` | cosmetic |
+| added | `types.AxisRole.props[placement].type.values[bottom]` |  | `"bottom"` | additive |
+| added | `types.AxisRole.props[placement].type.values[leading]` |  | `"leading"` | additive |
+| added | `types.AxisRole.props[placement].type.values[left]` |  | `"left"` | additive |
+| added | `types.AxisRole.props[placement].type.values[right]` |  | `"right"` | additive |
+| added | `types.AxisRole.props[placement].type.values[top]` |  | `"top"` | additive |
+| added | `types.AxisRole.props[placement].type.values[trailing]` |  | `"trailing"` | additive |
+| added | `types.BandGeometry.props[group]` |  | `{…}` | additive |
+| added | `types.BandGeometry.props[minLength]` |  | `{…}` | additive |
+| added | `types.BandGeometry.props[outlineInk]` |  | `{…}` | additive |
+| added | `types.CanvasTreatment` |  | `{…}` | additive |
+| added | `types.ChartAssemblyInput.props[chart_spec].type.props[chrome]` |  | `{…}` | additive |
+| added | `types.ChartAssemblyInput.props[chart_spec].type.props[label]` |  | `{…}` | additive |
+| added | `types.ChartAssemblyInput.props[chart_spec].type.props[source]` |  | `{…}` | additive |
+| changed | `types.ChartAssemblyInput.props[chart_spec].type.props[title].doc` | `"The headline — what this chart says, in words.\n\nNot decoration. A chart of bare numbers names not…` | `"The headline — what this chart says, in words.\n\nThemes that omit required axis titles append thei…` | cosmetic |
+| added | `types.ChartAssemblyInput.props[interaction_spec]` |  | `{…}` | additive |
+| added | `types.ChartEncoding.props[bins]` |  | `{…}` | additive |
+| added | `types.ChartEncoding.props[colors]` |  | `{…}` | additive |
+| added | `types.ChartEncoding.props[domain]` |  | `{…}` | additive |
+| added | `types.ChartEncoding.props[mid]` |  | `{…}` | additive |
+| added | `types.ChartEncoding.props[reverse]` |  | `{…}` | additive |
+| added | `types.ChartEncoding.props[scheme].doc` |  | `` "Colour channel: a Vega scheme name (`viridis`, `redblue`), or the stops a ramp or palette runs\nthr… `` | cosmetic |
+| changed | `types.ChartEncoding.props[scheme].type.kind` | `"string"` | `"union"` | BREAKING |
+| added | `types.ChartEncoding.props[scheme].type.members` |  | `[…]` | additive |
+| added | `types.ChartEncoding.props[title]` |  | `{…}` | additive |
+| added | `types.ChartSpec.props[chrome]` |  | `{…}` | additive |
+| added | `types.ChartSpec.props[label]` |  | `{…}` | additive |
+| added | `types.ChartSpec.props[source]` |  | `{…}` | additive |
+| changed | `types.ChartSpec.props[title].doc` | `"The headline — what this chart says, in words.\n\nNot decoration. A chart of bare numbers names not…` | `"The headline — what this chart says, in words.\n\nThemes that omit required axis titles append thei…` | cosmetic |
+| added | `types.InteractionEntry` |  | `{…}` | additive |
+| added | `types.InteractionSpec` |  | `{…}` | additive |
+| added | `types.LineGeometry.props[washOpacity]` |  | `{…}` | additive |
+| added | `types.LineGeometry.props[wash]` |  | `{…}` | additive |
+| added | `types.PointGeometry.props[density]` |  | `{…}` | additive |
+| added | `types.PointGeometry.props[halo]` |  | `{…}` | additive |
+| added | `types.PointGeometry.props[ink]` |  | `{…}` | additive |
+| added | `types.PointGeometry.props[opacity]` |  | `{…}` | additive |
+| added | `types.PointGeometry.props[shape]` |  | `{…}` | additive |
+| added | `types.SemanticAnnotation.props[colors]` |  | `{…}` | additive |
+| added | `types.SemanticAnnotation.props[polarity]` |  | `{…}` | additive |
+| added | `types.TargetDetailsOptions` |  | `{…}` | additive |
+| changed | `types.ThemeAnnotation.props[axisTitles].doc` | `` "`whenAmbiguous` asks the same question of each axis: `Jan Feb Mar` names\nits own kind and needs no… `` | `` "`whenAmbiguous` asks the same question of each axis: `Jan Feb Mar` names\nits own kind and needs no… `` | cosmetic |
+| added | `types.ThemeAnnotation.props[numberFormat].type.props[compact]` |  | `{…}` | additive |
+| changed | `types.ThemeChartDefaults.doc` | `"The one block that is allowed to name a chart type.\n\nEverything else at level 1 is a policy the c…` | `"The one block that is allowed to name a chart type.\n\nEverything else at level 1 is a policy the c…` | cosmetic |
+| added | `types.ThemeCompileDefaults.props[aspectTolerance]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[bandBalance]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[canvasFit]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[canvasRefit]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[canvasTreatment]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[cellGrowth]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[facetGapColumn]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[facetGapRow]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[labelStep]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[liveLayoutSignal]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[minLabelFontSize]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[rowNamesAbove]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[targetAspect]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[themeDecisions]` |  | `{…}` | additive |
+| added | `types.ThemeDataLabels.props[anchor]` |  | `{…}` | additive |
+| added | `types.ThemeDataLabels.props[fallback]` |  | `{…}` | additive |
+| added | `types.ThemeDataLabels.props[minContrast]` |  | `{…}` | additive |
+| added | `types.ThemeFurniture.props[align]` |  | `{…}` | additive |
+| added | `types.ThemeFurniture.props[alt]` |  | `{…}` | additive |
+| added | `types.ThemeFurniture.props[anchor].doc` |  | `` "The earlier corner placement, read by `mastheadTab`, `headerRule` and `footerRule`." `` | cosmetic |
+| added | `types.ThemeFurniture.props[at]` |  | `{…}` | additive |
+| added | `types.ThemeFurniture.props[frame]` |  | `{…}` | additive |
+| added | `types.ThemeFurniture.props[height].doc` |  | `"px. A rule's weight, a band's or tab's or image's height."` | cosmetic |
+| added | `types.ThemeFurniture.props[href]` |  | `{…}` | additive |
+| added | `types.ThemeFurniture.props[kind].doc` |  | `` "`rule` — a line across its frame; `band` — a filled strip across its frame; `tab` — a short\nblock … `` | cosmetic |
+| added | `types.ThemeFurniture.props[kind].type.values[band]` |  | `"band"` | additive |
+| added | `types.ThemeFurniture.props[kind].type.values[image]` |  | `"image"` | additive |
+| added | `types.ThemeFurniture.props[kind].type.values[rule]` |  | `"rule"` | additive |
+| added | `types.ThemeFurniture.props[kind].type.values[tab]` |  | `"tab"` | additive |
+| added | `types.ThemeFurniture.props[kind].type.values[text]` |  | `"text"` | additive |
+| added | `types.ThemeFurniture.props[src]` |  | `{…}` | additive |
+| added | `types.ThemeFurniture.props[svg]` |  | `{…}` | additive |
+| added | `types.ThemeFurniture.props[text]` |  | `{…}` | additive |
+| added | `types.ThemeFurniture.props[type]` |  | `{…}` | additive |
+| added | `types.ThemeFurniture.props[width].doc` |  | `"px. A tab's or image's width; a rule or band spans its frame unless given one."` | cosmetic |
+| added | `types.ThemeInk.props[series].type.props[byMark]` |  | `{…}` | additive |
+| added | `types.ThemeInk.props[series].type.props[categoricalByCount]` |  | `{…}` | additive |
+| added | `types.ThemeInk.props[series].type.props[categoricalText]` |  | `{…}` | additive |
+| added | `types.ThemeInk.props[series].type.props[minContrast]` |  | `{…}` | additive |
+| added | `types.ThemeInk.props[series].type.props[ordinal]` |  | `{…}` | additive |
+| added | `types.ThemeInk.props[series].type.props[repeat]` |  | `{…}` | additive |
+| added | `types.ThemeInk.props[series].type.props[roles]` |  | `{…}` | additive |
+| added | `types.ThemeInk.props[series].type.props[selection].type.props[ordered]` |  | `{…}` | additive |
+| added | `types.ThemeInk.props[series].type.props[selection].type.props[signed].doc` |  | `"How a signed series is coloured. Applies only when the coloured field itself carries\nthe sign: a c…` | cosmetic |
+| added | `types.ThemeInteraction` |  | `{…}` | additive |
+| added | `types.ThemeLabelFit` |  | `{…}` | additive |
+| removed | `types.ThemeLabels.props[angle]` | `{…}` |  | BREAKING |
+| added | `types.ThemeLabels.props[fit]` |  | `{…}` | additive |
+| added | `types.ThemeLabels.props[overflow]` |  | `{…}` | additive |
+| added | `types.ThemeLabels.props[rowNames]` |  | `{…}` | additive |
+| changed | `types.ThemeLayout.props[bandStepFit].doc` | `"How strongly category pitch follows the available discrete-axis span.\n  On sparse one-banded axes,…` | `"How strongly category pitch follows the available discrete-axis span.\n  On sparse one-banded axes,…` | cosmetic |
+| changed | `types.ThemeLayout.props[density].doc` | `` "Air around the plot. Not the ruler's gradations — those are `tickDensity`." `` | `"Air around the plot: the canvas padding, and a key's gap to the plot (0.8, 1 or 1.4 em of its\nlabe…` | cosmetic |
+| added | `types.ThemeLayout.props[titleBlock].type.props[frame]` |  | `{…}` | additive |
+| changed | `types.ThemeLayout.props[titleBlock].type.props[gap].doc` | `"The vertical gap between the title block and the chart below it — a\nhouse's whitespace personality…` | `"The vertical gap between the title block and the chart below it — a\nhouse's whitespace personality…` | cosmetic |
+| added | `types.ThemeLegend.props[align]` |  | `{…}` | additive |
+| added | `types.ThemeLegend.props[arrangement]` |  | `{…}` | additive |
+| added | `types.ThemeLegend.props[endValue]` |  | `{…}` | additive |
+| added | `types.ThemeLegend.props[gaps]` |  | `{…}` | additive |
+| changed | `types.ThemeLegend.props[maxSwatches].doc` | `"The most entries a key to *values* may spend. A legend that names ten\nbubble sizes is a table, not…` | `"The most entries a key to *values* may spend. A legend that names ten\nbubble sizes is a table, not…` | cosmetic |
+| added | `types.ThemeLegend.props[swatch].doc` |  | `` "The symbol beside each name in a key to categories: `auto` (default) takes it from the mark —\na sq… `` | cosmetic |
+| changed | `types.ThemeLegend.props[swatch].type.kind` | `"literal"` | `"literalUnion"` | BREAKING |
+| removed | `types.ThemeLegend.props[swatch].type.value` | `"auto"` |  | BREAKING |
+| added | `types.ThemeLegend.props[swatch].type.values` |  | `[…]` | additive |
+| added | `types.ThemeLegend.props[titlePosition]` |  | `{…}` | additive |
+| changed | `types.ThemeLegend.props[title].doc` | `` "`whenAmbiguous` asks whether the key's labels say what they are: a list\nof names (`Chrome`, `Cairo… `` | `` "Whether a key carries its field's name. `always`; or `whenAmbiguous` (the default), which\nleaves i… `` | cosmetic |
+| added | `types.ThemeMarks.props[arc]` |  | `{…}` | additive |
+| added | `types.ThemeMarks.props[areaEdge]` |  | `{…}` | additive |
+| added | `types.ThemeMarks.props[barMinLength]` |  | `{…}` | additive |
+| added | `types.ThemeMarks.props[barOpacity]` |  | `{…}` | additive |
+| added | `types.ThemeMarks.props[gradient]` |  | `{…}` | additive |
+| added | `types.ThemeMarks.props[group]` |  | `{…}` | additive |
+| changed | `types.ThemeMarks.props[outline].doc` | `"A stroke drawn around every filled mark — a bar, wedge, or point: the\n\"sticker\" / flat-illustrat…` | `` "`series` draws each mark's border in its own series ink, at full strength." `` | cosmetic |
+| added | `types.ThemeMarks.props[outline].type.props[source].type.values[series]` |  | `"series"` | additive |
+| added | `types.ThemeMarks.props[point].type.props[density]` |  | `{…}` | additive |
+| added | `types.ThemeMarks.props[point].type.props[halo].doc` |  | `"A ring in the plot's surface colour around each dot, so dots that overlap, or sit on a line,\nstay …` | cosmetic |
+| added | `types.ThemeMarks.props[point].type.props[ink]` |  | `{…}` | additive |
+| added | `types.ThemeMarks.props[point].type.props[opacity]` |  | `{…}` | additive |
+| added | `types.ThemeMarks.props[point].type.props[shape]` |  | `{…}` | additive |
+| added | `types.ThemeMarks.props[texture]` |  | `{…}` | additive |
+| added | `types.ThemeSource` |  | `{…}` | additive |
+| changed | `types.ThemeSpec.props[interaction].type.kind` | `"object"` | `"ref"` | BREAKING |
+| added | `types.ThemeSpec.props[interaction].type.name` |  | `"ThemeInteraction"` | additive |
+| removed | `types.ThemeSpec.props[interaction].type.props` | `[…]` |  | BREAKING |
+| added | `types.ThemeSpec.props[source]` |  | `{…}` | additive |
+| added | `types.ThemeStructure.props[axis].type.props[categorical].doc` |  | `"The axis the chart is indexed by, wherever it is drawn."` | cosmetic |
+| added | `types.ThemeStructure.props[axis].type.props[floating]` |  | `{…}` | additive |
+| added | `types.ThemeStructure.props[axis].type.props[measure].doc` |  | `"The axis values are read off, wherever it is drawn."` | cosmetic |
+| added | `types.ThemeStructure.props[axis].type.props[x]` |  | `{…}` | additive |
+| added | `types.ThemeStructure.props[axis].type.props[y]` |  | `{…}` | additive |
+| added | `types.ThemeStructure.props[baseline].doc` |  | `"The rule the marks stand on (A7): a presence, or one with its own weight, dash and ink."` | cosmetic |
+| changed | `types.ThemeStructure.props[baseline].type.kind` | `"literalUnion"` | `"union"` | BREAKING |
+| added | `types.ThemeStructure.props[baseline].type.members` |  | `[…]` | additive |
+| removed | `types.ThemeStructure.props[baseline].type.values` | `[…]` |  | BREAKING |
+| added | `types.ThemeStructure.props[frame].doc` |  | `"The rule round the plot: a presence, or one with its own weight, dash and ink, so a house\nwhose fr…` | cosmetic |
+| changed | `types.ThemeStructure.props[frame].type.kind` | `"literalUnion"` | `"union"` | BREAKING |
+| added | `types.ThemeStructure.props[frame].type.members` |  | `[…]` | additive |
+| removed | `types.ThemeStructure.props[frame].type.values` | `[…]` |  | BREAKING |
+| added | `types.ThemeStructure.props[grid].type.props[category].doc` |  | `` "The grid across the axis the chart is indexed by; styled on its own, as `measure`." `` | cosmetic |
+| changed | `types.ThemeStructure.props[grid].type.props[category].type.kind` | `"literalUnion"` | `"union"` | BREAKING |
+| added | `types.ThemeStructure.props[grid].type.props[category].type.members` |  | `[…]` | additive |
+| removed | `types.ThemeStructure.props[grid].type.props[category].type.values` | `[…]` |  | BREAKING |
+| added | `types.ThemeStructure.props[grid].type.props[layer]` |  | `{…}` | additive |
+| added | `types.ThemeStructure.props[grid].type.props[measure].doc` |  | `"The grid across the value axis: a presence, or the presence with its own style, dash, weight and in…` | cosmetic |
+| changed | `types.ThemeStructure.props[grid].type.props[measure].type.kind` | `"literalUnion"` | `"union"` | BREAKING |
+| added | `types.ThemeStructure.props[grid].type.props[measure].type.members` |  | `[…]` | additive |
+| removed | `types.ThemeStructure.props[grid].type.props[measure].type.values` | `[…]` |  | BREAKING |
+| added | `types.ThemeStructure.props[grid].type.props[minor]` |  | `{…}` | additive |
+| added | `types.ThemeStructure.props[grid].type.props[style].doc` |  | `"The style both grids take unless one states its own."` | cosmetic |
+| changed | `types.ThemeStructure.props[grid].type.props[zero].doc` | `` "A separate rule where the value axis crosses zero. `omit` leaves\nzero as an ordinary gridline; any… `` | `` "A separate rule where the value axis crosses zero. `omit` leaves\nzero as an ordinary gridline; any… `` | cosmetic |
+| changed | `types.ThemeStructure.props[grid].type.props[zero].type.kind` | `"literalUnion"` | `"union"` | BREAKING |
+| added | `types.ThemeStructure.props[grid].type.props[zero].type.members` |  | `[…]` | additive |
+| removed | `types.ThemeStructure.props[grid].type.props[zero].type.values` | `[…]` |  | BREAKING |
+| added | `types.ThemeType.props[keyTitle]` |  | `{…}` | additive |
+| added | `types.ThemeType.props[kicker]` |  | `{…}` | additive |
+| changed | `types.ThemeVariant.props[then].type.props[interaction].type.kind` | `"object"` | `"ref"` | BREAKING |
+| added | `types.ThemeVariant.props[then].type.props[interaction].type.name` |  | `"ThemeInteraction"` | additive |
+| removed | `types.ThemeVariant.props[then].type.props[interaction].type.props` | `[…]` |  | BREAKING |
+| added | `types.ThemeVariant.props[then].type.props[source]` |  | `{…}` | additive |
+| added | `types.TypeRole.props[case].doc` |  | `` "`upper`, `lower`, `title` (each word capitalised, short joining words kept lower-case) or\n`sentenc… `` | cosmetic |
+| added | `types.TypeRole.props[case].type.values[sentence]` |  | `"sentence"` | additive |
+| added | `types.TypeRole.props[weight].doc` |  | `` "The full CSS scale: `thin` (100) … `regular` (400) … `black` (900), or the number itself." `` | cosmetic |
+| changed | `types.TypeRole.props[weight].type.kind` | `"literalUnion"` | `"union"` | BREAKING |
+| added | `types.TypeRole.props[weight].type.members` |  | `[…]` | additive |
+| removed | `types.TypeRole.props[weight].type.values` | `[…]` |  | BREAKING |
+
+**Behaviour probes**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| changed | `probes.valueInference.TimeSpan "1.02:03:04"` | `"temporal"` | `"nominal"` | behavioural |
+| changed | `probes.valueInference.TimeSpan "2.00:00:00"` | `"temporal"` | `"nominal"` | behavioural |
+
+**Retired (retired.json additions)**
+| Entry | Vanished in | Last seen in |
+|---|---|---|
+| `catalog.chartTypes[KPI Card].backends.vegalite.properties[includeZero_x]` | 1.0.0 | 0.5.1 |
+| `catalog.chartTypes[KPI Card].backends.vegalite.properties[includeZero_y]` | 1.0.0 | 0.5.1 |
+| `catalog.chartTypes[KPI Card].backends.vegalite.properties[logScale_x]` | 1.0.0 | 0.5.1 |
+| `catalog.chartTypes[KPI Card].backends.vegalite.properties[logScale_y]` | 1.0.0 | 0.5.1 |
+| `catalog.chartTypes[Map].backends.vegalite.properties[includeZero_x]` | 1.0.0 | 0.5.1 |
+| `catalog.chartTypes[Map].backends.vegalite.properties[includeZero_y]` | 1.0.0 | 0.5.1 |
+| `catalog.chartTypes[Map].backends.vegalite.properties[logScale_x]` | 1.0.0 | 0.5.1 |
+| `catalog.chartTypes[Map].backends.vegalite.properties[logScale_y]` | 1.0.0 | 0.5.1 |
+
+</details>
 
 ### Added
 
@@ -24,7 +283,7 @@ Tracks `flint-chart` 1.0.0 (npm), an upstream major and so a breaking window ([d
 - `ThemeSpec.Interaction` and `ThemeVariantThen.Interaction` are `ThemeInteraction` (`TooltipFormat`, and the new `SelectionBoundary`); it replaces `ThemeSpecInteraction` and `ThemeVariantThenInteraction`.
 - The validator follows `flint-chart` 1.0.0 ([docs/validation-codes.md](docs/validation-codes.md)): an array value equal entry by entry to an array option is no longer `invalid_option_value`; on Excel, a temporal `group` with at most 12 distinct values is ordinal, so a Grouped Bar Chart grouped by a few dates is no longer `excel_unsupported`; a temporal `x` or `y` on a banded chart type that reads as a few snapshots is ordinal, so Excel's Boxplot rule no longer reports such a date `x`; `timespan_as_string` now says that upstream reads a duration string as a nominal category.
 - The validator ports more of `flint-chart` 1.0.0 ([docs/validation-codes.md](docs/validation-codes.md)): `sort_by_invalid` follows the sort repair of the layout backends (`invalid_sort`): an unbound `x`, `y` or `color`, a data field outside Vega-Lite, an invalid JSON array entry and an invalid `sortOrder` are reported, `size` and `group` are Warnings on ECharts too, and Excel is never reported; `YearMonth`, `Date` and `DateTime` values are read in the spellings upstream rewrites (`202501`, `Jan 2025`, `2025/01/15`); dates on a banded `x` or `y` are decided as snapshots or a time scale where their times are known; and a date string is inferred as upstream 1.0.0 infers it (`Jan 2025` and `Stage 1` are nominal).
-- `FlintUpstream.Version` is `1.0.0`.
+- `FlintUpstream.Version` is `1.0.1`.
 
 ### Removed
 
