@@ -8,6 +8,8 @@ namespace Graspea.Flint.Tests.Parity;
 /// The compiled catalog tables against the committed IR, read through the validator and the structs (design §10.1
 /// rule 4, §10.4 test 15). Both sides come from the IR, so a failure here is an emitter bug (§9.3).
 /// The native channels read though undeclared come from the probe record (CommittedIr.Reads) and are checked per base by ChannelReadsTests.
+/// The layout channels read though undeclared are listed here (LayoutReadsUndeclared); ChannelReadsTests checks per base that
+/// the validator reports every undeclared channel the layout assembler ignores.
 /// </summary>
 public sealed class CatalogCrossCheckTests
 {
@@ -28,6 +30,27 @@ public sealed class CatalogCrossCheckTests
 
     private static bool Has(ValidationResult result, string code, string? channel = null) =>
         result.Issues.Any(i => i.Code == code && (channel is null || i.Channel?.Name == channel));
+
+    /// <summary>The upstream version the layout exemptions (LayoutReads: the facets, the Pyramid group and the four ECharts
+    /// facets that stay reported) were reviewed against, by rendering.</summary>
+    private const string LayoutReadsReviewedVersion = "1.0.1";
+
+    /// <summary>The (backend, template, channel) a layout assembler draws from a bound field though the template does not
+    /// declare the channel, in flint-chart 1.0.1, on a document that binds only x: column and row facet the chart, one panel
+    /// per value, each in its own grid or subplot. ECharts also facets a Calendar Heatmap, Funnel Chart, Network Graph and
+    /// Sankey Diagram, and they stay reported: the faceted option does not render the first and draws every panel's chart in
+    /// the same place on the others (src/echarts/facet.ts:353-359, :424-428). The group of an ECharts or Plotly Pyramid Chart
+    /// is read only beside x and y (ChartValidatorTests.Layout_GroupOfAPyramid_IsTheSplitWithoutAColorField).</summary>
+    private static readonly HashSet<(string, string, string)> LayoutReadsUndeclared =
+    [
+        ("vegalite", "Ranged Dot Plot", "column"), ("vegalite", "Ranged Dot Plot", "row"),
+        ("echarts", "Pyramid Chart", "column"), ("echarts", "Pyramid Chart", "row"),
+        ("echarts", "Ranged Dot Plot", "column"), ("echarts", "Ranged Dot Plot", "row"),
+        ("plotly", "Funnel Chart", "column"), ("plotly", "Funnel Chart", "row"),
+        ("plotly", "Pyramid Chart", "column"), ("plotly", "Pyramid Chart", "row"),
+        ("plotly", "Ranged Dot Plot", "column"), ("plotly", "Ranged Dot Plot", "row"),
+        ("plotly", "Rose Chart", "column"), ("plotly", "Rose Chart", "row"),
+    ];
 
     public static IEnumerable<TestCaseData> ChartTypes() =>
         CommittedIr.Catalog["chartTypes"]!.AsArray().Select(t => new TestCaseData(t!["name"]!.GetValue<string>())
@@ -80,6 +103,13 @@ public sealed class CatalogCrossCheckTests
                             Assert.That(Has(result, "unsupported_channel", channel) || Has(result, unsupported, channel), Is.True, $"{id}: {channel} is not declared");
                         }
                     }
+                    else if (LayoutReadsUndeclared.Contains((id, chartType, channel)))
+                    {
+                        // source: LayoutReads.ReadsUndeclared against flint-chart 1.0.1 (Vega-Lite and ECharts rendered with
+                        // vega-lite 6.5.0 and echarts 6.1.0, Plotly read from its subplot domains and annotations): the
+                        // field's values make the facet panels, each in its own grid or subplot
+                        Assert.That(Has(result, "unsupported_channel", channel), Is.False, $"{id}: {channel} is read though undeclared");
+                    }
                     else if (CommittedIr.RetiredIn($"catalog.chartTypes[{chartType}].backends.{id}.channels[{channel}]") is not null)
                     {
                         // source: generator/retired.json and design part 3 §8.4 (a retired channel is retired_member)
@@ -92,6 +122,17 @@ public sealed class CatalogCrossCheckTests
                 }
             }
         }
+    }
+
+    // source: docs/maintainers.md "Running the upstream sync": the exemptions of LayoutReads were classified by rendering the
+    // pinned flint-chart (1.0.1) with vega-lite 6.5.0, vega 6.4.0 and echarts 6.1.0, and by reading the Plotly subplot domains;
+    // a green sync is no evidence that they still hold. This fails on a new pin so that the review is done first.
+    [Test]
+    public void LayoutReads_AreReviewedAgainstThePinnedVersion()
+    {
+        Assert.That(CommittedIr.Root["upstream"]!["version"]!.GetValue<string>(), Is.EqualTo(LayoutReadsReviewedVersion),
+            "the pinned flint-chart changed: re-review src/Graspea.Flint/Validation/Rules/LayoutReads.cs as docs/maintainers.md "
+            + "(Running the upstream sync) describes, then set LayoutReadsReviewedVersion to the reviewed version");
     }
 
     public static IEnumerable<TestCaseData> DiscreteProperties() =>

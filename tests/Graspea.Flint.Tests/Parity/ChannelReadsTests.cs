@@ -129,8 +129,8 @@ public sealed class ChannelReadsTests
 
     // source: probes.json channelReads.layoutReads[backend][chartType][base] (the undeclared channels the layout assembler
     // reads under that base; every other undeclared channel it ignores there) against the validator's unsupported_channel
-    // (ValidationRun.UnsupportedChannel: on a layout backend the template's declared channels, ir/flint-ir.json) and
-    // retired_member (generator/retired.json)
+    // (ValidationRun.UnsupportedChannel: on a layout backend the template's declared channels, ir/flint-ir.json, and
+    // LayoutReads.ReadsUndeclared) and retired_member (generator/retired.json)
     [TestCaseSource(nameof(LayoutBases))]
     public void ProbedLayoutReads_MatchTheValidator(string backend, string chartType, string baseName)
     {

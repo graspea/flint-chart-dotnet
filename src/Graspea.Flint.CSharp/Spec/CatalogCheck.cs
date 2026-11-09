@@ -141,7 +141,7 @@ internal sealed class CatalogCheck
                 continue;
             }
 
-            if (_targets.Length > 0 && !_targets.Any(t => Array.IndexOf(t.Channels, channel) >= 0 || ImageChartsReads(t, encodings, channel) || ExcelReads(t, encodings, channel)))
+            if (_targets.Length > 0 && !_targets.Any(t => Array.IndexOf(t.Channels, channel) >= 0 || ImageChartsReads(t, encodings, channel) || ExcelReads(t, encodings, channel) || LayoutReads(t, encodings, channel)))
             {
                 var retiredOn = _targets.Where(t => Retired(t, $"channels[{channel}]") is not null).ToList();
                 if (retiredOn.Count > 0)
@@ -219,6 +219,32 @@ internal sealed class CatalogCheck
         }
 
         return Text("aggregate") is null && Text("type") is { } type && type != "quantitative";
+    }
+
+    /// <summary>A channel a layout template leaves undeclared but its assembler draws from the field, as the validator's
+    /// <c>LayoutReads.ReadsUndeclared</c>: <c>column</c> and <c>row</c> with a field and no <c>count</c> aggregate facet the ECharts Pyramid Chart and
+    /// Ranged Dot Plot, the Plotly Funnel Chart, Pyramid Chart, Ranged Dot Plot and Rose Chart, and the Vega-Lite Ranged
+    /// Dot Plot (not the ECharts Calendar Heatmap, Funnel Chart, Network Graph or Sankey Diagram, whose faceted option does
+    /// not render or draws every panel's chart in the same place); <c>group</c> with a field and no <c>count</c> aggregate is the split of an ECharts or
+    /// Plotly Pyramid Chart while <c>x</c> and <c>y</c> resolve and <c>color</c> does not. A field is a non-empty one of a
+    /// single encoding; a channel resolves with a field or a <c>count</c> aggregate, but a <c>count</c> aggregate on the
+    /// channel itself makes the facet or split by the constant <c>_count</c>, which stays reported.</summary>
+    private bool LayoutReads(BackendTemplateRow t, JsonItem encodings, string channel)
+    {
+        string? Field(string ch) => encodings.Get(ch) is { IsNull: false, IsArray: false } v && FieldOf(v) is { Length: > 0 } f ? f : null;
+        bool Resolves(string ch) => Field(ch) is not null
+            || (encodings.Get(ch) is { IsObject: true } o && o.Get("aggregate") is { IsString: true } a && a.Value == "count");
+        bool Own(string ch) => Field(ch) is not null
+            && !(encodings.Get(ch) is { IsObject: true } o && o.Get("aggregate") is { IsString: true } a && a.Value == "count");
+        return channel switch
+        {
+            "column" or "row" => Own(channel) && (t.Backend, ChartTypeName) is ("vegalite", "Ranged Dot Plot")
+                or ("echarts", "Pyramid Chart" or "Ranged Dot Plot")
+                or ("plotly", "Funnel Chart" or "Pyramid Chart" or "Ranged Dot Plot" or "Rose Chart"),
+            "group" => ChartTypeName == "Pyramid Chart" && t.Backend is ("echarts" or "plotly")
+                && Own("group") && Resolves("x") && Resolves("y") && !Resolves("color"),
+            _ => false,
+        };
     }
 
     /// <summary>A channel the Image-Charts template leaves undeclared but the assembler reads, as the validator's

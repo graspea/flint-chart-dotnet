@@ -97,6 +97,40 @@ public sealed class CatalogCheckTests
         Assert.That(string.Join(" ", validator), Is.EqualTo(expected));
     }
 
+    // source: ValidationRun.UnsupportedChannel and LayoutReads.ReadsUndeclared (flint-chart 1.0.1: a column or row field
+    // facets the ECharts Pyramid Chart and Ranged Dot Plot, the Plotly Funnel Chart, Pyramid Chart, Ranged Dot Plot and Rose
+    // Chart, src/echarts/assemble.ts:351-361, src/plotly/assemble.ts:332-346, and the Vega-Lite Ranged Dot Plot,
+    // src/vegalite/templates/scatter.ts:322-327, not the ECharts Calendar Heatmap or Network Graph, src/echarts/facet.ts:353-359,
+    // :424-428; group is the split of an ECharts or Plotly Pyramid Chart while color does not resolve and x and y do, a count
+    // aggregate resolving, src/echarts/templates/pyramid.ts:30-35, src/plotly/templates/bar.ts:495-500,
+    // src/core/resolve-semantics.ts:625-637), where no backend's template declares the channel; the core and the validator agree
+    [TestCase("Ranged Dot Plot", "{\"x\":\"a\",\"y\":\"b\",\"column\":\"c\"}", "")]
+    [TestCase("Ranged Dot Plot", "{\"x\":\"a\",\"y\":\"b\",\"row\":\"\"}", "chart_spec.encodings.row")]
+    [TestCase("Funnel Chart", "{\"y\":\"a\",\"size\":\"b\",\"column\":\"c\"}", "")]
+    [TestCase("Network Graph", "{\"x\":\"a\",\"y\":\"b\",\"column\":\"c\"}", "chart_spec.encodings.column")]
+    [TestCase("Calendar Heatmap", "{\"x\":\"a\",\"color\":\"b\",\"row\":\"c\"}", "chart_spec.encodings.row")]
+    [TestCase("Map", "{\"longitude\":\"a\",\"latitude\":\"b\",\"column\":\"c\"}", "chart_spec.encodings.column")]
+    [TestCase("Pyramid Chart", "{\"x\":\"a\",\"y\":\"b\",\"group\":\"c\"}", "")]
+    [TestCase("Pyramid Chart", "{\"x\":\"a\",\"y\":\"b\",\"color\":{\"type\":\"nominal\"},\"group\":\"c\"}", "")]
+    [TestCase("Pyramid Chart", "{\"x\":\"a\",\"y\":\"b\",\"color\":\"d\",\"group\":\"c\"}", "chart_spec.encodings.group")]
+    [TestCase("Pyramid Chart", "{\"x\":\"a\",\"y\":\"b\",\"color\":{\"aggregate\":\"count\"},\"group\":\"c\"}", "chart_spec.encodings.group")]
+    [TestCase("Pyramid Chart", "{\"x\":{\"aggregate\":\"count\"},\"y\":\"b\",\"group\":\"c\"}", "")]
+    [TestCase("Pyramid Chart", "{\"y\":\"b\",\"group\":\"c\"}", "chart_spec.encodings.group")]
+    [TestCase("Pyramid Chart", "{\"x\":\"a\",\"y\":\"b\",\"column\":\"c\"}", "")]
+    [TestCase("Pyramid Chart", "{\"x\":\"a\",\"y\":\"b\",\"row\":\"c\"}", "")]
+    [TestCase("Pyramid Chart", "{\"x\":\"a\",\"y\":\"b\",\"group\":{\"aggregate\":\"count\"}}", "chart_spec.encodings.group")]
+    [TestCase("Pyramid Chart", "{\"x\":\"a\",\"y\":\"b\",\"column\":{\"aggregate\":\"count\"}}", "chart_spec.encodings.column")]
+    [TestCase("Pyramid Chart", "{\"x\":\"a\",\"y\":\"b\",\"group\":{\"field\":\"c\",\"aggregate\":\"count\"}}", "chart_spec.encodings.group")]
+    [TestCase("Ranged Dot Plot", "{\"x\":\"a\",\"y\":\"b\",\"column\":{\"field\":\"c\",\"aggregate\":\"count\"}}", "chart_spec.encodings.column")]
+    public void Run_ChannelLayoutReads_IsNotFlint111(string chartType, string encodings, string expected)
+    {
+        var json = Doc(chartType, encodings);
+        var core = Check(json).Where(i => i.Code == "unsupported_channel").Select(i => i.Path);
+        var validator = ChartTemplate.Create<JsonObject>(FlintJson.Deserialize(json)).Validate().Issues.Where(i => i.Code == "unsupported_channel").Select(i => i.Path);
+        Assert.That(string.Join(" ", core), Is.EqualTo(expected));
+        Assert.That(string.Join(" ", validator), Is.EqualTo(expected));
+    }
+
     // source: ValidationRun.PropertyChecks and Accepts (normalizeChartProperties: a value equal to an option value, or a
     // label ignoring case and surrounding whitespace)
     [TestCase("\"wobbly\"", 1)]

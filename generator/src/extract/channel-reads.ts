@@ -2,8 +2,9 @@
 // §14.8.1; docs/generator.md "Failure policy" and "Probes"). The validator's native rules and undeclared-read exemptions
 // (Excel.ReadsUndeclared, ImageCharts.ReadsUndeclared and their mirror in src/Graspea.Flint.CSharp/Spec/CatalogCheck.cs)
 // are hand-written from src/excel and src/image-charts, which also call src/core helpers (normalizeChartEncodingAliases,
-// resolveChannelSemantics, the banded overflow filter); on the four layout backends its rule is the template's declared
-// channels.
+// resolveChannelSemantics, the banded overflow filter). On the four layout backends they are the template's declared
+// channels and LayoutReads.ReadsUndeclared (src/Graspea.Flint/Validation/Rules/LayoutReads.cs, mirrored in
+// CatalogCheck.cs), hand-written from src/echarts, src/plotly and src/vegalite.
 //
 // A channel is read under a base when binding it to a text or a number field (or, for a channel of the base, removing
 // it) changes the assembled artifact (JSON.stringify, so functions drop) or the throw message. Math.random is reseeded
