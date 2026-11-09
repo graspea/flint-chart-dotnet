@@ -1,10 +1,10 @@
 // Runtime probes behind the facts the design cites as probed (design §7.2): null handling and row shapes, the backends
-// that apply the theme (by preset id or an object's `extends`), names of Object.prototype used as ids, the inference of the values .NET writes, the Date.parse results the validator relies on, the channel types it ports, and the channels `assembleImageCharts` reads per chart type.
+// that apply the theme (by preset id or an object's `extends`), names of Object.prototype used as ids, the inference of the values .NET writes, the Date.parse results the validator relies on, the channel types it ports, and the channels the Excel and Image-Charts assemblers read per chart type.
 // `npm run generate` (its fixtures step) records the output per version in tests/fixtures/flint-chart@<version>/probes.json;
 // a unit test that cites a probe fact names that file, and test/probes.test.ts keeps the pinned version's record equal to
 // a fresh run.
-import { probeImageChartsReads, type ImageChartsReads } from './extract/image-charts-reads.ts';
-import { BACKENDS, type Backend, type Input } from './extract/fixtures.ts';
+import { probeChannelReads, type ChannelReads } from './extract/channel-reads.ts';
+import { BACKENDS, type Backend, type CaseLine, type Input } from './extract/fixtures.ts';
 
 /** The record's file name in the fixture folder of a version. */
 export const PROBES_FILE = 'probes.json';
@@ -19,8 +19,8 @@ export interface ProbeResults {
   dateParse: Record<string, 'parses' | 'NaN'>;
   /** The type `resolveChannelSemantics` gives the probe's channel, with ` snapshots` when it reads the dates as snapshots. */
   channelTypes: Record<string, string>;
-  /** The channels `assembleImageCharts` reads per chart type and base (src/extract/image-charts-reads.ts). */
-  imageChartsReads: ImageChartsReads;
+  /** The channels `assembleExcel` and `assembleImageCharts` read per chart type and base (src/extract/channel-reads.ts). */
+  channelReads: ChannelReads;
 }
 
 type Assembler = (input: Input) => unknown;
@@ -163,7 +163,8 @@ const channelTypeProbes: Record<string, { chartType: string; values: unknown[]; 
 
 const sortedBackends = (set: Set<Backend>) => BACKENDS.filter((b) => set.has(b));
 
-export async function runProbes(): Promise<ProbeResults> {
+/** Runs the probes; `cases` (the fixture and crafted cases of the set just extracted) supply the read probe's fixture bases. */
+export async function runProbes(cases: readonly CaseLine[]): Promise<ProbeResults> {
   const flint = (await import('flint-chart')) as unknown as Record<string, Assembler> & {
     inferVisCategory: (values: unknown[]) => string;
     resolveChannelSemantics: (
@@ -235,12 +236,12 @@ export async function runProbes(): Promise<ProbeResults> {
       }),
     );
 
-    const imageChartsReads = probeImageChartsReads(flint as unknown as Record<string, unknown>);
+    const channelReads = probeChannelReads(flint as unknown as Record<string, unknown>, cases);
 
     return {
+      channelReads,
       channelTypes,
       dateParse,
-      imageChartsReads,
       nullHandling,
       prototypeKeys,
       themeBackends: {

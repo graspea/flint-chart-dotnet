@@ -69,7 +69,7 @@
       }
     },
     "imageChartsReads": {
-      "description": "Chart type of IMAGE_CHARTS_TYPE_MAP -> the channels assembleImageCharts reads, as the read probe of src/extract/image-charts-reads.ts finds them: binding the channel to a text or a number field, or removing it from the base, changes the URL or the throw, under a base the chart type assembles from. extract fails when the probe finds other channels, so that a change in a src/core helper the fingerprinted Image-Charts files call is reviewed too: review the Image-Charts throw rules, imageChartsChannels and the undeclared-read exemptions, then record the probed channels. Every imageChartsChannels channel must be read. The keys must equal the map's keys, unless pending lists catalog.chartTypes[<type>].backends.image-charts.",
+      "description": "Chart type of IMAGE_CHARTS_TYPE_MAP -> the channels assembleImageCharts reads, as the read probe of src/extract/channel-reads.ts finds them: binding the channel to a text or a number field, or removing it from the base, changes the URL or the throw, under a synthetic base the chart type assembles from (the fixtures step probes the fixture bases too and records every base in probes.json channelReads). extract fails when the probe finds other channels, so that a change in a src/core helper the fingerprinted Image-Charts files call is reviewed too: review the Image-Charts throw rules, imageChartsChannels and the undeclared-read exemptions, then record the probed channels. Every imageChartsChannels channel must be read. The keys must equal the map's keys, unless pending lists catalog.chartTypes[<type>].backends.image-charts.",
       "type": "object",
       "additionalProperties": {
         "type": "array",

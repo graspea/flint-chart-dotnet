@@ -12,7 +12,7 @@ import {
   type IrSemanticType,
   type IrThemePreset,
 } from '../ir.ts';
-import { imageChartsReadErrors, probeImageChartsReads, readUnion } from './image-charts-reads.ts';
+import { catalogChannels, imageChartsReadErrors, nativeAssembler, probeReads, readUnion, syntheticBases } from './channel-reads.ts';
 
 /** Backend id -> registry exports, in the fixed backend order. */
 const BACKENDS: ReadonlyArray<{ id: string; all: string; byCategory?: string }> = [
@@ -200,11 +200,15 @@ function imageChartsTemplates(flint: Record<string, unknown>, packageDir: string
       errors.push(`imageChartsChannels["${name}"] matches no chart type of IMAGE_CHARTS_TYPE_MAP`);
     }
   }
-  errors.push(...imageChartsReadErrors(readUnion(probeImageChartsReads(flint).reads), overrides.imageChartsReads, curated, pending));
+  const imageCharts = nativeAssembler(flint, IMAGE_CHARTS);
+  const probed = readUnion(probeReads(imageCharts.assemble, imageCharts.chartTypes, syntheticBases, catalogChannels(flint)));
+  errors.push(...imageChartsReadErrors(probed, overrides.imageChartsReads, curated, pending));
   // ponytail: the fingerprint catches an edit of these two files, the read probe above a change in a src/core helper
-  // they call that adds or drops a read. The probe toggles one catalog channel at a time on three rows under three
-  // bases, so a read that needs two more channels bound together, many rows (overflow filtering) or other values passes
-  // unseen; widen the bases in image-charts-reads.ts if a sync ever slips through.
+  // they call that adds or drops a read. Here the probe toggles one catalog channel at a time on three rows under the
+  // synthetic bases of src/extract/channel-reads.ts (the fixture bases need the fixture set, which extract has not
+  // built); the fixtures step probes the fixture bases too and records them in probes.json channelReads, which the C#
+  // tests read. A read that needs two more channels bound together, many rows (overflow filtering) or other values
+  // passes unseen; widen SYNTHETIC_BASES if a sync ever slips through.
   for (const file of IMAGE_CHARTS_SOURCES) {
     const actual = createHash('sha256').update(readFileSync(join(packageDir, file))).digest('hex');
     const reviewed = overrides.imageChartsSource[file];

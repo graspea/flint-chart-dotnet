@@ -156,7 +156,7 @@ async function fixtures(outRoot: string): Promise<void> {
   const set = await extractFixtures({ version, integrity: lockedIntegrity(join(generatorDir, 'package-lock.json')) });
   const folder = join(outRoot, fixtureFolder(version));
   for (const file of fixtureFiles(set)) writeText(join(folder, file.path), file.content);
-  writeText(join(folder, PROBES_FILE), canonicalJson(await runProbes()));
+  writeText(join(folder, PROBES_FILE), canonicalJson(await runProbes([...set.cases, ...set.probeCases])));
   const knownFailures = join(folder, KNOWN_FAILURES_FILE);
   if (!existsSync(knownFailures)) writeText(knownFailures, '');
   console.log(`fixtures: ${wrote} ${set.cases.length} cases in ${folder}`);

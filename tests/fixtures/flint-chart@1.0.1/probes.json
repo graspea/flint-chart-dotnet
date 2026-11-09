@@ -1,4 +1,1321 @@
 {
+  "channelReads": {
+    "bases": {
+      "Candlestick Chart|#4": {
+        "case": "Candlestick Chart|#4"
+      },
+      "Connected Scatter Plot|#4": {
+        "case": "Connected Scatter Plot|#4"
+      },
+      "Connected Scatter Plot|#5": {
+        "case": "Connected Scatter Plot|#5"
+      },
+      "Donut Chart|#4": {
+        "case": "Donut Chart|#4"
+      },
+      "ECharts: Funnel|#0": {
+        "case": "ECharts: Funnel|#0"
+      },
+      "ECharts: Radar|#0": {
+        "case": "ECharts: Radar|#0"
+      },
+      "ECharts: Sunburst|#0": {
+        "case": "ECharts: Sunburst|#0"
+      },
+      "ECharts: Sunburst|#1": {
+        "case": "ECharts: Sunburst|#1"
+      },
+      "ECharts: Treemap|#0": {
+        "case": "ECharts: Treemap|#0"
+      },
+      "ECharts: Treemap|#1": {
+        "case": "ECharts: Treemap|#1"
+      },
+      "Gallery: Pie|#0": {
+        "case": "Gallery: Pie|#0"
+      },
+      "Grouped Bar Chart|#1": {
+        "case": "Grouped Bar Chart|#1"
+      },
+      "Grouped Bar Chart|#11": {
+        "case": "Grouped Bar Chart|#11"
+      },
+      "Histogram|#1": {
+        "case": "Histogram|#1"
+      },
+      "Histogram|#3": {
+        "case": "Histogram|#3"
+      },
+      "Image-Charts: Core Templates|#3": {
+        "case": "Image-Charts: Core Templates|#3"
+      },
+      "Image-Charts: Core Templates|#5": {
+        "case": "Image-Charts: Core Templates|#5"
+      },
+      "Line Chart|#16": {
+        "case": "Line Chart|#16"
+      },
+      "Line Chart|#17": {
+        "case": "Line Chart|#17"
+      },
+      "Line Chart|#9": {
+        "case": "Line Chart|#9"
+      },
+      "Line/Area Stretch|#10": {
+        "case": "Line/Area Stretch|#10"
+      },
+      "Omni: Grouped Bar|#0": {
+        "case": "Omni: Grouped Bar|#0"
+      },
+      "Omni: Sunburst|#0": {
+        "case": "Omni: Sunburst|#0"
+      },
+      "Plotly: Core Templates|#3": {
+        "case": "Plotly: Core Templates|#3"
+      },
+      "Probe|#29": {
+        "case": "Probe|#29"
+      },
+      "Probe|#42": {
+        "case": "Probe|#42"
+      },
+      "Probe|#44": {
+        "case": "Probe|#44"
+      },
+      "Probe|#54": {
+        "case": "Probe|#54"
+      },
+      "Probe|#62": {
+        "case": "Probe|#62"
+      },
+      "Probe|#64": {
+        "case": "Probe|#64"
+      },
+      "Probe|#66": {
+        "case": "Probe|#66"
+      },
+      "Probe|#69": {
+        "case": "Probe|#69"
+      },
+      "Probe|#84": {
+        "case": "Probe|#84"
+      },
+      "Pyramid Chart|#8": {
+        "case": "Pyramid Chart|#8"
+      },
+      "Radar Chart|#0": {
+        "case": "Radar Chart|#0"
+      },
+      "Scatter Plot|#13": {
+        "case": "Scatter Plot|#13"
+      },
+      "Scatter Plot|#25": {
+        "case": "Scatter Plot|#25"
+      },
+      "Scatter Plot|#6": {
+        "case": "Scatter Plot|#6"
+      },
+      "Semantic Context|#6": {
+        "case": "Semantic Context|#6"
+      },
+      "Snap-to-Bound|#11": {
+        "case": "Snap-to-Bound|#11"
+      },
+      "Sparkline|#0": {
+        "case": "Sparkline|#0"
+      },
+      "Sparkline|#7": {
+        "case": "Sparkline|#7"
+      },
+      "Waterfall Chart|#4": {
+        "case": "Waterfall Chart|#4"
+      },
+      "slice and value": {
+        "encodings": {
+          "color": {
+            "field": "category"
+          },
+          "size": {
+            "field": "measure"
+          }
+        }
+      },
+      "x and y measures": {
+        "encodings": {
+          "x": {
+            "field": "measure"
+          },
+          "y": {
+            "field": "measure2"
+          }
+        }
+      },
+      "x category, y measure": {
+        "encodings": {
+          "x": {
+            "field": "category"
+          },
+          "y": {
+            "field": "measure"
+          }
+        }
+      },
+      "y category, x measure": {
+        "encodings": {
+          "x": {
+            "field": "measure"
+          },
+          "y": {
+            "field": "category"
+          }
+        }
+      },
+      "y measure": {
+        "encodings": {
+          "y": {
+            "field": "measure"
+          }
+        }
+      }
+    },
+    "probe": {
+      "probe_number": [
+        100,
+        63,
+        26,
+        90,
+        53,
+        16,
+        80
+      ],
+      "probe_text": [
+        "k3",
+        "k2",
+        "k1",
+        "k2",
+        "k3"
+      ]
+    },
+    "reads": {
+      "excel": {
+        "Area Chart": {
+          "Image-Charts: Core Templates|#3": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Plotly: Core Templates|#3": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ]
+        },
+        "Bar Chart": {
+          "Probe|#42": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Probe|#44": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Probe|#69": [
+            "color",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ]
+        },
+        "Boxplot": {
+          "Probe|#54": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Candlestick Chart": {
+          "Candlestick Chart|#4": [
+            "close",
+            "color",
+            "column",
+            "detail",
+            "group",
+            "high",
+            "low",
+            "open",
+            "row",
+            "x"
+          ]
+        },
+        "Connected Scatter Plot": {
+          "Connected Scatter Plot|#4": [
+            "color",
+            "column",
+            "detail",
+            "group",
+            "order",
+            "row",
+            "shape",
+            "size",
+            "x",
+            "y"
+          ],
+          "Connected Scatter Plot|#5": [
+            "color",
+            "column",
+            "detail",
+            "group",
+            "order",
+            "row",
+            "shape",
+            "size",
+            "strokeDash",
+            "x",
+            "y"
+          ]
+        },
+        "Donut Chart": {
+          "Donut Chart|#4": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash"
+          ],
+          "slice and value": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash",
+            "theta",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash",
+            "theta",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash",
+            "theta",
+            "x",
+            "y"
+          ]
+        },
+        "Funnel Chart": {
+          "ECharts: Funnel|#0": [
+            "column",
+            "row",
+            "size",
+            "y"
+          ]
+        },
+        "Grouped Bar Chart": {
+          "Grouped Bar Chart|#1": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Grouped Bar Chart|#11": [
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Omni: Grouped Bar|#0": [
+            "column",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Probe|#84": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ]
+        },
+        "Histogram": {
+          "Histogram|#1": [
+            "color",
+            "column",
+            "row",
+            "x"
+          ],
+          "Histogram|#3": [
+            "color",
+            "column",
+            "row",
+            "x"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "row",
+            "x"
+          ],
+          "y measure": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Line Chart": {
+          "Line Chart|#16": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Line Chart|#17": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Line/Area Stretch|#10": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Probe|#29": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "order",
+            "row",
+            "size",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ]
+        },
+        "Pie Chart": {
+          "Gallery: Pie|#0": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash"
+          ],
+          "Probe|#62": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash",
+            "theta",
+            "x",
+            "y"
+          ],
+          "slice and value": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash",
+            "theta",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash",
+            "theta",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "strokeDash",
+            "theta",
+            "x",
+            "y"
+          ]
+        },
+        "Pyramid Chart": {
+          "Pyramid Chart|#8": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Radar Chart": {
+          "ECharts: Radar|#0": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "Radar Chart|#0": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Scatter Plot": {
+          "Image-Charts: Core Templates|#5": [
+            "color",
+            "column",
+            "group",
+            "order",
+            "row",
+            "shape",
+            "size",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Scatter Plot|#13": [
+            "color",
+            "column",
+            "group",
+            "order",
+            "row",
+            "shape",
+            "size",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "Scatter Plot|#6": [
+            "color",
+            "column",
+            "group",
+            "order",
+            "row",
+            "shape",
+            "size",
+            "x",
+            "y"
+          ],
+          "Semantic Context|#6": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "shape",
+            "size",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "order",
+            "row",
+            "shape",
+            "size",
+            "strokeDash",
+            "x",
+            "y"
+          ]
+        },
+        "Stacked Bar Chart": {
+          "Snap-to-Bound|#11": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "strokeDash",
+            "x",
+            "y"
+          ]
+        },
+        "Sunburst Chart": {
+          "ECharts: Sunburst|#0": [
+            "color",
+            "column",
+            "detail",
+            "group",
+            "row",
+            "size"
+          ],
+          "ECharts: Sunburst|#1": [
+            "color",
+            "column",
+            "detail",
+            "group",
+            "row",
+            "size"
+          ],
+          "Omni: Sunburst|#0": [
+            "color",
+            "column",
+            "detail",
+            "group",
+            "row",
+            "size"
+          ],
+          "slice and value": [
+            "color",
+            "column",
+            "detail",
+            "group",
+            "row",
+            "size"
+          ]
+        },
+        "Treemap": {
+          "ECharts: Treemap|#0": [
+            "color",
+            "column",
+            "detail",
+            "row",
+            "size"
+          ],
+          "ECharts: Treemap|#1": [
+            "color",
+            "column",
+            "detail",
+            "row",
+            "size"
+          ],
+          "slice and value": [
+            "color",
+            "column",
+            "detail",
+            "row",
+            "size"
+          ]
+        },
+        "Waterfall Chart": {
+          "Waterfall Chart|#4": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ]
+        }
+      },
+      "image-charts": {
+        "Area Chart": {
+          "Image-Charts: Core Templates|#3": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Plotly: Core Templates|#3": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Bar Chart": {
+          "Probe|#42": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Probe|#44": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Probe|#69": [
+            "color",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Donut Chart": {
+          "Donut Chart|#4": [
+            "color",
+            "column",
+            "row",
+            "size"
+          ],
+          "slice and value": [
+            "color",
+            "column",
+            "row",
+            "size"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "theta",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "theta",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "theta",
+            "x",
+            "y"
+          ]
+        },
+        "Grouped Bar Chart": {
+          "Grouped Bar Chart|#1": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Grouped Bar Chart|#11": [
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Omni: Grouped Bar|#0": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "Probe|#84": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Line Chart": {
+          "Line Chart|#16": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Line Chart|#17": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Line Chart|#9": [
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Probe|#29": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Pie Chart": {
+          "Gallery: Pie|#0": [
+            "color",
+            "column",
+            "row",
+            "size"
+          ],
+          "Probe|#62": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "theta",
+            "x",
+            "y"
+          ],
+          "Probe|#64": [
+            "column",
+            "row",
+            "size",
+            "x"
+          ],
+          "slice and value": [
+            "color",
+            "column",
+            "row",
+            "size"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "theta",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "theta",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "row",
+            "size",
+            "theta",
+            "x",
+            "y"
+          ]
+        },
+        "Radar Chart": {
+          "Probe|#66": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Radar Chart|#0": [
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Scatter Plot": {
+          "Image-Charts: Core Templates|#5": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Scatter Plot|#13": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Scatter Plot|#25": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Scatter Plot|#6": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Semantic Context|#6": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Sparkline": {
+          "Sparkline|#0": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "Sparkline|#7": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ]
+        },
+        "Stacked Bar Chart": {
+          "Snap-to-Bound|#11": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ]
+        }
+      }
+    },
+    "rows": [
+      {
+        "category": "A",
+        "measure": 3,
+        "measure2": 30
+      },
+      {
+        "category": "B",
+        "measure": 1,
+        "measure2": 10
+      },
+      {
+        "category": "C",
+        "measure": 2,
+        "measure2": 20
+      }
+    ]
+  },
   "channelTypes": {
     "banded color, 3 dates": "ordinal",
     "banded x, 10 dates with an offset, 2 days apart": "temporal",
@@ -63,224 +1380,6 @@
     "Sat, Jan": "NaN",
     "Stage 1": "parses",
     "now": "NaN"
-  },
-  "imageChartsReads": {
-    "bases": {
-      "slice and value": {
-        "color": {
-          "field": "category"
-        },
-        "size": {
-          "field": "measure"
-        }
-      },
-      "x and y measures": {
-        "x": {
-          "field": "measure"
-        },
-        "y": {
-          "field": "measure2"
-        }
-      },
-      "x category, y measure": {
-        "x": {
-          "field": "category"
-        },
-        "y": {
-          "field": "measure"
-        }
-      }
-    },
-    "reads": {
-      "Area Chart": {
-        "x and y measures": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ],
-        "x category, y measure": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ]
-      },
-      "Bar Chart": {
-        "x and y measures": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ],
-        "x category, y measure": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ]
-      },
-      "Donut Chart": {
-        "slice and value": [
-          "color",
-          "column",
-          "row",
-          "size"
-        ],
-        "x and y measures": [
-          "color",
-          "column",
-          "row",
-          "size",
-          "theta",
-          "x",
-          "y"
-        ],
-        "x category, y measure": [
-          "color",
-          "column",
-          "row",
-          "size",
-          "theta",
-          "x",
-          "y"
-        ]
-      },
-      "Grouped Bar Chart": {
-        "x and y measures": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ],
-        "x category, y measure": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ]
-      },
-      "Line Chart": {
-        "x and y measures": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ],
-        "x category, y measure": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ]
-      },
-      "Pie Chart": {
-        "slice and value": [
-          "color",
-          "column",
-          "row",
-          "size"
-        ],
-        "x and y measures": [
-          "color",
-          "column",
-          "row",
-          "size",
-          "theta",
-          "x",
-          "y"
-        ],
-        "x category, y measure": [
-          "color",
-          "column",
-          "row",
-          "size",
-          "theta",
-          "x",
-          "y"
-        ]
-      },
-      "Radar Chart": {
-        "x and y measures": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ],
-        "x category, y measure": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ]
-      },
-      "Scatter Plot": {
-        "x and y measures": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ]
-      },
-      "Sparkline": {
-        "x and y measures": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ],
-        "x category, y measure": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ]
-      },
-      "Stacked Bar Chart": {
-        "x and y measures": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ],
-        "x category, y measure": [
-          "color",
-          "column",
-          "group",
-          "row",
-          "x",
-          "y"
-        ]
-      }
-    }
   },
   "nullHandling": {
     "channel null": {

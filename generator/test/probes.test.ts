@@ -2,6 +2,9 @@ import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { canonicalJson, type Ir } from '../src/ir.ts';
+import { readUnion } from '../src/extract/channel-reads.ts';
+import { extractFixtures } from '../src/extract/fixtures.ts';
+import { loadOverrides } from '../src/overrides.ts';
 import { runProbes, type ProbeResults } from '../src/probes.ts';
 
 const all = ['vegalite', 'echarts', 'chartjs', 'plotly', 'excel'];
@@ -20,8 +23,11 @@ const DOCUMENTED = '1.0.0';
 // A fresh run against the installed flint-chart (the pinned version) equals its record, which `npm run generate` writes.
 describe('probes: record of the pinned version', () => {
   // source: tests/fixtures/flint-chart@<pinned version>/probes.json (written by `npm run generate`, docs/generator.md "Probes")
+  // (a fresh fixture set first: the read probe takes its fixture bases from it, and extractFixtures must be the first
+  // flint-chart import of the process)
   it('matches a fresh run', async () => {
-    assert.equal(canonicalJson(await runProbes()), readFileSync(record(pinned), 'utf8'));
+    const set = await extractFixtures({ version: pinned, integrity: '' });
+    assert.equal(canonicalJson(await runProbes([...set.cases, ...set.probeCases])), readFileSync(record(pinned), 'utf8'));
   });
 });
 
@@ -203,17 +209,43 @@ describe('probes: Image-Charts facts (flint-chart 1.0.1)', () => {
   // source: src/image-charts/assemble.ts of flint-chart 1.0.1 (column and row throw, :192-194; group, else a categorical
   // color, is the series, :205-210; x is the slice when color has no field and y the value when neither size nor theta
   // has one, :265-266; a Scatter Plot assembles only from quantitative x and y, :290-293), probed by
-  // src/extract/image-charts-reads.ts
-  it('records the channels assembleImageCharts reads per chart type and base', () => {
+  // src/extract/channel-reads.ts under its synthetic bases
+  it('records the channels assembleImageCharts reads per chart type under the synthetic bases', () => {
     const axes = ['color', 'column', 'group', 'row', 'x', 'y'];
     const partToWhole = ['color', 'column', 'row', 'size', 'theta', 'x', 'y'];
-    const both = { 'x and y measures': axes, 'x category, y measure': axes };
-    const slices = { 'slice and value': ['color', 'column', 'row', 'size'], 'x and y measures': partToWhole, 'x category, y measure': partToWhole };
-    assert.deepEqual(Object.keys(results.imageChartsReads.bases).sort(), ['slice and value', 'x and y measures', 'x category, y measure']);
-    assert.deepEqual(results.imageChartsReads.reads, {
+    const both = { 'x and y measures': axes, 'x category, y measure': axes, 'y category, x measure': axes };
+    const slices = { 'slice and value': ['color', 'column', 'row', 'size'], 'x and y measures': partToWhole, 'x category, y measure': partToWhole, 'y category, x measure': partToWhole };
+    const synthetic = Object.fromEntries(
+      Object.entries(results.channelReads.reads['image-charts']).map(([t, bases]) => [t, Object.fromEntries(Object.entries(bases).filter(([b]) => 'encodings' in results.channelReads.bases[b]))]),
+    );
+    assert.deepEqual(synthetic, {
       'Area Chart': both, 'Bar Chart': both, 'Donut Chart': slices, 'Grouped Bar Chart': both, 'Line Chart': both,
       'Pie Chart': slices, 'Radar Chart': both, 'Scatter Plot': { 'x and y measures': axes }, Sparkline: both, 'Stacked Bar Chart': both,
     });
+  });
+
+  // source: docs/generator.md "Failure policy" (extract checks the reads under the synthetic bases against overrides.json
+  // imageChartsReads; the fixture bases find no other channel)
+  it('records the Image-Charts reads of overrides.json imageChartsReads under every base', () => {
+    const { imageChartsReads } = loadOverrides(new URL('../overrides.json', import.meta.url).pathname);
+    const expected = Object.fromEntries(Object.entries(imageChartsReads).map(([t, c]) => [t, [...c].sort()]));
+    assert.deepEqual(readUnion(results.channelReads.reads['image-charts']), expected);
+  });
+
+  // source: src/excel/assemble.ts of flint-chart 1.0.1 (group, else a categorical color, is the series off Pie and Donut,
+  // :270-275; color, else x, is the slice and size, else theta, else y, the value, :277-281; the dash field splits the
+  // series, :293, :403-448; size and order are read on the XY path, :294-295, :309-314, :320-377), the stock chart
+  // throws on color, group or detail (src/excel/templates/candlestick.ts:31-33) and a Histogram reads y without x
+  // (src/excel/templates/histogram.ts:19, :25), probed by src/extract/channel-reads.ts
+  it('records the channels assembleExcel reads', () => {
+    const excel = results.channelReads.reads.excel;
+    assert.deepEqual(excel['Line Chart']['x category, y measure'], ['color', 'column', 'group', 'row', 'strokeDash', 'x', 'y']);
+    assert.deepEqual(excel['Line Chart']['x and y measures'], ['color', 'column', 'group', 'order', 'row', 'size', 'strokeDash', 'x', 'y']);
+    assert.deepEqual(excel['Pie Chart']['x category, y measure'], ['color', 'column', 'row', 'size', 'strokeDash', 'theta', 'x', 'y']);
+    assert.deepEqual(excel['Pie Chart']['slice and value'], ['color', 'column', 'row', 'size', 'strokeDash']);
+    assert.deepEqual(excel.Histogram['y measure'], ['color', 'column', 'row', 'x', 'y']);
+    assert.deepEqual(excel.Histogram['x and y measures'], ['color', 'column', 'row', 'x']);
+    assert.deepEqual(excel['Candlestick Chart']['Candlestick Chart|#4'], ['close', 'color', 'column', 'detail', 'group', 'high', 'low', 'open', 'row', 'x']);
   });
 
   // source: src/image-charts/assemble.ts (no category or measure resolves without encodings; a null channel is skipped;

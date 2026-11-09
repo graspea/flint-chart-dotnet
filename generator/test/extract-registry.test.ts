@@ -7,7 +7,7 @@ import * as flint from 'flint-chart';
 import { extractCatalog } from '../src/extract/registry.ts';
 import { flintPackageDir } from '../src/extract/package.ts';
 import { loadOverrides } from '../src/overrides.ts';
-import { catalogChannels } from '../src/extract/image-charts-reads.ts';
+import { catalogChannels } from '../src/extract/channel-reads.ts';
 import { ordinal, type Ir, type IrCatalog } from '../src/ir.ts';
 
 // Runs against the installed flint-chart. Facts cited from docs/design part 01 §2 and §10.4 test 3 were probed against
@@ -67,13 +67,13 @@ describe('extract/registry', () => {
     assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, 'Bar Chart': ['x', 'y', 'column'] } }), /lists column, on which assembleImageCharts throws/);
   });
 
-  // source: docs/generator.md "Failure policy" and src/extract/image-charts-reads.ts (the probe's candidate channels are
+  // source: docs/generator.md "Failure policy" and src/extract/channel-reads.ts (the probe's candidate channels are
   // the catalog's: flint.channels and every channel a registry template declares)
   it('probes the channels of the catalog', () => {
     assert.deepEqual([...catalogChannels(flint as unknown as Record<string, unknown>)].sort(ordinal), [...committed.channels].sort(ordinal));
   });
 
-  // source: docs/generator.md "Failure policy" and src/extract/image-charts-reads.ts (the channels the probe finds
+  // source: docs/generator.md "Failure policy" and src/extract/channel-reads.ts (the channels the probe finds
   // assembleImageCharts reading are recorded in overrides.json imageChartsReads)
   it('fails when the probed Image-Charts reads differ from imageChartsReads', () => {
     const module = flint as unknown as Record<string, unknown>;
@@ -88,7 +88,7 @@ describe('extract/registry', () => {
     assert.doesNotThrow(() => extract(module, { imageChartsReads: { ...imageChartsReads, Heatmap: ['x'] }, pending: ['catalog.chartTypes[Heatmap].backends.image-charts'] }));
   });
 
-  // source: docs/generator.md "Failure policy" and src/extract/image-charts-reads.ts (a change in a src/core helper the
+  // source: docs/generator.md "Failure policy" and src/extract/channel-reads.ts (a change in a src/core helper the
   // fingerprinted files call is seen by behaviour, the fingerprint unchanged)
   it('fails when a src/core change makes Image-Charts read a new channel, the fingerprint unchanged', () => {
     const real = (flint as unknown as { assembleImageCharts: (i: any) => { type: string; url: string } }).assembleImageCharts;
@@ -105,7 +105,7 @@ describe('extract/registry', () => {
     );
   });
 
-  // source: docs/generator.md "Failure policy" and src/extract/image-charts-reads.ts (a curated channel the assembler
+  // source: docs/generator.md "Failure policy" and src/extract/channel-reads.ts (a curated channel the assembler
   // ignores would hide an unsupported_channel)
   it('fails on a curated Image-Charts channel the probe does not find read', () => {
     const real = (flint as unknown as { assembleImageCharts: (i: any) => unknown }).assembleImageCharts;
@@ -120,7 +120,7 @@ describe('extract/registry', () => {
     assert.throws(() => extract(ignoresColor), /imageChartsChannels\["Bar Chart"\] lists color, which the read probe does not find read/);
   });
 
-  // source: docs/generator.md "Failure policy" and src/extract/image-charts-reads.ts (a chart type that assembles from
+  // source: docs/generator.md "Failure policy" and src/extract/channel-reads.ts (a chart type that assembles from
   // none of the bases cannot be probed)
   it('fails on a chart type that assembles from none of the bases', () => {
     const real = (flint as unknown as { assembleImageCharts: (i: any) => unknown }).assembleImageCharts;

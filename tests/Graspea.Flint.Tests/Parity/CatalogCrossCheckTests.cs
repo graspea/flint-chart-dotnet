@@ -7,29 +7,11 @@ namespace Graspea.Flint.Tests.Parity;
 /// <summary>
 /// The compiled catalog tables against the committed IR, read through the validator and the structs (design §10.1
 /// rule 4, §10.4 test 15). Both sides come from the IR, so a failure here is an emitter bug (§9.3).
-/// The Image-Charts channels read though undeclared come from the probe record (CommittedIr.ImageChartsReads).
+/// The native channels read though undeclared come from the probe record (CommittedIr.Reads) and are checked per base by ChannelReadsTests.
 /// </summary>
 public sealed class CatalogCrossCheckTests
 {
     private static readonly string[] BackendIds = ["vegalite", "echarts", "chartjs", "plotly", "excel", "image-charts"];
-
-    /// <summary>The channels Excel reads in <see cref="Document"/> (x a text field, the channel a number field) though its
-    /// template leaves them out (flint-chart 1.0.1 src/excel/assemble.ts): the series group (:270-275), else the Grouped
-    /// Bar color (src/core/static-series.ts:63-73), the dash field (:293), size and order on the XY path (:294-295), and
-    /// the Pie and Donut slice and value fallbacks (:277-281). A Line Chart over a text x is not on the XY path, and a
-    /// Histogram with x reads no y.</summary>
-    private static readonly Dictionary<string, string[]> ExcelReadsHere = new()
-    {
-        ["Area Chart"] = ["group", "strokeDash"],
-        ["Bar Chart"] = ["group", "strokeDash"],
-        ["Grouped Bar Chart"] = ["color", "strokeDash"],
-        ["Stacked Bar Chart"] = ["group", "strokeDash"],
-        ["Line Chart"] = ["group"],
-        ["Scatter Plot"] = ["group", "order", "strokeDash"],
-        ["Connected Scatter Plot"] = ["group", "size", "strokeDash"],
-        ["Pie Chart"] = ["strokeDash", "x", "y"],
-        ["Donut Chart"] = ["strokeDash", "x", "y"],
-    };
 
     private static FlintBackend Backend(string id) => (FlintBackend)Array.IndexOf(BackendIds, id);
 
@@ -91,19 +73,10 @@ public sealed class CatalogCrossCheckTests
                             // source: supportsFacets false: both native assemblers throw on a bound facet
                             Assert.That(Has(result, unsupported, channel), Is.True, $"{id}: a bound {channel} throws");
                         }
-                        else if (id == "excel" && ExcelReadsHere.TryGetValue(chartType, out var read) && read.Contains(channel))
+                        else if (!CommittedIr.Reads(id, chartType).Contains(channel))
                         {
-                            // source: ExcelReadsHere
-                            Assert.That(Has(result, "unsupported_channel", channel), Is.False, $"{id}: {channel} is read");
-                        }
-                        else if (id == "image-charts" && CommittedIr.ImageChartsReads(chartType).Contains(channel))
-                        {
-                            // source: probes.json imageChartsReads (read though undeclared; the document's lone x and the bound
-                            // channel never shadow a fallback, so the union over the bases applies; ImageChartsReadsTests checks each base)
-                            Assert.That(Has(result, "unsupported_channel", channel), Is.False, $"{id}: {channel} is read");
-                        }
-                        else
-                        {
+                            // source: probes.json channelReads (a channel the assembler reads though undeclared under some
+                            // base depends on the document's other encodings and types; ChannelReadsTests checks it per base)
                             Assert.That(Has(result, "unsupported_channel", channel) || Has(result, unsupported, channel), Is.True, $"{id}: {channel} is not declared");
                         }
                     }
