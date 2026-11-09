@@ -370,4 +370,28 @@ public sealed partial class ChartValidatorTests
             Assert.That(UnsupportedOnExcel(ExcelChart(histogram, ("x", "revenue"), ("y", "cost"))), Is.EqualTo(new[] { "chart_spec.encodings.y" }), "histogram with x");
         }
     }
+
+    // source: src/excel/templates/histogram.ts:19-20 (validate() takes x as the value channel only when its field is
+    // non-empty, else y) and :25-27 (instantiate() reads fieldOf('x') ?? fieldOf('y'), so an empty x field is the value
+    // field, read as the rows' "" key, and it throws "Excel histogram requires finite numeric values."); probe case
+    // "histogram with an empty x field and y"
+    [Test]
+    public void Excel_HistogramWithAnEmptyXField_ReadsTheEmptyKey()
+    {
+        var histogram = new ChartType("Histogram");
+        var empty = ExcelChart(histogram, ("x", ""), ("y", "revenue"));
+        var emptyKey = ExcelChart(histogram, ("x", ""), ("y", "revenue"));
+        emptyKey.Data = ChartData.FromJson([new JsonObject { ["city"] = "a", ["revenue"] = 10, [""] = 3 }, new JsonObject { ["city"] = "b", ["revenue"] = 20, [""] = 4 }]);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(Issues(empty, FlintBackend.Excel, "excel_unsupported").Select(i => (i.Path, i.Severity)),
+                Is.EqualTo(new[] { ("chart_spec.encodings.x", IssueSeverity.Error) }));
+            Assert.That(Issues(empty, FlintBackend.Excel, "excel_unsupported").Single().Message, Does.Contain("finite numeric values"));
+            Assert.That(ChartValidator.Validate(empty).IsValid, Is.False, "no backend");
+            AssertNone(emptyKey, FlintBackend.Excel, "excel_unsupported");
+            AssertNone(ExcelChart(histogram, ("x", new ChartEncoding()), ("y", "revenue")), FlintBackend.Excel, "excel_unsupported");
+            AssertNone(ExcelChart(histogram, ("y", "revenue")), FlintBackend.Excel, "excel_unsupported");
+            Assert.That(ChartTemplate.Create<JsonObject>(empty).Validate(FlintBackend.Excel).IsValid, Is.True, "template: the rows decide");
+        }
+    }
 }

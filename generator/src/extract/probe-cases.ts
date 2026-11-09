@@ -168,6 +168,7 @@ const cases: Array<[string, Doc, true?]> = [
   ['pie with an empty theta field and y', chart('Pie Chart', (i) => (i.chart_spec.encodings = { color: { field: 'city' }, theta: { field: '' }, y: { field: 'revenue' } }))],
   ['grouped bar with a quantitative color and no group', chart('Grouped Bar Chart', (i) => (i.chart_spec.encodings = { x: { field: 'city' }, y: { field: 'revenue' }, color: { field: 'cost', type: 'quantitative' } }))],
   ['grouped bar with a nominal color and no group', chart('Grouped Bar Chart', (i) => (i.chart_spec.encodings = { x: { field: 'city' }, y: { field: 'revenue' }, color: { field: 'city', type: 'nominal' } }))],
+  ['histogram with an empty x field and y', chart('Histogram', (i) => (i.chart_spec.encodings = { x: { field: '' }, y: { field: 'revenue' } }))],
 ];
 
 export function probeCases(): ProbeCase[] {

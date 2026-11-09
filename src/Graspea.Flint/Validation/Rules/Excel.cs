@@ -117,8 +117,12 @@ internal static class Excel
                 var valueChannel = F("x") is not null ? "x" : "y";
                 Add(F(valueChannel) is null, "requires a quantitative value field for a native Excel histogram", valueChannel, false);
                 Add(NotQuantitative(T(valueChannel)), "requires a quantitative value field for a native Excel histogram", valueChannel, !types.SpecDecided(valueChannel));
-                Add(F(valueChannel) is { } histogramField && !rows.Any(r => Js.Get(r, histogramField, out var p) is var v && Js.IsFiniteNumber(v, p)),
-                    "requires finite numeric values for a histogram", valueChannel);
+                // instantiate() reads fieldOf('x') ?? fieldOf('y') (histogram.ts:25): an empty x field, which validate() skips,
+                // is the value field there, read as the rows' "" key.
+                var (readChannel, readField) = types.Encoding("x")?.Field is { } rawX ? ("x", rawX) : ("y", F("y"));
+                Add(F(valueChannel) is not null && readField is { } histogramField && !rows.Any(r => Js.Get(r, histogramField, out var p) is var v && Js.IsFiniteNumber(v, p)),
+                    readField is "" ? "requires finite numeric values for a histogram, and reads the empty x field as the value field (the rows' \"\" key)" : "requires finite numeric values for a histogram",
+                    readChannel);
                 break;
             case "Pyramid Chart":
                 Pyramid(types, rows, Add, NonNegativeViolated);
