@@ -264,6 +264,26 @@ public sealed partial class ChartValidatorTests
         Assert.That(Issues(continuousGroup, FlintBackend.Excel, "excel_unsupported").Select(i => i.Channel?.Name), Is.EqualTo(new[] { "group" }));
     }
 
+    // source: src/excel/templates/candlestick.ts:31-33 (the stock chart throws on a color, group or detail field) and
+    // probes.json channelReads (binding any of them changes the throw, so none is ignored)
+    [Test]
+    public void Excel_CandlestickColorGroupOrDetail_IsReportedOnTheChannel()
+    {
+        var input = Bar(i =>
+        {
+            i.ChartSpec.ChartType = ChartType.CandlestickChart;
+            i.ChartSpec.Encodings = new() { ["x"] = O("city"), ["open"] = "revenue", ["high"] = "revenue", ["low"] = "revenue", ["close"] = "revenue", ["color"] = "city", ["detail"] = "city" };
+        });
+        var stock = Issues(input, FlintBackend.Excel, "excel_unsupported").Where(i => i.Message.Contains("color, group, or detail", StringComparison.Ordinal));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(stock.Select(i => i.Path), Is.EqualTo(new[] { "chart_spec.encodings.color", "chart_spec.encodings.detail" }));
+            Assert.That(Issues(input, FlintBackend.Excel, "unsupported_channel"), Is.Empty);
+            Assert.That(ChartTemplate.Create<JsonObject>(input).Validate(FlintBackend.Excel).Issues.Where(i => i.Code == "excel_unsupported" && i.Message.Contains("color, group, or detail", StringComparison.Ordinal)).Select(i => i.Path),
+                Is.EqualTo(new[] { "chart_spec.encodings.color", "chart_spec.encodings.detail" }), "template");
+        }
+    }
+
     // source: normalizeChartEncodingAliases (only a Grouped Bar Chart aliases): a Line Chart's group is not aliased, and the Excel Line template does not declare it, so it is reported as before
     [Test]
     public void Excel_GroupWithoutColorOnALineChart_IsStillUnsupported()

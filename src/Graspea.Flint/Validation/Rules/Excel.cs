@@ -211,8 +211,11 @@ internal static class Excel
             add(NotQuantitative(types.Of(channel)), $"requires a quantitative {channel} field for a native Excel stock chart", channel, !types.SpecDecided(channel));
         }
 
-        add(types.FieldOf("color") is not null || types.FieldOf("group") is not null || types.FieldOf("detail") is not null,
-            "does not support color, group, or detail encodings in a native Excel stock chart", null, false);
+        // One reason per bound channel (candlestick.ts:31-33 throws on any of them), so that none is also unsupported_channel.
+        foreach (var channel in new[] { "color", "group", "detail" })
+        {
+            add(types.FieldOf(channel) is not null, "does not support color, group, or detail encodings in a native Excel stock chart", channel, false);
+        }
         if (x is null || PriceChannels.Any(c => types.FieldOf(c) is null))
         {
             return;

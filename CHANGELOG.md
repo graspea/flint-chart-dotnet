@@ -28,6 +28,7 @@ All notable changes to this project are documented in this file. The format foll
 ### Fixed
 
 - `reserved_semantic_type` is no longer an Error on an Excel target for a field that only a static-series entry binds and that is not a key of the first row: Excel reads an array encoding as an unbound channel and never looks the annotation up. Image-Charts is validated the same way.
+- Excel validation of a Candlestick Chart that binds a field to `color`, `group` or `detail` now reports one `excel_unsupported` Error per bound channel, on `chart_spec.encodings.<channel>`, instead of one on `chart_spec`, and on an Excel target no longer also an `unsupported_channel` Warning that said Excel ignores the channel: `flint-chart` throws on any of them.
 - Excel validation of a Grouped Bar Chart now reads `color` as the group when no `group` is bound, as `flint-chart` does: a continuous `color` is an `excel_unsupported` Error (reported on `chart_spec.encodings.color`), and the `color` is no longer reported as `unsupported_channel` on an Excel target. With a `group` bound, Excel still ignores `color` and it is still reported.
 
 ## [1.0.1.1-preview.1] - 2026-11-08
