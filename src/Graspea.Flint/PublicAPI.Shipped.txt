@@ -531,6 +531,8 @@ Graspea.Flint.ChartEncoding.Aggregate.set -> void
 Graspea.Flint.ChartEncoding.Bins.get -> double?
 Graspea.Flint.ChartEncoding.Bins.set -> void
 Graspea.Flint.ChartEncoding.ChartEncoding() -> void
+Graspea.Flint.ChartEncoding.ColorScheme.get -> Graspea.Flint.ColorScheme?
+Graspea.Flint.ChartEncoding.ColorScheme.set -> void
 Graspea.Flint.ChartEncoding.Colors.get -> System.Collections.Generic.Dictionary<string!, string!>?
 Graspea.Flint.ChartEncoding.Colors.set -> void
 Graspea.Flint.ChartEncoding.Domain.get -> double[]?
@@ -601,6 +603,7 @@ Graspea.Flint.ChartTemplate<TRow>.Bind(System.Collections.Generic.IEnumerable<TR
 Graspea.Flint.ChartTemplate<TRow>.BindAsync(System.Collections.Generic.IAsyncEnumerable<TRow>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Graspea.Flint.ChartAssemblyInput!>
 Graspea.Flint.ChartTemplate<TRow>.BindStream(System.Collections.Generic.IAsyncEnumerable<TRow>! rows) -> Graspea.Flint.ChartAssemblyInput!
 Graspea.Flint.ChartTemplate<TRow>.BindStream(System.Collections.Generic.IEnumerable<TRow>! rows) -> Graspea.Flint.ChartAssemblyInput!
+Graspea.Flint.ChartTemplate<TRow>.ToJson() -> string!
 Graspea.Flint.ChartTemplate<TRow>.Validate(Graspea.Flint.FlintBackend? backend = null) -> Graspea.Flint.Validation.ValidationResult!
 Graspea.Flint.ChartTheme
 Graspea.Flint.ChartTheme.Preset.get -> Graspea.Flint.ThemePreset?
@@ -694,6 +697,9 @@ Graspea.Flint.ClickHighlightOptions.Reset.get -> string![]?
 Graspea.Flint.ClickHighlightOptions.Reset.set -> void
 Graspea.Flint.ClickHighlightOptions.Targets.get -> string![]?
 Graspea.Flint.ClickHighlightOptions.Targets.set -> void
+Graspea.Flint.ColorScheme
+Graspea.Flint.ColorScheme.Name.get -> string?
+Graspea.Flint.ColorScheme.Stops.get -> string![]?
 Graspea.Flint.ComboChartBuilder<TRow>
 Graspea.Flint.ComboChartBuilder<TRow>.Column(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.ComboChartBuilder<TRow>!
 Graspea.Flint.ComboChartBuilder<TRow>.Column(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ComboChartBuilder<TRow>!
@@ -770,6 +776,50 @@ Graspea.Flint.ContinuousMarkCrossSection.SeriesCountAxis.get -> Graspea.Flint.Se
 Graspea.Flint.ContinuousMarkCrossSection.Uniform.get -> double?
 Graspea.Flint.ContinuousMarkCrossSection.X.get -> double?
 Graspea.Flint.ContinuousMarkCrossSection.Y.get -> double?
+Graspea.Flint.Delivery.ChartGroup
+Graspea.Flint.Delivery.ChartGroup.ChartGroup(string! name, params Graspea.Flint.Delivery.ChartHandle![]! charts) -> void
+Graspea.Flint.Delivery.ChartGroup.Charts.get -> System.Collections.Generic.IReadOnlyList<Graspea.Flint.Delivery.ChartHandle!>!
+Graspea.Flint.Delivery.ChartGroup.Name.get -> string!
+Graspea.Flint.Delivery.ChartGroup.Validate(Graspea.Flint.FlintBackend? backend = null) -> Graspea.Flint.Validation.ValidationResult!
+Graspea.Flint.Delivery.ChartHandle
+Graspea.Flint.Delivery.ChartHandle.Id.get -> string!
+Graspea.Flint.Delivery.ChartHandle.MaxRows.get -> int?
+Graspea.Flint.Delivery.ChartHandle.Withheld(string! code) -> Graspea.Flint.Delivery.ChartPart!
+Graspea.Flint.Delivery.ChartHandle<TRow>
+Graspea.Flint.Delivery.ChartHandle<TRow>.ChartHandle(string! id, Graspea.Flint.ChartTemplate<TRow>! template, int? maxRows = null) -> void
+Graspea.Flint.Delivery.ChartHandle<TRow>.Rows(System.Collections.Generic.IEnumerable<TRow>! rows) -> Graspea.Flint.Delivery.ChartPart!
+Graspea.Flint.Delivery.ChartHandle<TRow>.RowsAsync(System.Collections.Generic.IAsyncEnumerable<TRow>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Graspea.Flint.Delivery.ChartPart!>
+Graspea.Flint.Delivery.ChartHandle<TRow>.Stream(System.Collections.Generic.IAsyncEnumerable<TRow>! rows) -> Graspea.Flint.Delivery.ChartPart!
+Graspea.Flint.Delivery.ChartHandle<TRow>.Template.get -> Graspea.Flint.ChartTemplate<TRow>!
+Graspea.Flint.Delivery.ChartManifest
+Graspea.Flint.Delivery.ChartManifest.Groups.get -> System.Collections.Generic.IReadOnlyList<Graspea.Flint.Delivery.ChartGroup!>!
+Graspea.Flint.Delivery.ChartManifest.Hash.get -> string!
+Graspea.Flint.Delivery.ChartManifest.ToJson() -> string!
+Graspea.Flint.Delivery.ChartManifest.Utf8Bytes.get -> System.ReadOnlyMemory<byte>
+Graspea.Flint.Delivery.ChartManifest.WriteTo(System.Text.Json.Utf8JsonWriter! writer) -> void
+Graspea.Flint.Delivery.ChartPart
+Graspea.Flint.Delivery.ChartPart.Chart.get -> Graspea.Flint.Delivery.ChartHandle!
+Graspea.Flint.Delivery.ChartPart.IsStreamed.get -> bool
+Graspea.Flint.Delivery.ChartPart.WithheldCode.get -> string?
+Graspea.Flint.Delivery.ChartRowLimitException
+Graspea.Flint.Delivery.ChartRowLimitException.Chart.get -> Graspea.Flint.Delivery.ChartHandle!
+Graspea.Flint.Delivery.ChartRowLimitException.Limit.get -> int
+Graspea.Flint.Delivery.DataPage
+Graspea.Flint.Delivery.DataPage.Charts.get -> System.Collections.Generic.IReadOnlyList<Graspea.Flint.Delivery.ChartPart!>!
+Graspea.Flint.Delivery.DataPage.DataPage(Graspea.Flint.Delivery.ChartGroup! group, System.Collections.Generic.IReadOnlyList<Graspea.Flint.Delivery.ChartPart!>! charts, string? next = null) -> void
+Graspea.Flint.Delivery.DataPage.Group.get -> Graspea.Flint.Delivery.ChartGroup!
+Graspea.Flint.Delivery.DataPage.Next.get -> string?
+Graspea.Flint.Delivery.DataPage.ToJson() -> string!
+Graspea.Flint.Delivery.DataPage.ToUtf8Bytes() -> byte[]!
+Graspea.Flint.Delivery.DataPage.WriteAsync(System.IO.Stream! utf8Json, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Graspea.Flint.Delivery.DataPage.WriteTo(System.Text.Json.Utf8JsonWriter! writer) -> void
+Graspea.Flint.Delivery.DeliveryContract
+Graspea.Flint.Delivery.DeliveryError
+Graspea.Flint.Delivery.DeliveryError.Code.get -> string!
+Graspea.Flint.Delivery.DeliveryError.DeliveryError(string! code) -> void
+Graspea.Flint.Delivery.DeliveryError.ToJson() -> string!
+Graspea.Flint.Delivery.DeliveryError.ToUtf8Bytes() -> byte[]!
+Graspea.Flint.Delivery.DeliveryError.WriteTo(System.Text.Json.Utf8JsonWriter! writer) -> void
 Graspea.Flint.DensityContourBuilder<TRow>
 Graspea.Flint.DensityContourBuilder<TRow>.BinCount(double value) -> Graspea.Flint.DensityContourBuilder<TRow>!
 Graspea.Flint.DensityContourBuilder<TRow>.Column(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.DensityContourBuilder<TRow>!
@@ -923,6 +973,7 @@ Graspea.Flint.FlintBackend
 Graspea.Flint.FlintBackend.ChartJs = 2 -> Graspea.Flint.FlintBackend
 Graspea.Flint.FlintBackend.ECharts = 1 -> Graspea.Flint.FlintBackend
 Graspea.Flint.FlintBackend.Excel = 4 -> Graspea.Flint.FlintBackend
+Graspea.Flint.FlintBackend.ImageCharts = 5 -> Graspea.Flint.FlintBackend
 Graspea.Flint.FlintBackend.Plotly = 3 -> Graspea.Flint.FlintBackend
 Graspea.Flint.FlintBackend.VegaLite = 0 -> Graspea.Flint.FlintBackend
 Graspea.Flint.FlintUpstream
@@ -1765,6 +1816,8 @@ Graspea.Flint.Serialization.ChartThemeConverter
 Graspea.Flint.Serialization.ChartThemeConverter.ChartThemeConverter() -> void
 Graspea.Flint.Serialization.ChartTypeConverter
 Graspea.Flint.Serialization.ChartTypeConverter.ChartTypeConverter() -> void
+Graspea.Flint.Serialization.ColorSchemeConverter
+Graspea.Flint.Serialization.ColorSchemeConverter.ColorSchemeConverter() -> void
 Graspea.Flint.Serialization.ContinuousMarkCrossSectionConverter
 Graspea.Flint.Serialization.ContinuousMarkCrossSectionConverter.ContinuousMarkCrossSectionConverter() -> void
 Graspea.Flint.Serialization.EncodingTypeConverter
@@ -3363,6 +3416,7 @@ Graspea.Flint.WaterfallChartTotals.Default = 0 -> Graspea.Flint.WaterfallChartTo
 Graspea.Flint.WaterfallChartTotals.First = 3 -> Graspea.Flint.WaterfallChartTotals
 Graspea.Flint.WaterfallChartTotals.Last = 4 -> Graspea.Flint.WaterfallChartTotals
 Graspea.Flint.WaterfallChartTotals.None = 2 -> Graspea.Flint.WaterfallChartTotals
+const Graspea.Flint.Delivery.DeliveryContract.Version = 1 -> int
 const Graspea.Flint.FlintUpstream.Version = "1.0.1" -> string!
 override Graspea.Flint.Aggregate.GetHashCode() -> int
 override Graspea.Flint.Aggregate.ToString() -> string!
@@ -3372,6 +3426,7 @@ override Graspea.Flint.ChannelTitle.ToString() -> string!
 override Graspea.Flint.ChartSize.GetHashCode() -> int
 override Graspea.Flint.ChartType.GetHashCode() -> int
 override Graspea.Flint.ChartType.ToString() -> string!
+override Graspea.Flint.ColorScheme.ToString() -> string!
 override Graspea.Flint.EncodingType.GetHashCode() -> int
 override Graspea.Flint.EncodingType.ToString() -> string!
 override Graspea.Flint.Polarity.GetHashCode() -> int
@@ -3397,6 +3452,8 @@ override Graspea.Flint.Serialization.ChartThemeConverter.Read(ref System.Text.Js
 override Graspea.Flint.Serialization.ChartThemeConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ChartTheme! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.ChartTypeConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ChartType
 override Graspea.Flint.Serialization.ChartTypeConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ChartType value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.ColorSchemeConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ColorScheme!
+override Graspea.Flint.Serialization.ColorSchemeConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ColorScheme! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.ContinuousMarkCrossSectionConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ContinuousMarkCrossSection!
 override Graspea.Flint.Serialization.ContinuousMarkCrossSectionConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ContinuousMarkCrossSection! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.EncodingTypeConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.EncodingType
@@ -3784,8 +3841,11 @@ static Graspea.Flint.ChartTheme.implicit operator Graspea.Flint.ChartTheme!(Gras
 static Graspea.Flint.ChartTheme.implicit operator Graspea.Flint.ChartTheme!(Graspea.Flint.Theming.ThemeSpec! spec) -> Graspea.Flint.ChartTheme!
 static Graspea.Flint.ChartType.operator !=(Graspea.Flint.ChartType left, Graspea.Flint.ChartType right) -> bool
 static Graspea.Flint.ChartType.operator ==(Graspea.Flint.ChartType left, Graspea.Flint.ChartType right) -> bool
+static Graspea.Flint.ColorScheme.implicit operator Graspea.Flint.ColorScheme?(string![]? stops) -> Graspea.Flint.ColorScheme?
+static Graspea.Flint.ColorScheme.implicit operator Graspea.Flint.ColorScheme?(string? name) -> Graspea.Flint.ColorScheme?
 static Graspea.Flint.ContinuousMarkCrossSection.Axes(double x, double y, double? elasticity = null, double? maxStretch = null, Graspea.Flint.SeriesCountAxis? seriesCountAxis = null) -> Graspea.Flint.ContinuousMarkCrossSection!
 static Graspea.Flint.ContinuousMarkCrossSection.implicit operator Graspea.Flint.ContinuousMarkCrossSection!(double value) -> Graspea.Flint.ContinuousMarkCrossSection!
+static Graspea.Flint.Delivery.ChartManifest.Create(params Graspea.Flint.Delivery.ChartGroup![]! groups) -> Graspea.Flint.Delivery.ChartManifest!
 static Graspea.Flint.EncodingType.operator !=(Graspea.Flint.EncodingType left, Graspea.Flint.EncodingType right) -> bool
 static Graspea.Flint.EncodingType.operator ==(Graspea.Flint.EncodingType left, Graspea.Flint.EncodingType right) -> bool
 static Graspea.Flint.EncodingValue.Series(params Graspea.Flint.ChartEncoding![]! e) -> Graspea.Flint.EncodingValue!

@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+## [1.0.1.1-preview.2] - 2026-11-09
+
+Tracks `flint-chart` 1.0.1 (npm), as 1.0.1.1-preview.1 does; no upstream sync, so no IR diff. The hand-written surface only grows (no `PublicAPI` removal); the validation outcome changes are listed under Changed and Fixed.
+
 ### Added
 
 - `ChartTemplate<TRow>.ToJson()`, the template's stored document (no bound rows) as compact JSON text.
