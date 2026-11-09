@@ -37,7 +37,7 @@ Additions never break consumers because no public type is derivable (`sealed` cl
 | Change of canonical output | no | no | yes, documented |
 | Removal of an `[Obsolete]` member, signature change | no (before Stable: allowed under the §8.2 pre-Stable rule) | no | yes |
 | `IDictionary<,>` freeze of the map properties, PublicAPI tidy-up | done during the M2 previews under the §8.2 pre-Stable rule, so the stable tag only drops the label | never | yes |
-| Package-validation baseline | previous `X.Y.Z.n` (the preview-to-preview baseline is **UNVERIFIED**: the NuGet docs describe the baseline as a previously released stable version; pre-Stable breaking changes need `CompatibilitySuppressions.xml` entries either way) | previous release of the same `X.Y` line | none; new baseline |
+| Package-validation baseline | previous `X.Y.Z.n` (a preview baseline works, checked on `1.0.1.1-preview.2` against `1.0.1.1-preview.1`, though the NuGet docs describe the baseline as a previously released stable version; pre-Stable breaking changes need `CompatibilitySuppressions.xml` entries either way) | previous release of the same `X.Y` line | none; new baseline |
 
 #### 8.4 Deprecation policy
 
@@ -292,7 +292,7 @@ The first M2 test is `ChartBuilderTests.Encode_MemberExpression_ResolvesWireName
 | 17 | Upstream CHANGELOG unreliable | cannot drive anything | the IR diff is the changelog |
 | 18 | `interaction_spec` and `validate` arrive only with the next upstream release | consumers wanting interactions wait | resolved in flint-chart 1.0.0: `InteractionSpec` is generated from the IR (`Generated/Interaction`), its two boolean-or-object unions are hand-written; `flint-chart/validate` ships and is mapped in `docs/validation-codes.md` |
 | 19 | Newer-patch compatibility is an expectation, not a guarantee | the bot's forward-compat step records counts, it does not gate | 0 counter-examples in 11 transitions; a failed round-trip is visible in the sync PR body; the next SDK line follows within a day of the sync PR |
-| 20 | Package-validation baseline between two previews | the NuGet docs describe a stable baseline (**UNVERIFIED** for previews) | suppressions per intended pre-Stable break; re-check on the first `-preview.2` |
+| 20 | Package-validation baseline between two previews | the NuGet docs describe a stable baseline; checked on the first `-preview.2`: `1.0.1.1-preview.2` validates against `1.0.1.1-preview.1`, and only a pack with a release version can use the baseline (a `0.0.0-local` or `0.0.0-ci` pack fails `CP0003`) | suppressions per intended pre-Stable break; the csproj sets the baseline only for a release-version pack |
 
 **Open questions, to settle before tagging `0.5.1.1-preview.1`**
 
