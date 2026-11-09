@@ -246,8 +246,10 @@ internal sealed partial class ValidationRun
             return;
         }
 
-        // A declared channel, or one Image-Charts reads though its curated template leaves it out (ImageCharts.ReadsUndeclared).
-        bool Reads(FlintBackend t) => template[t].Channels.Contains(channel) || (t == FlintBackend.ImageCharts && ImageCharts.ReadsUndeclared(input, types, channel));
+        // A declared channel, or one a backend reads though its template leaves it out (ImageCharts.ReadsUndeclared, Excel.ReadsUndeclared).
+        bool Reads(FlintBackend t) => template[t].Channels.Contains(channel)
+            || (t == FlintBackend.ImageCharts && ImageCharts.ReadsUndeclared(input, types, channel))
+            || (t == FlintBackend.Excel && Excel.ReadsUndeclared(input, channel));
 
         if (backend is { } b)
         {

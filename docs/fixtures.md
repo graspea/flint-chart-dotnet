@@ -1,6 +1,6 @@
 # Fixtures
 
-The contract tests (`tests/Graspea.Flint.ContractTests`) run against a corpus generated from the pinned `flint-chart` package. Each upstream version has its own folder, and folders are append-only: `tests/fixtures/flint-chart@<version>/`. A folder is regenerated for its own version when the SDK covers more of that version: the `flint-chart@1.0.1` folder gained the Image-Charts outcomes and 23 crafted cases, and kept its 956 corpus cases. The design is in [part 2 §7.9](design/02-sdk-serialisation-validation-codegen.md) and [part 3 §10.3](design/03-sdk-versioning-runbook-tests-risks.md). The folder is generated; never edit it by hand.
+The contract tests (`tests/Graspea.Flint.ContractTests`) run against a corpus generated from the pinned `flint-chart` package. Each upstream version has its own folder, and folders are append-only: `tests/fixtures/flint-chart@<version>/`. A folder is regenerated for its own version when the SDK covers more of that version: the `flint-chart@1.0.1` folder gained the Image-Charts outcomes and 25 crafted cases, and kept its 956 corpus cases. The design is in [part 2 §7.9](design/02-sdk-serialisation-validation-codegen.md) and [part 3 §10.3](design/03-sdk-versioning-runbook-tests-risks.md). The folder is generated; never edit it by hand.
 
 ```
 cd generator
@@ -79,14 +79,14 @@ No corpus fixture produces `invalid-option-value`; the crafted cases do (`option
 ## Contract results on flint-chart 1.0.1
 
 - `FixtureRoundTripTests`: every stored fixture of every folder round-trips: 934 on 0.5.1, 956 on 1.0.0 and 956 on 1.0.1.
-- `FixtureExpectationTests`: the 956 corpus cases and the 83 crafted cases of 1.0.1 pass (60 crafted cases on 1.0.0). For each recorded backend: a throw is reported as an Error whose code explains the recorded message (a table maps message prefixes such as `Static series` or `Unknown theme` to codes, and an Excel `validate()` message to `excel_unsupported`, `data_empty`, `data_url_only` or the encodings codes; an unmapped message fails), no non-throwing case gets a throw-class Error, `invalid_option_value` is reported exactly when upstream records `invalid-option-value`, and a `sort_by_invalid` Warning exactly when it records `invalid_sort`. `Validate(input, null).IsValid` holds exactly when no backend with the template throws. `FixtureSet_MatchesItsManifest` fails when a file is missing or truncated: the case counts must equal `manifest.json`, every case must have an expectation line, and `upstream` must equal `FlintUpstream.Version`.
+- `FixtureExpectationTests`: the 956 corpus cases and the 85 crafted cases of 1.0.1 pass (60 crafted cases on 1.0.0). For each recorded backend: a throw is reported as an Error whose code explains the recorded message (a table maps message prefixes such as `Static series` or `Unknown theme` to codes, and an Excel `validate()` message to `excel_unsupported`, `data_empty`, `data_url_only` or the encodings codes; an unmapped message fails), no non-throwing case gets a throw-class Error, `invalid_option_value` is reported exactly when upstream records `invalid-option-value`, and a `sort_by_invalid` Warning exactly when it records `invalid_sort`. `Validate(input, null).IsValid` holds exactly when no backend with the template throws. `FixtureSet_MatchesItsManifest` fails when a file is missing or truncated: the case counts must equal `manifest.json`, every case must have an expectation line, and `upstream` must equal `FlintUpstream.Version`.
 - The crafted cases found one rule that was wrong: Excel was reported to reject every static series, but it reads an array encoding as an unbound channel and assembles a Line Chart with a static series on `color`.
 - `known-failures.txt` is empty: no fixture needed a model or converter fix.
 
 ## Image-Charts on flint-chart 1.0.1
 
 - 617 of the 956 corpus cases have an Image-Charts chart type. Image-Charts throws on 175 of them (129 bound facets, 46 Scatter Plots without quantitative `x` and `y`) and records no warnings.
-- 75 of the 83 crafted cases are recorded on Image-Charts; 41 of them throw there.
+- 77 of the 85 crafted cases are recorded on Image-Charts; 41 of them throw there.
 - Two documents throw on Image-Charts alone: the crafted `sparkline faceted on column` and `sparkline without y` (a Sparkline has no Excel template). Every other Image-Charts throw also throws on another backend that has the template, so on the fixtures adding Image-Charts to the null target changes `IsValid` for those two only.
 - `FixtureExpectationTests` maps the messages `Image-Charts backend does not support chart type` to `unknown_chart_type` or `chart_type_not_on_backend`, and every other `Image-Charts backend` message to `image_charts_unsupported` or an encodings or data code; the shared-core `TypeError`s map as on the other backends.
 

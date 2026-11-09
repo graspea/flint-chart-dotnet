@@ -73,6 +73,11 @@ public sealed class CatalogCrossCheckTests
                             // source: supportsFacets false: both native assemblers throw on a bound facet
                             Assert.That(Has(result, unsupported, channel), Is.True, $"{id}: a bound {channel} throws");
                         }
+                        else if (id == "excel" && chartType == "Grouped Bar Chart" && channel == "color")
+                        {
+                            // source: normalizeChartEncodingAliases (Excel reads color as the group while no group is bound)
+                            Assert.That(Has(result, "unsupported_channel", channel), Is.False, $"{id}: {channel} is read as the group");
+                        }
                         else if (id == "image-charts" && CommittedIr.ImageChartsReads(chartType).Contains(channel))
                         {
                             // source: probes.json imageChartsReads (read though undeclared; the document's lone x and the bound

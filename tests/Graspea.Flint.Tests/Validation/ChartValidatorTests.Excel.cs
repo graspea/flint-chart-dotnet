@@ -201,4 +201,74 @@ public sealed partial class ChartValidatorTests
         });
         Assert.That(Issues(clean, FlintBackend.Excel, "data_empty").Single().Message, Does.Contain("assembles an empty chart"));
     }
+
+    private static void GroupedBar(ChartAssemblyInput i, params (string Channel, EncodingValue Value)[] encodings)
+    {
+        i.ChartSpec.ChartType = ChartType.GroupedBarChart;
+        i.ChartSpec.Encodings = new() { ["x"] = "city", ["y"] = "revenue" };
+        foreach (var (channel, value) in encodings)
+        {
+            i.ChartSpec.Encodings[channel] = value;
+        }
+    }
+
+    // source: src/core/static-series.ts:63-73 (normalizeChartEncodingAliases: color becomes group when group is unbound) and
+    // src/excel/templates/bar.ts:20; probe "grouped bar with a quantitative color and no group"
+    [Test]
+    public void Excel_GroupedBarContinuousColorWithoutGroup_IsReadAsTheGroup()
+    {
+        void Spec(ChartAssemblyInput i) => GroupedBar(i, ("color", Q("cost")));
+        bool Reported(IEnumerable<ValidationIssue> issues) =>
+            issues.Any(i => i.Code == "excel_unsupported" && i.Severity == IssueSeverity.Error && i.Channel == Channel.Color
+                && i.Path == "chart_spec.encodings.color" && i.Message.Contains("continuous grouping", StringComparison.Ordinal));
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(Reported(Issues(Bar(Spec), FlintBackend.Excel)), Is.True, "with rows");
+            Assert.That(Reported(ChartTemplate.Create<JsonObject>(Bar(Spec)).Validate(FlintBackend.Excel).Issues), Is.True, "template");
+            Assert.That(Reported(Issues(StreamedBar(Spec), FlintBackend.Excel)), Is.True, "streamed");
+            Assert.That(Reported(Issues(Bar(Spec))), Is.True, "no backend");
+            Assert.That(Issues(Bar(Spec), FlintBackend.Excel, "unsupported_channel"), Is.Empty);
+        }
+    }
+
+    // source: probe "grouped bar with a nominal color and no group" (assembles on Excel)
+    [Test]
+    public void Excel_GroupedBarNominalColorWithoutGroup_IsNotAnError()
+    {
+        var input = Bar(i => GroupedBar(i, ("color", N("city"))));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(Issues(input, FlintBackend.Excel, "excel_unsupported"), Is.Empty);
+            Assert.That(Issues(input, FlintBackend.Excel, "unsupported_channel"), Is.Empty);
+            Assert.That(Issues(Bar(i => GroupedBar(i, ("color", "city"))), FlintBackend.Excel, "unsupported_channel"), Is.Empty, "shorthand");
+        }
+    }
+
+    // source: normalizeChartEncodingAliases (a bound group wins and color stays a channel Excel never reads); verified with
+    // assembleExcel on flint-chart 1.0.1: a nominal group with a quantitative color assembles, a continuous group throws
+    // whatever the color, and an encoding with an empty field still counts as bound
+    [Test]
+    public void Excel_GroupedBarWithGroup_IgnoresColor()
+    {
+        var nominalGroup = Bar(i => GroupedBar(i, ("group", N("city")), ("color", Q("cost"))));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(Issues(nominalGroup, FlintBackend.Excel, "excel_unsupported"), Is.Empty);
+            Assert.That(Issues(nominalGroup, FlintBackend.Excel, "unsupported_channel").Select(i => i.Path), Is.EqualTo(new[] { "chart_spec.encodings.color" }));
+            Assert.That(Issues(Bar(i => GroupedBar(i, ("group", ""), ("color", Q("cost")))), FlintBackend.Excel, "excel_unsupported"), Is.Empty, "empty group field");
+            Assert.That(Issues(Bar(i => GroupedBar(i, ("group", ""), ("color", Q("cost")))), FlintBackend.Excel, "unsupported_channel").ToList(), Has.Count.EqualTo(1), "empty group field");
+        }
+
+        var continuousGroup = Bar(i => GroupedBar(i, ("group", Q("cost")), ("color", N("city"))));
+        Assert.That(Issues(continuousGroup, FlintBackend.Excel, "excel_unsupported").Select(i => i.Channel?.Name), Is.EqualTo(new[] { "group" }));
+    }
+
+    // source: normalizeChartEncodingAliases (only a Grouped Bar Chart aliases): a Line Chart's group is not aliased, and the Excel Line template does not declare it, so it is reported as before
+    [Test]
+    public void Excel_GroupWithoutColorOnALineChart_IsStillUnsupported()
+    {
+        var line = Line(i => i.ChartSpec.Encodings["group"] = N("city"));
+        Assert.That(Issues(line, FlintBackend.Excel, "unsupported_channel").Select(i => i.Path), Is.EqualTo(new[] { "chart_spec.encodings.group" }));
+    }
 }

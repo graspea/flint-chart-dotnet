@@ -65,7 +65,10 @@ internal static class Excel
                 break;
             case "Grouped Bar Chart":
                 Add(And(NotQuantitative(T("x")), NotQuantitative(T("y"))), "requires one quantitative measure axis for a native Excel bar chart", null, !(types.SpecDecided("x") && types.SpecDecided("y")));
-                Add(IsContinuous(T("group")), "does not support continuous grouping in a native Excel grouped bar chart", "group", !types.ContinuityDecided("group"));
+                if (GroupedSeriesChannel(input) is { } series)
+                {
+                    Add(IsContinuous(T(series)), "does not support continuous grouping in a native Excel grouped bar chart", series, !types.ContinuityDecided(series));
+                }
                 break;
             case "Stacked Bar Chart":
                 Add(And(NotQuantitative(T("x")), NotQuantitative(T("y"))), "requires one quantitative measure axis for a native Excel bar chart", null, !(types.SpecDecided("x") && types.SpecDecided("y")));
@@ -169,6 +172,29 @@ internal static class Excel
 
         return reasons;
     }
+
+    /// <summary>
+    /// The channel <c>assembleExcel</c> reads as the series of a Grouped Bar Chart: <c>normalizeChartEncodingAliases</c>
+    /// (src/core/static-series.ts) moves <c>color</c> to <c>group</c> when <c>group</c> is not bound, so <c>group</c> while
+    /// it is bound (an encoding of any shape, an empty field and a static series included, as the objects the normalized
+    /// encodings hold are all truthy), else <c>color</c> while that is bound, else none. Null on any other chart type.
+    /// </summary>
+    internal static string? GroupedSeriesChannel(ChartAssemblyInput input)
+    {
+        if (input.ChartSpec.ChartType.Name != "Grouped Bar Chart")
+        {
+            return null;
+        }
+
+        bool Bound(string ch) => input.ChartSpec.Encodings.TryGetValue(ch, out var v) && v is not null;
+        return Bound("group") ? "group" : Bound("color") ? "color" : null;
+    }
+
+    /// <summary>Whether Excel reads <paramref name="channel"/> though its template does not declare it: <c>color</c> of a
+    /// Grouped Bar Chart with no <c>group</c> bound, which <c>assembleExcel</c> reads as the group. <c>CatalogCheck</c> of
+    /// Graspea.Flint.CSharp mirrors this.</summary>
+    internal static bool ReadsUndeclared(ChartAssemblyInput input, string channel) =>
+        channel == "color" && GroupedSeriesChannel(input) == "color";
 
     private static string? Property(ChartAssemblyInput input, string key) =>
         input.ChartSpec.ChartProperties is { } p && p.TryGetValue(key, out var v) && Js.Kind(v) == JsonValueKind.String ? v!.GetValue<string>() : null;

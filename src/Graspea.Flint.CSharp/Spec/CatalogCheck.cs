@@ -141,7 +141,7 @@ internal sealed class CatalogCheck
                 continue;
             }
 
-            if (_targets.Length > 0 && !_targets.Any(t => Array.IndexOf(t.Channels, channel) >= 0 || ImageChartsReads(t, encodings, channel)))
+            if (_targets.Length > 0 && !_targets.Any(t => Array.IndexOf(t.Channels, channel) >= 0 || ImageChartsReads(t, encodings, channel) || ExcelReads(t, encodings, channel)))
             {
                 var retiredOn = _targets.Where(t => Retired(t, $"channels[{channel}]") is not null).ToList();
                 if (retiredOn.Count > 0)
@@ -157,6 +157,12 @@ internal sealed class CatalogCheck
             }
         }
     }
+
+    /// <summary><c>color</c> of a Grouped Bar Chart with no <c>group</c> bound, which Excel reads as the group, as the
+    /// validator's <c>Excel.ReadsUndeclared</c>; only a <c>null</c> group falls through (an empty field, an array, a
+    /// string all count as bound).</summary>
+    private bool ExcelReads(BackendTemplateRow t, JsonItem encodings, string channel) =>
+        t.Backend == "excel" && channel == "color" && ChartTypeName == "Grouped Bar Chart" && encodings.Get("group") is not { IsNull: false };
 
     /// <summary>A channel the Image-Charts template leaves undeclared but the assembler reads, as the validator's
     /// <c>ImageCharts.ReadsUndeclared</c> (the core cannot see it): <c>group</c> with a field on every chart type but Pie

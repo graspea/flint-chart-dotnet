@@ -57,6 +57,22 @@ public sealed class CatalogCheckTests
         Assert.That(string.Join(" ", validator), Is.EqualTo(expected));
     }
 
+    // source: ValidationRun.UnsupportedChannel and Excel.ReadsUndeclared (Excel reads the color of a Grouped Bar Chart as the group
+    // while no group is bound; flint-chart 1.0.1 src/core/static-series.ts:63-73). Another template declares color there, so the
+    // core and the validator without a backend never report it; the Excel-only exemption is checked on the validator.
+    [TestCase("{\"x\":\"a\",\"y\":\"b\",\"color\":\"c\"}", "")]
+    [TestCase("{\"x\":\"a\",\"y\":\"b\",\"color\":\"c\",\"group\":null}", "")]
+    [TestCase("{\"x\":\"a\",\"y\":\"b\",\"color\":\"c\",\"group\":\"d\"}", "chart_spec.encodings.color")]
+    [TestCase("{\"x\":\"a\",\"y\":\"b\",\"color\":\"c\",\"group\":\"\"}", "chart_spec.encodings.color")]
+    public void Run_ExcelGroupedBarColor_IsNotFlint111WithoutAGroup(string encodings, string expected)
+    {
+        var json = Doc("Grouped Bar Chart", encodings);
+        var core = Check(json).Where(i => i.Code == "unsupported_channel").Select(i => i.Path);
+        var excel = ChartTemplate.Create<JsonObject>(FlintJson.Deserialize(json)).Validate(FlintBackend.Excel).Issues.Where(i => i.Code == "unsupported_channel").Select(i => i.Path);
+        Assert.That(string.Join(" ", excel), Is.EqualTo(expected));
+        Assert.That(core, Is.Empty);
+    }
+
     // source: ValidationRun.PropertyChecks and Accepts (normalizeChartProperties: a value equal to an option value, or a
     // label ignoring case and surrounding whitespace)
     [TestCase("\"wobbly\"", 1)]
