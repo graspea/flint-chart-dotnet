@@ -1,8 +1,74 @@
 {
   "channelReads": {
     "bases": {
+      "Area Chart|#13": {
+        "case": "Area Chart|#13"
+      },
+      "Bar Table|#11": {
+        "case": "Bar Table|#11"
+      },
+      "Bar Table|#16": {
+        "case": "Bar Table|#16"
+      },
+      "Bar Table|#17": {
+        "case": "Bar Table|#17"
+      },
+      "Bar Table|#18": {
+        "case": "Bar Table|#18"
+      },
+      "Bar Table|#2": {
+        "case": "Bar Table|#2"
+      },
+      "Boxplot|#6": {
+        "case": "Boxplot|#6"
+      },
+      "Bullet Chart|#0": {
+        "case": "Bullet Chart|#0"
+      },
+      "Bump Chart|#4": {
+        "case": "Bump Chart|#4"
+      },
+      "Bump Chart|#5": {
+        "case": "Bump Chart|#5"
+      },
+      "Candlestick Chart|#3": {
+        "case": "Candlestick Chart|#3"
+      },
       "Candlestick Chart|#4": {
         "case": "Candlestick Chart|#4"
+      },
+      "Chart.js: Bubble *|#0": {
+        "case": "Chart.js: Bubble *|#0"
+      },
+      "Chart.js: Bubble *|#1": {
+        "case": "Chart.js: Bubble *|#1"
+      },
+      "Chart.js: Combo *|#2": {
+        "case": "Chart.js: Combo *|#2"
+      },
+      "Chart.js: Doughnut *|#0": {
+        "case": "Chart.js: Doughnut *|#0"
+      },
+      "Chart.js: Doughnut *|#2": {
+        "case": "Chart.js: Doughnut *|#2"
+      },
+      "Chart.js: ECDF|#1": {
+        "case": "Chart.js: ECDF|#1"
+      },
+      "Chart.js: Line|#3": {
+        "case": "Chart.js: Line|#3"
+      },
+      "Chart.js: Range Area|#1": {
+        "case": "Chart.js: Range Area|#1"
+      },
+      "Chart.js: Range Area|#3": {
+        "case": "Chart.js: Range Area|#3"
+      },
+      "Chart.js: Slope|#2": {
+        "case": "Chart.js: Slope|#2"
+      },
+      "Choropleth|#1": {
+        "case": "Choropleth|#1"
       },
       "Connected Scatter Plot|#4": {
         "case": "Connected Scatter Plot|#4"
@@ -10,14 +76,62 @@
       "Connected Scatter Plot|#5": {
         "case": "Connected Scatter Plot|#5"
       },
+      "Connected Scatter Plot|#7": {
+        "case": "Connected Scatter Plot|#7"
+      },
+      "Density Contour|#0": {
+        "case": "Density Contour|#0"
+      },
+      "Density Plot|#1": {
+        "case": "Density Plot|#1"
+      },
+      "Density Plot|#4": {
+        "case": "Density Plot|#4"
+      },
+      "Density Plot|#5": {
+        "case": "Density Plot|#5"
+      },
       "Donut Chart|#4": {
         "case": "Donut Chart|#4"
+      },
+      "ECDF Plot|#3": {
+        "case": "ECDF Plot|#3"
+      },
+      "ECDF Plot|#7": {
+        "case": "ECDF Plot|#7"
+      },
+      "ECharts: Calendar Heatmap *|#0": {
+        "case": "ECharts: Calendar Heatmap *|#0"
+      },
+      "ECharts: Facet Small|#2": {
+        "case": "ECharts: Facet Small|#2"
+      },
+      "ECharts: Facet Small|#4": {
+        "case": "ECharts: Facet Small|#4"
       },
       "ECharts: Funnel|#0": {
         "case": "ECharts: Funnel|#0"
       },
+      "ECharts: Gauge|#0": {
+        "case": "ECharts: Gauge|#0"
+      },
+      "ECharts: Gauge|#1": {
+        "case": "ECharts: Gauge|#1"
+      },
+      "ECharts: Network Graph *|#0": {
+        "case": "ECharts: Network Graph *|#0"
+      },
+      "ECharts: Parallel Coordinates *|#0": {
+        "case": "ECharts: Parallel Coordinates *|#0"
+      },
+      "ECharts: Parallel Coordinates *|#1": {
+        "case": "ECharts: Parallel Coordinates *|#1"
+      },
       "ECharts: Radar|#0": {
         "case": "ECharts: Radar|#0"
+      },
+      "ECharts: Sankey|#1": {
+        "case": "ECharts: Sankey|#1"
       },
       "ECharts: Sunburst|#0": {
         "case": "ECharts: Sunburst|#0"
@@ -25,20 +139,50 @@
       "ECharts: Sunburst|#1": {
         "case": "ECharts: Sunburst|#1"
       },
+      "ECharts: Tree *|#0": {
+        "case": "ECharts: Tree *|#0"
+      },
+      "ECharts: Tree *|#1": {
+        "case": "ECharts: Tree *|#1"
+      },
       "ECharts: Treemap|#0": {
         "case": "ECharts: Treemap|#0"
       },
       "ECharts: Treemap|#1": {
         "case": "ECharts: Treemap|#1"
       },
+      "Facet: Columns|#0": {
+        "case": "Facet: Columns|#0"
+      },
+      "Facet: Rows|#0": {
+        "case": "Facet: Rows|#0"
+      },
+      "Gallery: KPI Card|#0": {
+        "case": "Gallery: KPI Card|#0"
+      },
+      "Gallery: KPI Card|#1": {
+        "case": "Gallery: KPI Card|#1"
+      },
       "Gallery: Pie|#0": {
         "case": "Gallery: Pie|#0"
+      },
+      "Gallery: Rose|#0": {
+        "case": "Gallery: Rose|#0"
+      },
+      "Gantt Chart|#1": {
+        "case": "Gantt Chart|#1"
+      },
+      "Gantt Chart|#2": {
+        "case": "Gantt Chart|#2"
       },
       "Grouped Bar Chart|#1": {
         "case": "Grouped Bar Chart|#1"
       },
       "Grouped Bar Chart|#11": {
         "case": "Grouped Bar Chart|#11"
+      },
+      "Heatmap|#0": {
+        "case": "Heatmap|#0"
       },
       "Histogram|#1": {
         "case": "Histogram|#1"
@@ -52,6 +196,9 @@
       "Image-Charts: Core Templates|#5": {
         "case": "Image-Charts: Core Templates|#5"
       },
+      "KPI Card|#1": {
+        "case": "KPI Card|#1"
+      },
       "Line Chart|#16": {
         "case": "Line Chart|#16"
       },
@@ -64,14 +211,47 @@
       "Line/Area Stretch|#10": {
         "case": "Line/Area Stretch|#10"
       },
+      "Lollipop Chart|#1": {
+        "case": "Lollipop Chart|#1"
+      },
+      "Lollipop Chart|#2": {
+        "case": "Lollipop Chart|#2"
+      },
+      "Lollipop Chart|#3": {
+        "case": "Lollipop Chart|#3"
+      },
+      "Map|#0": {
+        "case": "Map|#0"
+      },
+      "Marginal Plot|#3": {
+        "case": "Marginal Plot|#3"
+      },
+      "Marginal Plot|#4": {
+        "case": "Marginal Plot|#4"
+      },
       "Omni: Grouped Bar|#0": {
         "case": "Omni: Grouped Bar|#0"
+      },
+      "Omni: Line|#0": {
+        "case": "Omni: Line|#0"
       },
       "Omni: Sunburst|#0": {
         "case": "Omni: Sunburst|#0"
       },
       "Plotly: Core Templates|#3": {
         "case": "Plotly: Core Templates|#3"
+      },
+      "Plotly: Facets|#1": {
+        "case": "Plotly: Facets|#1"
+      },
+      "Plotly: Facets|#2": {
+        "case": "Plotly: Facets|#2"
+      },
+      "Probe|#15": {
+        "case": "Probe|#15"
+      },
+      "Probe|#19": {
+        "case": "Probe|#19"
       },
       "Probe|#29": {
         "case": "Probe|#29"
@@ -85,11 +265,23 @@
       "Probe|#54": {
         "case": "Probe|#54"
       },
+      "Probe|#60": {
+        "case": "Probe|#60"
+      },
+      "Probe|#61": {
+        "case": "Probe|#61"
+      },
       "Probe|#62": {
         "case": "Probe|#62"
       },
+      "Probe|#63": {
+        "case": "Probe|#63"
+      },
       "Probe|#64": {
         "case": "Probe|#64"
+      },
+      "Probe|#65": {
+        "case": "Probe|#65"
       },
       "Probe|#66": {
         "case": "Probe|#66"
@@ -97,14 +289,95 @@
       "Probe|#69": {
         "case": "Probe|#69"
       },
+      "Probe|#70": {
+        "case": "Probe|#70"
+      },
+      "Probe|#71": {
+        "case": "Probe|#71"
+      },
+      "Probe|#72": {
+        "case": "Probe|#72"
+      },
+      "Probe|#73": {
+        "case": "Probe|#73"
+      },
+      "Probe|#74": {
+        "case": "Probe|#74"
+      },
+      "Probe|#75": {
+        "case": "Probe|#75"
+      },
+      "Probe|#76": {
+        "case": "Probe|#76"
+      },
+      "Probe|#77": {
+        "case": "Probe|#77"
+      },
+      "Probe|#78": {
+        "case": "Probe|#78"
+      },
+      "Probe|#79": {
+        "case": "Probe|#79"
+      },
+      "Probe|#80": {
+        "case": "Probe|#80"
+      },
+      "Probe|#81": {
+        "case": "Probe|#81"
+      },
+      "Probe|#82": {
+        "case": "Probe|#82"
+      },
       "Probe|#84": {
         "case": "Probe|#84"
+      },
+      "Probe|#85": {
+        "case": "Probe|#85"
       },
       "Pyramid Chart|#8": {
         "case": "Pyramid Chart|#8"
       },
       "Radar Chart|#0": {
         "case": "Radar Chart|#0"
+      },
+      "Radar Chart|#3": {
+        "case": "Radar Chart|#3"
+      },
+      "Range Area Chart|#7": {
+        "case": "Range Area Chart|#7"
+      },
+      "Ranged Dot Plot|#1": {
+        "case": "Ranged Dot Plot|#1"
+      },
+      "Regression|#1": {
+        "case": "Regression|#1"
+      },
+      "Regression|#10": {
+        "case": "Regression|#10"
+      },
+      "Regression|#11": {
+        "case": "Regression|#11"
+      },
+      "Regression|#4": {
+        "case": "Regression|#4"
+      },
+      "Ridgeline Plot|#2": {
+        "case": "Ridgeline Plot|#2"
+      },
+      "Ridgeline Plot|#3": {
+        "case": "Ridgeline Plot|#3"
+      },
+      "Ridgeline Plot|#7": {
+        "case": "Ridgeline Plot|#7"
+      },
+      "Rose Chart|#3": {
+        "case": "Rose Chart|#3"
+      },
+      "Rose Chart|#6": {
+        "case": "Rose Chart|#6"
+      },
+      "Rose Chart|#7": {
+        "case": "Rose Chart|#7"
       },
       "Scatter Plot|#13": {
         "case": "Scatter Plot|#13"
@@ -118,6 +391,15 @@
       "Semantic Context|#6": {
         "case": "Semantic Context|#6"
       },
+      "Slope Chart|#5": {
+        "case": "Slope Chart|#5"
+      },
+      "Slope Chart|#7": {
+        "case": "Slope Chart|#7"
+      },
+      "Slope Chart|#8": {
+        "case": "Slope Chart|#8"
+      },
       "Snap-to-Bound|#11": {
         "case": "Snap-to-Bound|#11"
       },
@@ -126,6 +408,30 @@
       },
       "Sparkline|#7": {
         "case": "Sparkline|#7"
+      },
+      "Streamgraph|#3": {
+        "case": "Streamgraph|#3"
+      },
+      "Strip Plot|#1": {
+        "case": "Strip Plot|#1"
+      },
+      "Strip Plot|#2": {
+        "case": "Strip Plot|#2"
+      },
+      "Table|#0": {
+        "case": "Table|#0"
+      },
+      "Violin Plot|#1": {
+        "case": "Violin Plot|#1"
+      },
+      "Violin Plot|#6": {
+        "case": "Violin Plot|#6"
+      },
+      "Violin Plot|#7": {
+        "case": "Violin Plot|#7"
+      },
+      "Waterfall Chart|#1": {
+        "case": "Waterfall Chart|#1"
       },
       "Waterfall Chart|#4": {
         "case": "Waterfall Chart|#4"
@@ -175,6 +481,3492 @@
           "y": {
             "field": "measure"
           }
+        }
+      }
+    },
+    "layoutReads": {
+      "chartjs": {
+        "Area Chart": {
+          "Area Chart|#13": [
+            "group"
+          ],
+          "Image-Charts: Core Templates|#3": [
+            "group"
+          ],
+          "Plotly: Core Templates|#3": [],
+          "Probe|#71": [],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Bar Chart": {
+          "ECharts: Facet Small|#2": [
+            "group"
+          ],
+          "ECharts: Facet Small|#4": [
+            "group"
+          ],
+          "Probe|#15": [],
+          "Probe|#42": [
+            "group"
+          ],
+          "Probe|#44": [],
+          "Probe|#69": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Bubble Chart": {
+          "Chart.js: Bubble *|#0": [],
+          "Chart.js: Bubble *|#1": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Bump Chart": {
+          "Bump Chart|#4": [
+            "group"
+          ],
+          "Bump Chart|#5": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Combo Chart": {
+          "Chart.js: Combo *|#2": [
+            "color",
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "color",
+            "group"
+          ],
+          "x category, y measure": [
+            "color",
+            "group"
+          ],
+          "y category, x measure": [
+            "color",
+            "group"
+          ],
+          "y measure": []
+        },
+        "Connected Scatter Plot": {
+          "Connected Scatter Plot|#4": [],
+          "Connected Scatter Plot|#5": [
+            "group"
+          ],
+          "Connected Scatter Plot|#7": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Doughnut Chart": {
+          "Chart.js: Doughnut *|#0": [],
+          "Chart.js: Doughnut *|#2": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "ECDF Plot": {
+          "Chart.js: ECDF|#1": [
+            "y"
+          ],
+          "ECDF Plot|#3": [
+            "group",
+            "y"
+          ],
+          "ECDF Plot|#7": [
+            "group",
+            "y"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "y"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group",
+            "y"
+          ],
+          "y measure": []
+        },
+        "Gantt Chart": {
+          "Gantt Chart|#1": [],
+          "Gantt Chart|#2": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Grouped Bar Chart": {
+          "Grouped Bar Chart|#1": [],
+          "Grouped Bar Chart|#11": [],
+          "Omni: Grouped Bar|#0": [
+            "detail"
+          ],
+          "Probe|#74": [],
+          "Probe|#80": [],
+          "Probe|#84": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Histogram": {
+          "Histogram|#1": [
+            "y"
+          ],
+          "Histogram|#3": [
+            "group",
+            "y"
+          ],
+          "Probe|#85": [],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "y"
+          ],
+          "x category, y measure": [],
+          "y category, x measure": [
+            "group",
+            "y"
+          ],
+          "y measure": []
+        },
+        "Line Chart": {
+          "Chart.js: Line|#3": [
+            "group"
+          ],
+          "Line Chart|#16": [
+            "group"
+          ],
+          "Line Chart|#17": [
+            "detail"
+          ],
+          "Line Chart|#9": [],
+          "Omni: Line|#0": [
+            "detail"
+          ],
+          "Plotly: Facets|#1": [
+            "group"
+          ],
+          "Probe|#29": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Lollipop Chart": {
+          "Lollipop Chart|#1": [],
+          "Lollipop Chart|#2": [
+            "group"
+          ],
+          "Lollipop Chart|#3": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Pie Chart": {
+          "Gallery: Pie|#0": [],
+          "Probe|#62": [],
+          "Probe|#63": [],
+          "Probe|#65": [
+            "group"
+          ],
+          "Probe|#77": [],
+          "Probe|#81": [],
+          "Probe|#82": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Radar Chart": {
+          "Probe|#66": [
+            "group"
+          ],
+          "Probe|#72": [],
+          "Radar Chart|#0": [],
+          "Radar Chart|#3": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Range Area Chart": {
+          "Chart.js: Range Area|#1": [
+            "group"
+          ],
+          "Chart.js: Range Area|#3": [
+            "group"
+          ],
+          "Range Area Chart|#7": [
+            "detail",
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Rose Chart": {
+          "Gallery: Rose|#0": [
+            "group"
+          ],
+          "Rose Chart|#3": [],
+          "Rose Chart|#6": [
+            "group"
+          ],
+          "Rose Chart|#7": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Scatter Plot": {
+          "Facet: Columns|#0": [
+            "group"
+          ],
+          "Facet: Rows|#0": [
+            "group"
+          ],
+          "Image-Charts: Core Templates|#5": [
+            "group"
+          ],
+          "Plotly: Facets|#2": [
+            "group"
+          ],
+          "Probe|#75": [],
+          "Probe|#76": [],
+          "Scatter Plot|#13": [
+            "group"
+          ],
+          "Scatter Plot|#25": [
+            "group"
+          ],
+          "Scatter Plot|#6": [],
+          "Semantic Context|#6": [],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Slope Chart": {
+          "Chart.js: Slope|#2": [
+            "group"
+          ],
+          "Slope Chart|#5": [
+            "group"
+          ],
+          "Slope Chart|#7": [
+            "group"
+          ],
+          "Slope Chart|#8": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Stacked Bar Chart": {
+          "Probe|#73": [
+            "group"
+          ],
+          "Probe|#79": [
+            "group"
+          ],
+          "Snap-to-Bound|#11": [
+            "group"
+          ],
+          "slice and value": [
+            "group"
+          ],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Strip Plot": {
+          "Strip Plot|#1": [
+            "group"
+          ],
+          "Strip Plot|#2": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Waterfall Chart": {
+          "Waterfall Chart|#1": [],
+          "Waterfall Chart|#4": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        }
+      },
+      "echarts": {
+        "Area Chart": {
+          "Area Chart|#13": [
+            "group"
+          ],
+          "Image-Charts: Core Templates|#3": [
+            "group"
+          ],
+          "Plotly: Core Templates|#3": [
+            "group"
+          ],
+          "Probe|#71": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Bar Chart": {
+          "ECharts: Facet Small|#2": [
+            "group"
+          ],
+          "ECharts: Facet Small|#4": [
+            "group"
+          ],
+          "Probe|#15": [
+            "group"
+          ],
+          "Probe|#42": [
+            "group"
+          ],
+          "Probe|#44": [],
+          "Probe|#69": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Boxplot": {
+          "Boxplot|#6": [
+            "group"
+          ],
+          "Probe|#54": [
+            "group",
+            "y2"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "y2"
+          ],
+          "x category, y measure": [
+            "group",
+            "y2"
+          ],
+          "y category, x measure": [
+            "group",
+            "x2"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Bullet Chart": {
+          "Bullet Chart|#0": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Bump Chart": {
+          "Bump Chart|#4": [
+            "group"
+          ],
+          "Bump Chart|#5": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "x category, y measure": [
+            "group",
+            "y2"
+          ],
+          "y category, x measure": [
+            "group",
+            "x2"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Calendar Heatmap": {
+          "ECharts: Calendar Heatmap *|#0": [
+            "column",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "group",
+            "row"
+          ]
+        },
+        "Candlestick Chart": {
+          "Candlestick Chart|#3": [
+            "color",
+            "group",
+            "y"
+          ],
+          "Candlestick Chart|#4": [
+            "color",
+            "group",
+            "y"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "color",
+            "group"
+          ],
+          "x category, y measure": [
+            "color",
+            "group"
+          ],
+          "y category, x measure": [
+            "color",
+            "group"
+          ],
+          "y measure": [
+            "color",
+            "group"
+          ]
+        },
+        "Connected Scatter Plot": {
+          "Connected Scatter Plot|#4": [
+            "x2"
+          ],
+          "Connected Scatter Plot|#5": [
+            "group",
+            "x2"
+          ],
+          "Connected Scatter Plot|#7": [
+            "group",
+            "x2"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "x category, y measure": [
+            "group",
+            "y2"
+          ],
+          "y category, x measure": [
+            "group",
+            "x2"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Density Plot": {
+          "Density Plot|#1": [
+            "y"
+          ],
+          "Density Plot|#4": [
+            "y"
+          ],
+          "Density Plot|#5": [
+            "group",
+            "y"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "y"
+          ],
+          "x category, y measure": [
+            "group",
+            "y"
+          ],
+          "y category, x measure": [
+            "group",
+            "y"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "ECDF Plot": {
+          "Chart.js: ECDF|#1": [
+            "y"
+          ],
+          "ECDF Plot|#3": [
+            "group",
+            "x2",
+            "y"
+          ],
+          "ECDF Plot|#7": [
+            "group",
+            "x2",
+            "y"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "x2",
+            "y",
+            "y2"
+          ],
+          "x category, y measure": [
+            "group",
+            "y",
+            "y2"
+          ],
+          "y category, x measure": [
+            "group",
+            "x2",
+            "y"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Funnel Chart": {
+          "ECharts: Funnel|#0": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ]
+        },
+        "Gantt Chart": {
+          "Gantt Chart|#1": [],
+          "Gantt Chart|#2": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Gauge Chart": {
+          "ECharts: Gauge|#0": [
+            "color",
+            "group"
+          ],
+          "ECharts: Gauge|#1": [
+            "color",
+            "group"
+          ],
+          "slice and value": [
+            "color"
+          ],
+          "x and y measures": [
+            "color",
+            "group"
+          ],
+          "x category, y measure": [
+            "color",
+            "group"
+          ],
+          "y category, x measure": [
+            "color",
+            "group"
+          ],
+          "y measure": [
+            "color",
+            "group"
+          ]
+        },
+        "Grouped Bar Chart": {
+          "Grouped Bar Chart|#1": [],
+          "Grouped Bar Chart|#11": [],
+          "Omni: Grouped Bar|#0": [],
+          "Probe|#74": [],
+          "Probe|#80": [],
+          "Probe|#84": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Heatmap": {
+          "Heatmap|#0": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Histogram": {
+          "Histogram|#1": [
+            "y"
+          ],
+          "Histogram|#3": [
+            "group",
+            "y"
+          ],
+          "Probe|#85": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "y"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group",
+            "y"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Line Chart": {
+          "Chart.js: Line|#3": [
+            "group"
+          ],
+          "Line Chart|#16": [
+            "group"
+          ],
+          "Line Chart|#17": [
+            "detail"
+          ],
+          "Line Chart|#9": [],
+          "Omni: Line|#0": [
+            "detail"
+          ],
+          "Plotly: Facets|#1": [
+            "group"
+          ],
+          "Probe|#29": [
+            "group",
+            "y2"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "x category, y measure": [
+            "group",
+            "y2"
+          ],
+          "y category, x measure": [
+            "group",
+            "x2"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Lollipop Chart": {
+          "Lollipop Chart|#1": [],
+          "Lollipop Chart|#2": [
+            "group"
+          ],
+          "Lollipop Chart|#3": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Network Graph": {
+          "ECharts: Network Graph *|#0": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ]
+        },
+        "Parallel Coordinates": {
+          "ECharts: Parallel Coordinates *|#0": [
+            "column",
+            "row"
+          ],
+          "ECharts: Parallel Coordinates *|#1": [
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "group",
+            "row"
+          ]
+        },
+        "Pie Chart": {
+          "Gallery: Pie|#0": [],
+          "Probe|#62": [
+            "group"
+          ],
+          "Probe|#63": [],
+          "Probe|#65": [
+            "group"
+          ],
+          "Probe|#77": [],
+          "Probe|#81": [],
+          "Probe|#82": [],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Pyramid Chart": {
+          "Pyramid Chart|#8": [
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "group",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "group",
+            "row"
+          ]
+        },
+        "Radar Chart": {
+          "Probe|#66": [
+            "group"
+          ],
+          "Probe|#72": [
+            "group"
+          ],
+          "Radar Chart|#0": [],
+          "Radar Chart|#3": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Range Area Chart": {
+          "Chart.js: Range Area|#1": [
+            "group"
+          ],
+          "Chart.js: Range Area|#3": [
+            "group"
+          ],
+          "Range Area Chart|#7": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Ranged Dot Plot": {
+          "Ranged Dot Plot|#1": [
+            "column",
+            "group",
+            "row",
+            "x2"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row",
+            "x2",
+            "y2"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row",
+            "y2"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row",
+            "x2"
+          ],
+          "y measure": [
+            "column",
+            "group",
+            "row"
+          ]
+        },
+        "Regression": {
+          "Regression|#1": [
+            "x2",
+            "y2"
+          ],
+          "Regression|#10": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "Regression|#11": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "Regression|#4": [
+            "x2"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "x category, y measure": [
+            "group",
+            "y2"
+          ],
+          "y category, x measure": [
+            "group",
+            "x2"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Rose Chart": {
+          "Gallery: Rose|#0": [
+            "group"
+          ],
+          "Rose Chart|#3": [],
+          "Rose Chart|#6": [
+            "group"
+          ],
+          "Rose Chart|#7": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Sankey Diagram": {
+          "ECharts: Sankey|#1": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ]
+        },
+        "Scatter Plot": {
+          "Facet: Columns|#0": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "Facet: Rows|#0": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "Image-Charts: Core Templates|#5": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "Plotly: Facets|#2": [
+            "group",
+            "y2"
+          ],
+          "Probe|#75": [
+            "group"
+          ],
+          "Probe|#76": [
+            "group"
+          ],
+          "Scatter Plot|#13": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "Scatter Plot|#25": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "Scatter Plot|#6": [
+            "x2",
+            "y2"
+          ],
+          "Semantic Context|#6": [
+            "x2"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "x2",
+            "y2"
+          ],
+          "x category, y measure": [
+            "group",
+            "y2"
+          ],
+          "y category, x measure": [
+            "group",
+            "x2"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Slope Chart": {
+          "Chart.js: Slope|#2": [
+            "group",
+            "y2"
+          ],
+          "Slope Chart|#5": [],
+          "Slope Chart|#7": [
+            "group"
+          ],
+          "Slope Chart|#8": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "y2"
+          ],
+          "x category, y measure": [
+            "group",
+            "y2"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Stacked Bar Chart": {
+          "Probe|#73": [
+            "group"
+          ],
+          "Probe|#79": [
+            "group"
+          ],
+          "Snap-to-Bound|#11": [
+            "group"
+          ],
+          "slice and value": [
+            "group"
+          ],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Streamgraph": {
+          "Streamgraph|#3": [
+            "detail"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Strip Plot": {
+          "Strip Plot|#1": [
+            "group",
+            "y2"
+          ],
+          "Strip Plot|#2": [
+            "group",
+            "y2"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group",
+            "y2"
+          ],
+          "x category, y measure": [
+            "group",
+            "y2"
+          ],
+          "y category, x measure": [
+            "group",
+            "x2"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Sunburst Chart": {
+          "ECharts: Sunburst|#0": [],
+          "ECharts: Sunburst|#1": [
+            "row"
+          ],
+          "Omni: Sunburst|#0": [
+            "row"
+          ],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Tree": {
+          "ECharts: Tree *|#0": [
+            "row"
+          ],
+          "ECharts: Tree *|#1": [],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Treemap": {
+          "ECharts: Treemap|#0": [],
+          "ECharts: Treemap|#1": [
+            "row"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Waterfall Chart": {
+          "Waterfall Chart|#1": [],
+          "Waterfall Chart|#4": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        }
+      },
+      "plotly": {
+        "Area Chart": {
+          "Area Chart|#13": [
+            "group",
+            "shape",
+            "strokeDash"
+          ],
+          "Image-Charts: Core Templates|#3": [
+            "group"
+          ],
+          "Plotly: Core Templates|#3": [
+            "group"
+          ],
+          "Probe|#71": [],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Bar Chart": {
+          "ECharts: Facet Small|#2": [
+            "group",
+            "shape",
+            "strokeDash"
+          ],
+          "ECharts: Facet Small|#4": [
+            "group",
+            "shape",
+            "strokeDash"
+          ],
+          "Probe|#15": [],
+          "Probe|#42": [
+            "group"
+          ],
+          "Probe|#44": [],
+          "Probe|#69": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Bar Table": {
+          "Bar Table|#11": [],
+          "Bar Table|#16": [
+            "group"
+          ],
+          "Bar Table|#17": [
+            "group"
+          ],
+          "Bar Table|#18": [
+            "group"
+          ],
+          "Bar Table|#2": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Boxplot": {
+          "Boxplot|#6": [
+            "group"
+          ],
+          "Probe|#54": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Bullet Chart": {
+          "Bullet Chart|#0": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Bump Chart": {
+          "Bump Chart|#4": [
+            "group"
+          ],
+          "Bump Chart|#5": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Candlestick Chart": {
+          "Candlestick Chart|#3": [
+            "color",
+            "group",
+            "shape",
+            "strokeDash",
+            "y"
+          ],
+          "Candlestick Chart|#4": [
+            "y"
+          ],
+          "slice and value": [
+            "y"
+          ],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [
+            "y"
+          ],
+          "y measure": []
+        },
+        "Choropleth": {
+          "Choropleth|#1": [
+            "column",
+            "row",
+            "x"
+          ],
+          "slice and value": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "column",
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "column",
+            "row",
+            "y"
+          ],
+          "y measure": [
+            "column",
+            "row",
+            "x"
+          ]
+        },
+        "Connected Scatter Plot": {
+          "Connected Scatter Plot|#4": [],
+          "Connected Scatter Plot|#5": [
+            "group"
+          ],
+          "Connected Scatter Plot|#7": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Density Contour": {
+          "Density Contour|#0": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Density Plot": {
+          "Density Plot|#1": [
+            "y"
+          ],
+          "Density Plot|#4": [
+            "y"
+          ],
+          "Density Plot|#5": [
+            "group",
+            "y"
+          ],
+          "slice and value": [
+            "y"
+          ],
+          "x and y measures": [
+            "group",
+            "y"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group",
+            "y"
+          ],
+          "y measure": []
+        },
+        "Donut Chart": {
+          "Donut Chart|#4": [
+            "column",
+            "row",
+            "x"
+          ],
+          "Probe|#70": [
+            "row",
+            "x"
+          ],
+          "Probe|#78": [
+            "row",
+            "x"
+          ],
+          "slice and value": [
+            "column",
+            "row",
+            "x"
+          ],
+          "x and y measures": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "column",
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "column",
+            "row",
+            "y"
+          ],
+          "y measure": [
+            "column",
+            "row",
+            "x"
+          ]
+        },
+        "ECDF Plot": {
+          "Chart.js: ECDF|#1": [
+            "y"
+          ],
+          "ECDF Plot|#3": [
+            "group",
+            "y"
+          ],
+          "ECDF Plot|#7": [
+            "group",
+            "shape",
+            "strokeDash",
+            "y"
+          ],
+          "slice and value": [
+            "y"
+          ],
+          "x and y measures": [
+            "group",
+            "y"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group",
+            "y"
+          ],
+          "y measure": []
+        },
+        "Funnel Chart": {
+          "ECharts: Funnel|#0": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x"
+          ],
+          "slice and value": [
+            "column",
+            "row",
+            "x"
+          ],
+          "x and y measures": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "color",
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "color",
+            "column",
+            "group",
+            "row",
+            "x"
+          ]
+        },
+        "Gantt Chart": {
+          "Gantt Chart|#1": [],
+          "Gantt Chart|#2": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Gauge Chart": {
+          "ECharts: Gauge|#0": [
+            "color",
+            "group",
+            "x"
+          ],
+          "ECharts: Gauge|#1": [
+            "color",
+            "group",
+            "x"
+          ],
+          "slice and value": [
+            "row",
+            "x"
+          ],
+          "x and y measures": [
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "row",
+            "y"
+          ],
+          "y measure": [
+            "row",
+            "x"
+          ]
+        },
+        "Grouped Bar Chart": {
+          "Grouped Bar Chart|#1": [],
+          "Grouped Bar Chart|#11": [],
+          "Omni: Grouped Bar|#0": [
+            "detail"
+          ],
+          "Probe|#74": [],
+          "Probe|#80": [],
+          "Probe|#84": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Heatmap": {
+          "Heatmap|#0": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Histogram": {
+          "Histogram|#1": [
+            "y"
+          ],
+          "Histogram|#3": [
+            "group",
+            "y"
+          ],
+          "Probe|#85": [],
+          "slice and value": [
+            "y"
+          ],
+          "x and y measures": [
+            "group",
+            "y"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group",
+            "y"
+          ],
+          "y measure": []
+        },
+        "KPI Card": {
+          "Gallery: KPI Card|#0": [
+            "x"
+          ],
+          "Gallery: KPI Card|#1": [
+            "x"
+          ],
+          "KPI Card|#1": [
+            "row",
+            "x"
+          ],
+          "slice and value": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "column",
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "column",
+            "row",
+            "y"
+          ],
+          "y measure": [
+            "column",
+            "row",
+            "x"
+          ]
+        },
+        "Line Chart": {
+          "Chart.js: Line|#3": [
+            "group",
+            "shape"
+          ],
+          "Line Chart|#16": [
+            "group"
+          ],
+          "Line Chart|#17": [
+            "detail"
+          ],
+          "Line Chart|#9": [],
+          "Omni: Line|#0": [
+            "detail"
+          ],
+          "Plotly: Facets|#1": [
+            "group",
+            "shape"
+          ],
+          "Probe|#29": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Lollipop Chart": {
+          "Lollipop Chart|#1": [],
+          "Lollipop Chart|#2": [
+            "group"
+          ],
+          "Lollipop Chart|#3": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Map": {
+          "Map|#0": [
+            "column",
+            "row",
+            "x"
+          ],
+          "Probe|#19": [
+            "group",
+            "row",
+            "x"
+          ],
+          "slice and value": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "column",
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "column",
+            "row",
+            "y"
+          ],
+          "y measure": [
+            "column",
+            "row",
+            "x"
+          ]
+        },
+        "Pie Chart": {
+          "Gallery: Pie|#0": [
+            "column",
+            "row",
+            "x"
+          ],
+          "Probe|#62": [
+            "column",
+            "row",
+            "x"
+          ],
+          "Probe|#63": [
+            "row",
+            "x"
+          ],
+          "Probe|#65": [
+            "group",
+            "row",
+            "x"
+          ],
+          "Probe|#77": [
+            "row",
+            "x"
+          ],
+          "Probe|#81": [
+            "row",
+            "x"
+          ],
+          "Probe|#82": [
+            "row",
+            "x"
+          ],
+          "slice and value": [
+            "column",
+            "row",
+            "x"
+          ],
+          "x and y measures": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "column",
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "column",
+            "row",
+            "y"
+          ],
+          "y measure": [
+            "column",
+            "row",
+            "x"
+          ]
+        },
+        "Pyramid Chart": {
+          "Pyramid Chart|#8": [
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "group",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "row"
+          ]
+        },
+        "Radar Chart": {
+          "Probe|#66": [
+            "group"
+          ],
+          "Probe|#72": [],
+          "Radar Chart|#0": [],
+          "Radar Chart|#3": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Range Area Chart": {
+          "Chart.js: Range Area|#1": [
+            "group"
+          ],
+          "Chart.js: Range Area|#3": [
+            "group"
+          ],
+          "Range Area Chart|#7": [
+            "detail",
+            "group",
+            "shape",
+            "strokeDash"
+          ],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Ranged Dot Plot": {
+          "Ranged Dot Plot|#1": [
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "row"
+          ]
+        },
+        "Regression": {
+          "Regression|#1": [],
+          "Regression|#10": [
+            "group"
+          ],
+          "Regression|#11": [
+            "group",
+            "shape",
+            "strokeDash"
+          ],
+          "Regression|#4": [],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Rose Chart": {
+          "Gallery: Rose|#0": [
+            "column",
+            "group",
+            "row"
+          ],
+          "Rose Chart|#3": [
+            "column",
+            "row"
+          ],
+          "Rose Chart|#6": [
+            "column",
+            "group",
+            "row",
+            "shape",
+            "strokeDash"
+          ],
+          "Rose Chart|#7": [
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "row"
+          ]
+        },
+        "Scatter Plot": {
+          "Facet: Columns|#0": [
+            "group",
+            "strokeDash"
+          ],
+          "Facet: Rows|#0": [
+            "group",
+            "strokeDash"
+          ],
+          "Image-Charts: Core Templates|#5": [
+            "group"
+          ],
+          "Plotly: Facets|#2": [
+            "group",
+            "strokeDash"
+          ],
+          "Probe|#75": [],
+          "Probe|#76": [],
+          "Scatter Plot|#13": [
+            "group"
+          ],
+          "Scatter Plot|#25": [
+            "group"
+          ],
+          "Scatter Plot|#6": [],
+          "Semantic Context|#6": [],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Slope Chart": {
+          "Chart.js: Slope|#2": [
+            "group"
+          ],
+          "Slope Chart|#5": [
+            "group"
+          ],
+          "Slope Chart|#7": [
+            "group"
+          ],
+          "Slope Chart|#8": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Sparkline": {
+          "Probe|#60": [
+            "row"
+          ],
+          "Probe|#61": [
+            "column",
+            "row"
+          ],
+          "Sparkline|#0": [
+            "column",
+            "row"
+          ],
+          "Sparkline|#7": [
+            "column",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "row"
+          ],
+          "y category, x measure": [
+            "column",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "row"
+          ]
+        },
+        "Stacked Bar Chart": {
+          "Probe|#73": [
+            "group"
+          ],
+          "Probe|#79": [
+            "group"
+          ],
+          "Snap-to-Bound|#11": [
+            "group"
+          ],
+          "slice and value": [
+            "group"
+          ],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Streamgraph": {
+          "Streamgraph|#3": [
+            "detail"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Strip Plot": {
+          "Strip Plot|#1": [
+            "group"
+          ],
+          "Strip Plot|#2": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Violin Plot": {
+          "Violin Plot|#1": [
+            "group",
+            "shape",
+            "strokeDash"
+          ],
+          "Violin Plot|#6": [
+            "group"
+          ],
+          "Violin Plot|#7": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": []
+        },
+        "Waterfall Chart": {
+          "Waterfall Chart|#1": [],
+          "Waterfall Chart|#4": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        }
+      },
+      "vegalite": {
+        "Area Chart": {
+          "Area Chart|#13": [
+            "group"
+          ],
+          "Image-Charts: Core Templates|#3": [
+            "group"
+          ],
+          "Plotly: Core Templates|#3": [
+            "group"
+          ],
+          "Probe|#71": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Bar Chart": {
+          "ECharts: Facet Small|#2": [
+            "group"
+          ],
+          "ECharts: Facet Small|#4": [
+            "group"
+          ],
+          "Probe|#15": [
+            "group",
+            "theta"
+          ],
+          "Probe|#42": [
+            "group"
+          ],
+          "Probe|#44": [],
+          "Probe|#69": [
+            "group"
+          ],
+          "slice and value": [
+            "theta"
+          ],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group",
+            "theta"
+          ]
+        },
+        "Bar Table": {
+          "Bar Table|#11": [],
+          "Bar Table|#16": [
+            "group"
+          ],
+          "Bar Table|#17": [
+            "group"
+          ],
+          "Bar Table|#18": [],
+          "Bar Table|#2": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Boxplot": {
+          "Boxplot|#6": [
+            "group"
+          ],
+          "Probe|#54": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Bullet Chart": {
+          "Bullet Chart|#0": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Bump Chart": {
+          "Bump Chart|#4": [
+            "group"
+          ],
+          "Bump Chart|#5": [
+            "group",
+            "strokeDash"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Calendar Heatmap": {
+          "ECharts: Calendar Heatmap *|#0": [
+            "column",
+            "row",
+            "y"
+          ],
+          "slice and value": [
+            "column",
+            "row",
+            "y"
+          ],
+          "x and y measures": [
+            "column",
+            "row",
+            "y"
+          ],
+          "x category, y measure": [
+            "column",
+            "row",
+            "y"
+          ],
+          "y category, x measure": [
+            "column",
+            "row",
+            "y"
+          ],
+          "y measure": [
+            "column",
+            "group",
+            "row",
+            "y"
+          ]
+        },
+        "Candlestick Chart": {
+          "Candlestick Chart|#3": [
+            "y"
+          ],
+          "Candlestick Chart|#4": [
+            "y"
+          ],
+          "slice and value": [
+            "y"
+          ],
+          "x and y measures": [
+            "y"
+          ],
+          "x category, y measure": [
+            "y"
+          ],
+          "y category, x measure": [
+            "y"
+          ],
+          "y measure": [
+            "y"
+          ]
+        },
+        "Choropleth": {
+          "Choropleth|#1": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "slice and value": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row",
+            "y"
+          ],
+          "y measure": [
+            "column",
+            "group",
+            "row",
+            "x"
+          ]
+        },
+        "Connected Scatter Plot": {
+          "Connected Scatter Plot|#4": [],
+          "Connected Scatter Plot|#5": [
+            "group"
+          ],
+          "Connected Scatter Plot|#7": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Density Plot": {
+          "Density Plot|#1": [
+            "y"
+          ],
+          "Density Plot|#4": [
+            "y"
+          ],
+          "Density Plot|#5": [
+            "group",
+            "y"
+          ],
+          "slice and value": [
+            "y"
+          ],
+          "x and y measures": [
+            "group",
+            "y"
+          ],
+          "x category, y measure": [
+            "group",
+            "y"
+          ],
+          "y category, x measure": [
+            "group",
+            "y"
+          ],
+          "y measure": [
+            "group",
+            "y"
+          ]
+        },
+        "Donut Chart": {
+          "Donut Chart|#4": [
+            "x",
+            "y"
+          ],
+          "Probe|#70": [
+            "x",
+            "y"
+          ],
+          "Probe|#78": [
+            "x",
+            "y"
+          ],
+          "slice and value": [
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "x"
+          ],
+          "y category, x measure": [
+            "y"
+          ],
+          "y measure": [
+            "x"
+          ]
+        },
+        "ECDF Plot": {
+          "Chart.js: ECDF|#1": [
+            "y"
+          ],
+          "ECDF Plot|#3": [
+            "group",
+            "y"
+          ],
+          "ECDF Plot|#7": [
+            "group",
+            "y"
+          ],
+          "slice and value": [
+            "y"
+          ],
+          "x and y measures": [
+            "group",
+            "y"
+          ],
+          "x category, y measure": [
+            "group",
+            "y"
+          ],
+          "y category, x measure": [
+            "group",
+            "y"
+          ],
+          "y measure": [
+            "group",
+            "y"
+          ]
+        },
+        "Gantt Chart": {
+          "Gantt Chart|#1": [],
+          "Gantt Chart|#2": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Grouped Bar Chart": {
+          "Grouped Bar Chart|#1": [],
+          "Grouped Bar Chart|#11": [],
+          "Omni: Grouped Bar|#0": [],
+          "Probe|#74": [
+            "theta"
+          ],
+          "Probe|#80": [],
+          "Probe|#84": [],
+          "slice and value": [
+            "theta"
+          ],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": [
+            "theta"
+          ]
+        },
+        "Heatmap": {
+          "Heatmap|#0": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Histogram": {
+          "Histogram|#1": [
+            "y"
+          ],
+          "Histogram|#3": [
+            "group",
+            "y"
+          ],
+          "Probe|#85": [
+            "group"
+          ],
+          "slice and value": [
+            "y"
+          ],
+          "x and y measures": [
+            "group",
+            "y"
+          ],
+          "x category, y measure": [
+            "group",
+            "y"
+          ],
+          "y category, x measure": [
+            "group",
+            "y"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "KPI Card": {
+          "Gallery: KPI Card|#0": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "Gallery: KPI Card|#1": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "KPI Card|#1": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "slice and value": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "column",
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "column",
+            "row",
+            "y"
+          ],
+          "y measure": [
+            "column",
+            "row",
+            "x"
+          ]
+        },
+        "Line Chart": {
+          "Chart.js: Line|#3": [
+            "group"
+          ],
+          "Line Chart|#16": [
+            "group"
+          ],
+          "Line Chart|#17": [],
+          "Line Chart|#9": [],
+          "Omni: Line|#0": [],
+          "Plotly: Facets|#1": [
+            "group"
+          ],
+          "Probe|#29": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Lollipop Chart": {
+          "Lollipop Chart|#1": [],
+          "Lollipop Chart|#2": [
+            "group"
+          ],
+          "Lollipop Chart|#3": [
+            "group"
+          ],
+          "slice and value": [
+            "theta"
+          ],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group",
+            "theta"
+          ]
+        },
+        "Map": {
+          "Map|#0": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "Probe|#19": [
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "slice and value": [
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row",
+            "x"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row",
+            "y"
+          ],
+          "y measure": [
+            "column",
+            "group",
+            "row",
+            "x"
+          ]
+        },
+        "Marginal Plot": {
+          "Marginal Plot|#3": [
+            "column",
+            "group",
+            "row"
+          ],
+          "Marginal Plot|#4": [
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "group",
+            "row"
+          ]
+        },
+        "Pie Chart": {
+          "Gallery: Pie|#0": [
+            "x",
+            "y"
+          ],
+          "Probe|#62": [
+            "x"
+          ],
+          "Probe|#63": [
+            "x",
+            "y"
+          ],
+          "Probe|#65": [
+            "x",
+            "y"
+          ],
+          "Probe|#77": [
+            "x",
+            "y"
+          ],
+          "Probe|#81": [
+            "x",
+            "y"
+          ],
+          "Probe|#82": [
+            "x"
+          ],
+          "slice and value": [
+            "x",
+            "y"
+          ],
+          "x and y measures": [
+            "x",
+            "y"
+          ],
+          "x category, y measure": [
+            "x"
+          ],
+          "y category, x measure": [
+            "y"
+          ],
+          "y measure": [
+            "x"
+          ]
+        },
+        "Pyramid Chart": {
+          "Pyramid Chart|#8": [
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "group",
+            "row",
+            "theta"
+          ],
+          "x and y measures": [
+            "column",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "row",
+            "theta"
+          ],
+          "y category, x measure": [
+            "column",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "row",
+            "theta"
+          ]
+        },
+        "Radar Chart": {
+          "Probe|#66": [],
+          "Probe|#72": [],
+          "Radar Chart|#0": [],
+          "Radar Chart|#3": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Range Area Chart": {
+          "Chart.js: Range Area|#1": [
+            "group"
+          ],
+          "Chart.js: Range Area|#3": [
+            "group"
+          ],
+          "Range Area Chart|#7": [
+            "detail",
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Ranged Dot Plot": {
+          "Ranged Dot Plot|#1": [
+            "column",
+            "group",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "group",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y category, x measure": [
+            "column",
+            "group",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "group",
+            "row"
+          ]
+        },
+        "Regression": {
+          "Regression|#1": [],
+          "Regression|#10": [
+            "group"
+          ],
+          "Regression|#11": [
+            "group"
+          ],
+          "Regression|#4": [],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Ridgeline Plot": {
+          "Ridgeline Plot|#2": [
+            "column",
+            "row"
+          ],
+          "Ridgeline Plot|#3": [
+            "column",
+            "row"
+          ],
+          "Ridgeline Plot|#7": [
+            "column",
+            "detail",
+            "row"
+          ],
+          "slice and value": [
+            "column",
+            "row"
+          ],
+          "x and y measures": [
+            "column",
+            "row"
+          ],
+          "x category, y measure": [
+            "column",
+            "row"
+          ],
+          "y category, x measure": [
+            "column",
+            "row"
+          ],
+          "y measure": [
+            "column",
+            "row"
+          ]
+        },
+        "Rose Chart": {
+          "Gallery: Rose|#0": [],
+          "Rose Chart|#3": [
+            "group"
+          ],
+          "Rose Chart|#6": [
+            "group"
+          ],
+          "Rose Chart|#7": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Scatter Plot": {
+          "Facet: Columns|#0": [
+            "group"
+          ],
+          "Facet: Rows|#0": [
+            "group"
+          ],
+          "Image-Charts: Core Templates|#5": [
+            "group"
+          ],
+          "Plotly: Facets|#2": [
+            "group"
+          ],
+          "Probe|#75": [
+            "group"
+          ],
+          "Probe|#76": [
+            "group"
+          ],
+          "Scatter Plot|#13": [
+            "group"
+          ],
+          "Scatter Plot|#25": [
+            "group"
+          ],
+          "Scatter Plot|#6": [],
+          "Semantic Context|#6": [],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Slope Chart": {
+          "Chart.js: Slope|#2": [
+            "group"
+          ],
+          "Slope Chart|#5": [
+            "group"
+          ],
+          "Slope Chart|#7": [
+            "group"
+          ],
+          "Slope Chart|#8": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Sparkline": {
+          "Probe|#60": [],
+          "Probe|#61": [],
+          "Sparkline|#0": [],
+          "Sparkline|#7": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Stacked Bar Chart": {
+          "Probe|#73": [
+            "group",
+            "theta"
+          ],
+          "Probe|#79": [
+            "group"
+          ],
+          "Snap-to-Bound|#11": [
+            "group",
+            "y2"
+          ],
+          "slice and value": [
+            "group",
+            "theta"
+          ],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group",
+            "theta"
+          ]
+        },
+        "Streamgraph": {
+          "Streamgraph|#3": [
+            "detail"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Strip Plot": {
+          "Strip Plot|#1": [
+            "group"
+          ],
+          "Strip Plot|#2": [
+            "group"
+          ],
+          "slice and value": [],
+          "x and y measures": [
+            "group"
+          ],
+          "x category, y measure": [
+            "group"
+          ],
+          "y category, x measure": [
+            "group"
+          ],
+          "y measure": [
+            "group"
+          ]
+        },
+        "Table": {
+          "Table|#0": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
+        },
+        "Violin Plot": {
+          "Violin Plot|#1": [
+            "column",
+            "group"
+          ],
+          "Violin Plot|#6": [
+            "column",
+            "group"
+          ],
+          "Violin Plot|#7": [
+            "column",
+            "group"
+          ],
+          "slice and value": [
+            "column"
+          ],
+          "x and y measures": [
+            "column"
+          ],
+          "x category, y measure": [
+            "column"
+          ],
+          "y category, x measure": [
+            "column"
+          ],
+          "y measure": [
+            "column",
+            "group"
+          ]
+        },
+        "Waterfall Chart": {
+          "Waterfall Chart|#1": [],
+          "Waterfall Chart|#4": [],
+          "slice and value": [],
+          "x and y measures": [],
+          "x category, y measure": [],
+          "y category, x measure": [],
+          "y measure": []
         }
       }
     },

@@ -13,6 +13,9 @@ public static class CommittedIr
 
     public static string[] Strings(JsonNode? array) => array!.AsArray().Select(n => n!.GetValue<string>()).ToArray();
 
+    /// <summary>The backend of an IR backend id (catalog.backends lists them in the order of <see cref="FlintBackend"/>).</summary>
+    public static FlintBackend Backend(string id) => (FlintBackend)Array.IndexOf(Strings(Catalog["backends"]), id);
+
     /// <summary>The fixture folder of the pinned version, tests/fixtures/flint-chart@&lt;pin&gt;/.</summary>
     private static string FixtureFolder => Path.Combine(RepositoryRoot(), "tests", "fixtures", $"flint-chart@{Root["upstream"]!["version"]!.GetValue<string>()}");
 

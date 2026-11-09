@@ -1,8 +1,9 @@
-// The channels the native assemblers (assembleExcel, assembleImageCharts) read per chart type, found by behaviour
-// instead of by reading their source (design part 9 §14.8.1; docs/generator.md "Failure policy" and "Probes"). The
-// validator's native rules and undeclared-read exemptions (Excel.ReadsUndeclared, ImageCharts.ReadsUndeclared and their
-// mirror in src/Graspea.Flint.CSharp/Spec/CatalogCheck.cs) are hand-written from src/excel and src/image-charts, which
-// also call src/core helpers (normalizeChartEncodingAliases, resolveChannelSemantics, the banded overflow filter).
+// The channels the assemblers read per chart type, found by behaviour instead of by reading their source (design part 9
+// §14.8.1; docs/generator.md "Failure policy" and "Probes"). The validator's native rules and undeclared-read exemptions
+// (Excel.ReadsUndeclared, ImageCharts.ReadsUndeclared and their mirror in src/Graspea.Flint.CSharp/Spec/CatalogCheck.cs)
+// are hand-written from src/excel and src/image-charts, which also call src/core helpers (normalizeChartEncodingAliases,
+// resolveChannelSemantics, the banded overflow filter); on the four layout backends its rule is the template's declared
+// channels.
 //
 // A channel is read under a base when binding it to a text or a number field (or, for a channel of the base, removing
 // it) changes the assembled artifact (JSON.stringify, so functions drop) or the throw message. Math.random is reseeded
@@ -15,22 +16,35 @@
 // The extract gate (registry.ts) has no fixture set and uses the synthetic bases only; their Image-Charts reads equal
 // the full record's (test/probes.test.ts).
 //
-// Not probed: the four layout backends. Their shared layout (legend space, label fit, band steps, palettes,
-// measure domains, the _pivot/_options sidecars) reacts to every bound channel, so this criterion finds 272 undeclared
-// (backend, template, channel) reads there against 1.0.1, nearly all of them layout side effects; their validator rules
-// are the IR's declared channels only, with no hand-written exemption to check.
+// The native backends (assembleExcel, assembleImageCharts) are probed on every catalog channel (probes.json
+// channelReads.reads). The four layout backends (assembleVegaLite, assembleECharts, assembleChartjs, assemblePlotly)
+// are probed on the channels their template does not declare only (channelReads.layoutReads). Their shared layout
+// (legend space, label fit, band steps, palettes, measure domains, facets, the _pivot/_options sidecars) reacts to some
+// of them, about 1.2 per base against 1.0.1, nearly all of them side effects that draw nothing from the field's values,
+// so the C# test asserts only the ignored ones there: an undeclared channel the probe sees ignored is
+// unsupported_channel. Some artifacts format numbers and dates in the ICU default locale (toLocaleString,
+// toLocaleDateString without a locale); cli.ts pins TZ, not the locale, and against 1.0.1 the reads are the same under
+// en-US, en-IN and de-DE.
 //
 // extract checks the Image-Charts reads against overrides.json imageChartsReads (registry.ts); the fixtures step records
-// the reads of both native backends per base in probes.json channelReads, which
-// tests/Graspea.Flint.Tests/Parity/ChannelReadsTests.cs checks the validator against.
+// the reads per base in probes.json channelReads, which tests/Graspea.Flint.Tests/Parity/ChannelReadsTests.cs checks
+// the validator against.
 import { ordinal } from '../ir.ts';
 import { FIXTURE_SEED, installSeededRandom, type CaseLine, type Input } from './fixtures.ts';
 
 type Encodings = Record<string, { field: string }>;
 
-/** The backends probed, in the fixed backend order. */
+/** The native backends probed on every catalog channel, in the fixed backend order. */
 export const READ_BACKENDS = ['excel', 'image-charts'] as const;
 export type ReadBackend = (typeof READ_BACKENDS)[number];
+
+/** The layout backends, probed on the channels their template does not declare: the assembler and the template list. */
+export const LAYOUT_READ_BACKENDS = {
+  vegalite: ['assembleVegaLite', 'vlAllTemplateDefs'],
+  echarts: ['assembleECharts', 'ecAllTemplateDefs'],
+  chartjs: ['assembleChartjs', 'cjsAllTemplateDefs'],
+  plotly: ['assemblePlotly', 'plAllTemplateDefs'],
+} as const;
 
 /** The rows of the synthetic bases: a category and two measures. */
 export const SYNTHETIC_ROWS = [
@@ -77,6 +91,9 @@ export interface ChannelReads {
   probe: typeof PROBE_VALUES;
   /** Backend -> chart type -> base -> the channels whose binding (or removal) changes the artifact or the throw, sorted. */
   reads: Record<string, Record<string, Record<string, string[]>>>;
+  /** Layout backend -> chart type -> base -> the channels the template does not declare whose binding (or removal)
+   * changes the artifact or the throw, sorted; every other undeclared channel is ignored under that base. */
+  layoutReads: Record<string, Record<string, Record<string, string[]>>>;
   rows: typeof SYNTHETIC_ROWS;
 }
 
@@ -208,18 +225,41 @@ export function nativeAssembler(flint: Record<string, unknown>, backend: ReadBac
   return { assemble: assemble as Assemble, chartTypes: Object.keys(map) };
 }
 
-/** The record of probes.json channelReads: both native backends over the fixture bases of `cases` and the synthetic bases. */
+/** The assembler and the templates (chart type, declared channels) of a layout backend in the installed package. */
+export function layoutAssembler(flint: Record<string, unknown>, backend: keyof typeof LAYOUT_READ_BACKENDS): { assemble: Assemble; templates: { chart: string; channels: string[] }[] } {
+  const [assembler, list] = LAYOUT_READ_BACKENDS[backend];
+  const assemble = flint[assembler];
+  const defs = flint[list] as Array<{ chart: string; channels?: string[] }> | undefined;
+  if (typeof assemble !== 'function' || !Array.isArray(defs)) throw new Error(`flint-chart exports no ${assembler} or ${list}; update src/extract/channel-reads.ts.`);
+  return { assemble: assemble as Assemble, templates: defs.map((d) => ({ chart: d.chart, channels: d.channels ?? [] })) };
+}
+
+/**
+ * The record of probes.json channelReads: both native backends on every catalog channel and the four layout backends on
+ * the channels each template does not declare, over the fixture bases of `cases` and the synthetic bases.
+ */
 export function probeChannelReads(flint: Record<string, unknown>, cases: readonly CaseLine[]): ChannelReads {
   const channels = catalogChannels(flint);
+  const basesOf = (assemble: Assemble) => (chartType: string) => [...fixtureBases(assemble, chartType, cases), ...syntheticBases(chartType)];
   const reads: ChannelReads['reads'] = {};
   for (const backend of READ_BACKENDS) {
     const { assemble, chartTypes } = nativeAssembler(flint, backend);
-    reads[backend] = probeReads(assemble, chartTypes, (chartType) => [...fixtureBases(assemble, chartType, cases), ...syntheticBases(chartType)], channels);
+    reads[backend] = probeReads(assemble, chartTypes, basesOf(assemble), channels);
   }
-  const names = new Set(Object.values(reads).flatMap((perType) => Object.values(perType).flatMap((perBase) => Object.keys(perBase))));
+  const layoutReads: ChannelReads['layoutReads'] = {};
+  for (const backend of Object.keys(LAYOUT_READ_BACKENDS) as (keyof typeof LAYOUT_READ_BACKENDS)[]) {
+    const { assemble, templates } = layoutAssembler(flint, backend);
+    layoutReads[backend] = {};
+    for (const { chart, channels: declared } of templates) {
+      Object.assign(layoutReads[backend], probeReads(assemble, [chart], basesOf(assemble), channels.filter((c) => !declared.includes(c))));
+    }
+  }
+  const names = new Set(
+    [reads, layoutReads].flatMap((record) => Object.values(record).flatMap((perType) => Object.values(perType).flatMap((perBase) => Object.keys(perBase)))),
+  );
   const bases: ChannelReads['bases'] = {};
   for (const name of [...names].sort(ordinal)) bases[name] = Object.hasOwn(SYNTHETIC_BASES, name) ? { encodings: SYNTHETIC_BASES[name] } : { case: name };
-  return { bases, probe: PROBE_VALUES, reads, rows: SYNTHETIC_ROWS };
+  return { bases, layoutReads, probe: PROBE_VALUES, reads, rows: SYNTHETIC_ROWS };
 }
 
 /** Per chart type, the channels read under any base, sorted. */

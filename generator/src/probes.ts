@@ -1,5 +1,5 @@
 // Runtime probes behind the facts the design cites as probed (design §7.2): null handling and row shapes, the backends
-// that apply the theme (by preset id or an object's `extends`), names of Object.prototype used as ids, the inference of the values .NET writes, the Date.parse results the validator relies on, the channel types it ports, and the channels the Excel and Image-Charts assemblers read per chart type.
+// that apply the theme (by preset id or an object's `extends`), names of Object.prototype used as ids, the inference of the values .NET writes, the Date.parse results the validator relies on, the channel types it ports, and the channels the assemblers read per chart type (every catalog channel on Excel and Image-Charts, the undeclared ones on the layout backends).
 // `npm run generate` (its fixtures step) records the output per version in tests/fixtures/flint-chart@<version>/probes.json;
 // a unit test that cites a probe fact names that file, and test/probes.test.ts keeps the pinned version's record equal to
 // a fresh run.
@@ -19,7 +19,8 @@ export interface ProbeResults {
   dateParse: Record<string, 'parses' | 'NaN'>;
   /** The type `resolveChannelSemantics` gives the probe's channel, with ` snapshots` when it reads the dates as snapshots. */
   channelTypes: Record<string, string>;
-  /** The channels `assembleExcel` and `assembleImageCharts` read per chart type and base (src/extract/channel-reads.ts). */
+  /** The channels `assembleExcel` and `assembleImageCharts` read, and the undeclared channels the four layout assemblers
+   * read, per chart type and base (src/extract/channel-reads.ts). */
   channelReads: ChannelReads;
 }
 
