@@ -81,6 +81,57 @@ internal static partial class TemporalParse
     /// <summary><c>parseTemporalByType(text, 'Date') !== null</c>.</summary>
     internal static bool IsDate(string text) => Js.Trim(text) is { Length: > 0 } t && Read(t, DateParsers) is not null;
 
+    /// <summary>The upper bound of a likely timestamp in seconds (<c>MAX_TIMESTAMP_SEC</c>, src/core/resolve-semantics.ts:220).</summary>
+    private const double MaxTimestampSeconds = 4102444800;
+
+    /// <summary>
+    /// A value of a temporal key as <c>convertTemporalData</c> writes it into the table (src/core/resolve-semantics.ts:452-479):
+    /// the canonical string of a spelling of <paramref name="semanticType"/> (<see cref="Parse"/>), or without a semantic type of
+    /// a full date that does not open as an ISO date; else a number of a <c>Year</c> or <c>Decade</c> as its floor, a likely
+    /// timestamp (<c>isLikelyTimestamp</c>, :223-231: seconds or milliseconds up to 2100) as <c>toISOString()</c>, any other number as
+    /// <c>String(n)</c>; a <c>Year</c> or <c>Decade</c> string of two digits as its four-digit year (<c>expandToFullYear</c>, :412-419);
+    /// anything else as <c>String(v)</c>, so <c>null</c> is <c>"null"</c> and a missing key <c>"undefined"</c>.
+    /// </summary>
+    internal static string Converted(JsonNode? value, bool present, string semanticType)
+    {
+        var parsed = Parse(value, semanticType)
+            ?? (semanticType.Length == 0 && Js.Kind(value) == JsonValueKind.String && !IsoPrefix().IsMatch(Js.Trim(value!.GetValue<string>())) ? Parse(value, "Date") : null);
+        if (parsed is not null)
+        {
+            return parsed;
+        }
+
+        var year = semanticType is "Year" or "Decade";
+        switch (Js.Kind(value))
+        {
+            case JsonValueKind.Number:
+                var n = Js.NumberOf(value!);
+                if (year)
+                {
+                    return Js.NumberToString(Math.Floor(n));
+                }
+
+                if (n is >= 1e9 and <= MaxTimestampSeconds * 1000)
+                {
+                    var ms = Math.Truncate(n <= MaxTimestampSeconds ? n * 1000 : n);
+                    return DateTimeOffset.FromUnixTimeMilliseconds((long)ms).UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", CultureInfo.InvariantCulture);
+                }
+
+                return Js.ToJsString(value);
+            case JsonValueKind.String when year:
+                var text = value!.GetValue<string>();
+                return Js.Trim(text) is { Length: 2 } t && t.All(char.IsAsciiDigit) && int.Parse(t, CultureInfo.InvariantCulture) is var y
+                    ? (y <= 49 ? 2000 + y : 1900 + y).ToString(CultureInfo.InvariantCulture)
+                    : text;
+            default:
+                return Js.ToJsString(value, present);
+        }
+    }
+
+    /// <summary><c>ISO_PREFIX</c> (src/core/resolve-semantics.ts:251).</summary>
+    [GeneratedRegex("^[0-9]{4}-[0-9]{2}", RegexOptions.CultureInvariant)]
+    private static partial Regex IsoPrefix();
+
     private static string? Read(string text, (Regex Pattern, Func<Match, string?> Read)[] parsers)
     {
         // The i flag without u folds ASCII letters only.

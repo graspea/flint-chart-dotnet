@@ -243,18 +243,9 @@ internal sealed partial class FieldTypes
         var undecided = false;
         foreach (var key in keys)
         {
-            var values = Values(key);
-            var supplied = SuppliedSemanticType(key);
-            var semanticType = supplied.Length > 0 ? supplied : ImplicitYear(key, values);
-            if (semanticType == "Decade"
-                || (CatalogTables.SemanticTypes.TryGetValue(semanticType, out var candidates) && candidates is ["temporal", ..]))
+            switch (IsTemporalKey(key))
             {
-                return true;
-            }
-
-            switch (InferVisCategory(values))
-            {
-                case "temporal":
+                case true:
                     return true;
                 case null:
                     undecided = true;
@@ -263,6 +254,72 @@ internal sealed partial class FieldTypes
         }
 
         return undecided ? null : false;
+    }
+
+    /// <summary>The <c>temporalKeys</c> test of <c>convertTemporalData</c> (src/core/resolve-semantics.ts:440-445) for one key:
+    /// its semantic type (<see cref="EffectiveSemanticType"/>) has the registry category temporal or is <c>Decade</c>, or its
+    /// values infer as temporal. Null when only <c>Date.parse</c> could decide.</summary>
+    private bool? IsTemporalKey(string key)
+    {
+        var semanticType = EffectiveSemanticType(key);
+        if (semanticType == "Decade"
+            || (CatalogTables.SemanticTypes.TryGetValue(semanticType, out var candidates) && candidates is ["temporal", ..]))
+        {
+            return true;
+        }
+
+        return InferVisCategory(Values(key)) switch
+        {
+            "temporal" => true,
+            null => null,
+            _ => false,
+        };
+    }
+
+    /// <summary><c>toTypeString(semanticTypes[key]) || inferImplicitSemanticType(key, values)</c> (src/core/resolve-semantics.ts:436-439).</summary>
+    private string EffectiveSemanticType(string key) =>
+        SuppliedSemanticType(key) is { Length: > 0 } supplied ? supplied : ImplicitYear(key, Values(key));
+
+    private readonly Dictionary<string, (JsonNode? Value, bool Present)[]?> table = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// <c>row[field]</c> of every row of the table that <c>assembleExcel</c> passes to its templates (src/excel/assemble.ts:201,
+    /// :216, :225): <c>convertTemporalData</c> (src/core/resolve-semantics.ts:428-483) writes each value of a temporal key of
+    /// the first row as a string (<see cref="TemporalParse.Converted"/>), into every row, and leaves every other key as given.
+    /// Null when only <c>Date.parse</c> could tell whether <paramref name="field"/> is temporal and the conversion would change
+    /// one of its values.
+    /// </summary>
+    internal (JsonNode? Value, bool Present)[]? TableValues(string field)
+    {
+        if (!table.TryGetValue(field, out var column))
+        {
+            column = rows is [JsonObject first, ..] && first.ContainsKey(field) ? Converted(field) : Values(field);
+            table[field] = column;
+        }
+
+        return column;
+    }
+
+    private (JsonNode? Value, bool Present)[]? Converted(string field)
+    {
+        var values = Values(field);
+        var temporal = IsTemporalKey(field);
+        if (temporal == false)
+        {
+            return values;
+        }
+
+        var semanticType = EffectiveSemanticType(field);
+        var converted = values.Select(v => TemporalParse.Converted(v.Value, v.Present, semanticType)).ToArray();
+        if (temporal == true)
+        {
+            return [.. converted.Select(s => ((JsonNode?)JsonValue.Create(s), true))];
+        }
+
+        // Undecided: the answer does not matter when the conversion leaves every value as it is (a string of its own).
+        return values.Select((v, i) => v.Present && Js.Kind(v.Value) == JsonValueKind.String && v.Value!.GetValue<string>() == converted[i]).All(same => same)
+            ? values
+            : null;
     }
 
     /// <summary><c>new Set(data.map(r => r[field])).size</c>.</summary>

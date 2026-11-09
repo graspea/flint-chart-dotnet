@@ -12,8 +12,14 @@ internal sealed record ThrowReason(string Message, string? Channel, bool FromRow
 /// The throw conditions of <c>assembleExcel</c> in the pinned package (design §6 <c>excel_unsupported</c>): faceting,
 /// static series, each template's <c>validate()</c>, the category/measure resolution of the shared path, and the two
 /// throws inside <c>instantiate()</c> (histogram values, radar metrics). Hand-written from src/excel/assemble.ts and
-/// src/excel/templates/*.ts of flint-chart 1.0.0 and pinned to the recorded fixture outcomes. Row values are read as
-/// given; upstream reads them after its temporal conversion, which changes no value these checks read.
+/// src/excel/templates/*.ts of flint-chart 1.0.0 and pinned to the recorded fixture outcomes. The templates read the rows
+/// after <c>convertTemporalData</c> (src/excel/assemble.ts:201, :216, :225; src/core/resolve-semantics.ts:428-483), which
+/// writes every value of a temporal key of the first row as a string (a <c>YearMonth</c> 202501 is "2025-01", a timestamp
+/// an ISO date-time, null "null"): a histogram's values, the radar metrics, the pyramid groups, the waterfall values and
+/// the stock chart's rows are read from that table (FieldTypes.TableValues), and skip where only <c>Date.parse</c> could
+/// tell whether a key is temporal and the conversion would change its values. The sign checks and the waterfall roles
+/// read the values as given, as the conversion never changes them: no temporal spelling has a sign, a floor keeps it, a
+/// timestamp is positive, <c>String(n)</c> reads back as n, and no converted value is start, end or total.
 /// A rule that reads a field's type is reported without the rows when the spec decides that type for every channel the
 /// rule reads (FieldTypes.SpecDecided; FieldTypes.ContinuityDecided for the rules that reject a continuous field); a rule
 /// that reads row values is not.
@@ -120,12 +126,14 @@ internal static class Excel
                 // instantiate() reads fieldOf('x') ?? fieldOf('y') (histogram.ts:25): an empty x field, which validate() skips,
                 // is the value field there, read as the rows' "" key.
                 var (readChannel, readField) = types.Encoding("x")?.Field is { } rawX ? ("x", rawX) : ("y", F("y"));
-                Add(F(valueChannel) is not null && readField is { } histogramField && !rows.Any(r => Js.Get(r, histogramField, out var p) is var v && Js.IsFiniteNumber(v, p)),
+                Add(F(valueChannel) is not null && readField is { } histogramField
+                        ? types.TableValues(histogramField) is { } histogramValues ? !histogramValues.Any(v => Js.IsFiniteNumber(v.Value, v.Present)) : null
+                        : false,
                     readField is "" ? "requires finite numeric values for a histogram, and reads the empty x field as the value field (the rows' \"\" key)" : "requires finite numeric values for a histogram",
                     readChannel);
                 break;
             case "Pyramid Chart":
-                Pyramid(types, rows, Add, NonNegativeViolated);
+                Pyramid(types, Add, NonNegativeViolated);
                 break;
             case "Radar Chart":
                 Add(F("x") is null, "requires a categorical metric x field for a native Excel radar chart", "x", false);
@@ -134,7 +142,9 @@ internal static class Excel
                 Add(NotQuantitative(T("y")), "requires a quantitative y field for a native Excel radar chart", "y", !types.SpecDecided("y"));
                 Add(F("color") is not null ? IsContinuous(T("color")) : false, "requires a discrete color field for native Excel radar series", "color", !types.ContinuityDecided("color"));
                 Add(F("y") is { } radarValue && rows.Any(r => Js.ToNumber(Js.Get(r, radarValue, out var p), p) < 0), "requires non-negative values for a native Excel radar chart", "y");
-                Add(F("x") is { } metric && rows.Select(r => Js.ToJsString(Js.Get(r, metric, out var p), p)).Distinct(StringComparer.Ordinal).Count() < 3,
+                Add(F("x") is { } metric
+                        ? types.TableValues(metric) is { } metrics ? metrics.Select(v => Js.ToJsString(v.Value, v.Present)).Distinct(StringComparer.Ordinal).Count() < 3 : null
+                        : false,
                     "requires at least three metric axes for a radar chart", "x");
                 break;
             case "Sunburst Chart":
@@ -260,12 +270,18 @@ internal static class Excel
         }
 
         add(types.Rows.Count == 0, "requires at least one OHLC row for a native Excel stock chart", null, true);
-        var previous = double.NegativeInfinity;
-        for (var i = 0; i < types.Rows.Count; i++)
+        var dates = types.TableValues(x);
+        var columns = PriceChannels.Select(c => types.TableValues(types.FieldOf(c)!)).ToArray();
+        if (dates is null || columns.Any(c => c is null))
         {
-            var row = types.Rows[i];
+            return;
+        }
+
+        var previous = double.NegativeInfinity;
+        for (var i = 0; i < dates.Length; i++)
+        {
             // new Date(v).getTime(): unknown as soon as a value is a string V8's ISO parser is not known to read.
-            if (DateTime(Js.Get(row, x, out var present), present) is not { } time)
+            if (DateTime(dates[i].Value, dates[i].Present) is not { } time)
             {
                 return;
             }
@@ -283,7 +299,7 @@ internal static class Excel
             }
 
             previous = time;
-            var prices = PriceChannels.Select(c => (Value: Js.Get(row, types.FieldOf(c)!, out var p), Present: p)).ToArray();
+            var prices = columns.Select(c => c![i]).ToArray();
             var numbers = prices.Select(p => Js.ToNumber(p.Value, p.Present)).ToArray();
             if (prices.Any(p => Js.IsNullish(p.Value, p.Present) || (Js.Kind(p.Value) == JsonValueKind.String && p.Value!.GetValue<string>().Length == 0))
                 || !numbers.All(double.IsFinite))
@@ -327,7 +343,7 @@ internal static class Excel
         }
     }
 
-    private static void Pyramid(FieldTypes types, IReadOnlyList<JsonNode?> rows, Action<bool?, string, string?, bool> add, Func<string?, bool?> negative)
+    private static void Pyramid(FieldTypes types, Action<bool?, string, string?, bool> add, Func<string?, bool?> negative)
     {
         var xMeasure = IsQuantitative(types.Of("x"));
         var yMeasure = IsQuantitative(types.Of("y"));
@@ -348,9 +364,9 @@ internal static class Excel
         var group = types.FieldOf("color");
         add(group is null, "requires a discrete color field for a native Excel pyramid chart", "color", false);
         add(IsContinuous(types.Of("color")), "requires a discrete color field for a native Excel pyramid chart", "color", !types.ContinuityDecided("color"));
-        if (group is not null)
+        if (group is not null && types.TableValues(group) is { } sides)
         {
-            var groups = rows.Select(r => Js.Get(r, group, out var p) is var v && !Js.IsNullish(v, p) ? Js.SetKey(v, p) : null)
+            var groups = sides.Select(v => !Js.IsNullish(v.Value, v.Present) ? Js.SetKey(v.Value, v.Present) : null)
                 .Where(k => k is not null).Distinct().Count();
             add(groups != 2, $"requires exactly two groups for a native Excel pyramid chart (found {groups})", "color", true);
         }
@@ -367,7 +383,7 @@ internal static class Excel
         var valueField = types.FieldOf("y");
         var values = valueField is null
             ? []
-            : rows.Select(r => Js.ToNumber(Js.Get(r, valueField, out var p), p)).Where(double.IsFinite).ToArray();
+            : types.TableValues(valueField)?.Select(v => Js.ToNumber(v.Value, v.Present)).Where(double.IsFinite).ToArray();
         if (roles is not null)
         {
             var nonInitialTotal = rows.Skip(1).Any(r =>
@@ -381,9 +397,9 @@ internal static class Excel
         else
         {
             var explicitMode = Property(input, "totals") is "none" or "first" or "last" or "both" ? Property(input, "totals") : null;
-            var mode = explicitMode ?? (LastReconciles(values) ? "both" : "first");
             // An explicit mode is used as given (resolveTotalsMode, src/chart-types/waterfall.ts:51-56): no row is read.
-            add(mode is "last" or "both", "cannot mark a final total because Office.js does not expose Waterfall total-point semantics", null, explicitMode is null);
+            bool? finalTotal = explicitMode is not null ? explicitMode is "last" or "both" : values is null ? null : LastReconciles(values);
+            add(finalTotal, "cannot mark a final total because Office.js does not expose Waterfall total-point semantics", null, explicitMode is null);
         }
     }
 

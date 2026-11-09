@@ -394,4 +394,136 @@ public sealed partial class ChartValidatorTests
             Assert.That(ChartTemplate.Create<JsonObject>(empty).Validate(FlintBackend.Excel).IsValid, Is.True, "template: the rows decide");
         }
     }
+
+    /// <summary>An Excel document of <paramref name="chartType"/> over <paramref name="rows"/>, with semantic types.</summary>
+    private static ChartAssemblyInput ExcelTable(ChartType chartType, JsonObject[] rows, Dictionary<string, SemanticType>? semanticTypes, params (string Channel, EncodingValue Value)[] encodings)
+    {
+        var input = ExcelChart(chartType, encodings);
+        input.Data = ChartData.FromJson(new JsonArray([.. rows.Select(r => r.DeepClone())]));
+        if (semanticTypes is not null)
+        {
+            input.SemanticTypes = semanticTypes.ToDictionary(p => p.Key, p => (SemanticAnnotation)p.Value);
+        }
+
+        return input;
+    }
+
+    private static string[] ExcelErrors(ChartAssemblyInput input) =>
+        Issues(input, FlintBackend.Excel, "excel_unsupported").Select(i => $"{i.Path}: {i.Message}").ToArray();
+
+    // source: src/excel/assemble.ts:201, :216, :225 (the templates read convertedData) and src/core/resolve-semantics.ts:428-483
+    // (convertTemporalData writes every value of a temporal key of the first row as a string: a YearMonth 202501 is
+    // "2025-01", a timestamp an ISO date-time, null "null"); src/excel/templates/histogram.ts:25-27 (Number of each value);
+    // probe cases "histogram with an empty x field and a numeric empty key", "... a YearMonth empty key" and "histogram of
+    // a quantitative YearMonth field"
+    [Test]
+    public void Excel_HistogramValues_AreReadAfterTheTemporalConversion()
+    {
+        var histogram = new ChartType("Histogram");
+        JsonObject[] Keyed(string key, params JsonNode?[] values) => [.. values.Select((v, i) => new JsonObject { [key] = v?.DeepClone(), ["revenue"] = 10 + i })];
+        var emptyKey = Keyed("", 202501, 202502);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(ExcelErrors(ExcelTable(histogram, emptyKey, new() { [""] = SemanticType.YearMonth }, ("x", ""), ("y", "revenue"))),
+                Is.EqualTo(new[] { "chart_spec.encodings.x: Excel requires finite numeric values for a histogram, and reads the empty x field as the value field (the rows' \"\" key); Excel throws." }), "YearMonth empty key");
+            Assert.That(ExcelErrors(ExcelTable(histogram, emptyKey, null, ("x", ""), ("y", "revenue"))), Is.Empty, "unannotated numbers stay numbers");
+            Assert.That(ExcelErrors(ExcelTable(histogram, Keyed("month", 202501, 202502), new() { ["month"] = SemanticType.YearMonth }, ("x", Q("month")))),
+                Has.Length.EqualTo(1).And.Some.Contains("finite numeric values"), "quantitative YearMonth");
+            Assert.That(ExcelErrors(ExcelTable(histogram, Keyed("at", 1700000000, 1700003600), new() { ["at"] = SemanticType.Timestamp }, ("x", Q("at")))),
+                Has.Length.EqualTo(1).And.Some.Contains("finite numeric values"), "timestamps are ISO date-times");
+            Assert.That(ExcelErrors(ExcelTable(histogram, Keyed("year", null, null), new() { ["year"] = SemanticType.Year }, ("x", Q("year")))),
+                Has.Length.EqualTo(1).And.Some.Contains("finite numeric values"), "null is \"null\"");
+            Assert.That(ExcelErrors(ExcelTable(histogram, Keyed("year", 2020, 2021), null, ("x", Q("year")))), Is.Empty, "an implicit Year is its floor, a number");
+            Assert.That(ExcelErrors(ExcelTable(histogram, [new JsonObject { ["revenue"] = 10 }, new JsonObject { [""] = 202502, ["revenue"] = 20 }], new() { [""] = SemanticType.YearMonth }, ("x", ""), ("y", "revenue"))),
+                Is.Empty, "only the keys of the first row are converted");
+            Assert.That(ChartTemplate.Create<JsonObject>(ExcelTable(histogram, emptyKey, new() { [""] = SemanticType.YearMonth }, ("x", ""), ("y", "revenue"))).Validate(FlintBackend.Excel).IsValid,
+                Is.True, "template: the rows decide");
+        }
+    }
+
+    // source: src/core/resolve-semantics.ts:428-483 and src/excel/templates/radar.ts:45-47 (String of each converted metric):
+    // three spellings of one YearMonth, or of one untyped date, are one metric; probe case "radar with one YearMonth metric
+    // in three spellings"
+    [Test]
+    public void Excel_RadarMetrics_AreCountedAfterTheTemporalConversion()
+    {
+        JsonObject[] Metrics(params JsonNode[] metrics) => [.. metrics.Select((m, i) => new JsonObject { ["metric"] = m.DeepClone(), ["revenue"] = 10 + i })];
+        var spellings = Metrics(202501, "2025-01", "Jan 2025");
+        const string Three = "chart_spec.encodings.x: Excel requires at least three metric axes for a radar chart; Excel throws.";
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(ExcelErrors(ExcelTable(ChartType.RadarChart, spellings, new() { ["metric"] = SemanticType.YearMonth }, ("x", N("metric")), ("y", "revenue"))), Is.EqualTo(new[] { Three }), "YearMonth");
+            Assert.That(ExcelErrors(ExcelTable(ChartType.RadarChart, spellings, null, ("x", N("metric")), ("y", "revenue"))), Is.Empty, "unannotated: three metrics");
+            Assert.That(ExcelErrors(ExcelTable(ChartType.RadarChart, Metrics("Jan 1, 2025", "January 1, 2025", "2025/01/01"), null, ("x", N("metric")), ("y", "revenue"))),
+                Is.EqualTo(new[] { Three }), "untyped full dates read as one date");
+            Assert.That(ExcelErrors(ExcelTable(ChartType.RadarChart, Metrics(5, "2025-01-01", "Jan 1, 2025"), null, ("x", N("metric")), ("y", "revenue"))),
+                Is.Empty, "only Date.parse could tell whether the key is temporal: the rule skips");
+            Assert.That(ExcelErrors(ExcelTable(ChartType.RadarChart, Metrics("2025-01-01T10:00+24:00", "2025-01-02T10:00+24:00"), null, ("x", N("metric")), ("y", "revenue"))),
+                Is.EqualTo(new[] { Three }), "undecided, but the conversion leaves every value as it is");
+        }
+    }
+
+    // source: src/core/resolve-semantics.ts:428-483 and src/excel/templates/pyramid.ts:38-41 (the non-null distinct converted
+    // values): a null date is the string "null", a missing one "undefined", and 2024 and "2024" of a Year are one group, a two-digit Year string is its four-digit year (expandToFullYear, :412-419) and a fractional Year its floor (:458-459);
+    // probe cases "pyramid with a date color and a null" and "pyramid with a Year color as numbers and strings"
+    [Test]
+    public void Excel_PyramidGroups_AreCountedAfterTheTemporalConversion()
+    {
+        JsonObject[] Sides(params JsonNode?[] sides) => [.. sides.Select((s, i) => new JsonObject { ["age"] = i % 2 == 0 ? "a" : "b", ["wave"] = s?.DeepClone(), ["revenue"] = 1 + i })];
+        ChartAssemblyInput Pyramid(JsonObject[] rows, Dictionary<string, SemanticType>? semanticTypes = null) =>
+            ExcelTable(ChartType.PyramidChart, rows, semanticTypes, ("x", "revenue"), ("y", "age"), ("color", "wave"));
+        var missing = Sides("2024-01-01", "2025-01-01");
+        missing = [.. missing, new JsonObject { ["age"] = "a", ["revenue"] = 3 }];
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(ExcelErrors(Pyramid(Sides("2024-01-01", "2025-01-01", null))), Has.Length.EqualTo(1).And.Some.Contains("(found 3)"), "a null date");
+            Assert.That(ExcelErrors(Pyramid(missing)), Has.Length.EqualTo(1).And.Some.Contains("(found 3)"), "a missing date");
+            Assert.That(ExcelErrors(Pyramid(Sides("M", "F", null))), Is.Empty, "a null category is no group");
+            Assert.That(ExcelErrors(Pyramid(Sides(2024, "2024", 2025), new() { ["wave"] = SemanticType.Year })), Is.Empty, "2024 and \"2024\" are one year");
+            Assert.That(ExcelErrors(Pyramid(Sides(2024, "24", 2025), new() { ["wave"] = SemanticType.Year })), Is.Empty, "a two-digit Year string is its four-digit year");
+            Assert.That(ExcelErrors(Pyramid(Sides(2024.5, "2024", 2025), new() { ["wave"] = SemanticType.Year })), Is.Empty, "a fractional Year is its floor");
+            Assert.That(ExcelErrors(Pyramid(Sides("2024-01-01", "2024/01/01", "2025-01-01"))), Is.Empty, "an untyped 2024/01/01 is 2024-01-01");
+            Assert.That(ExcelErrors(Pyramid(Sides(5, "2024-01-01", "2024/01/01"))), Is.Empty, "only Date.parse could tell whether 5 makes the key temporal: the rule skips");
+        }
+    }
+
+    // source: src/core/resolve-semantics.ts:428-483 and src/excel/templates/waterfall.ts:22, :32 (resolveTotalsMode over the
+    // finite converted values): YearMonth values are strings, so no last value reconciles; probe case "waterfall of a
+    // quantitative YearMonth y"
+    [Test]
+    public void Excel_WaterfallTotals_ReadTheValuesAfterTheTemporalConversion()
+    {
+        JsonObject[] Steps(params JsonNode?[] values) => [.. values.Select((v, i) => new JsonObject { ["step"] = $"s{i}", ["month"] = v?.DeepClone() })];
+        ChartAssemblyInput Waterfall(JsonObject[] rows, SemanticType? semanticType) =>
+            ExcelTable(ChartType.WaterfallChart, rows, semanticType is { } t ? new() { ["month"] = t } : null, ("x", "step"), ("y", Q("month")));
+        const string Final = "chart_spec: Excel cannot mark a final total because Office.js does not expose Waterfall total-point semantics; Excel throws.";
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(ExcelErrors(Waterfall(Steps(202501, 202502, 405003), SemanticType.YearMonth)), Is.Empty, "YearMonth strings are not finite");
+            Assert.That(ExcelErrors(Waterfall(Steps(202501, 202502, 405003), null)), Is.EqualTo(new[] { Final }), "unannotated: the last value reconciles");
+            Assert.That(ExcelErrors(Waterfall(Steps(5, 5, null), SemanticType.Year)), Is.EqualTo(new[] { Final }), "a null Year is \"null\", not 0");
+        }
+    }
+
+    // source: src/core/resolve-semantics.ts:428-483 and src/excel/templates/candlestick.ts:40-53 (new Date of each converted
+    // x): a null date is "null", an invalid date; a Date 20250102 is "2025-01-02"; a month-name date is an ISO date; a seconds or a milliseconds timestamp is its ISO instant (isLikelyTimestamp and timestampToMs, :223-231, read at :460-461); probe
+    // cases "candlestick with a null first date" and "candlestick with month-name dates out of order"
+    [Test]
+    public void Excel_CandlestickRows_AreReadAfterTheTemporalConversion()
+    {
+        JsonObject[] Days(params JsonNode?[] days) => [.. days.Select((d, i) => new JsonObject { ["day"] = d?.DeepClone(), ["open"] = 10 + i, ["high"] = 12 + i, ["low"] = 9 + i, ["close"] = 11 + i })];
+        ChartAssemblyInput Stock(JsonObject[] rows, SemanticType? semanticType = null) =>
+            ExcelTable(ChartType.CandlestickChart, rows, semanticType is { } t ? new() { ["day"] = t } : null, ("x", "day"), ("open", "open"), ("high", "high"), ("low", "low"), ("close", "close"));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(ExcelErrors(Stock(Days(null, "2025-01-02", "2025-01-03"))),
+                Is.EqualTo(new[] { "chart_spec.encodings.x: Excel requires a valid date at row 1 for a native Excel stock chart; Excel throws." }), "a null first date");
+            Assert.That(ExcelErrors(Stock(Days("2025-01-01", null, "2025-01-03"))),
+                Is.EqualTo(new[] { "chart_spec.encodings.x: Excel requires a valid date at row 2 for a native Excel stock chart; Excel throws." }), "a null date is invalid, not 1970");
+            Assert.That(ExcelErrors(Stock(Days("2025-01-01", 20250102), SemanticType.Date)), Is.Empty, "20250102 is 2 January 2025");
+            Assert.That(ExcelErrors(Stock(Days("Jan 2, 2025", "Jan 1, 2025"))), Has.Length.EqualTo(1).And.Some.Contains("strictly increasing"), "month-name dates read as ISO dates");
+            Assert.That(ExcelErrors(Stock(Days("2025-01-01", "2025-01-02", "2025-01-03"))), Is.Empty, "ISO dates");
+            Assert.That(ExcelErrors(Stock(Days(1700000000, 1700000000000), SemanticType.Timestamp)), Has.Length.EqualTo(1).And.Some.Contains("strictly increasing"), "a seconds and a milliseconds timestamp of one instant");
+        }
+    }
 }

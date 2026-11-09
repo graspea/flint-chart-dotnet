@@ -54,6 +54,17 @@ const sortBy = (value: string, change: (i: Doc) => void = () => {}): Doc =>
 
 const monthStarts = (count: number) => Array.from({ length: count }, (_, i) => new Date(Date.UTC(2024, i, 1)).toISOString().slice(0, 10));
 
+/** A document of the given rows; Excel reads them after convertTemporalData, which writes every value of a temporal key as a string. */
+const table = (chartType: string, values: unknown[], encodings: unknown, semantic_types?: Record<string, string>): Doc => ({
+  data: { values },
+  chart_spec: { chartType, encodings },
+  ...(semantic_types ? { semantic_types } : {}),
+});
+
+const ohlc = (dates: unknown[]): Doc =>
+  table('Candlestick Chart', dates.map((day, i) => ({ day, open: 10 + i, high: 12 + i, low: 9 + i, close: 11 + i })),
+    { x: { field: 'day' }, open: { field: 'open' }, high: { field: 'high' }, low: { field: 'low' }, close: { field: 'close' } });
+
 /** A Boxplot over dates on x (Excel needs a categorical x): snapshots read as ordinal, a run of time as temporal. */
 const boxplot = (dates: unknown[], semanticType?: string): Doc => ({
   data: { values: dates.flatMap((d, i) => [{ day: d, revenue: 10 + i }, { day: d, revenue: 20 + i }]) },
@@ -169,6 +180,15 @@ const cases: Array<[string, Doc, true?]> = [
   ['grouped bar with a quantitative color and no group', chart('Grouped Bar Chart', (i) => (i.chart_spec.encodings = { x: { field: 'city' }, y: { field: 'revenue' }, color: { field: 'cost', type: 'quantitative' } }))],
   ['grouped bar with a nominal color and no group', chart('Grouped Bar Chart', (i) => (i.chart_spec.encodings = { x: { field: 'city' }, y: { field: 'revenue' }, color: { field: 'city', type: 'nominal' } }))],
   ['histogram with an empty x field and y', chart('Histogram', (i) => (i.chart_spec.encodings = { x: { field: '' }, y: { field: 'revenue' } }))],
+  ['histogram with an empty x field and a numeric empty key', table('Histogram', [{ '': 202501, revenue: 10 }, { '': 202502, revenue: 20 }], { x: { field: '' }, y: { field: 'revenue' } })],
+  ['histogram with an empty x field and a YearMonth empty key', table('Histogram', [{ '': 202501, revenue: 10 }, { '': 202502, revenue: 20 }], { x: { field: '' }, y: { field: 'revenue' } }, { '': 'YearMonth' })],
+  ['histogram of a quantitative YearMonth field', table('Histogram', [{ month: 202501 }, { month: 202502 }], { x: { field: 'month', type: 'quantitative' } }, { month: 'YearMonth' })],
+  ['radar with one YearMonth metric in three spellings', table('Radar Chart', [{ month: 202501, revenue: 10 }, { month: '2025-01', revenue: 11 }, { month: 'Jan 2025', revenue: 12 }], { x: { field: 'month', type: 'nominal' }, y: { field: 'revenue' } }, { month: 'YearMonth' })],
+  ['pyramid with a date color and a null', table('Pyramid Chart', [{ age: 'a', wave: '2024-01-01', revenue: 1 }, { age: 'b', wave: '2025-01-01', revenue: 2 }, { age: 'a', wave: null, revenue: 3 }], { x: { field: 'revenue' }, y: { field: 'age' }, color: { field: 'wave' } })],
+  ['pyramid with a Year color as numbers and strings', table('Pyramid Chart', [{ age: 'a', wave: 2024, revenue: 1 }, { age: 'b', wave: '2024', revenue: 2 }, { age: 'a', wave: 2025, revenue: 3 }], { x: { field: 'revenue' }, y: { field: 'age' }, color: { field: 'wave' } }, { wave: 'Year' })],
+  ['waterfall of a quantitative YearMonth y', table('Waterfall Chart', [{ step: 'a', month: 202501 }, { step: 'b', month: 202502 }, { step: 'c', month: 405003 }], { x: { field: 'step' }, y: { field: 'month', type: 'quantitative' } }, { month: 'YearMonth' })],
+  ['candlestick with a null first date', ohlc([null, '2025-01-02', '2025-01-03'])],
+  ['candlestick with month-name dates out of order', ohlc(['Jan 2, 2025', 'Jan 1, 2025'])],
 ];
 
 export function probeCases(): ProbeCase[] {

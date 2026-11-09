@@ -331,11 +331,23 @@
       "Probe|#84": {
         "case": "Probe|#84"
       },
-      "Probe|#85": {
-        "case": "Probe|#85"
+      "Probe|#86": {
+        "case": "Probe|#86"
       },
-      "Pyramid Chart|#8": {
-        "case": "Pyramid Chart|#8"
+      "Probe|#88": {
+        "case": "Probe|#88"
+      },
+      "Probe|#90": {
+        "case": "Probe|#90"
+      },
+      "Probe|#91": {
+        "case": "Probe|#91"
+      },
+      "Probe|#92": {
+        "case": "Probe|#92"
+      },
+      "Probe|#94": {
+        "case": "Probe|#94"
       },
       "Radar Chart|#0": {
         "case": "Radar Chart|#0"
@@ -432,9 +444,6 @@
       },
       "Waterfall Chart|#1": {
         "case": "Waterfall Chart|#1"
-      },
-      "Waterfall Chart|#4": {
-        "case": "Waterfall Chart|#4"
       },
       "slice and value": {
         "encodings": {
@@ -673,11 +682,8 @@
           "Histogram|#1": [
             "y"
           ],
-          "Histogram|#3": [
-            "group",
-            "y"
-          ],
-          "Probe|#85": [],
+          "Probe|#86": [],
+          "Probe|#88": [],
           "slice and value": [],
           "x and y measures": [
             "group",
@@ -923,8 +929,8 @@
           "y measure": []
         },
         "Waterfall Chart": {
+          "Probe|#92": [],
           "Waterfall Chart|#1": [],
-          "Waterfall Chart|#4": [],
           "slice and value": [],
           "x and y measures": [],
           "x category, y measure": [],
@@ -1095,7 +1101,7 @@
             "group",
             "y"
           ],
-          "Candlestick Chart|#4": [
+          "Probe|#94": [
             "color",
             "group",
             "y"
@@ -1324,11 +1330,10 @@
           "Histogram|#1": [
             "y"
           ],
-          "Histogram|#3": [
-            "group",
-            "y"
+          "Probe|#86": [
+            "group"
           ],
-          "Probe|#85": [
+          "Probe|#88": [
             "group"
           ],
           "slice and value": [],
@@ -1506,7 +1511,7 @@
           ]
         },
         "Pyramid Chart": {
-          "Pyramid Chart|#8": [
+          "Probe|#90": [
             "column",
             "group",
             "row"
@@ -1931,10 +1936,10 @@
           ]
         },
         "Waterfall Chart": {
-          "Waterfall Chart|#1": [],
-          "Waterfall Chart|#4": [
+          "Probe|#92": [
             "group"
           ],
+          "Waterfall Chart|#1": [],
           "slice and value": [],
           "x and y measures": [
             "group"
@@ -2079,7 +2084,7 @@
             "strokeDash",
             "y"
           ],
-          "Candlestick Chart|#4": [
+          "Probe|#94": [
             "y"
           ],
           "slice and value": [
@@ -2365,11 +2370,11 @@
           "Histogram|#1": [
             "y"
           ],
-          "Histogram|#3": [
+          "Probe|#86": [],
+          "Probe|#88": [
             "group",
             "y"
           ],
-          "Probe|#85": [],
           "slice and value": [
             "y"
           ],
@@ -2578,7 +2583,7 @@
           ]
         },
         "Pyramid Chart": {
-          "Pyramid Chart|#8": [
+          "Probe|#90": [
             "column",
             "group",
             "row"
@@ -2931,8 +2936,8 @@
           "y measure": []
         },
         "Waterfall Chart": {
+          "Probe|#92": [],
           "Waterfall Chart|#1": [],
-          "Waterfall Chart|#4": [],
           "slice and value": [],
           "x and y measures": [],
           "x category, y measure": [],
@@ -3107,7 +3112,7 @@
           "Candlestick Chart|#3": [
             "y"
           ],
-          "Candlestick Chart|#4": [
+          "Probe|#94": [
             "y"
           ],
           "slice and value": [
@@ -3341,12 +3346,12 @@
           "Histogram|#1": [
             "y"
           ],
-          "Histogram|#3": [
+          "Probe|#86": [
+            "group"
+          ],
+          "Probe|#88": [
             "group",
             "y"
-          ],
-          "Probe|#85": [
-            "group"
           ],
           "slice and value": [
             "y"
@@ -3597,7 +3602,7 @@
           ]
         },
         "Pyramid Chart": {
-          "Pyramid Chart|#8": [
+          "Probe|#90": [
             "column",
             "group",
             "row"
@@ -3960,8 +3965,8 @@
           ]
         },
         "Waterfall Chart": {
+          "Probe|#92": [],
           "Waterfall Chart|#1": [],
-          "Waterfall Chart|#4": [],
           "slice and value": [],
           "x and y measures": [],
           "x category, y measure": [],
@@ -4276,6 +4281,13 @@
             "row",
             "x"
           ],
+          "Probe|#86": [
+            "color",
+            "column",
+            "row",
+            "x",
+            "y"
+          ],
           "x and y measures": [
             "color",
             "column",
@@ -4411,7 +4423,7 @@
           ]
         },
         "Pyramid Chart": {
-          "Pyramid Chart|#8": [
+          "Probe|#91": [
             "color",
             "column",
             "row",
@@ -4597,7 +4609,7 @@
           ]
         },
         "Waterfall Chart": {
-          "Waterfall Chart|#4": [
+          "Probe|#92": [
             "color",
             "column",
             "row",
