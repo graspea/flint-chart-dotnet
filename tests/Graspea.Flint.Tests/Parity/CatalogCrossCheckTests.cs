@@ -13,6 +13,24 @@ public sealed class CatalogCrossCheckTests
 {
     private static readonly string[] BackendIds = ["vegalite", "echarts", "chartjs", "plotly", "excel", "image-charts"];
 
+    /// <summary>The channels Excel reads in <see cref="Document"/> (x a text field, the channel a number field) though its
+    /// template leaves them out (flint-chart 1.0.1 src/excel/assemble.ts): the series group (:270-275), else the Grouped
+    /// Bar color (src/core/static-series.ts:63-73), the dash field (:293), size and order on the XY path (:294-295), and
+    /// the Pie and Donut slice and value fallbacks (:277-281). A Line Chart over a text x is not on the XY path, and a
+    /// Histogram with x reads no y.</summary>
+    private static readonly Dictionary<string, string[]> ExcelReadsHere = new()
+    {
+        ["Area Chart"] = ["group", "strokeDash"],
+        ["Bar Chart"] = ["group", "strokeDash"],
+        ["Grouped Bar Chart"] = ["color", "strokeDash"],
+        ["Stacked Bar Chart"] = ["group", "strokeDash"],
+        ["Line Chart"] = ["group"],
+        ["Scatter Plot"] = ["group", "order", "strokeDash"],
+        ["Connected Scatter Plot"] = ["group", "size", "strokeDash"],
+        ["Pie Chart"] = ["strokeDash", "x", "y"],
+        ["Donut Chart"] = ["strokeDash", "x", "y"],
+    };
+
     private static FlintBackend Backend(string id) => (FlintBackend)Array.IndexOf(BackendIds, id);
 
     private static ChartAssemblyInput Document(string chartType, Action<ChartSpec>? change = null)
@@ -73,10 +91,10 @@ public sealed class CatalogCrossCheckTests
                             // source: supportsFacets false: both native assemblers throw on a bound facet
                             Assert.That(Has(result, unsupported, channel), Is.True, $"{id}: a bound {channel} throws");
                         }
-                        else if (id == "excel" && chartType == "Grouped Bar Chart" && channel == "color")
+                        else if (id == "excel" && ExcelReadsHere.TryGetValue(chartType, out var read) && read.Contains(channel))
                         {
-                            // source: normalizeChartEncodingAliases (Excel reads color as the group while no group is bound)
-                            Assert.That(Has(result, "unsupported_channel", channel), Is.False, $"{id}: {channel} is read as the group");
+                            // source: ExcelReadsHere
+                            Assert.That(Has(result, "unsupported_channel", channel), Is.False, $"{id}: {channel} is read");
                         }
                         else if (id == "image-charts" && CommittedIr.ImageChartsReads(chartType).Contains(channel))
                         {

@@ -284,11 +284,90 @@ public sealed partial class ChartValidatorTests
         }
     }
 
-    // source: normalizeChartEncodingAliases (only a Grouped Bar Chart aliases): a Line Chart's group is not aliased, and the Excel Line template does not declare it, so it is reported as before
-    [Test]
-    public void Excel_GroupWithoutColorOnALineChart_IsStillUnsupported()
+    private static ChartAssemblyInput ExcelChart(ChartType chartType, params (string Channel, EncodingValue Value)[] encodings) => Bar(i =>
     {
-        var line = Line(i => i.ChartSpec.Encodings["group"] = N("city"));
-        Assert.That(Issues(line, FlintBackend.Excel, "unsupported_channel").Select(i => i.Path), Is.EqualTo(new[] { "chart_spec.encodings.group" }));
+        i.ChartSpec.ChartType = chartType;
+        i.ChartSpec.Encodings = new();
+        foreach (var (channel, value) in encodings)
+        {
+            i.ChartSpec.Encodings[channel] = value;
+        }
+    });
+
+    private static string[] UnsupportedOnExcel(ChartAssemblyInput input) =>
+        Issues(input, FlintBackend.Excel, "unsupported_channel").Select(i => i.Path).ToArray();
+
+    // source: src/excel/assemble.ts:270-275 (seriesCand = encodings.group ? 'group' : a categorical color: the series of
+    // every shared-path template but Pie and Donut, which read none, :277-281); the Excel Line template does not declare
+    // group (src/excel/templates/line.ts:8); probes.json channelReads
+    [Test]
+    public void Excel_GroupOnALineChart_IsReadAsTheSeries()
+    {
+        var nominal = new ChartEncoding { Type = EncodingType.Nominal };
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(UnsupportedOnExcel(Line(i => i.ChartSpec.Encodings["group"] = N("city"))), Is.Empty, "a group field");
+            Assert.That(UnsupportedOnExcel(Line(i => { i.ChartSpec.Encodings["color"] = "city"; i.ChartSpec.Encodings["group"] = nominal; })), Is.Empty, "no field, displacing a color");
+            Assert.That(UnsupportedOnExcel(Line(i => i.ChartSpec.Encodings["group"] = nominal)), Is.EqualTo(new[] { "chart_spec.encodings.group" }), "no field and no color");
+            Assert.That(UnsupportedOnExcel(Bar(i => { i.ChartSpec.Encodings["color"] = "revenue"; i.ChartSpec.Encodings["group"] = nominal; })), Is.EqualTo(new[] { "chart_spec.encodings.group" }), "no field beside a quantitative color");
+            Assert.That(UnsupportedOnExcel(Bar(i => { i.ChartSpec.Encodings["color"] = nominal; i.ChartSpec.Encodings["group"] = nominal; })), Is.EqualTo(new[] { "chart_spec.encodings.group" }), "no field beside a field-less color");
+            Assert.That(UnsupportedOnExcel(ExcelChart(ChartType.PieChart, ("color", "city"), ("size", "revenue"), ("group", "city"))), Is.EqualTo(new[] { "chart_spec.encodings.group" }), "a Pie Chart has no series");
+        }
+    }
+
+    // source: src/excel/assemble.ts:293 (dashField = fieldOf('strokeDash')), :403-448 (the series descriptors and formats
+    // off the XY path) and :587-591 (the legend shows for a series or a dash field)
+    [Test]
+    public void Excel_StrokeDashWithAField_IsRead()
+    {
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(UnsupportedOnExcel(Bar(i => i.ChartSpec.Encodings["strokeDash"] = "city")), Is.Empty, "bar");
+            Assert.That(UnsupportedOnExcel(ExcelChart(ChartType.PieChart, ("color", "city"), ("size", "revenue"), ("strokeDash", "city"))), Is.Empty, "pie");
+            Assert.That(UnsupportedOnExcel(Bar(i => i.ChartSpec.Encodings["strokeDash"] = "")), Is.EqualTo(new[] { "chart_spec.encodings.strokeDash" }), "an empty field");
+            Assert.That(UnsupportedOnExcel(Scatter(i => i.ChartSpec.Encodings["strokeDash"] = "city")), Is.Empty, "scatter without a series: it shows the legend");
+            Assert.That(UnsupportedOnExcel(Scatter(i => { i.ChartSpec.Encodings["color"] = "city"; i.ChartSpec.Encodings["strokeDash"] = "city"; })),
+                Is.EqualTo(new[] { "chart_spec.encodings.strokeDash" }), "scatter with a series");
+            Assert.That(Issues(Bar(i => i.ChartSpec.Encodings["strokeDash"] = "city"), null, "unsupported_channel"), Is.Empty, "no backend");
+        }
+    }
+
+    // source: src/excel/assemble.ts:294-295 and :320-377 (size and order are read on the XY path: a Scatter or Connected
+    // Scatter Plot, mapping.xy, :282-283, and a Line Chart over quantitative x and y, numericXLine, :309-314)
+    [Test]
+    public void Excel_SizeAndOrder_AreReadOnTheXyPath()
+    {
+        var numericLine = ExcelChart(ChartType.LineChart, ("x", "revenue"), ("y", "cost"), ("size", "cost"), ("order", "revenue"));
+        var nominalX = ExcelChart(ChartType.LineChart, ("x", N("revenue")), ("y", "cost"), ("size", "cost"));
+        IEnumerable<string> TemplatePaths(ChartAssemblyInput input) =>
+            ChartTemplate.Create<JsonObject>(input).Validate(FlintBackend.Excel).Issues.Where(i => i.Code == "unsupported_channel").Select(i => i.Path);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(UnsupportedOnExcel(ExcelChart(ChartType.ConnectedScatterPlot, ("x", "revenue"), ("y", "cost"), ("order", "revenue"), ("size", "cost"))), Is.Empty, "connected scatter size");
+            Assert.That(UnsupportedOnExcel(Scatter(i => i.ChartSpec.Encodings["order"] = "revenue")), Is.Empty, "scatter order");
+            Assert.That(UnsupportedOnExcel(numericLine), Is.Empty, "line over numeric x and y");
+            Assert.That(UnsupportedOnExcel(Line(i => { i.ChartSpec.Encodings["size"] = "cost"; i.ChartSpec.Encodings["order"] = "cost"; })),
+                Is.EquivalentTo(new[] { "chart_spec.encodings.size", "chart_spec.encodings.order" }), "line over a category");
+            Assert.That(TemplatePaths(numericLine), Is.Empty, "template: the rows decide x and y");
+            Assert.That(TemplatePaths(nominalX), Is.EqualTo(new[] { "chart_spec.encodings.size" }), "template: a nominal x decides");
+        }
+    }
+
+    // source: src/excel/assemble.ts:277-281 (a Pie or Donut Chart takes color, else x, as the slice and size, else theta,
+    // else y, as the value; a bound encoding of any shape shadows the next) and src/excel/templates/histogram.ts:19, :25
+    // (y is the value without an x field)
+    [Test]
+    public void Excel_SliceValueAndHistogramFallbacks_AreRead()
+    {
+        var histogram = new ChartType("Histogram");
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(UnsupportedOnExcel(ExcelChart(ChartType.PieChart, ("x", "city"), ("y", "revenue"))), Is.Empty, "pie x and y");
+            Assert.That(UnsupportedOnExcel(ExcelChart(ChartType.DonutChart, ("color", "city"), ("size", "revenue"), ("x", "city"), ("y", "revenue"))),
+                Is.EquivalentTo(new[] { "chart_spec.encodings.x", "chart_spec.encodings.y" }), "shadowed by color and size");
+            Assert.That(UnsupportedOnExcel(ExcelChart(histogram, ("y", "revenue"))), Is.Empty, "histogram y without x");
+            Assert.That(Issues(ExcelChart(histogram, ("y", "revenue")), null, "unsupported_channel"), Is.Empty, "histogram y without x, no backend");
+            Assert.That(UnsupportedOnExcel(ExcelChart(histogram, ("x", "revenue"), ("y", "cost"))), Is.EqualTo(new[] { "chart_spec.encodings.y" }), "histogram with x");
+        }
     }
 }

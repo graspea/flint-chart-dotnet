@@ -190,11 +190,45 @@ internal static class Excel
         return Bound("group") ? "group" : Bound("color") ? "color" : null;
     }
 
-    /// <summary>Whether Excel reads <paramref name="channel"/> though its template does not declare it: <c>color</c> of a
-    /// Grouped Bar Chart with no <c>group</c> bound, which <c>assembleExcel</c> reads as the group. <c>CatalogCheck</c> of
-    /// Graspea.Flint.CSharp mirrors this.</summary>
-    internal static bool ReadsUndeclared(ChartAssemblyInput input, string channel) =>
-        channel == "color" && GroupedSeriesChannel(input) == "color";
+    /// <summary>
+    /// Whether Excel reads <paramref name="channel"/> though its template does not declare it (flint-chart 1.0.1
+    /// src/excel/assemble.ts, probes.json <c>channelReads</c>). On the shared path: <c>color</c> of a Grouped Bar Chart with
+    /// no <c>group</c> bound and a <c>color</c> with a field, the group (<see cref="GroupedSeriesChannel"/>); off Pie and Donut, <c>group</c> with a field,
+    /// the series, or without a field beside a <c>color</c> with a field that is not quantitative, a categorical series it displaces (:270-275); <c>strokeDash</c> with a
+    /// field (:293), which splits the series (:403-448), and on a Scatter or Connected Scatter Plot without a series field
+    /// only shows the legend (:587-591); <c>size</c> and <c>order</c> with a field on the XY path (:294-295, :320-377): a
+    /// Connected Scatter Plot reads <c>size</c>, a Scatter Plot <c>order</c>, and a Line Chart both when <c>x</c> and
+    /// <c>y</c> are quantitative (:309-314), assumed while the rows that decide it are not known; on a Pie or Donut Chart
+    /// <c>x</c> while no <c>color</c> is bound (the slice) and <c>y</c> while neither <c>size</c> nor <c>theta</c> is (the
+    /// value, :277-281). A Histogram reads <c>y</c> as the value without an <c>x</c> field (templates/histogram.ts:19, :25).
+    /// Bound is any non-null value (the normalized encodings are truthy objects; a Grouped Bar Chart <c>color</c> also needs a field); a field is a non-empty one of a single
+    /// encoding. <c>CatalogCheck</c> of Graspea.Flint.CSharp mirrors this for a template.
+    /// </summary>
+    internal static bool ReadsUndeclared(ChartAssemblyInput input, FieldTypes types, string channel, bool rowsKnown)
+    {
+        var chartType = input.ChartSpec.ChartType.Name;
+        if (!SharedPathTemplates.Contains(chartType))
+        {
+            return chartType == "Histogram" && channel == "y" && types.FieldOf("x") is null;
+        }
+
+        bool Bound(string ch) => input.ChartSpec.Encodings.TryGetValue(ch, out var v) && v is not null;
+        bool? Measure(string axis) => rowsKnown || types.SpecDecided(axis) ? IsQuantitative(types.Of(axis)) : null;
+        bool NumericLine() => chartType == "Line Chart" && And(Measure("x"), Measure("y")) != false;
+        var pie = chartType is "Pie Chart" or "Donut Chart";
+        return channel switch
+        {
+            "color" => GroupedSeriesChannel(input) == "color" && types.FieldOf("color") is not null,
+            "group" => !pie && (types.FieldOf("group") is not null || (types.FieldOf("color") is not null && Measure("color") != true)),
+            "strokeDash" => types.FieldOf("strokeDash") is not null
+                && (chartType is not ("Scatter Plot" or "Connected Scatter Plot") || (Bound("group") ? types.FieldOf("group") : types.FieldOf("color")) is null),
+            "size" => types.FieldOf("size") is not null && (chartType == "Connected Scatter Plot" || NumericLine()),
+            "order" => types.FieldOf("order") is not null && (chartType == "Scatter Plot" || NumericLine()),
+            "x" => pie && !Bound("color"),
+            "y" => pie && !Bound("size") && !Bound("theta"),
+            _ => false,
+        };
+    }
 
     private static string? Property(ChartAssemblyInput input, string key) =>
         input.ChartSpec.ChartProperties is { } p && p.TryGetValue(key, out var v) && Js.Kind(v) == JsonValueKind.String ? v!.GetValue<string>() : null;

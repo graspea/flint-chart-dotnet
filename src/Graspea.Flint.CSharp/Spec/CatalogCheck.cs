@@ -158,11 +158,68 @@ internal sealed class CatalogCheck
         }
     }
 
-    /// <summary><c>color</c> of a Grouped Bar Chart with no <c>group</c> bound, which Excel reads as the group, as the
-    /// validator's <c>Excel.ReadsUndeclared</c>; only a <c>null</c> group falls through (an empty field, an array, a
-    /// string all count as bound).</summary>
-    private bool ExcelReads(BackendTemplateRow t, JsonItem encodings, string channel) =>
-        t.Backend == "excel" && channel == "color" && ChartTypeName == "Grouped Bar Chart" && encodings.Get("group") is not { IsNull: false };
+    /// <summary>The templates of the Excel shared path (src/excel/assemble.ts:264-310), as the validator's <c>Excel</c>.</summary>
+    private static readonly string[] ExcelSharedPath =
+        ["Area Chart", "Bar Chart", "Grouped Bar Chart", "Stacked Bar Chart", "Line Chart", "Scatter Plot", "Connected Scatter Plot", "Pie Chart", "Donut Chart"];
+
+    /// <summary>A channel the Excel template leaves undeclared but the assembler reads, as the validator's
+    /// <c>Excel.ReadsUndeclared</c> without rows (a template): <c>color</c> with a field of a Grouped Bar Chart with no
+    /// <c>group</c> bound; <c>group</c> off Pie and Donut with a field or beside a <c>color</c> with a field and no aggregate; <c>strokeDash</c> with a field
+    /// (on a Scatter or Connected Scatter Plot only without a series field); <c>size</c> with a field on a Connected
+    /// Scatter Plot and <c>order</c> with a field on a Scatter Plot, both on a Line Chart unless the spec makes <c>x</c> or
+    /// <c>y</c> not quantitative; <c>x</c> and <c>y</c> of a Pie or Donut Chart as the slice and value fallbacks; <c>y</c>
+    /// of a Histogram without an <c>x</c> field. Bound is any non-null value (a Grouped Bar Chart <c>color</c> also needs a field); a field is a non-empty one of a single
+    /// encoding.</summary>
+    private bool ExcelReads(BackendTemplateRow t, JsonItem encodings, string channel)
+    {
+        if (t.Backend != "excel")
+        {
+            return false;
+        }
+
+        var name = ChartTypeName;
+        bool Bound(string ch) => encodings.Get(ch) is { IsNull: false };
+        string? Field(string ch) => encodings.Get(ch) is { IsNull: false, IsArray: false } v && FieldOf(v) is { Length: > 0 } f ? f : null;
+        if (Array.IndexOf(ExcelSharedPath, name) < 0)
+        {
+            return name == "Histogram" && channel == "y" && Field("x") is null;
+        }
+
+        string? Agg(string ch) => encodings.Get(ch) is { IsObject: true } o && o.Get("aggregate") is { IsString: true } a && a.Value is { Length: > 0 } s ? s : null;
+        var pie = name is "Pie Chart" or "Donut Chart";
+        bool NumericLine() => name == "Line Chart" && !NotQuantitativeBySpec(encodings, "x") && !NotQuantitativeBySpec(encodings, "y");
+        return channel switch
+        {
+            "color" => name == "Grouped Bar Chart" && !Bound("group") && Field("color") is not null,
+            "group" => !pie && (Field("group") is not null || (Field("color") is not null && Agg("color") is null)),
+            "strokeDash" => Field("strokeDash") is not null
+                && (name is not ("Scatter Plot" or "Connected Scatter Plot") || (Bound("group") ? Field("group") : Field("color")) is null),
+            "size" => Field("size") is not null && (name == "Connected Scatter Plot" || NumericLine()),
+            "order" => Field("order") is not null && (name == "Scatter Plot" || NumericLine()),
+            "x" => pie && !Bound("color"),
+            "y" => pie && !Bound("size") && !Bound("theta"),
+            _ => false,
+        };
+    }
+
+    /// <summary>Whether the spec alone makes an axis not quantitative, as the validator's <c>FieldTypes.SpecDecided</c> and
+    /// <c>Of</c> without rows: unbound, <c>null</c> or a static series; no field and no <c>count</c>; or an explicit
+    /// <c>type</c> other than <c>quantitative</c> and no <c>aggregate</c> (an aggregate makes it quantitative).</summary>
+    private static bool NotQuantitativeBySpec(JsonItem encodings, string axis)
+    {
+        if (encodings.Get(axis) is not { IsNull: false, IsArray: false } e)
+        {
+            return true;
+        }
+
+        string? Text(string key) => e.IsObject && e.Get(key) is { IsString: true } v && v.Value is { Length: > 0 } s ? s : null;
+        if (FieldOf(e) is not { Length: > 0 })
+        {
+            return Text("aggregate") != "count";
+        }
+
+        return Text("aggregate") is null && Text("type") is { } type && type != "quantitative";
+    }
 
     /// <summary>A channel the Image-Charts template leaves undeclared but the assembler reads, as the validator's
     /// <c>ImageCharts.ReadsUndeclared</c> (the core cannot see it): <c>group</c> with a field on every chart type but Pie

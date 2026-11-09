@@ -249,7 +249,7 @@ internal sealed partial class ValidationRun
         // A declared channel, or one a backend reads though its template leaves it out (ImageCharts.ReadsUndeclared, Excel.ReadsUndeclared).
         bool Reads(FlintBackend t) => template[t].Channels.Contains(channel)
             || (t == FlintBackend.ImageCharts && ImageCharts.ReadsUndeclared(input, types, channel))
-            || (t == FlintBackend.Excel && Excel.ReadsUndeclared(input, channel));
+            || (t == FlintBackend.Excel && Excel.ReadsUndeclared(input, types, channel, deferred is null));
 
         if (backend is { } b)
         {

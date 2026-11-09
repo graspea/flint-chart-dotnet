@@ -73,6 +73,30 @@ public sealed class CatalogCheckTests
         Assert.That(core, Is.Empty);
     }
 
+    // source: ValidationRun.UnsupportedChannel and Excel.ReadsUndeclared (flint-chart 1.0.1 src/excel/assemble.ts: the
+    // series group, :270-275; the dash field, :293; size and order on the XY path, a Line Chart only over quantitative x
+    // and y, :294-295, :309-314; src/excel/templates/histogram.ts:19, :25, y without an x field), where no other backend's
+    // template declares the channel; the core and the validator without a backend agree
+    [TestCase("Bar Chart", "{\"x\":\"a\",\"y\":\"b\",\"strokeDash\":\"c\"}", "")]
+    [TestCase("Bar Chart", "{\"x\":\"a\",\"y\":\"b\",\"strokeDash\":\"\"}", "chart_spec.encodings.strokeDash")]
+    [TestCase("Line Chart", "{\"x\":\"a\",\"y\":\"b\",\"color\":\"c\",\"group\":{\"type\":\"nominal\"}}", "")]
+    [TestCase("Bar Chart", "{\"x\":\"a\",\"y\":\"b\",\"color\":{\"field\":\"c\",\"aggregate\":\"sum\"},\"group\":{\"type\":\"nominal\"}}", "chart_spec.encodings.group")]
+    [TestCase("Line Chart", "{\"x\":\"a\",\"y\":\"b\",\"order\":\"c\"}", "")]
+    [TestCase("Line Chart", "{\"x\":{\"field\":\"a\",\"type\":\"nominal\"},\"y\":\"b\",\"order\":\"c\"}", "chart_spec.encodings.order")]
+    [TestCase("Line Chart", "{\"x\":{\"field\":\"a\",\"type\":\"nominal\",\"aggregate\":\"sum\"},\"y\":\"b\",\"order\":\"c\"}", "")]
+    [TestCase("Scatter Plot", "{\"x\":\"a\",\"y\":\"b\",\"order\":\"c\"}", "")]
+    [TestCase("Connected Scatter Plot", "{\"x\":\"a\",\"y\":\"b\",\"order\":\"c\",\"size\":\"d\"}", "")]
+    [TestCase("Histogram", "{\"y\":\"a\"}", "")]
+    [TestCase("Histogram", "{\"x\":\"a\",\"y\":\"b\"}", "chart_spec.encodings.y")]
+    public void Run_ChannelExcelReads_IsNotFlint111(string chartType, string encodings, string expected)
+    {
+        var json = Doc(chartType, encodings);
+        var core = Check(json).Where(i => i.Code == "unsupported_channel").Select(i => i.Path);
+        var validator = ChartTemplate.Create<JsonObject>(FlintJson.Deserialize(json)).Validate().Issues.Where(i => i.Code == "unsupported_channel").Select(i => i.Path);
+        Assert.That(string.Join(" ", core), Is.EqualTo(expected));
+        Assert.That(string.Join(" ", validator), Is.EqualTo(expected));
+    }
+
     // source: ValidationRun.PropertyChecks and Accepts (normalizeChartProperties: a value equal to an option value, or a
     // label ignoring case and surrounding whitespace)
     [TestCase("\"wobbly\"", 1)]
