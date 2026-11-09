@@ -153,7 +153,7 @@ Decided: `Build()` and `ToJson()` never validate; `Validate(backend)` is explici
 
 | Code | Fact |
 |---|---|
-| `unsupported_channel` | not declared by the template (any backend, or the target backend); ignored on Vega-Lite, ECharts, Chart.js and Plotly; on an Excel target the facet and `validate()` cases are `excel_unsupported` Errors instead |
+| `unsupported_channel` | not declared by the template (any backend, or the target backend); ignored on Excel and Image-Charts and not drawn, though the shared layout may react, on Vega-Lite, ECharts, Chart.js and Plotly; on an Excel target the facet and `validate()` cases are `excel_unsupported` Errors instead |
 | `unknown_field` | encoding field not in `FirstRowKeys` (only when `Values` present; exempt for `aggregate: count` without a field); upstream accepts it silently and the encoding resolves to nothing |
 | `invalid_option_value` | discrete value outside the template's set for the backend; upstream `invalid-option-value` drops it |
 | `unknown_semantic_type` | unregistered name kept verbatim; the registry lookup falls back to `UNKNOWN_ENTRY` and the type is inferred from the data, so the annotation has no effect |

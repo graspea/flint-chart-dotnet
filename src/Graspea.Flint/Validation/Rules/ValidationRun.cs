@@ -262,7 +262,11 @@ internal sealed partial class ValidationRun
 
             if (!RetiredChannel([b], channel, path))
             {
-                Add(IssueSeverity.Warning, Codes.UnsupportedChannel, path, $"The {Id(b)} template of \"{input.ChartSpec.ChartType.Name}\" does not declare \"{channel}\"; {Id(b)} ignores it.", channel);
+                var chart = input.ChartSpec.ChartType.Name;
+                var effect = LayoutBackends.Contains(b)
+                    ? LayoutReads.BrokenFacet(b, input, types, channel) ?? $"{Id(b)} does not draw it, though it may still affect the output"
+                    : $"{Id(b)} ignores it";
+                Add(IssueSeverity.Warning, Codes.UnsupportedChannel, path, $"The {Id(b)} template of \"{chart}\" does not declare \"{channel}\"; {effect}.", channel);
             }
 
             return;
@@ -270,7 +274,7 @@ internal sealed partial class ValidationRun
 
         if (!targets.Any(Reads) && !RetiredChannel(targets, channel, path))
         {
-            Add(IssueSeverity.Warning, Codes.UnsupportedChannel, path, $"No backend's template of \"{input.ChartSpec.ChartType.Name}\" declares \"{channel}\"; it is ignored.", channel);
+            Add(IssueSeverity.Warning, Codes.UnsupportedChannel, path, $"No backend's template of \"{input.ChartSpec.ChartType.Name}\" declares \"{channel}\"; {(targets.Any(LayoutBackends.Contains) ? "no backend draws it, though it may still affect the output" : "it is ignored")}.", channel);
         }
     }
 

@@ -98,4 +98,55 @@ public sealed partial class ChartValidatorTests
             Assert.That(Unsupported(Layout("Density Plot", ("color", "city"), ("y", "revenue")), FlintBackend.VegaLite), Is.EqualTo(new[] { "chart_spec.encodings.y" }), "vega-lite density y");
         }
     }
+
+    private static string UnsupportedMessage(ChartAssemblyInput input, FlintBackend? backend) =>
+        Issues(input, backend, "unsupported_channel").Single().Message;
+
+    // source: the layout backends' shared layout reacts to an undeclared channel (legend space, a palette, a legend title
+    // naming the field, the category budget; probes.json channelReads.layoutReads), so "ignores it" is not said of them;
+    // Excel and Image-Charts read channels by name (probes.json channelReads) and ignore the rest
+    [Test]
+    public void Layout_UnsupportedChannelMessage_SaysWhatTheBackendDoes()
+    {
+        var detail = Layout("Bar Chart", ("x", "city"), ("y", "revenue"), ("goal", "cost"));
+        using (Assert.EnterMultipleScope())
+        {
+            foreach (var (backend, id) in new[] { (FlintBackend.VegaLite, "vegalite"), (FlintBackend.ECharts, "echarts"), (FlintBackend.ChartJs, "chartjs"), (FlintBackend.Plotly, "plotly") })
+            {
+                Assert.That(UnsupportedMessage(detail, backend),
+                    Is.EqualTo($"The {id} template of \"Bar Chart\" does not declare \"goal\"; {id} does not draw it, though it may still affect the output."), id);
+            }
+
+            Assert.That(UnsupportedMessage(detail, FlintBackend.Excel),
+                Is.EqualTo("The excel template of \"Bar Chart\" does not declare \"goal\"; excel ignores it."), "excel");
+            Assert.That(UnsupportedMessage(detail, FlintBackend.ImageCharts),
+                Is.EqualTo("The image-charts template of \"Bar Chart\" does not declare \"goal\"; image-charts ignores it."), "image-charts");
+            Assert.That(UnsupportedMessage(detail, null),
+                Is.EqualTo("No backend's template of \"Bar Chart\" declares \"goal\"; no backend draws it, though it may still affect the output."), "no backend, layout targets");
+        }
+    }
+
+    // source: src/echarts/facet.ts:353-359, :424-428 (see above): the four ECharts templates facet the field and draw it broken
+    [Test]
+    public void Layout_UnsupportedChannelMessage_NamesTheBrokenEChartsFacets()
+    {
+        const string same = "echarts facets it, but draws every panel's chart in the same place";
+        string Expect(string chart, string channel, string effect) =>
+            $"The echarts template of \"{chart}\" does not declare \"{channel}\"; {effect}.";
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(UnsupportedMessage(Layout("Funnel Chart", ("y", "city"), ("size", "revenue"), ("column", "cost")), FlintBackend.ECharts),
+                Is.EqualTo(Expect("Funnel Chart", "column", same)), "funnel");
+            Assert.That(UnsupportedMessage(Layout("Network Graph", ("x", "city"), ("y", "revenue"), ("row", "cost")), FlintBackend.ECharts),
+                Is.EqualTo(Expect("Network Graph", "row", same)), "network");
+            Assert.That(UnsupportedMessage(Layout("Sankey Diagram", ("x", "city"), ("y", "revenue"), ("column", "cost")), FlintBackend.ECharts),
+                Is.EqualTo(Expect("Sankey Diagram", "column", same)), "sankey");
+            Assert.That(UnsupportedMessage(Layout("Calendar Heatmap", ("x", "city"), ("color", "revenue"), ("column", "cost")), FlintBackend.ECharts),
+                Is.EqualTo(Expect("Calendar Heatmap", "column", "echarts facets it, but the faceted chart loses its calendar and color scale and does not render")), "calendar");
+            Assert.That(UnsupportedMessage(Layout("Funnel Chart", ("y", "city"), ("size", "revenue"), ("column", new ChartEncoding { Aggregate = Aggregate.Count })), FlintBackend.ECharts),
+                Is.EqualTo(Expect("Funnel Chart", "column", "echarts does not draw it, though it may still affect the output")), "a count facet keeps the generic text");
+            Assert.That(UnsupportedMessage(Layout("Gauge Chart", ("size", "revenue"), ("row", "city")), FlintBackend.ECharts),
+                Is.EqualTo(Expect("Gauge Chart", "row", "echarts does not draw it, though it may still affect the output")), "a template echarts does not facet");
+        }
+    }
 }

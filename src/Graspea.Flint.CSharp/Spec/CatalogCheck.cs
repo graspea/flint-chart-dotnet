@@ -152,7 +152,7 @@ internal sealed class CatalogCheck
                 else
                 {
                     AddAtKey("unsupported_channel", SpecSeverity.Warning, path, member,
-                        $"No backend's template of \"{ChartTypeName}\" declares \"{channel}\"; it is ignored.");
+                        $"No backend's template of \"{ChartTypeName}\" declares \"{channel}\"; {(_targets.All(t => t.Backend is "excel" or "image-charts") ? "it is ignored" : "no backend draws it, though it may still affect the output")}.");
                 }
             }
         }

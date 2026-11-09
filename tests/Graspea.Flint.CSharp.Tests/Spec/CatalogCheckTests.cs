@@ -39,6 +39,17 @@ public sealed class CatalogCheckTests
         Assert.That(issues.Select(Describe), Is.EqualTo(new[] { "FLINT111 unsupported_channel Warning chart_spec.encodings.goal @1:70" }));
     }
 
+    // source: ValidationRun.UnsupportedChannel: a Line Chart has layout backends among its templates, which may still react to
+    // the channel, so the text does not say it is ignored; the validator's no-backend message is the same
+    [Test]
+    public void Run_ChannelNoBackendDeclares_SaysNoBackendDrawsIt()
+    {
+        var json = Doc("Line Chart", "{\"x\":\"a\",\"y\":\"b\",\"goal\":\"c\"}");
+        var text = "No backend's template of \"Line Chart\" declares \"goal\"; no backend draws it, though it may still affect the output.";
+        Assert.That(Check(json).Single(i => i.Code == "unsupported_channel").Message, Does.Contain(text));
+        Assert.That(ChartTemplate.Create<JsonObject>(FlintJson.Deserialize(json)).Validate().Issues.Single(i => i.Code == "unsupported_channel").Message, Is.EqualTo(text));
+    }
+
     // source: ValidationRun.UnsupportedChannel and ImageCharts.ReadsUndeclared (Image-Charts reads group with a field as the
     // series, and on a Pie or Donut Chart x without a color field and y without a size or theta field, though its template
     // does not declare them; flint-chart 1.0.1 src/image-charts/assemble.ts:205-210, :265-266), the same as the validator

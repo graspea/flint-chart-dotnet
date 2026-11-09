@@ -49,6 +49,18 @@ internal static class LayoutReads
         };
     }
 
+    /// <summary>Why an ECharts facet of <c>column</c> or <c>row</c> with a field (no <c>count</c> aggregate) is broken, for the four
+    /// templates the class docs name, in the words of <c>unsupported_channel</c>; null for any other case.</summary>
+    internal static string? BrokenFacet(FlintBackend backend, ChartAssemblyInput input, FieldTypes types, string channel) =>
+        backend == FlintBackend.ECharts && channel is "column" or "row" && HasField(types, channel)
+            ? input.ChartSpec.ChartType.Name switch
+            {
+                "Funnel Chart" or "Network Graph" or "Sankey Diagram" => "echarts facets it, but draws every panel's chart in the same place",
+                "Calendar Heatmap" => "echarts facets it, but the faceted chart loses its calendar and color scale and does not render",
+                _ => null,
+            }
+            : null;
+
     /// <summary>A non-empty field without a <c>count</c> aggregate: upstream renames a counted field to <c>_count</c>
     /// (src/core/resolve-semantics.ts:682-685), so the facet or split is by the count, not the field's values.</summary>
     private static bool HasField(FieldTypes types, string channel) =>
