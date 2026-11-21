@@ -68,6 +68,7 @@ public sealed class NameTablesCrossCheckTests
             foreach (var c in NameTables.Aggregates) Assert.That(Constant<Aggregate>(c.Member).Name, Is.EqualTo(c.Wire));
             foreach (var c in NameTables.SortOrders) Assert.That(Constant<SortOrder>(c.Member).Name, Is.EqualTo(c.Wire));
             foreach (var c in NameTables.SeriesCountAxes) Assert.That(Constant<SeriesCountAxis>(c.Member).Name, Is.EqualTo(c.Wire));
+            foreach (var c in NameTables.PercentScales) Assert.That(Constant<PercentScale>(c.Member).Name, Is.EqualTo(c.Wire));
         });
     }
 

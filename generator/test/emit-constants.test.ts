@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { emitConstants } from '../src/emit/constants.ts';
 import { emptyOverrides } from '../src/overrides.ts';
-import type { Ir } from '../src/ir.ts';
+import type { Ir, IrType } from '../src/ir.ts';
 import { syntheticIr } from './support/synthetic-ir.ts';
 
 function irWithLiterals(): Ir {
@@ -91,6 +91,40 @@ public readonly partial record struct ChartType
     assert.match(text, /public static readonly Polarity HigherIsBetter = new\("higher-is-better"\);/);
     assert.match(text, /public static readonly Polarity LowerIsBetter = new\("lower-is-better"\);/);
     assert.ok(result.apiLines.includes('static readonly Graspea.Flint.Polarity.HigherIsBetter -> Graspea.Flint.Polarity'));
+  });
+
+  /** irWithLiterals() with SemanticAnnotation.percentScale typed as given (flint-chart 1.1.x adds the member). */
+  const withPercentScale = (type: IrType): Ir => {
+    const ir = irWithLiterals();
+    const annotation = ir.types.SemanticAnnotation;
+    assert.equal(annotation.kind, 'object');
+    if (annotation.kind === 'object') annotation.props.push({ name: 'percentScale', optional: true, type });
+    return ir;
+  };
+
+  // source: flint-chart 1.1.1 d.ts SemanticAnnotation.percentScale ('fraction' | 'percent'; "How a percentage field's numbers
+  // are stored"), emitted as SemanticAnnotation.polarity is
+  it('emits the PercentScale literals of SemanticAnnotation.percentScale when the IR has it', () => {
+    const result = emitConstants(withPercentScale({ kind: 'literalUnion', values: ['fraction', 'percent'] }));
+    const text = result.files.find((f) => f.path === 'Constants/PercentScale.g.cs')!.content;
+    assert.match(text, /public readonly partial record struct PercentScale\n/);
+    assert.match(text, /    \/\/\/ <summary>The <c>fraction<\/c> literal\.<\/summary>\n    public static readonly PercentScale Fraction = new\("fraction"\);\n/);
+    assert.match(text, /public static readonly PercentScale Percent = new\("percent"\);/);
+    assert.match(text, /Literals = .*\["fraction", "percent"\]/);
+    assert.deepEqual(
+      result.apiLines.filter((l) => l.includes('PercentScale')),
+      ['static readonly Graspea.Flint.PercentScale.Fraction -> Graspea.Flint.PercentScale', 'static readonly Graspea.Flint.PercentScale.Percent -> Graspea.Flint.PercentScale'],
+    );
+  });
+
+  // source: flint-chart 1.0.1 d.ts SemanticAnnotation (no percentScale member): the hand-written struct has no generated
+  // constants there; the generator still owns its constant lines, so a version that drops the member removes them
+  it('emits no PercentScale constants when the IR has no SemanticAnnotation.percentScale', () => {
+    const result = emitConstants(irWithLiterals());
+    assert.ok(!result.files.some((f) => f.path === 'Constants/PercentScale.g.cs'));
+    assert.ok(!result.apiLines.some((l) => l.includes('PercentScale')));
+    assert.ok(result.ownedConstantStructs.includes('Graspea.Flint.PercentScale'));
+    assert.throws(() => emitConstants(withPercentScale({ kind: 'string' })), /IR path SemanticAnnotation\.percentScale is not a string-literal union/);
   });
 
   // source: design §6 (invalid_literal: a value outside the IR literal set); the set is internal, for the validator

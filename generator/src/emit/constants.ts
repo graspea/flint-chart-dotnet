@@ -35,6 +35,13 @@ function literal(ir: Ir, path: string, pick: (t: IrType) => IrType | undefined):
   return literalValues(ir, path, pick).map((v) => ({ member: pascal(v), value: v, doc: `The \`${v}\` literal.`, path: `${path}[${v}]`, literal: true }));
 }
 
+/** As literal(), for a member a pinned version may not have yet: none when the object type lacks it. */
+function optionalLiteral(ir: Ir, path: string): Constant[] {
+  const [typeName, name] = path.split('.');
+  const t = ir.types[typeName];
+  return t?.kind === 'object' && t.props.some((p) => p.name === name) ? literal(ir, path, (o) => member(o, name)) : [];
+}
+
 /** The catalog structs (ChartType, Channel, SemanticType, ThemePreset) with their rule-1 member names, before renames. */
 function catalogStructs(ir: Ir): Array<[string, Constant[]]> {
   const { catalog: c, obsolete } = facadeCatalog(ir);
@@ -81,7 +88,8 @@ export function catalogConstantNames(ir: Ir, overrides: Overrides): Map<string, 
 
 /**
  * Struct name -> its constants in emission order (wire value and C# member, overrides.json renames applied), for every
- * string-backed struct: the catalog structs and the literal structs (EncodingType, Aggregate, SortOrder, Polarity, SeriesCountAxis).
+ * string-backed struct: the catalog structs and the literal structs (EncodingType, Aggregate, SortOrder, Polarity,
+ * PercentScale, SeriesCountAxis).
  */
 export function constantNames(ir: Ir, overrides: Overrides): Map<string, Array<{ value: string; member: string }>> {
   return new Map(structs(ir).map(([struct, constants]) => [struct, constants.map((c) => ({ value: c.value, member: overrides.renames[c.path] ?? c.member }))]));
@@ -94,6 +102,8 @@ function structs(ir: Ir): Array<[string, Constant[]]> {
     ['Aggregate', literal(ir, 'ChartEncoding.aggregate', (t) => member(t, 'aggregate'))],
     ['SortOrder', literal(ir, 'ChartEncoding.sortOrder', (t) => member(t, 'sortOrder'))],
     ['Polarity', literal(ir, 'SemanticAnnotation.polarity', (t) => member(t, 'polarity'))],
+    // flint-chart 1.1.0+; the hand-written struct exists on every version, without constants before.
+    ['PercentScale', optionalLiteral(ir, 'SemanticAnnotation.percentScale')],
     [
       'SeriesCountAxis',
       literal(ir, 'ContinuousMarkCrossSection.seriesCountAxis', (t) =>
@@ -119,6 +129,8 @@ export function emitConstants(ir: Ir, overrides: Overrides = emptyOverrides()): 
       if (clash !== undefined) errors.push(`constant name collision "${struct}.${c.member}": ${clash} and ${c.path}`);
       owner.set(c.member, c.path);
     }
+    result.ownedConstantStructs.push(`Graspea.Flint.${struct}`);
+    if (constants.length === 0) continue;
     let body = constants
       .map((c) => `${docComment('    ', c.doc)}${c.obsoleteIn ? obsoleteAttribute('    ', c.obsoleteIn) : ''}    public static readonly ${struct} ${c.member} = new(${csString(c.value)});\n`)
       .join('\n');
@@ -133,7 +145,6 @@ export function emitConstants(ir: Ir, overrides: Overrides = emptyOverrides()): 
       content: `${header(ir)}\nnamespace Graspea.Flint;\n\npublic readonly partial record struct ${struct}\n{\n${body}}\n`,
     });
     result.apiLines.push(...constants.map((c) => `static readonly Graspea.Flint.${struct}.${c.member} -> Graspea.Flint.${struct}`));
-    result.ownedConstantStructs.push(`Graspea.Flint.${struct}`);
   }
   use.assertAllUsed((key) => key.startsWith('catalog.'));
   if (errors.length > 0) throw new Error(`Cannot emit constants:\n  ${errors.join('\n  ')}`);

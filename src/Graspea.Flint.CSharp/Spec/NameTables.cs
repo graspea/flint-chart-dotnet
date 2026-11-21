@@ -63,6 +63,7 @@ internal static partial class NameTables
     private static Dictionary<string, string>? _aggregates;
     private static Dictionary<string, string>? _sortOrders;
     private static Dictionary<string, string>? _polarities;
+    private static Dictionary<string, string>? _percentScales;
     private static Dictionary<string, string>? _seriesCountAxes;
     private static Dictionary<string, ClassNames>? _classes;
     private static Dictionary<string, StringUnionNames>? _stringUnions;
@@ -83,6 +84,8 @@ internal static partial class NameTables
     public static string? SortOrder(string value) => Find(ref _sortOrders, SortOrders, value);
 
     public static string? Polarity(string value) => Find(ref _polarities, Polarities, value);
+
+    public static string? PercentScale(string value) => Find(ref _percentScales, PercentScales, value);
 
     public static string? SeriesCountAxis(string value) => Find(ref _seriesCountAxes, SeriesCountAxes, value);
 

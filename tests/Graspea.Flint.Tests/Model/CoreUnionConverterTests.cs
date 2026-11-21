@@ -140,6 +140,17 @@ public sealed class CoreUnionConverterTests
         Assert.That(JsonSerializer.Deserialize<Polarity>("\"sideways\"").Name, Is.EqualTo("sideways"));
     }
 
+    // source: flint-chart 1.1.1 d.ts SemanticAnnotation.percentScale ('fraction' | 'percent'), string-backed like Polarity
+    // (design §4.1: unknown values written verbatim); the pinned 1.0.1 has no constants, so the values are built by name
+    [Test]
+    public void PercentScale_IsWrittenAsItsWireString()
+    {
+        Assert.That(JsonSerializer.Serialize(new PercentScale("fraction")), Is.EqualTo("\"fraction\""));
+        Assert.That(JsonSerializer.Deserialize<PercentScale>("\"percent\""), Is.EqualTo(new PercentScale("percent")));
+        Assert.That(JsonSerializer.Deserialize<PercentScale>("\"basis-points\"").Name, Is.EqualTo("basis-points"));
+        Assert.That(JsonSerializer.Deserialize<PercentScale?>("null"), Is.Null);
+    }
+
     // source: design §5.2 (unknown keys round-trip through Extensions and are written last)
     [Test]
     public void ObjectForms_UnknownKeys_RoundTripAfterKnownMembers()
@@ -158,7 +169,7 @@ public sealed class CoreUnionConverterTests
         [
             ChartChrome.None, new ChartChrome { Footer = false }, (ChartSource)"s", new ChartSource { Text = "t", Href = "h" },
             (ChannelTitle)"Revenue", ChannelTitle.None, (AssistedTargeting)true, new AssistedTargeting { MaxDistance = 8, Details = false },
-            new TargetDetails { Fields = ["a"], MaxRows = 1 }, Polarity.HigherIsBetter,
+            new TargetDetails { Fields = ["a"], MaxRows = 1 }, Polarity.HigherIsBetter, new PercentScale("fraction"),
             (ColorScheme)"viridis", (ColorScheme)new[] { "#000", "#fff" },
         ];
         foreach (var value in values)

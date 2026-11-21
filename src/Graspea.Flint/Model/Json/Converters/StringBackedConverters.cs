@@ -140,6 +140,20 @@ public sealed class PolarityConverter : JsonConverter<Polarity>
         StringBacked.Write<Polarity>(writer, value.Name);
 }
 
+/// <summary>Writes <see cref="PercentScale"/> as its string, verbatim. Infrastructure: public only so that a host
+/// source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public sealed class PercentScaleConverter : JsonConverter<PercentScale>
+{
+    /// <inheritdoc/>
+    public override PercentScale Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        StringBacked.Read(ref reader, static name => new PercentScale(name));
+
+    /// <inheritdoc/>
+    public override void Write(Utf8JsonWriter writer, PercentScale value, JsonSerializerOptions options) =>
+        StringBacked.Write<PercentScale>(writer, value.Name);
+}
+
 /// <summary>Writes <see cref="SeriesCountAxis"/> as its string, verbatim. Infrastructure: public only so that a host
 /// source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
 [EditorBrowsable(EditorBrowsableState.Never)]

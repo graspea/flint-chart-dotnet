@@ -101,6 +101,10 @@ internal static partial class NameTables
         new("lower-is-better", "LowerIsBetter"),
     ];
 
+    internal static readonly ConstantName[] PercentScales =
+    [
+    ];
+
     internal static readonly ConstantName[] SeriesCountAxes =
     [
         new("auto", "Auto"),
@@ -128,6 +132,19 @@ internal static partial class NameTables
     ];
 }
 `,
+    );
+  });
+
+  // source: flint-chart 1.1.1 d.ts SemanticAnnotation.percentScale ('fraction' | 'percent') and the constants emitter (one
+  // PercentScale constant per literal; none when the IR has no such member, as on 1.0.1 and in irWithTypes())
+  it('lists the PercentScale literals of SemanticAnnotation.percentScale', () => {
+    const ir = irWithTypes();
+    const annotation = ir.types.SemanticAnnotation;
+    if (annotation.kind === 'object') annotation.props.push({ name: 'percentScale', optional: true, type: { kind: 'literalUnion', values: ['fraction', 'percent'] } });
+    assert.ok(
+      emitCSharpNames(ir, emptyOverrides())[0].content.includes(
+        '    internal static readonly ConstantName[] PercentScales =\n    [\n        new("fraction", "Fraction"),\n        new("percent", "Percent"),\n    ];\n',
+      ),
     );
   });
 

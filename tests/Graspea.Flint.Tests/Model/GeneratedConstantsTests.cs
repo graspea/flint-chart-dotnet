@@ -84,6 +84,16 @@ public sealed class GeneratedConstantsTests
         Assert.That(SeriesCountAxis.Auto.Name, Is.EqualTo("auto"));
     }
 
+    // source: ir/flint-ir.json types.SemanticAnnotation.percentScale (flint-chart 1.1.x: 'fraction' | 'percent'; the pinned
+    // version may not have the member, and the hand-written struct then has no constants)
+    [Test]
+    public void PercentScale_ConstantsEqualTheIrLiterals()
+    {
+        var member = CommittedIr.Root["types"]!["SemanticAnnotation"]!["props"]!.AsArray().SingleOrDefault(p => p!["name"]!.GetValue<string>() == "percentScale");
+        var literals = member is null ? [] : CommittedIr.Strings(member["type"]!["values"]);
+        Assert.That(StaticValues<PercentScale>().Select(v => v.Name), Is.EquivalentTo(literals));
+    }
+
     // source: ir/flint-ir.json upstream.version (FlintUpstream.Version is generated, design §4.1)
     [Test]
     public void FlintUpstream_Version_EqualsTheIrVersion()

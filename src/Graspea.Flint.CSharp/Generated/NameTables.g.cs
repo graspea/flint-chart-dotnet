@@ -560,6 +560,10 @@ internal static partial class NameTables
         new("lower-is-better", "LowerIsBetter"),
     ];
 
+    internal static readonly ConstantName[] PercentScales =
+    [
+    ];
+
     internal static readonly ConstantName[] SeriesCountAxes =
     [
         new("x", "X"),

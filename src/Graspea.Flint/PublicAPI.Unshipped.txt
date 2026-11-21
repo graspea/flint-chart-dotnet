@@ -8,8 +8,15 @@ Graspea.Flint.InteractionDefaults.Legend.get -> bool?
 Graspea.Flint.InteractionDefaults.Legend.init -> void
 Graspea.Flint.InteractionDefaults.Tooltip.get -> bool?
 Graspea.Flint.InteractionDefaults.Tooltip.init -> void
+Graspea.Flint.PercentScale
+Graspea.Flint.PercentScale.Equals(Graspea.Flint.PercentScale other) -> bool
+Graspea.Flint.PercentScale.Name.get -> string!
+Graspea.Flint.PercentScale.PercentScale() -> void
+Graspea.Flint.PercentScale.PercentScale(string! name) -> void
 Graspea.Flint.Serialization.InteractionDefaultsConverter
 Graspea.Flint.Serialization.InteractionDefaultsConverter.InteractionDefaultsConverter() -> void
+Graspea.Flint.Serialization.PercentScaleConverter
+Graspea.Flint.Serialization.PercentScaleConverter.PercentScaleConverter() -> void
 Graspea.Flint.Serialization.SparseFillConverter
 Graspea.Flint.Serialization.SparseFillConverter.SparseFillConverter() -> void
 Graspea.Flint.Serialization.TitleWrapConverter
@@ -36,12 +43,19 @@ Graspea.Flint.TitleWrap.MinWidth.init -> void
 Graspea.Flint.TitleWrap.Overhang.get -> double?
 Graspea.Flint.TitleWrap.Overhang.init -> void
 Graspea.Flint.TitleWrap.TitleWrap() -> void
+override Graspea.Flint.PercentScale.GetHashCode() -> int
+override Graspea.Flint.PercentScale.ToString() -> string!
 override Graspea.Flint.Serialization.InteractionDefaultsConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.InteractionDefaults!
 override Graspea.Flint.Serialization.InteractionDefaultsConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.InteractionDefaults! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.PercentScaleConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.PercentScale
+override Graspea.Flint.Serialization.PercentScaleConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.PercentScale value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.SparseFillConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.SparseFill!
 override Graspea.Flint.Serialization.SparseFillConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.SparseFill! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.TitleWrapConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.TitleWrap!
 override Graspea.Flint.Serialization.TitleWrapConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.TitleWrap! value, System.Text.Json.JsonSerializerOptions! options) -> void
 static Graspea.Flint.InteractionDefaults.implicit operator Graspea.Flint.InteractionDefaults!(bool enabled) -> Graspea.Flint.InteractionDefaults!
+static Graspea.Flint.PercentScale.operator !=(Graspea.Flint.PercentScale left, Graspea.Flint.PercentScale right) -> bool
+static Graspea.Flint.PercentScale.operator ==(Graspea.Flint.PercentScale left, Graspea.Flint.PercentScale right) -> bool
 static Graspea.Flint.SparseFill.implicit operator Graspea.Flint.SparseFill!(bool enabled) -> Graspea.Flint.SparseFill!
 static Graspea.Flint.TitleWrap.implicit operator Graspea.Flint.TitleWrap!(bool enabled) -> Graspea.Flint.TitleWrap!
+~override Graspea.Flint.PercentScale.Equals(object obj) -> bool

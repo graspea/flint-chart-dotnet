@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace Graspea.Flint.Tests.Model;
 
-/// <summary>The eight string-backed structs share one contract (design §4.1 "String-backed structs", §5.1).</summary>
+/// <summary>The string-backed structs share one contract (design §4.1 "String-backed structs", §5.1).</summary>
 public sealed class StringBackedStructTests
 {
     public sealed record StructCase(Type Type, Func<string, object> Create, Func<object, string?> Name)
@@ -20,6 +20,7 @@ public sealed class StringBackedStructTests
         yield return Case(n => new Aggregate(n), v => ((Aggregate)v).Name);
         yield return Case(n => new SortOrder(n), v => ((SortOrder)v).Name);
         yield return Case(n => new SeriesCountAxis(n), v => ((SeriesCountAxis)v).Name);
+        yield return Case(n => new PercentScale(n), v => ((PercentScale)v).Name);
     }
 
     private static TestCaseData Case<T>(Func<string, T> create, Func<object, string?> name) where T : struct =>
