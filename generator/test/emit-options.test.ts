@@ -989,4 +989,20 @@ describe('overrides', () => {
     assert.throws(() => parseOverrides({ imageChartsSource: { ...both, 'src/image-charts/assemble.ts': ['xyz'] } }), /imageChartsSource/);
     assert.throws(() => parseOverrides({ imageChartsSource: { ...both, 'src/image-charts/assemble.ts': [sha, sha] } }), /imageChartsSource/);
   });
+
+  // source: overrides.schema.json "acceptsSource" (property key -> package-relative file -> one reviewed sha256 or a non-empty
+  // list of them; at least one file per key)
+  it('accepts per accepting property the reviewed sha256 of each predicate file', () => {
+    const sha = 'a'.repeat(64);
+    const entry = { boundaries: { 'src/chart-types/boundaries.ts': sha }, mapStyle: { 'src/vegalite/templates/map-style.ts': [sha, 'b'.repeat(64)] } };
+    assert.deepEqual(parseOverrides({ acceptsSource: entry }).acceptsSource, entry);
+    assert.deepEqual(emptyOverrides().acceptsSource, {});
+    assert.throws(() => parseOverrides({ acceptsSource: { boundaries: {} } }), /acceptsSource/);
+    assert.throws(() => parseOverrides({ acceptsSource: { boundaries: { 'src/chart-types/boundaries.ts': 'xyz' } } }), /acceptsSource/);
+    assert.throws(() => parseOverrides({ acceptsSource: { boundaries: { 'src/chart-types/boundaries.ts': [] } } }), /acceptsSource/);
+    assert.throws(() => parseOverrides({ acceptsSource: { boundaries: sha } }), /acceptsSource/);
+    for (const file of ['/src/a.ts', 'src/../../a.ts', 'dist/index.js', 'src/a\\b.ts']) {
+      assert.throws(() => parseOverrides({ acceptsSource: { boundaries: { [file]: sha } } }), /acceptsSource/, file);
+    }
+  });
 });

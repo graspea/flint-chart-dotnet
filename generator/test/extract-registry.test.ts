@@ -24,8 +24,8 @@ describe('extract/registry', () => {
   const discretePairs = (c: IrCatalog) =>
     new Set(allProperties(c).filter(({ p }) => p.type === 'discrete').map(({ t, p }) => `${t.name}/${p.key}`));
 
-  const { imageChartsChannels, imageChartsReads, imageChartsSource } = loadOverrides(new URL('../overrides.json', import.meta.url).pathname);
-  const overrides = { backendsApplyingTheme: ['vegalite', 'plotly'], hostStateKeys: ['sort'], ignoredOptions: {}, imageChartsChannels, imageChartsReads, imageChartsSource };
+  const { imageChartsChannels, imageChartsReads, imageChartsSource, acceptsSource } = loadOverrides(new URL('../overrides.json', import.meta.url).pathname);
+  const overrides = { backendsApplyingTheme: ['vegalite', 'plotly'], hostStateKeys: ['sort'], ignoredOptions: {}, imageChartsChannels, imageChartsReads, imageChartsSource, acceptsSource };
   const extract = (module: Record<string, unknown>, change: Partial<typeof overrides> & { pending?: string[] } = {}) =>
     extractCatalog(module, flintPackageDir(), { ...overrides, ...change });
   const map = (flint as unknown as { IMAGE_CHARTS_TYPE_MAP: Record<string, Record<string, string | boolean>> }).IMAGE_CHARTS_TYPE_MAP;
@@ -187,6 +187,73 @@ describe('extract/registry', () => {
       const template = catalog.chartTypes.find((t) => t.name === name)!.backends['image-charts'];
       assert.deepEqual([...template.channels].sort(), [...channels].sort(), name);
     }
+  });
+
+  /** The pinned flint-chart with an `accepts` predicate (and `acceptsLabel`, unless undefined) on the Vega-Lite Line Chart
+   * `interpolate`, the way flint-chart 1.1.x declares one on Map and Choropleth `boundaries` and `mapStyle`. */
+  const withAccepts = (acceptsLabel?: string, accepts: unknown = (v: unknown) => typeof v === 'object' && v !== null) => {
+    const module = flint as unknown as Record<string, unknown>;
+    const defs = (module.vlAllTemplateDefs as Array<{ chart: string; properties?: Array<{ key: string }> }>).map((d) =>
+      d.chart !== 'Line Chart'
+        ? d
+        : { ...d, properties: d.properties!.map((p) => (p.key !== 'interpolate' ? p : { ...p, accepts, ...(acceptsLabel === undefined ? {} : { acceptsLabel }) })) },
+    );
+    return { ...module, vlAllTemplateDefs: defs };
+  };
+  const predicateFile = 'src/core/normalize-properties.ts';
+  const predicateSha = () => createHash('sha256').update(readFileSync(join(flintPackageDir(), predicateFile))).digest('hex');
+  const interpolateOf = (c: IrCatalog, backend: string) =>
+    c.chartTypes.find((t) => t.name === 'Line Chart')!.backends[backend].properties.find((p) => p.key === 'interpolate')!;
+
+  // source: flint-chart 1.1.1 src/core/types.ts:745-747 (ChartPropertyDef.accepts, a function, and acceptsLabel, the text
+  // the invalid-option warning quotes) and src/core/normalize-properties.ts:65 and :97 (an accepted value is kept; the
+  // label is appended only when truthy); the pinned 1.0.1 declares no accepts
+  it('records the acceptsLabel of a property that has an accepts predicate', () => {
+    assert.ok(allProperties(catalog).every(({ p }) => p.acceptsLabel === undefined));
+    const reviewed = { interpolate: { [predicateFile]: predicateSha() } };
+    const labelled = extract(withAccepts('a curve { name }'), { acceptsSource: reviewed });
+    assert.equal(interpolateOf(labelled, 'vegalite').acceptsLabel, 'a curve { name }');
+    assert.equal(interpolateOf(labelled, 'plotly').acceptsLabel, undefined);
+    assert.equal(allProperties(labelled).filter(({ p }) => p.acceptsLabel !== undefined).length, 1);
+    assert.equal(interpolateOf(extract(withAccepts(), { acceptsSource: reviewed }), 'vegalite').acceptsLabel, '');
+    assert.equal(interpolateOf(extract(withAccepts('ignored', true), { acceptsSource: {} }), 'vegalite').acceptsLabel, undefined);
+  });
+
+  // source: docs/generator.md "Failure policy" (a property with an accepts predicate needs a reviewed C# predicate, recorded
+  // with the sha256 of each package file it is read from in overrides.json acceptsSource)
+  it('fails on an accepting property that acceptsSource has no entry for', () => {
+    assert.throws(
+      () => extract(withAccepts('a curve'), { acceptsSource: {} }),
+      /property interpolate \(Line Chart on vegalite\) has an accepts predicate, but acceptsSource in overrides\.json has no entry for it: port the predicate to src\/Graspea\.Flint\/Validation\/Rules\/Accepts\.cs and its mirror in src\/Graspea\.Flint\.CSharp\/Spec\/CatalogCheck\.cs, then record the sha256 of each package file it is read from/,
+    );
+  });
+
+  // source: overrides.schema.json "acceptsSource" (per file one reviewed sha256 or several; a file whose sha256 none of them
+  // is fails, naming the C# predicate to review) and the installed src/core/normalize-properties.ts
+  it('fails when a file of an accepts predicate differs from its reviewed fingerprint', () => {
+    const module = withAccepts('a curve');
+    const sha = predicateSha();
+    assert.doesNotThrow(() => extract(module, { acceptsSource: { interpolate: { [predicateFile]: ['0'.repeat(64), sha] } } }));
+    assert.throws(
+      () => extract(module, { acceptsSource: { interpolate: { [predicateFile]: ['0'.repeat(64), '1'.repeat(64)] } } }),
+      new RegExp(
+        `src/core/normalize-properties\\.ts has sha256 ${sha}, but acceptsSource\\["interpolate"\\] in overrides\\.json records 0{64} or 1{64}: ` +
+          'review the accepts predicate of interpolate in src/Graspea\\.Flint/Validation/Rules/Accepts\\.cs and its mirror in src/Graspea\\.Flint\\.CSharp/Spec/CatalogCheck\\.cs against the new file, then update the fingerprint',
+      ),
+    );
+    assert.throws(
+      () => extract(module, { acceptsSource: { interpolate: { [predicateFile]: sha, 'src/core/no-such-file.ts': sha } } }),
+      /acceptsSource\["interpolate"\] lists src\/core\/no-such-file\.ts, which the package does not have/,
+    );
+  });
+
+  // source: docs/generator.md "Failure policy" (an overrides.json entry that matches nothing fails, unless pending lists it:
+  // acceptsSource[<key>] for an entry written ahead of the version that declares the predicate)
+  it('fails on an acceptsSource entry that matches no accepting property, unless pending lists it', () => {
+    const module = flint as unknown as Record<string, unknown>;
+    const ahead = { boundaries: { 'src/chart-types/boundaries.ts': '0'.repeat(64) } };
+    assert.throws(() => extract(module, { acceptsSource: ahead }), /acceptsSource\["boundaries"\] matches no catalog property with an accepts predicate/);
+    assert.doesNotThrow(() => extract(module, { acceptsSource: ahead, pending: ['acceptsSource[boundaries]'] }));
   });
 
   // source: the assemble* exports of the pinned flint-chart (a backend without a template registry fails loudly)

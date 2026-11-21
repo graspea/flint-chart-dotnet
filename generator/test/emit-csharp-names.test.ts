@@ -174,8 +174,9 @@ internal static partial class NameTables
   });
 
   // source: design §12.7 (Catalog.g.cs: what the catalog checks need: templates per backend with channels and properties
-  // (kind, options, ranges), backendsApplyingTheme and host-state keys) and the library's tables emitter (src/emit/tables.ts:
-  // discrete options as the JSON text of the value, null for an omitted option, with their labels)
+  // (kind, options, ranges, accepts label), backendsApplyingTheme and host-state keys) and the library's tables emitter
+  // (src/emit/tables.ts: discrete options as the JSON text of the value, null for an omitted option, with their labels; the
+  // accepts label null where the property has no accepts predicate)
   it('writes the catalog tables of the synthetic IR', () => {
     const files = emitCSharpNames(irWithTypes(), emptyOverrides());
     assert.equal(
@@ -199,9 +200,9 @@ internal static partial class Catalog
         [
             new("vegalite", ["x", "y", "color"],
             [
-                new("interpolate", CatalogPropertyKind.Discrete, [null, "\\"monotone\\""], ["Default", "Monotone"], null, null),
-                new("showPoints", CatalogPropertyKind.Binary, null, null, null, null),
-                new("strokeWidth", CatalogPropertyKind.Continuous, null, null, 0.5, 5),
+                new("interpolate", CatalogPropertyKind.Discrete, [null, "\\"monotone\\""], ["Default", "Monotone"], null, null, null),
+                new("showPoints", CatalogPropertyKind.Binary, null, null, null, null, null),
+                new("strokeWidth", CatalogPropertyKind.Continuous, null, null, 0.5, 5, null),
             ]),
             new("excel", ["x", "y"], []),
         ]),
@@ -212,6 +213,23 @@ internal static partial class Catalog
     ];
 }
 `,
+    );
+  });
+
+  // source: src/ir.ts IrProperty.acceptsLabel (flint-chart 1.1.x: set for a property with an accepts predicate, empty when
+  // upstream declares no label) and Spec/Catalog.cs CatalogPropertyRow.AcceptsLabel, its mirror of the library's row
+  it('writes the accepts label of a property that has an accepts predicate', () => {
+    const ir = irWithTypes();
+    const [interpolate, showPoints] = ir.catalog.chartTypes[0].backends.vegalite.properties;
+    interpolate.acceptsLabel = 'a curve { name, "tension"? }';
+    showPoints.acceptsLabel = '';
+    const content = emitCSharpNames(ir, emptyOverrides())[1].content;
+    assert.ok(
+      content.includes(
+        '                new("interpolate", CatalogPropertyKind.Discrete, [null, "\\"monotone\\""], ["Default", "Monotone"], null, null, "a curve { name, \\"tension\\"? }"),\n' +
+          '                new("showPoints", CatalogPropertyKind.Binary, null, null, null, null, ""),\n',
+      ),
+      content,
     );
   });
 

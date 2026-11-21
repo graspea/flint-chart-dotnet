@@ -58,6 +58,24 @@ internal static partial class CatalogTables
     );
   });
 
+  // source: src/ir.ts IrProperty.acceptsLabel (set for a property with an accepts predicate, flint-chart 1.1.x; empty when
+  // upstream declares no label) and Model/CatalogTables.cs PropertyRow (AcceptsLabel null where the property has none)
+  it('writes the accepts label of a property that has an accepts predicate', () => {
+    const ir = syntheticIr();
+    const [interpolate, showPoints] = ir.catalog.chartTypes[0].backends.vegalite.properties;
+    interpolate.acceptsLabel = 'a curve { name, "tension"? }';
+    showPoints.acceptsLabel = '';
+    const content = emitTables(ir).files[0].content;
+    assert.ok(
+      content.includes(
+        '                    new PropertyRow("interpolate", PropertyKind.Discrete, Options: [null, "\\"monotone\\""], Labels: ["Default", "Monotone"], AcceptsLabel: "a curve { name, \\"tension\\"? }"),\n' +
+          '                    new PropertyRow("showPoints", PropertyKind.Binary, AcceptsLabel: ""),\n' +
+          '                    new PropertyRow("strokeWidth", PropertyKind.Continuous, Min: 0.5, Max: 5, Step: 0.5),\n',
+      ),
+      content,
+    );
+  });
+
   // source: design §7.8 and part 3 §8.4 (the validator reports retired_member from the ledger, naming the version; every
   // entry counts, also one whose facade member was removed)
   it('lists every retired IR path with the version that retired it', () => {

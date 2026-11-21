@@ -1,6 +1,6 @@
 // Runtime registries of flint-chart -> IR.catalog (design §7.1, §7.3). Counts are derived, never assumed.
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   ordinal,
@@ -51,6 +51,8 @@ export interface CatalogOverrides {
   imageChartsReads: Record<string, string[]>;
   /** Package-relative path -> the reviewed sha256 of an Image-Charts source file, or several of which any is accepted. */
   imageChartsSource: Record<string, string | string[]>;
+  /** Property key with an accepts predicate -> package-relative file -> its reviewed sha256, or several (`acceptsSource`). */
+  acceptsSource: Record<string, Record<string, string | string[]>>;
   /** IR paths of entries written ahead for an upstream version that is not pinned yet. */
   pending?: string[];
 }
@@ -71,6 +73,8 @@ interface PropertyDef {
   min?: number;
   max?: number;
   step?: number;
+  accepts?: unknown;
+  acceptsLabel?: unknown;
 }
 
 function property(p: PropertyDef): IrProperty {
@@ -82,7 +86,57 @@ function property(p: PropertyDef): IrProperty {
     out.options = (p.options ?? []).map((o) => (o.value === undefined ? { label: o.label, omitted: true } : { label: o.label, value: o.value }));
   }
   for (const k of ['min', 'max', 'step'] as const) if (typeof p[k] === 'number') out[k] = p[k];
+  // Upstream calls accepts only on a value outside the options and appends acceptsLabel to the warning when it is truthy
+  // (src/core/normalize-properties.ts of 1.1.x), so an absent label is recorded as the empty string.
+  if (typeof p.accepts === 'function') out.acceptsLabel = typeof p.acceptsLabel === 'string' ? p.acceptsLabel : '';
   return out;
+}
+
+/** The hand-written mirrors of the accepts predicates, which acceptsSource fingerprints. */
+const ACCEPTS_MIRRORS = 'src/Graspea.Flint/Validation/Rules/Accepts.cs and its mirror in src/Graspea.Flint.CSharp/Spec/CatalogCheck.cs';
+
+/**
+ * Fails, naming every entry, when a property with an accepts predicate has no acceptsSource entry, a file an entry lists
+ * is missing from the package or differs from every reviewed sha256, or an entry matches no accepting property and
+ * pending does not list acceptsSource[<key>]. The predicates themselves are hand-written in C#; the fingerprint stops a
+ * sync whose predicate may have changed until they are reviewed.
+ */
+function checkAcceptsSource(chartTypes: Map<string, IrChartType>, packageDir: string, overrides: CatalogOverrides): void {
+  const accepting = new Map<string, string[]>();
+  for (const t of chartTypes.values()) {
+    for (const [backend, b] of Object.entries(t.backends)) {
+      for (const p of b.properties) if (p.acceptsLabel !== undefined) accepting.set(p.key, [...(accepting.get(p.key) ?? []), `${t.name} on ${backend}`]);
+    }
+  }
+  const pending = new Set(overrides.pending ?? []);
+  const errors: string[] = [];
+  for (const [key, where] of [...accepting].sort(([a], [b]) => ordinal(a, b))) {
+    const files = overrides.acceptsSource[key];
+    if (!files) {
+      errors.push(
+        `property ${key} (${where.join(', ')}) has an accepts predicate, but acceptsSource in overrides.json has no entry for it: port the predicate to ${ACCEPTS_MIRRORS}, then record the sha256 of each package file it is read from`,
+      );
+      continue;
+    }
+    for (const [file, sha] of Object.entries(files)) {
+      const path = join(packageDir, file);
+      if (!existsSync(path)) {
+        errors.push(`acceptsSource["${key}"] lists ${file}, which the package does not have`);
+        continue;
+      }
+      const actual = createHash('sha256').update(readFileSync(path)).digest('hex');
+      const reviewed = [sha].flat();
+      if (!reviewed.includes(actual)) {
+        errors.push(
+          `${file} has sha256 ${actual}, but acceptsSource["${key}"] in overrides.json records ${reviewed.join(' or ')}: review the accepts predicate of ${key} in ${ACCEPTS_MIRRORS} against the new file, then update the fingerprint`,
+        );
+      }
+    }
+  }
+  for (const key of Object.keys(overrides.acceptsSource)) {
+    if (!accepting.has(key) && !pending.has(`acceptsSource[${key}]`)) errors.push(`acceptsSource["${key}"] matches no catalog property with an accepts predicate`);
+  }
+  if (errors.length > 0) throw new Error(`Accepting properties: ${errors.join('; ')}.`);
 }
 
 /** Trailing `// comment` of each `Name: 'Name',` line in src/core/semantic-types.ts (not available at runtime). */
@@ -128,6 +182,7 @@ export function extractCatalog(flint: Record<string, unknown>, packageDir: strin
     }
   }
 
+  checkAcceptsSource(chartTypes, packageDir, overrides);
   imageChartsTemplates(flint, packageDir, chartTypes, overrides);
 
   const coreChannels = flint.channels as readonly string[];

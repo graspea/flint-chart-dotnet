@@ -40,14 +40,16 @@ const CATALOG_KINDS: Readonly<Record<IrProperty['type'], string>> = {
 
 const strings = (items: readonly string[]) => `[${items.map(csString).join(', ')}]`;
 
-/** A property row as the library's tables emitter writes it: options as the JSON text of each value, null when omitted. */
+/** A property row as the library's tables emitter writes it: options as the JSON text of each value, null when omitted;
+ * the accepts label null where the property has no accepts predicate. */
 function catalogProperty(p: IrProperty): string {
   const options = p.options
     ? `[${p.options.map((o) => ('value' in o && o.value !== undefined ? csString(JSON.stringify(o.value)) : 'null')).join(', ')}]`
     : 'null';
   const labels = p.options ? strings(p.options.map((o) => o.label)) : 'null';
   const bound = (n: number | undefined) => (n === undefined ? 'null' : csNumber(n));
-  return `new(${csString(p.key)}, ${CATALOG_KINDS[p.type]}, ${options}, ${labels}, ${bound(p.min)}, ${bound(p.max)})`;
+  const accepts = p.acceptsLabel === undefined ? 'null' : csString(p.acceptsLabel);
+  return `new(${csString(p.key)}, ${CATALOG_KINDS[p.type]}, ${options}, ${labels}, ${bound(p.min)}, ${bound(p.max)}, ${accepts})`;
 }
 
 function emitCatalog(ir: Ir): EmittedFile {

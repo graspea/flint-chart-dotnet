@@ -41,8 +41,10 @@ internal sealed class TemplateRow
 }
 
 /// <summary>A declared <c>chartProperties</c> key. <paramref name="Options"/> holds discrete values as compact JSON (null = omitted
-/// default) and <paramref name="Labels"/> their display labels, in the same order.</summary>
-internal sealed record PropertyRow(string Key, PropertyKind Kind, string?[]? Options = null, string[]? Labels = null, double? Min = null, double? Max = null, double? Step = null);
+/// default) and <paramref name="Labels"/> their display labels, in the same order. <paramref name="AcceptsLabel"/> is set when
+/// the template def has an <c>accepts</c> predicate (flint-chart 1.1.0+), which keeps a value outside the options; it is the
+/// text upstream appends to the invalid-option warning, empty when it declares none, and null when there is no predicate.</summary>
+internal sealed record PropertyRow(string Key, PropertyKind Kind, string?[]? Options = null, string[]? Labels = null, double? Min = null, double? Max = null, double? Step = null, string? AcceptsLabel = null);
 
 internal enum PropertyKind
 {

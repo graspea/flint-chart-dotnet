@@ -88,6 +88,16 @@
         "src/image-charts/chart-types.ts": { "$ref": "#/$defs/reviewedSha256" }
       }
     },
+    "acceptsSource": {
+      "description": "Catalog property key -> the package files its accepts predicate is read from (src/..., package-relative) -> the reviewed sha256 (lowercase hex) of each, or a list of reviewed values of which any is accepted. A discrete property with accepts (a function) keeps a value outside its options that the predicate holds for; the C# validator mirrors each predicate by hand (src/Graspea.Flint/Validation/Rules/Accepts.cs and src/Graspea.Flint.CSharp/Spec/CatalogCheck.cs). Extraction fails when an accepting property has no entry, when a listed file is missing or matches none of its values, and when an entry matches no accepting property, unless pending lists acceptsSource[<key>].",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "minProperties": 1,
+        "propertyNames": { "pattern": "^src/(?:[\\w-][\\w.-]*/)*[\\w-][\\w.-]*$" },
+        "additionalProperties": { "$ref": "#/$defs/reviewedSha256" }
+      }
+    },
     "pending": {
       "description": "IR paths of entries written ahead for a flint-chart version that is not pinned yet: such an entry may match nothing. Once the pin has the path the entry applies like any other; remove the path from this list then.",
       "type": "array",

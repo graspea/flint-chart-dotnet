@@ -15,6 +15,8 @@ export interface Overrides {
   imageChartsReads: Record<string, string[]>;
   /** Per Image-Charts source file: its reviewed sha256, or several of which any is accepted. */
   imageChartsSource: Record<string, string | string[]>;
+  /** Per catalog property key with an accepts predicate: package-relative file -> its reviewed sha256, or several. */
+  acceptsSource: Record<string, Record<string, string | string[]>>;
   keepObsolete: string[];
   pending: string[];
 }
@@ -32,6 +34,7 @@ export function emptyOverrides(): Overrides {
     imageChartsChannels: {},
     imageChartsReads: {},
     imageChartsSource: {},
+    acceptsSource: {},
     keepObsolete: [],
     pending: [],
   };

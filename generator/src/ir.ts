@@ -54,6 +54,11 @@ export interface IrProperty {
   min?: number;
   max?: number;
   step?: number;
+  /**
+   * Set when the template def has an `accepts` predicate (flint-chart 1.1.0+): a value outside the options that it holds
+   * for is kept. The text is `acceptsLabel`, which the invalid-option warning appends; empty when the def has none.
+   */
+  acceptsLabel?: string;
 }
 
 export interface IrBackendTemplate {

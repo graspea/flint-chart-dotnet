@@ -23,6 +23,7 @@ function propertyRow(p: IrProperty): string {
   if (p.min !== undefined) args.push(`Min: ${csNumber(p.min)}`);
   if (p.max !== undefined) args.push(`Max: ${csNumber(p.max)}`);
   if (p.step !== undefined) args.push(`Step: ${csNumber(p.step)}`);
+  if (p.acceptsLabel !== undefined) args.push(`AcceptsLabel: ${csString(p.acceptsLabel)}`);
   return `new PropertyRow(${args.join(', ')})`;
 }
 

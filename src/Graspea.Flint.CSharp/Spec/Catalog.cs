@@ -10,9 +10,11 @@ internal enum CatalogPropertyKind
 
 /// <summary>
 /// A template property: its key, kind, the JSON text of each option value (null for an option that omits the key) with the
-/// option labels, and the declared range of a continuous property.
+/// option labels, the declared range of a continuous property, and the accepts label: set when the template def has an
+/// <c>accepts</c> predicate (flint-chart 1.1.0+), which keeps a value outside the options; empty when upstream declares no
+/// label, null when there is no predicate.
 /// </summary>
-internal sealed record CatalogPropertyRow(string Key, CatalogPropertyKind Kind, string?[]? Options, string[]? Labels, double? Min, double? Max);
+internal sealed record CatalogPropertyRow(string Key, CatalogPropertyKind Kind, string?[]? Options, string[]? Labels, double? Min, double? Max, string? AcceptsLabel);
 
 /// <summary>The template of a chart type on one backend: the backend id, its channels and its properties.</summary>
 internal sealed record BackendTemplateRow(string Backend, string[] Channels, CatalogPropertyRow[] Properties)
