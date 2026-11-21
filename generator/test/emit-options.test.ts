@@ -633,7 +633,8 @@ describe('emit/options: discriminated unions', () => {
 
   // source: docs/generator.md "Discriminated unions" (abstract base with a private protected
   // constructor, the abstract discriminator and the converter; one sealed derived class per member, named Pascal(literal)
-  // + the alias's last word, the discriminator override first; Unknown<Alias>; the converter in Graspea.Flint.Serialization
+  // + the alias's last word, the discriminator override first; Unknown<Alias>; both discriminator overrides with
+  // JsonIgnoreCondition.Never, which IgnoreReadOnlyProperties cannot drop; the converter in Graspea.Flint.Serialization
   // and FlintUnionJsonContext with one entry per derived class); the ChartUpdate root goes to Graspea.Flint, Updates/
   it('emits a discriminated union as an abstract base, sealed derived classes, an unknown class and a converter', () => {
     const result = emitOptions(updateIr(), emptyOverrides());
@@ -697,6 +698,7 @@ public sealed partial class AnnotateRegionOp : ChartUpdateOp
 {
     /// <summary>Always <c>annotate-region</c>.</summary>
     [JsonPropertyName("op")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public override string Op => "annotate-region";
 
     /// <summary>The <c>name</c> member.</summary>
@@ -742,6 +744,7 @@ public sealed partial class UnknownChartUpdateOp : ChartUpdateOp
 
     /// <summary>The <c>op</c> string, written verbatim.</summary>
     [JsonPropertyName("op")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public override string Op { get; }
 
     /// <summary>The other members, written after <c>op</c>.</summary>
@@ -855,7 +858,7 @@ internal sealed partial class FlintUnionJsonContext : JsonSerializerContext;
       CloneBody: options([opt('opacity', { kind: 'number' }), req('type', lit('clone'))]),
     });
     const result = emitOptions(ir, emptyOverrides());
-    assert.match(fileContent(result, 'Updates/SvgBody.g.cs'), /\/\/\/ <summary>SVG markup\.<\/summary>\n\[JsonNumberHandling\(JsonNumberHandling\.Strict\)\]\npublic sealed partial class SvgBody : OverlayBody\n\{\n    \/\/\/ <summary>Always <c>svg<\/c>\.<\/summary>\n    \[JsonPropertyName\("type"\)\]\n    public override string Type => "svg";\n\n    \/\/\/ <summary>The <c>content<\/c> member\.<\/summary>\n/);
+    assert.match(fileContent(result, 'Updates/SvgBody.g.cs'), /\/\/\/ <summary>SVG markup\.<\/summary>\n\[JsonNumberHandling\(JsonNumberHandling\.Strict\)\]\npublic sealed partial class SvgBody : OverlayBody\n\{\n    \/\/\/ <summary>Always <c>svg<\/c>\.<\/summary>\n    \[JsonPropertyName\("type"\)\]\n    \[JsonIgnore\(Condition = JsonIgnoreCondition\.Never\)\]\n    public override string Type => "svg";\n\n    \/\/\/ <summary>The <c>content<\/c> member\.<\/summary>\n/);
     assert.ok(fileContent(result, 'Updates/TextBoxBody.g.cs').includes('public sealed partial class TextBoxBody : OverlayBody\n'));
     assert.ok(fileContent(result, 'Updates/CloneBody.g.cs').includes('public sealed partial class CloneBody : OverlayBody\n'));
     assert.ok(fileContent(result, 'Json/OverlayBodyConverter.g.cs').includes('            "svg" => FlintUnionJsonContext.Default.SvgBody,\n            "text-box" => FlintUnionJsonContext.Default.TextBoxBody,\n            "clone" => FlintUnionJsonContext.Default.CloneBody,\n'));

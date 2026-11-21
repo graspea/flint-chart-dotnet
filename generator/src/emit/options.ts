@@ -30,6 +30,10 @@ const ROOTS = [
  */
 const PRESETS = 'InteractionPresetOptions';
 
+/** On a get-only discriminator override, so that a derived class serialized as its own type under host options with
+ * `IgnoreReadOnlyProperties = true` still writes it (docs/generator.md "Discriminated unions"). */
+const NEVER = '    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]\n';
+
 /** A named type reached from more than one root: shared, like the hand-written ContinuousMarkCrossSection. */
 const SHARED = { namespace: 'Graspea.Flint', folder: 'Options' } as const;
 
@@ -453,7 +457,7 @@ function buildPass(
       const literal = base.members.find((m) => m.cls === c.name)!.literal;
       names.set(base.discName, `${c.path}.${base.disc} (discriminator)`);
       members.push(
-        docComment('    ', `Always \`${literal}\`.`) + `    [JsonPropertyName("${base.disc}")]\n    public override string ${base.discName} => ${csString(literal)};\n`,
+        docComment('    ', `Always \`${literal}\`.`) + `    [JsonPropertyName("${base.disc}")]\n${NEVER}    public override string ${base.discName} => ${csString(literal)};\n`,
       );
       api.push(`override ${full}.${base.discName}.get -> string!`);
     }
@@ -645,7 +649,7 @@ function unionFiles(ir: Ir, u: UnionPlan): Record<'base' | 'unknown' | 'converte
     `    /// <exception cref="ArgumentNullException"><paramref name="${param}"/> is null.</exception>\n` +
     `    public ${u.unknown}(string ${param})\n    {\n        ArgumentNullException.ThrowIfNull(${param});\n        ${u.discName} = ${param};\n    }\n\n` +
     docComment('    ', `The ${disc} string, written verbatim.`) +
-    `    [JsonPropertyName("${u.disc}")]\n    public override string ${u.discName} { get; }\n\n` +
+    `    [JsonPropertyName("${u.disc}")]\n${NEVER}    public override string ${u.discName} { get; }\n\n` +
     docComment('    ', `The other members, written after ${disc}.`) +
     '    [JsonExtensionData]\n    public Dictionary<string, JsonElement>? Extensions { get; set; }\n}\n';
   const conv = `Graspea.Flint.Serialization.${u.name}Converter`;

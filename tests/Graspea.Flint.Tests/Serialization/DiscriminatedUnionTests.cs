@@ -102,13 +102,15 @@ public sealed class DiscriminatedUnionTests
 
     // source: docs/generator.md "Discriminated unions" (the guarantee holds for a value typed as the base: System.Text.Json
     // reads [JsonConverter] from the declared type only, so a derived class handled as its own type goes through the caller's
-    // options, where IgnoreReadOnlyProperties drops the get-only discriminator, and is read without checking it)
+    // options; its get-only discriminator carries JsonIgnoreCondition.Never, so IgnoreReadOnlyProperties keeps it, and it is
+    // read without checking it)
     [Test]
     public void DerivedClassAsItsOwnType_BypassesTheConverter()
     {
         var square = new TestSquare { Side = 3 };
         Assert.That(JsonSerializer.Serialize<TestShape>(square, HostileOptions.Create()), Is.EqualTo("""{"kind":"square","side":3}"""));
-        Assert.That(JsonSerializer.Serialize(square, HostileOptions.Create()), Is.EqualTo("""{"side":3}"""));
+        Assert.That(JsonSerializer.Serialize(square, HostileOptions.Create()), Is.EqualTo("""{"kind":"square","side":3}"""));
+        Assert.That(JsonSerializer.Serialize(new UnknownTestShape("hexagon"), HostileOptions.Create()), Is.EqualTo("""{"kind":"hexagon"}"""));
         var read = JsonSerializer.Deserialize<TestSquare>("""{"kind":"circle","side":3}""");
         Assert.That(read!.Kind, Is.EqualTo("square"));
         Assert.That(read.Extensions, Is.Null);
@@ -131,6 +133,7 @@ public abstract class TestShape
 public sealed class TestCircle : TestShape
 {
     [JsonPropertyName("kind")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public override string Kind => "circle";
 
     [JsonPropertyName("radius")]
@@ -149,6 +152,7 @@ public sealed class TestCircle : TestShape
 public sealed class TestSquare : TestShape
 {
     [JsonPropertyName("kind")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public override string Kind => "square";
 
     [JsonPropertyName("side")]
@@ -168,6 +172,7 @@ public sealed class UnknownTestShape : TestShape
     }
 
     [JsonPropertyName("kind")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public override string Kind { get; }
 
     [JsonExtensionData]
