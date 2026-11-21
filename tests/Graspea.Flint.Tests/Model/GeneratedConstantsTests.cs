@@ -26,13 +26,18 @@ public sealed class GeneratedConstantsTests
         Assert.That(StaticValues<ChartType>().Select(v => v.Name), Is.EquivalentTo(names));
     }
 
-    // source: ir/flint-ir.json catalog.channels (the union includes theta and not text)
+    // source: ir/flint-ir.json catalog.channels (the union of the core constant and the declared channels: 29 on
+    // flint-chart 1.1.1, with theta from the Excel and Image-Charts Pie and Donut Chart, and strokeWidth and text from the
+    // Vega-Lite and Plotly Map, src/vegalite/templates/map.ts:974 and src/plotly/templates/map.ts:181, text also from their
+    // Choropleth, src/vegalite/templates/map.ts:1362 and src/plotly/templates/choropleth.ts:75)
     // (with the obsolete generator/retired.json entries, which keep their constant: design §7.8)
     [Test]
     public void Channel_ConstantsEqualTheIrChannelUnion()
     {
         Assert.That(StaticValues<Channel>().Select(v => v.Name), Is.EquivalentTo(CommittedIr.Strings(CommittedIr.FacadeCatalog["channels"])));
         Assert.That(Channel.Theta.Name, Is.EqualTo("theta"));
+        Assert.That(Channel.StrokeWidth.Name, Is.EqualTo("strokeWidth"));
+        Assert.That(Channel.Text.Name, Is.EqualTo("text"));
     }
 
     // source: ir/flint-ir.json catalog.semanticTypes (verbatim names) and generator/overrides.json renames (Name -> NameType)
