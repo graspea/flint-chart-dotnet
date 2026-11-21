@@ -252,9 +252,10 @@ internal static class SpecShape
     }
 
     /// <summary>A value of a model or name-table type: <c>string</c>, <c>double</c>, <c>bool</c>, <c>JsonNode</c>, arrays,
-    /// string- and integer-keyed maps, <c>ChartSize</c>, <c>ContinuousMarkCrossSection</c>, a theme union, a string-backed
-    /// literal, an open literal union struct, a generated class or a class of <see cref="NameTables.UnionObjectForms"/> (such
-    /// as <c>UpdateTarget</c> and the classes it holds). Every type is nullable except the <c>!</c> forms.</summary>
+    /// string- and integer-keyed maps, <c>ChartSize</c>, <c>ContinuousMarkCrossSection</c>, a theme union, <c>StrokeDash</c>,
+    /// a string-backed literal, an open literal union struct, a generated class or a class of
+    /// <see cref="NameTables.UnionObjectForms"/> (such as <c>UpdateTarget</c> and the classes it holds). Every type is nullable
+    /// except the <c>!</c> forms.</summary>
     internal static void Typed(JsonItem value, string type, string path)
     {
         if (type is "JsonNode" or "JsonNode?")
@@ -298,6 +299,9 @@ internal static class SpecShape
                 return;
             case "Graspea.Flint.Theming.LabelOverflow":
                 Require(value.IsString || (value.IsArray && value.Items.All(i => i.IsString)), value, path, $"{path} must be a string or an array of strings.");
+                return;
+            case "Graspea.Flint.StrokeDash":
+                Require(value.IsString || (value.IsArray && value.Items.All(i => i.IsNumber)), value, path, $"{path} must be a string or an array of numbers.");
                 return;
             case "Graspea.Flint.Theming.RuleSpec" or "Graspea.Flint.Theming.MinorGridSpec" or "Graspea.Flint.ChartSource" when value.IsString:
                 return; // the string form; the object form is checked as a class below

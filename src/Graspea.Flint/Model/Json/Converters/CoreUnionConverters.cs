@@ -153,6 +153,51 @@ public sealed class ColorSchemeConverter : JsonConverter<ColorScheme>
     }
 }
 
+/// <summary>Wire form <c>string | number[]</c> of <see cref="StrokeDash"/>; the numbers are read strictly, whatever the caller's
+/// options are. Infrastructure: public only so that a host source-generated <see cref="JsonSerializerContext"/> can
+/// instantiate it.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public sealed class StrokeDashConverter : JsonConverter<StrokeDash>
+{
+    /// <inheritdoc/>
+    public override StrokeDash Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        switch (reader.TokenType)
+        {
+            case JsonTokenType.String:
+                return new StrokeDash(reader.GetString(), null);
+            case JsonTokenType.StartArray:
+                var lengths = new List<double>();
+                while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
+                {
+                    lengths.Add(reader.TokenType == JsonTokenType.Number ? reader.GetDouble() : throw new JsonException("The items of strokeDash must be numbers."));
+                }
+
+                return new StrokeDash(null, [.. lengths]);
+            default:
+                throw new JsonException("strokeDash must be a string or an array of numbers.");
+        }
+    }
+
+    /// <inheritdoc/>
+    public override void Write(Utf8JsonWriter writer, StrokeDash value, JsonSerializerOptions options)
+    {
+        if (value.Keyword is { } keyword)
+        {
+            writer.WriteStringValue(keyword);
+            return;
+        }
+
+        writer.WriteStartArray();
+        foreach (var length in value.Lengths ?? [])
+        {
+            writer.WriteNumberValue(length);
+        }
+
+        writer.WriteEndArray();
+    }
+}
+
 /// <summary>Wire form <c>boolean | {details?, indicator?, maxDistance?}</c> of <see cref="AssistedTargeting"/>.
 /// Infrastructure: public only so that a host source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
 [EditorBrowsable(EditorBrowsableState.Never)]

@@ -126,6 +126,8 @@ internal sealed class ValueWriter
                 return item.IsArray && item.Items.All(i => i.IsString)
                     ? $"new string[] {{ {string.Join(", ", item.Items.Select(i => CSharpText.StringLiteral(i.Value!)))} }}"
                     : null;
+            case "Graspea.Flint.StrokeDash":
+                return item.IsString ? CSharpText.StringLiteral(item.Value!) : Lengths(item);
             case "Graspea.Flint.Theming.RuleSpec" or "Graspea.Flint.Theming.MinorGridSpec" or "Graspea.Flint.ChartSource" when item.IsString:
                 return CSharpText.StringLiteral(item.Value!); // the string form; the object form is written as a class below
             case "Graspea.Flint.ChartSource" when item.Get("text") is not { IsString: true }:
@@ -316,6 +318,16 @@ internal sealed class ValueWriter
         }
 
         return Number(width) is { } w && Number(height) is { } h ? $"new {Flint("ChartSize")}({w}, {h})" : null;
+    }
+
+    /// <summary><c>new double[] { 4, 2 }</c> for an array of numbers that <c>double</c> holds, which converts to a
+    /// <c>StrokeDash</c>; null otherwise.</summary>
+    private static string? Lengths(JsonItem item)
+    {
+        var lengths = item.IsArray ? item.Items.Select(Number).ToList() : null;
+        return lengths is null || lengths.Contains(null) ? null
+            : lengths.Count == 0 ? "new double[] { }"
+            : $"new double[] {{ {string.Join(", ", lengths)} }}";
     }
 
     private string? CrossSection(JsonItem item)
