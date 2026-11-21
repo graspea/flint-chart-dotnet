@@ -3,8 +3,11 @@
 // (IntKeyDictionaryConverter<T> for number keys) on map members, and a trailing [JsonExtensionData] Extensions. A record
 // keyed by string literals is a class with one member per key; an open literal union (`'a' | string`) is a string-backed
 // struct with its converter, one per literal set. Unmapped constructs fail with their IR path.
+// A named union whose members one string literal member tells apart is a discriminated union: an abstract base, one
+// sealed derived class per member, an Unknown<Alias> class and a converter (docs/generator.md "Discriminated unions").
 // Also writes FlintMapJsonContext, which registers the map value types those converters resolve (design §5.1); it is a
-// context of its own because System.Text.Json reads [JsonSerializable] from one partial declaration only.
+// context of its own because System.Text.Json reads [JsonSerializable] from one partial declaration only. The derived
+// classes are registered in FlintUnionJsonContext, through which their converters read and write.
 import { ordinal, type Ir, type IrProp, type IrType } from '../ir.ts';
 import { pascal } from '../naming.ts';
 import { OverrideUse, type Overrides } from '../overrides.ts';
@@ -16,6 +19,7 @@ const ROOTS = [
   { type: 'ThemeSpec', namespace: 'Graspea.Flint.Theming', folder: 'Theming' },
   { type: 'InteractionSpec', namespace: 'Graspea.Flint', folder: 'Interaction' },
   { type: 'InteractionPresetOptions', namespace: 'Graspea.Flint', folder: 'Interaction' },
+  { type: 'ChartUpdate', namespace: 'Graspea.Flint', folder: 'Updates' },
 ] as const;
 
 /**
@@ -88,7 +92,64 @@ interface ClassPlan {
   doc?: string;
   /** `mapped`: the member type, already mapped (the keys of a literal-keyed record share one value type). */
   props: Array<IrProp & { mapped?: CsType }>;
+  /** Set on the derived class of a discriminated union member: the union, whose discriminator the class overrides. */
+  base?: UnionPlan;
 }
+
+/** A discriminated union: its abstract base, the discriminator, one derived class per member and the unknown class. */
+interface UnionPlan {
+  name: string;
+  namespace: string;
+  folder: string;
+  doc?: string;
+  /** The discriminator's wire name and C# property. */
+  disc: string;
+  discName: string;
+  /** Per union member, in IR order: its literal and its derived class. */
+  members: Array<{ literal: string; cls: string }>;
+  unknown: string;
+}
+
+/** A named union's members as objects told apart by `disc`, or why it is not discriminated. */
+type Discrimination =
+  | { disc: string; members: Array<{ literal: string; props: IrProp[]; ref?: string; doc?: string }> }
+  | { reason: string };
+
+/**
+ * A named union is discriminated when every member is an object (inline or a ref to an object interface) and exactly one
+ * member name is required with a string literal type in every member, the literals distinct.
+ */
+function discriminate(ir: Ir, name: string): Discrimination {
+  const union = ir.types[name];
+  if (union?.kind !== 'union') return { reason: `${name} is not a named union` };
+  const members: Array<{ props: IrProp[]; ref?: string; doc?: string }> = [];
+  for (const m of union.members) {
+    const target = m.kind === 'ref' ? ir.types[m.name] : undefined;
+    if (m.kind === 'object') members.push({ props: m.props });
+    else if (m.kind === 'ref' && target?.kind === 'object') members.push({ props: target.props, ref: m.name, doc: target.doc });
+    else return { reason: `the member ${m.kind === 'ref' ? m.name : m.kind} is not an object` };
+  }
+  const literal = (props: IrProp[], key: string) => {
+    const p = props.find((x) => x.name === key);
+    return p && !p.optional && p.type.kind === 'literal' && typeof p.type.value === 'string' ? p.type.value : undefined;
+  };
+  const candidates = members[0].props
+    .map((p) => p.name)
+    .filter((key) => members.every((m) => literal(m.props, key) !== undefined) && new Set(members.map((m) => literal(m.props, key))).size === members.length);
+  if (candidates.length !== 1) {
+    return {
+      reason:
+        candidates.length === 0
+          ? 'no member name is required with a string literal in every member, the literals distinct'
+          : `${andList(candidates)} each tell the members apart`,
+    };
+  }
+  const [disc] = candidates;
+  return { disc, members: members.map((m) => ({ ...m, literal: literal(m.props, disc)! })) };
+}
+
+/** The last Pascal word of a name: `ChartUpdateOp` -> `Op`, `FreeformOverlayBody` -> `Body`. */
+const lastWord = (name: string) => name.split(/(?<=[a-z0-9])(?=[A-Z])/).at(-1)!;
 
 /** An open literal union (`'a' | 'b' | string`) and the members typed by it; identical literal sets share one struct. */
 interface OpenUnion {
@@ -146,8 +207,29 @@ export function openStructs(ir: Ir, overrides: Overrides): OpenStruct[] {
   return buildOptions(ir, overrides).structs;
 }
 
+/** A generated discriminated union as the spec-to-C# name tables see it (names namespace-qualified). */
+export interface DiscriminatedUnion {
+  name: string;
+  /** The discriminator's wire name. */
+  discriminator: string;
+  /** Per member: its literal and derived class. */
+  members: Array<{ literal: string; cls: string }>;
+  unknown: string;
+}
+
+/** Every generated discriminated union, by name. */
+export function discriminatedUnions(ir: Ir, overrides: Overrides): DiscriminatedUnion[] {
+  return buildOptions(ir, overrides).unions;
+}
+
 /** Two passes: the first finds every member of each open literal union, so the struct name can be chosen from all of them. */
-type Built = { result: EmitResult; classes: OptionClass[]; structs: OpenStruct[]; presets: Array<{ type: string; cls: string; required: boolean }> };
+type Built = {
+  result: EmitResult;
+  classes: OptionClass[];
+  structs: OpenStruct[];
+  unions: DiscriminatedUnion[];
+  presets: Array<{ type: string; cls: string; required: boolean }>;
+};
 
 function buildOptions(ir: Ir, overrides: Overrides): Built {
   const opens = new Map<string, OpenUnion>();
@@ -179,15 +261,47 @@ function buildPass(
   const contextTypes = new Set<string>();
   const placed = placeNamedTypes(ir);
 
+  const unions = new Map<string, UnionPlan>();
+
   const plan = (p: ClassPlan) => {
     const existing = classes.get(p.name);
     if (existing) {
       if (existing.path !== p.path) errors.push(`class name collision "${p.name}": ${existing.path} and ${p.path}`);
+      else if (existing.base !== p.base) {
+        errors.push(`${p.name} is a member of the discriminated union ${(existing.base ?? p.base)!.name} and also referenced directly`);
+      }
       return;
     }
     classes.set(p.name, p);
     queue.push(p);
   };
+
+  /** The C# type of a `unions` entry at the path, or undefined without one. */
+  const overrideType = (path: string): CsType | undefined => {
+    const union = use.union(path);
+    if (union === undefined) return undefined;
+    return union === 'JsonNode' ? JSON_NODE : { cs: union, api: union, value: VALUE_TYPES.has(union) };
+  };
+
+  const undiscriminated = (t: IrType) => t.kind === 'ref' && ir.types[t.name]?.kind === 'union' && !('disc' in discriminate(ir, t.name));
+
+  /** Plans the base, one derived class per member and the unknown class of a discriminated union, once. */
+  function planUnion(name: string, d: Extract<Discrimination, { disc: string }>, owner: ClassPlan): CsType {
+    let u = unions.get(name);
+    if (!u) {
+      const place = placed.get(name) ?? owner;
+      u = { name, namespace: place.namespace, folder: place.folder, doc: ir.types[name].doc, disc: d.disc, discName: pascal(d.disc), members: [], unknown: `Unknown${name}` };
+      unions.set(name, u);
+      for (const m of d.members) {
+        const path = m.ref ?? `${name}[${m.literal}]`;
+        const cls = m.ref ?? use.rename(path) ?? pascal(m.literal) + lastWord(name);
+        u.members.push({ literal: m.literal, cls });
+        const doc = m.doc ?? m.props.find((p) => p.name === d.disc)?.doc ?? `The \`${m.literal}\` member of \`${name}\`.`;
+        plan({ name: cls, namespace: u.namespace, folder: u.folder, path, doc, props: m.props, base: u });
+      }
+    }
+    return { cs: name, api: `${u.namespace}.${name}`, value: false };
+  }
 
   const fail = (path: string, what: string): CsType => {
     errors.push(`${path}: ${what}`);
@@ -234,8 +348,10 @@ function buildPass(
         };
       }
       case 'array': {
-        // An array of a union no element type maps (`(string | FilterFieldOptions)[]`) maps as a whole.
-        if ((t.element.kind === 'union' || t.element.kind === 'unsupported') && use.union(path) === 'JsonNode') return JSON_NODE;
+        // An array of a union no element type maps (`(string | FilterFieldOptions)[]`, a named union that is not
+        // discriminated) or of `unknown` maps as a whole.
+        const whole = t.element.kind === 'union' || t.element.kind === 'unsupported' || t.element.kind === 'unknown' || undiscriminated(t.element);
+        if (whole && use.union(path) === 'JsonNode') return JSON_NODE;
         const el = mapType(t.element, `${path}[]`, owner, propName);
         if (el.node) return fail(`${path}[]`, 'JsonNode array elements would be written with the caller\'s options');
         const i = inner(el);
@@ -243,7 +359,7 @@ function buildPass(
       }
       case 'tuple':
         if (t.elements.every((e) => e.kind === 'number')) return { cs: 'double[]', api: 'double[]', value: false };
-        return fail(path, 'tuple with non-number elements');
+        return overrideType(path) ?? fail(path, 'tuple with non-number elements (map it in overrides.json "unions")');
       case 'record': {
         if (t.keys) {
           // One member per key, all of one value type, mapped once (so an object value is one class, `<Record>Value`).
@@ -272,6 +388,11 @@ function buildPass(
         const target = ir.types[t.name];
         if (!target) return fail(path, `reference to ${t.name}, which the IR does not contain`);
         if (target.kind === 'record') return mapType(target, t.name, owner, propName);
+        if (target.kind === 'union') {
+          const d = discriminate(ir, t.name);
+          if ('disc' in d) return planUnion(t.name, d, owner);
+          return overrideType(path) ?? fail(path, `ref ${t.name}, a union that is not discriminated: ${d.reason} (map it in overrides.json "unions")`);
+        }
         if (target.kind !== 'object') return fail(t.name, `named type of kind ${target.kind}`);
         const place = placed.get(t.name) ?? owner;
         plan({ name: t.name, namespace: place.namespace, folder: place.folder, path: t.name, doc: target.doc, props: target.props });
@@ -295,9 +416,7 @@ function buildPass(
       default: {
         // Only here: a member the mapping maps keeps its type, so an entry written ahead for a wider upstream type
         // (a pending path) leaves the pinned version's member as it is.
-        const union = use.union(path);
-        if (union !== undefined) return union === 'JsonNode' ? JSON_NODE : { cs: union, api: union, value: VALUE_TYPES.has(union) };
-        return fail(path, `${t.kind}${'text' in t ? ` ${t.text}` : ''} (map it in overrides.json "unions")`);
+        return overrideType(path) ?? fail(path, `${t.kind}${'text' in t ? ` ${t.text}` : ''} (map it in overrides.json "unions")`);
       }
     }
   }
@@ -328,7 +447,18 @@ function buildPass(
     const shape: OptionClass = { name: full, members: [] };
     shapes.push(shape);
     const names = new Map<string, string>([['Extensions', `${c.path} (Extensions)`], [c.name, `${c.path} (class name)`]]);
+    const base = c.base;
+    if (base) {
+      // The discriminator comes first: the override that names the class.
+      const literal = base.members.find((m) => m.cls === c.name)!.literal;
+      names.set(base.discName, `${c.path}.${base.disc} (discriminator)`);
+      members.push(
+        docComment('    ', `Always \`${literal}\`.`) + `    [JsonPropertyName("${base.disc}")]\n    public override string ${base.discName} => ${csString(literal)};\n`,
+      );
+      api.push(`override ${full}.${base.discName}.get -> string!`);
+    }
     for (const p of c.props) {
+      if (base && p.name === base.disc) continue;
       const path = `${c.path}.${p.name}`;
       const name = use.rename(path) ?? pascal(p.name);
       const clash = names.get(name);
@@ -340,12 +470,16 @@ function buildPass(
       const t = p.mapped ?? mapType(p.type, path, c, p.name);
       shape.members.push({ wire: p.name, name, type: t.cs });
       const ignoredBy = OPTION_CLASSES.has(c.name) ? ir.catalog.ignoredOptions[p.name] : undefined;
+      // A required member that takes null: unset is written as null (upstream reads `value: null` on an update op as
+      // "clear"), not left out.
+      const writesNull = p.nullable === true && !p.optional;
       const remarks = [
         t.remark,
+        writesNull && 'Required upstream, where `null` is a value: an unset member is written as `null`.',
         ignoredBy && `Overwritten by the ${andList(ignoredBy)} ${ignoredBy.length === 1 ? 'backend' : 'backends'}.`,
         use.docs(path),
       ].filter((r): r is string => !!r);
-      const attrs = [`[JsonPropertyName("${p.name}")]`, '[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]'];
+      const attrs = [`[JsonPropertyName("${p.name}")]`, `[JsonIgnore(Condition = JsonIgnoreCondition.${writesNull ? 'Never' : 'WhenWritingNull'})]`];
       if (t.converterArg) attrs.push(`[JsonConverter(typeof(${t.converter}<${t.converterArg}>))]`);
       if (t.node) attrs.push('[JsonConverter(typeof(JsonNodePassThroughConverter))]');
       members.push(
@@ -370,8 +504,35 @@ function buildPass(
       `namespace ${c.namespace};\n\n` +
       docComment('', c.doc ?? `The \`${c.path}\` object.`, use.docs(c.path)) +
       '[JsonNumberHandling(JsonNumberHandling.Strict)]\n' +
-      `public sealed partial class ${c.name}\n{\n${members.join('\n')}}\n`;
+      `public sealed partial class ${c.name}${base ? ` : ${base.name}` : ''}\n{\n${members.join('\n')}}\n`;
     rendered.set(`${c.folder}/${c.name}.g.cs`, { content, api });
+  }
+
+  const unionShapes: DiscriminatedUnion[] = [];
+  for (const u of unions.values()) {
+    for (const name of [u.name, u.unknown]) {
+      const clash = classes.get(name);
+      if (clash) errors.push(`type name collision "${name}": ${clash.path} and the discriminated union ${u.name}`);
+    }
+    if (u.discName === u.name || u.discName === 'Extensions') errors.push(`${u.name}: the discriminator ${u.disc} gives the member name ${u.discName}, which the class declares`);
+    const qualified = (cls: string) => `${u.namespace}.${cls}`;
+    unionShapes.push({ name: qualified(u.name), discriminator: u.disc, members: u.members.map((m) => ({ literal: m.literal, cls: qualified(m.cls) })), unknown: qualified(u.unknown) });
+    const files = unionFiles(ir, u);
+    rendered.set(`${u.folder}/${u.name}.g.cs`, files.base);
+    rendered.set(`${u.folder}/${u.unknown}.g.cs`, files.unknown);
+    rendered.set(`Json/${u.name}Converter.g.cs`, files.converter);
+  }
+  if (unions.size > 0) {
+    const derived = [...unions.values()].flatMap((u) => u.members.map((m) => `${u.namespace}.${m.cls}`)).sort(ordinal);
+    rendered.set('Json/FlintUnionJsonContext.g.cs', {
+      content:
+        `${header(ir)}\nusing System.Text.Json.Serialization;\n\nnamespace Graspea.Flint.Serialization;\n\n` +
+        '/// <summary>The derived classes of the generated discriminated unions, which their converters read and write through.</summary>\n' +
+        '[JsonSourceGenerationOptions(DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, NumberHandling = JsonNumberHandling.Strict)]\n' +
+        derived.map((t) => `[JsonSerializable(typeof(${t}))]\n`).join('') +
+        'internal sealed partial class FlintUnionJsonContext : JsonSerializerContext;\n',
+      api: [],
+    });
   }
 
   const structs: string[] = [];
@@ -381,7 +542,10 @@ function buildPass(
     if (!u) continue;
     const full = `${named.namespace}.${named.name}`;
     const paths = [...new Set(u.uses.map((x) => x.path))];
-    const clash = classes.get(named.name)?.path ?? (structs.includes(full) ? '(another open literal union)' : undefined);
+    const clash =
+      classes.get(named.name)?.path ??
+      (unions.has(named.name) ? `the discriminated union ${named.name}` : undefined) ??
+      (structs.includes(full) ? '(another open literal union)' : undefined);
     if (clash !== undefined) {
       errors.push(`type name collision "${named.name}": ${clash} and ${paths.join(', ')}`);
       continue;
@@ -437,8 +601,93 @@ function buildPass(
     ...[...classes.values()].filter((c) => c.name !== PRESETS).map((c) => `${c.namespace}.${c.name}`),
     ...structs,
     ...structs.map((t) => `Graspea.Flint.Serialization.${t.slice(t.lastIndexOf('.') + 1)}Converter`),
+    ...[...unions.values()].flatMap((u) => [`${u.namespace}.${u.name}`, `${u.namespace}.${u.unknown}`, `Graspea.Flint.Serialization.${u.name}Converter`]),
   ].sort(ordinal);
-  return { result, classes: shapes.sort((a, b) => ordinal(a.name, b.name)), structs: structShapes.sort((a, b) => ordinal(a.name, b.name)), presets };
+  return {
+    result,
+    classes: shapes.sort((a, b) => ordinal(a.name, b.name)),
+    structs: structShapes.sort((a, b) => ordinal(a.name, b.name)),
+    unions: unionShapes.sort((a, b) => ordinal(a.name, b.name)),
+    presets,
+  };
+}
+
+/**
+ * The files of a discriminated union besides its derived classes: the abstract base, which only the generated classes
+ * can derive from (docs/versioning.md), the class for a discriminator this version does not know, and the converter,
+ * whose logic is the hand-written DiscriminatedUnion helper.
+ */
+function unionFiles(ir: Ir, u: UnionPlan): Record<'base' | 'unknown' | 'converter', { content: string; api: string[] }> {
+  const full = `${u.namespace}.${u.name}`;
+  const unknownFull = `${u.namespace}.${u.unknown}`;
+  const disc = `\`${u.disc}\``;
+  const listed = andList(u.members.map((m) => `\`${m.cls}\` (\`${m.literal}\`)`));
+  const base =
+    `${header(ir)}\nusing System.Text.Json.Serialization;\nusing Graspea.Flint.Serialization;\n\nnamespace ${u.namespace};\n\n` +
+    docComment(
+      '',
+      u.doc ?? `The \`${u.name}\` union.`,
+      `One of the classes told apart by ${disc}: ${listed}.\n\`${u.unknown}\` holds an ${disc} this version does not know.`,
+    ) +
+    `[JsonConverter(typeof(${u.name}Converter))]\npublic abstract partial class ${u.name}\n{\n` +
+    docComment('    ', 'Only the generated classes derive from this class.') +
+    `    private protected ${u.name}()\n    {\n    }\n\n` +
+    docComment('    ', `The ${disc} member, which names the class.`) +
+    `    [JsonPropertyName("${u.disc}")]\n    public abstract string ${u.discName} { get; }\n}\n`;
+  // The parameter is named after the discriminator (`op`, `type`); a C# keyword there would fail the build, not this emitter.
+  const param = u.discName[0].toLowerCase() + u.discName.slice(1);
+  const unknown =
+    `${header(ir)}\nusing System.Collections.Generic;\nusing System.Text.Json;\nusing System.Text.Json.Serialization;\n\nnamespace ${u.namespace};\n\n` +
+    docComment('', `A \`${u.name}\` whose ${disc} this version does not know, kept for round-trips.`) +
+    `public sealed partial class ${u.unknown} : ${u.name}\n{\n` +
+    docComment('    ', `Creates a value with the given ${disc}.`) +
+    `    /// <param name="${param}">The <c>${u.disc}</c> string, written verbatim.</param>\n` +
+    `    /// <exception cref="ArgumentNullException"><paramref name="${param}"/> is null.</exception>\n` +
+    `    public ${u.unknown}(string ${param})\n    {\n        ArgumentNullException.ThrowIfNull(${param});\n        ${u.discName} = ${param};\n    }\n\n` +
+    docComment('    ', `The ${disc} string, written verbatim.`) +
+    `    [JsonPropertyName("${u.disc}")]\n    public override string ${u.discName} { get; }\n\n` +
+    docComment('    ', `The other members, written after ${disc}.`) +
+    '    [JsonExtensionData]\n    public Dictionary<string, JsonElement>? Extensions { get; set; }\n}\n';
+  const conv = `Graspea.Flint.Serialization.${u.name}Converter`;
+  const converter =
+    `${header(ir)}\nusing System.ComponentModel;\nusing System.Text.Json;\nusing System.Text.Json.Serialization;\nusing ${u.namespace};\n\n` +
+    'namespace Graspea.Flint.Serialization;\n\n' +
+    `/// <summary>Reads and writes <see cref="${u.name}"/> by its <c>${u.disc}</c> member. Infrastructure: public only so that a\n` +
+    '/// host source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>\n' +
+    `[EditorBrowsable(EditorBrowsableState.Never)]\npublic sealed class ${u.name}Converter : JsonConverter<${u.name}>\n{\n` +
+    '    /// <inheritdoc/>\n' +
+    `    public override ${u.name} Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>\n` +
+    `        DiscriminatedUnion.Read<${u.name}>(ref reader, ${csString(u.disc)}, static value => value switch\n        {\n` +
+    u.members.map((m) => `            ${csString(m.literal)} => FlintUnionJsonContext.Default.${m.cls},\n`).join('') +
+    '            _ => null,\n' +
+    `        }, static (value, extensions) => new ${u.unknown}(value) { Extensions = extensions });\n\n` +
+    '    /// <inheritdoc/>\n' +
+    `    public override void Write(Utf8JsonWriter writer, ${u.name} value, JsonSerializerOptions options)\n    {\n` +
+    `        if (value is ${u.unknown} unknown)\n        {\n` +
+    `            DiscriminatedUnion.WriteUnknown(writer, ${csString(u.disc)}, unknown.${u.discName}, unknown.Extensions);\n        }\n` +
+    '        else\n        {\n            DiscriminatedUnion.Write(writer, value, FlintUnionJsonContext.Default);\n        }\n    }\n}\n';
+  return {
+    base: { content: base, api: [full, `abstract ${full}.${u.discName}.get -> string!`] },
+    unknown: {
+      content: unknown,
+      api: [
+        unknownFull,
+        `${unknownFull}.${u.unknown}(string! ${param}) -> void`,
+        `override ${unknownFull}.${u.discName}.get -> string!`,
+        `${unknownFull}.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?`,
+        `${unknownFull}.Extensions.set -> void`,
+      ],
+    },
+    converter: {
+      content: converter,
+      api: [
+        conv,
+        `${conv}.${u.name}Converter() -> void`,
+        `override ${conv}.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> ${full}!`,
+        `override ${conv}.Write(System.Text.Json.Utf8JsonWriter! writer, ${full}! value, System.Text.Json.JsonSerializerOptions! options) -> void`,
+      ],
+    },
+  };
 }
 
 /**

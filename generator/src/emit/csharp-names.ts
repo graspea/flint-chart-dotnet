@@ -9,7 +9,7 @@ import { csNumber, csString, header, type EmittedFile } from './common.ts';
 import { constantNames } from './constants.ts';
 import { wireValue } from './enums.ts';
 import { fluentModel, type FluentProperty } from './fluent.ts';
-import { interactionPresets, openStructs, optionClasses } from './options.ts';
+import { discriminatedUnions, interactionPresets, openStructs, optionClasses } from './options.ts';
 
 const KINDS: Readonly<Record<FluentProperty['kind'], string>> = {
   binary: 'PropertyKind.Bool',
@@ -104,6 +104,10 @@ export function emitCSharpNames(ledgerIr: Ir, overrides: Overrides): EmittedFile
 
   const unions = openStructs(ir, overrides).map((u) => `new(${csString(u.name)}, [${u.literals.map((l) => pair(l.wire, l.member)).join(', ')}])`);
 
+  const discriminated = discriminatedUnions(ir, overrides).map(
+    (u) => `new(${csString(u.name)}, ${csString(u.discriminator)}, [${u.members.map((m) => pair(m.literal, m.cls)).join(', ')}], ${csString(u.unknown)})`,
+  );
+
   const content =
     `${header(ir)}\nnamespace Graspea.Flint.CSharp;\n\ninternal static partial class NameTables\n{\n` +
     [
@@ -119,6 +123,7 @@ export function emitCSharpNames(ledgerIr: Ir, overrides: Overrides): EmittedFile
       list('Classes', 'ClassNames', classes),
       list('StringUnions', 'StringUnionNames', unions),
       list('Presets', 'PresetNames', interactionPresets(ir, overrides).map((p) => `new(${csString(p.type)}, ${csString(p.method)}, ${csString(p.options)})`)),
+      list('Unions', 'UnionNames', discriminated),
     ].join('\n') +
     '}\n';
   return [{ path: 'NameTables.g.cs', content }, emitCatalog(ledgerIr)];

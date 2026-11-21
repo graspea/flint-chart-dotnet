@@ -26,4 +26,9 @@
     <ProjectReference Include="../../src/Graspea.Flint/Graspea.Flint.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- The discriminated union converter logic, tested over test-only unions: no generated union exists on every pin. -->
+    <Compile Include="../../src/Graspea.Flint/Model/Json/Converters/DiscriminatedUnion.cs" LinkBase="Linked" />
+  </ItemGroup>
+
 </Project>

@@ -8357,6 +8357,7 @@
         {
           "doc": "The name the channel's axis or key prints, in place of the field's; `null` prints none. A\ntheme still decides whether a key is titled at all: a name given here renames it where it is.",
           "name": "title",
+          "nullable": true,
           "optional": true,
           "type": {
             "kind": "string"
@@ -8971,44 +8972,8 @@
           "type": {
             "kind": "record",
             "value": {
-              "kind": "union",
-              "members": [
-                {
-                  "kind": "object",
-                  "props": [
-                    {
-                      "name": "in",
-                      "optional": false,
-                      "type": {
-                        "element": {
-                          "kind": "unknown"
-                        },
-                        "kind": "array"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "kind": "object",
-                  "props": [
-                    {
-                      "name": "range",
-                      "optional": false,
-                      "type": {
-                        "elements": [
-                          {
-                            "kind": "unknown"
-                          },
-                          {
-                            "kind": "unknown"
-                          }
-                        ],
-                        "kind": "tuple"
-                      }
-                    }
-                  ]
-                }
-              ]
+              "kind": "ref",
+              "name": "FilterValue"
             }
           }
         },
@@ -9086,6 +9051,47 @@
               "toggle"
             ]
           }
+        }
+      ]
+    },
+    "FilterValue": {
+      "doc": "One field's filter: the values a reader keeps (`in`), or an inclusive range (`range`)\nwhose ends compare as numbers or dates.",
+      "kind": "union",
+      "members": [
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "in",
+              "optional": false,
+              "type": {
+                "element": {
+                  "kind": "unknown"
+                },
+                "kind": "array"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "range",
+              "optional": false,
+              "type": {
+                "elements": [
+                  {
+                    "kind": "unknown"
+                  },
+                  {
+                    "kind": "unknown"
+                  }
+                ],
+                "kind": "tuple"
+              }
+            }
+          ]
         }
       ]
     },
@@ -9215,166 +9221,8 @@
           "name": "selector",
           "optional": true,
           "type": {
-            "kind": "union",
-            "members": [
-              {
-                "kind": "object",
-                "props": [
-                  {
-                    "name": "select",
-                    "optional": false,
-                    "type": {
-                      "kind": "object",
-                      "props": [
-                        {
-                          "name": "key",
-                          "optional": false,
-                          "type": {
-                            "kind": "record",
-                            "value": {
-                              "kind": "unknown"
-                            }
-                          }
-                        },
-                        {
-                          "name": "visual",
-                          "optional": true,
-                          "type": {
-                            "kind": "mapped",
-                            "props": [
-                              {
-                                "name": "kind",
-                                "optional": true,
-                                "type": {
-                                  "kind": "literalUnion",
-                                  "values": [
-                                    "mark",
-                                    "path",
-                                    "region",
-                                    "widget",
-                                    "handle",
-                                    "legend",
-                                    "axis",
-                                    "chart",
-                                    "title",
-                                    "header"
-                                  ]
-                                }
-                              },
-                              {
-                                "name": "role",
-                                "optional": true,
-                                "type": {
-                                  "kind": "string"
-                                }
-                              }
-                            ],
-                            "text": "Partial<SemanticTarget['visual']>"
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              },
-              {
-                "kind": "object",
-                "props": [
-                  {
-                    "name": "select",
-                    "optional": false,
-                    "type": {
-                      "kind": "object",
-                      "props": [
-                        {
-                          "name": "visual",
-                          "optional": true,
-                          "type": {
-                            "kind": "mapped",
-                            "props": [
-                              {
-                                "name": "kind",
-                                "optional": true,
-                                "type": {
-                                  "kind": "literalUnion",
-                                  "values": [
-                                    "mark",
-                                    "path",
-                                    "region",
-                                    "widget",
-                                    "handle",
-                                    "legend",
-                                    "axis",
-                                    "chart",
-                                    "title",
-                                    "header"
-                                  ]
-                                }
-                              },
-                              {
-                                "name": "role",
-                                "optional": true,
-                                "type": {
-                                  "kind": "string"
-                                }
-                              }
-                            ],
-                            "text": "Partial<SemanticTarget['visual']>"
-                          }
-                        },
-                        {
-                          "name": "where",
-                          "optional": false,
-                          "type": {
-                            "kind": "record",
-                            "value": {
-                              "kind": "union",
-                              "members": [
-                                {
-                                  "kind": "object",
-                                  "props": [
-                                    {
-                                      "name": "in",
-                                      "optional": false,
-                                      "type": {
-                                        "element": {
-                                          "kind": "unknown"
-                                        },
-                                        "kind": "array"
-                                      }
-                                    }
-                                  ]
-                                },
-                                {
-                                  "kind": "object",
-                                  "props": [
-                                    {
-                                      "name": "range",
-                                      "optional": false,
-                                      "type": {
-                                        "elements": [
-                                          {
-                                            "kind": "unknown"
-                                          },
-                                          {
-                                            "kind": "unknown"
-                                          }
-                                        ],
-                                        "kind": "tuple"
-                                      }
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            ]
+            "kind": "ref",
+            "name": "SemanticTargetSelector"
           }
         },
         {
@@ -9543,166 +9391,8 @@
           "name": "selector",
           "optional": true,
           "type": {
-            "kind": "union",
-            "members": [
-              {
-                "kind": "object",
-                "props": [
-                  {
-                    "name": "select",
-                    "optional": false,
-                    "type": {
-                      "kind": "object",
-                      "props": [
-                        {
-                          "name": "key",
-                          "optional": false,
-                          "type": {
-                            "kind": "record",
-                            "value": {
-                              "kind": "unknown"
-                            }
-                          }
-                        },
-                        {
-                          "name": "visual",
-                          "optional": true,
-                          "type": {
-                            "kind": "mapped",
-                            "props": [
-                              {
-                                "name": "kind",
-                                "optional": true,
-                                "type": {
-                                  "kind": "literalUnion",
-                                  "values": [
-                                    "mark",
-                                    "path",
-                                    "region",
-                                    "widget",
-                                    "handle",
-                                    "legend",
-                                    "axis",
-                                    "chart",
-                                    "title",
-                                    "header"
-                                  ]
-                                }
-                              },
-                              {
-                                "name": "role",
-                                "optional": true,
-                                "type": {
-                                  "kind": "string"
-                                }
-                              }
-                            ],
-                            "text": "Partial<SemanticTarget['visual']>"
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              },
-              {
-                "kind": "object",
-                "props": [
-                  {
-                    "name": "select",
-                    "optional": false,
-                    "type": {
-                      "kind": "object",
-                      "props": [
-                        {
-                          "name": "visual",
-                          "optional": true,
-                          "type": {
-                            "kind": "mapped",
-                            "props": [
-                              {
-                                "name": "kind",
-                                "optional": true,
-                                "type": {
-                                  "kind": "literalUnion",
-                                  "values": [
-                                    "mark",
-                                    "path",
-                                    "region",
-                                    "widget",
-                                    "handle",
-                                    "legend",
-                                    "axis",
-                                    "chart",
-                                    "title",
-                                    "header"
-                                  ]
-                                }
-                              },
-                              {
-                                "name": "role",
-                                "optional": true,
-                                "type": {
-                                  "kind": "string"
-                                }
-                              }
-                            ],
-                            "text": "Partial<SemanticTarget['visual']>"
-                          }
-                        },
-                        {
-                          "name": "where",
-                          "optional": false,
-                          "type": {
-                            "kind": "record",
-                            "value": {
-                              "kind": "union",
-                              "members": [
-                                {
-                                  "kind": "object",
-                                  "props": [
-                                    {
-                                      "name": "in",
-                                      "optional": false,
-                                      "type": {
-                                        "element": {
-                                          "kind": "unknown"
-                                        },
-                                        "kind": "array"
-                                      }
-                                    }
-                                  ]
-                                },
-                                {
-                                  "kind": "object",
-                                  "props": [
-                                    {
-                                      "name": "range",
-                                      "optional": false,
-                                      "type": {
-                                        "elements": [
-                                          {
-                                            "kind": "unknown"
-                                          },
-                                          {
-                                            "kind": "unknown"
-                                          }
-                                        ],
-                                        "kind": "tuple"
-                                      }
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            ]
+            "kind": "ref",
+            "name": "SemanticTargetSelector"
           }
         },
         {
@@ -10873,6 +10563,133 @@
           "type": {
             "kind": "string"
           }
+        }
+      ]
+    },
+    "SemanticTargetSelector": {
+      "doc": "Marks named by their values. `key` names one combination, each field equal to its value;\n`where` describes a set, each field `in` a list or within a `range`, and every field must hold.\nOps that act on one mark (a note, an order) take a key; set-style takes either.",
+      "kind": "union",
+      "members": [
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "select",
+              "optional": false,
+              "type": {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "key",
+                    "optional": false,
+                    "type": {
+                      "kind": "record",
+                      "value": {
+                        "kind": "unknown"
+                      }
+                    }
+                  },
+                  {
+                    "name": "visual",
+                    "optional": true,
+                    "type": {
+                      "kind": "mapped",
+                      "props": [
+                        {
+                          "name": "kind",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "mark",
+                              "path",
+                              "region",
+                              "widget",
+                              "handle",
+                              "legend",
+                              "axis",
+                              "chart",
+                              "title",
+                              "header"
+                            ]
+                          }
+                        },
+                        {
+                          "name": "role",
+                          "optional": true,
+                          "type": {
+                            "kind": "string"
+                          }
+                        }
+                      ],
+                      "text": "Partial<SemanticTarget['visual']>"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "select",
+              "optional": false,
+              "type": {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "visual",
+                    "optional": true,
+                    "type": {
+                      "kind": "mapped",
+                      "props": [
+                        {
+                          "name": "kind",
+                          "optional": true,
+                          "type": {
+                            "kind": "literalUnion",
+                            "values": [
+                              "mark",
+                              "path",
+                              "region",
+                              "widget",
+                              "handle",
+                              "legend",
+                              "axis",
+                              "chart",
+                              "title",
+                              "header"
+                            ]
+                          }
+                        },
+                        {
+                          "name": "role",
+                          "optional": true,
+                          "type": {
+                            "kind": "string"
+                          }
+                        }
+                      ],
+                      "text": "Partial<SemanticTarget['visual']>"
+                    }
+                  },
+                  {
+                    "name": "where",
+                    "optional": false,
+                    "type": {
+                      "kind": "record",
+                      "value": {
+                        "kind": "ref",
+                        "name": "FilterValue"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
         }
       ]
     },

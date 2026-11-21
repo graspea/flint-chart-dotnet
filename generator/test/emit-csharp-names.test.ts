@@ -122,9 +122,29 @@ internal static partial class NameTables
     internal static readonly PresetNames[] Presets =
     [
     ];
+
+    internal static readonly UnionNames[] Unions =
+    [
+    ];
 }
 `,
     );
+  });
+
+  // source: the options emitter (a discriminated union is an abstract base, one derived class per literal of its
+  // discriminator and an Unknown<Alias> class; docs/generator.md "Discriminated unions"); the core writes a union value as
+  // its derived class from this table
+  it('lists each discriminated union with its discriminator, derived classes and unknown class', () => {
+    const ir = irWithTypes();
+    const op = (literal: string) => ({ kind: 'object' as const, props: [{ name: 'op', optional: false, type: { kind: 'literal' as const, value: literal } }] });
+    ir.types.ChartUpdate = { kind: 'object', props: [{ name: 'ops', optional: false, type: { kind: 'array', element: { kind: 'ref', name: 'ChartUpdateOp' } } }] };
+    ir.types.ChartUpdateOp = { kind: 'union', members: [op('set-style'), op('set-data')] };
+    const content = emitCSharpNames(ir, emptyOverrides())[0].content;
+    assert.match(
+      content,
+      /    internal static readonly UnionNames\[\] Unions =\n    \[\n        new\("Graspea\.Flint\.ChartUpdateOp", "op", \[new\("set-style", "Graspea\.Flint\.SetStyleOp"\), new\("set-data", "Graspea\.Flint\.SetDataOp"\)\], "Graspea\.Flint\.UnknownChartUpdateOp"\),\n    \];/,
+    );
+    assert.match(content, /new\("Graspea\.Flint\.SetStyleOp",\n        \[\n        \]\)/);
   });
 
   // source: docs/generator.md "Interaction presets" (the conversion writes an entry of a known preset through its

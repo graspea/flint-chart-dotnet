@@ -26,11 +26,16 @@ export type IrType =
 export interface IrProp {
   name: string;
   optional: boolean;
+  /** The member's declared type is a union with `null` (`value: Note | null`); `null` itself is not in `type`. */
+  nullable?: true;
   type: IrType;
   doc?: string;
 }
 
-/** A named upstream type: an interface (object), an index-signature-only interface (record), or a core alias. */
+/**
+ * A named upstream type: an interface (object), an index-signature-only interface (record), a core alias, or a named
+ * union (`union`): a non-generic type alias of at least two objects, object interfaces or other named unions.
+ */
 export type IrNamedType = IrType & { doc?: string };
 
 export type IrOptionValue = string | number | boolean | Array<string | number | boolean>;

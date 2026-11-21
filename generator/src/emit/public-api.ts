@@ -21,8 +21,8 @@ function isOwned(line: string, result: EmitResult): boolean {
 }
 
 /**
- * The public types a generated file owns outright: its `public enum`, `public sealed [partial] class` and
- * `public readonly partial record struct` declarations, with
+ * The public types a generated file owns outright: its `public enum`, `public sealed [partial] class`,
+ * `public abstract [partial] class` and `public readonly partial record struct` declarations, with
  * their namespace. Partial members of hand-written types (`static partial class Chart`, the constant structs) are not
  * included. The CLI adds the types of the generated files it removes to `ownedTypes`, so their lines leave
  * PublicAPI.Unshipped.txt.
@@ -30,7 +30,7 @@ function isOwned(line: string, result: EmitResult): boolean {
 export function declaredPublicTypes(content: string): string[] {
   const namespace = /^namespace ([\w.]+);/m.exec(content)?.[1];
   if (namespace === undefined) return [];
-  return [...content.matchAll(/^public (?:enum|sealed (?:partial )?class|readonly partial record struct) (\w+(?:<[^>]+>)?)/gm)].map((m) => `${namespace}.${m[1]}`);
+  return [...content.matchAll(/^public (?:enum|(?:sealed|abstract) (?:partial )?class|readonly partial record struct) (\w+(?:<[^>]+>)?)/gm)].map((m) => `${namespace}.${m[1]}`);
 }
 
 export function unshippedText(shipped: string, unshipped: string, result: EmitResult): string {

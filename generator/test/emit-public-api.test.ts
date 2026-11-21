@@ -141,5 +141,11 @@ describe('emit/public-api', () => {
       declaredPublicTypes('namespace Graspea.Flint.Serialization;\n\npublic sealed class PointInkConverter : JsonConverter<PointInk>\n{\n}\n'),
       ['Graspea.Flint.Serialization.PointInkConverter'],
     );
+    // source: the options emitter's discriminated union files (the abstract base and a derived class)
+    assert.deepEqual(declaredPublicTypes('namespace Graspea.Flint;\n\npublic abstract partial class ChartUpdateOp\n{\n}\n'), ['Graspea.Flint.ChartUpdateOp']);
+    assert.deepEqual(
+      declaredPublicTypes('namespace Graspea.Flint;\n\npublic sealed partial class SetStyleOp : ChartUpdateOp\n{\n}\n'),
+      ['Graspea.Flint.SetStyleOp'],
+    );
   });
 });

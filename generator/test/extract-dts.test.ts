@@ -317,4 +317,174 @@ describe('extract/dts on a synthetic d.ts', () => {
     const types = extractTheme('initial?: Readonly<Record<string, number>>;');
     assert.deepEqual(member(types, 'initial'), { kind: 'record', value: { kind: 'number' } });
   });
+
+  const prop = (types: Record<string, IrNamedType>, name: string) => (types.ThemeSpec as { props: IrProp[] }).props.find((p) => p.name === name)!;
+
+  // source: flint-chart 1.1.1 d.ts ChartUpdateOp `annotate-text` (`value: AnnotationSpec | null`, which upstream reads as
+  // clearing the note) and 1.0.1 ChartEncoding.title (`title?: string | null`); docs/generator.md "Extracted shapes" (only the member's
+  // declared type node counts, looked through parentheses; null stays out of the type)
+  it('flags a member declared as a union with null as nullable and keeps null out of its type', () => {
+    const types = extractTheme(
+      'note: Note | null; wrapped?: (string | null); title?: string | null; plain?: string; viaAlias?: MaybeNote; inner?: Record<string, string | null>;',
+      'export interface Note { text?: string; }',
+      'type MaybeNote = Note | null;',
+    );
+    assert.deepEqual(prop(types, 'note'), { name: 'note', optional: false, nullable: true, type: { kind: 'ref', name: 'Note' } });
+    assert.deepEqual(prop(types, 'wrapped'), { name: 'wrapped', optional: true, nullable: true, type: { kind: 'string' } });
+    assert.deepEqual(prop(types, 'title'), { name: 'title', optional: true, nullable: true, type: { kind: 'string' } });
+    for (const name of ['plain', 'viaAlias', 'inner']) assert.equal('nullable' in prop(types, name), false, name);
+    assert.deepEqual(prop(types, 'inner').type, { kind: 'record', value: { kind: 'string' } });
+  });
+
+  // source: flint-chart 1.1.1 d.ts ChartUpdateOp (a union of inline objects told apart by `op`), FreeformOverlayBody
+  // (`FreeformSvgBody | FreeformCloneBody`), UpdateTarget (`SemanticTargetRef | SemanticTargetSelector`, the second a union
+  // of inline objects); docs/generator.md "Extracted shapes" (such an alias is a named union, with its JSDoc, referenced by name)
+  it('records a non-generic alias of a union of objects as a named union and references it by name', () => {
+    const types = extractTheme(
+      'op?: Op; body?: Body; target?: Target;',
+      "/** One change. */\nexport type Op = { op: 'set'; value: number } | { op: 'clear' } | null;",
+      "export interface Svg { type: 'svg'; content: string; }",
+      "export interface Clone { type: 'clone'; opacity?: number; }",
+      'type Body = Svg | Clone;',
+      'interface Ref { elements: string[]; }',
+      'type Selector = { select: { key: string } } | { select: { where: string } };',
+      'type Target = Ref | Selector;',
+    );
+    assert.deepEqual(member(types, 'op'), { kind: 'ref', name: 'Op' });
+    assert.deepEqual(types.Op, {
+      kind: 'union',
+      doc: 'One change.',
+      members: [
+        {
+          kind: 'object',
+          props: [
+            { name: 'op', optional: false, type: { kind: 'literal', value: 'set' } },
+            { name: 'value', optional: false, type: { kind: 'number' } },
+          ],
+        },
+        { kind: 'object', props: [{ name: 'op', optional: false, type: { kind: 'literal', value: 'clear' } }] },
+      ],
+    });
+    assert.deepEqual(member(types, 'body'), { kind: 'ref', name: 'Body' });
+    assert.deepEqual(types.Body, { kind: 'union', members: [{ kind: 'ref', name: 'Svg' }, { kind: 'ref', name: 'Clone' }] });
+    assert.equal(types.Svg.kind, 'object');
+    assert.deepEqual(types.Target, { kind: 'union', members: [{ kind: 'ref', name: 'Ref' }, { kind: 'ref', name: 'Selector' }] });
+    assert.equal(types.Selector.kind, 'union');
+  });
+
+  // source: TypeScript 3.7 release notes, recursive type aliases (an alias may refer to itself inside an object member);
+  // docs/generator.md "Extracted shapes" (a named union is referenced by name, so one that refers to itself, directly or
+  // through another named union, holds a ref to itself, as a recursive interface does)
+  it('records a named union that refers to itself with a ref to itself', () => {
+    const types = extractTheme(
+      'tree?: Tree; a?: A;',
+      "type Tree = { kind: 'leaf' } | { kind: 'node'; children: Tree[] };",
+      "type A = { k: 'a'; b?: B } | { k: 'x' };",
+      "type B = { k: 'b'; a?: A } | { k: 'y' };",
+    );
+    assert.deepEqual(member(types, 'tree'), { kind: 'ref', name: 'Tree' });
+    assert.deepEqual(types.Tree, {
+      kind: 'union',
+      members: [
+        { kind: 'object', props: [{ name: 'kind', optional: false, type: { kind: 'literal', value: 'leaf' } }] },
+        {
+          kind: 'object',
+          props: [
+            { name: 'children', optional: false, type: { kind: 'array', element: { kind: 'ref', name: 'Tree' } } },
+            { name: 'kind', optional: false, type: { kind: 'literal', value: 'node' } },
+          ],
+        },
+      ],
+    });
+    assert.deepEqual(member(types, 'a'), { kind: 'ref', name: 'A' });
+    assert.deepEqual((types.A as { members: IrType[] }).members[0], {
+      kind: 'object',
+      props: [
+        { name: 'b', optional: true, type: { kind: 'ref', name: 'B' } },
+        { name: 'k', optional: false, type: { kind: 'literal', value: 'a' } },
+      ],
+    });
+    assert.deepEqual((types.B as { members: IrType[] }).members[0], {
+      kind: 'object',
+      props: [
+        { name: 'a', optional: true, type: { kind: 'ref', name: 'A' } },
+        { name: 'k', optional: false, type: { kind: 'literal', value: 'b' } },
+      ],
+    });
+  });
+
+  // source: docs/generator.md "Extracted shapes" (any alias other than a named union is inlined, which cannot hold one that
+  // refers to itself: extraction fails naming it instead of overflowing the stack)
+  it('fails naming an alias that refers to itself and is not a named union', () => {
+    assert.throws(() => extractTheme('json?: Json;', 'type Json = string | { items: Json[] };'), /Json refers to itself/);
+    assert.throws(() => extractTheme('list?: List;', 'type List = { next?: List };'), /List refers to itself/);
+  });
+
+  // source: flint-chart 1.0.1 d.ts ChartChrome (`false | {...}`), SizeToken (`string | number`); docs/generator.md "Extracted shapes" (only
+  // a union of at least two objects, object interfaces or such named unions is named; a generic alias stays unsupported)
+  it('keeps inlining an alias that is not a union of objects', () => {
+    const types = extractTheme(
+      'chrome?: Chrome; size?: Size; dict?: DictOrObject; one?: One; gen?: Gen<number>;',
+      'type Chrome = false | { header?: boolean };',
+      'type Size = string | number;',
+      'interface Dict { [key: string]: number; }',
+      'type DictOrObject = Dict | { a: number };',
+      'type One = { a: number } | null;',
+      'type Gen<T> = { a: T } | { b: T };',
+    );
+    assert.equal(member(types, 'chrome').kind, 'union');
+    assert.deepEqual(member(types, 'size'), { kind: 'union', members: [{ kind: 'string' }, { kind: 'number' }] });
+    assert.deepEqual(member(types, 'dict'), {
+      kind: 'union',
+      members: [{ kind: 'ref', name: 'Dict' }, { kind: 'object', props: [{ name: 'a', optional: false, type: { kind: 'number' } }] }],
+    });
+    assert.deepEqual(member(types, 'one'), { kind: 'object', props: [{ name: 'a', optional: false, type: { kind: 'number' } }] });
+    assert.equal(member(types, 'gen').kind, 'unsupported');
+    for (const name of ['Chrome', 'Size', 'DictOrObject', 'One', 'Gen']) assert.equal(name in types, false, name);
+  });
+
+  // source: flint-chart 1.1.1 d.ts SemanticTargetRef.visual (`SemanticTarget['visual']`, an inline object member of the
+  // interface SemanticTarget); docs/generator.md "Extracted shapes" (an indexed access the checker resolves to one object type maps to its
+  // members; one that resolves to something else stays unsupported)
+  it('maps an indexed access that resolves to one object type to that object', () => {
+    const types = extractTheme(
+      "visual?: Target['visual']; kind?: Target['visual']['kind']; items?: Target['items'];",
+      "interface Target {\n  visual: {\n    kind: 'mark' | 'path';\n    /** The role. */\n    role: string;\n  };\n  items: string[];\n}",
+    );
+    assert.deepEqual(member(types, 'visual'), {
+      kind: 'object',
+      props: [
+        { name: 'kind', optional: false, type: { kind: 'literalUnion', values: ['mark', 'path'] } },
+        { name: 'role', optional: false, type: { kind: 'string' }, doc: 'The role.' },
+      ],
+    });
+    assert.deepEqual(member(types, 'kind'), { kind: 'literalUnion', values: ['mark', 'path'] });
+    assert.deepEqual(member(types, 'items'), { kind: 'unsupported', text: "Target['items']" });
+  });
+
+  // source: review D2-7 (the IR keys named types by name; a named union is a named type, so a second declaration under its
+  // name fails as two interfaces do)
+  it('fails when a named union shares its name with another declaration', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'flint-dts-'));
+    try {
+      writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'fake', version: '0.0.0', types: 'index.d.ts' }));
+      writeFileSync(join(dir, 'a.d.ts'), 'export type Body = { a: number } | { b: number };\n');
+      writeFileSync(join(dir, 'b.d.ts'), 'export interface Body { c?: string; }\n');
+      writeFileSync(
+        join(dir, 'index.d.ts'),
+        [
+          "import type { Body as A } from './a';",
+          "import type { Body as B } from './b';",
+          'export interface AssembleOptions { a?: A; }',
+          'export interface ThemeSpec { b?: B; }',
+          'export interface ChartAssemblyInput { x?: number; }',
+          'export interface ChartEncoding { x?: number; }',
+          'export interface SemanticAnnotation { x?: number; }',
+        ].join('\n'),
+      );
+      assert.throws(() => extractTypes(dir), /Body is declared twice: a\.d\.ts and b\.d\.ts/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 });

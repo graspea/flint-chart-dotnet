@@ -126,6 +126,33 @@ public sealed class NameTablesCrossCheckTests
         }
     }
 
+    // source: the compiled Graspea.Flint (a generated discriminated union: an abstract base whose converter reads each
+    // literal of the discriminator as the derived class the table names and any other value as the unknown class, and
+    // writes each back); the pinned flint-chart may have none (1.0.1)
+    [Test]
+    public void Unions_MatchTheLibrary()
+    {
+        Assert.Multiple(() =>
+        {
+            foreach (var union in NameTables.Unions)
+            {
+                var type = Library.GetType(union.Name, throwOnError: true)!;
+                Assert.That(type.IsAbstract, Is.True, union.Name);
+                Assert.That(NameTables.Union(NameTables.SimpleName(union.Name)), Is.SameAs(union));
+                foreach (var member in union.Members.Append(new ConstantName("no such value", union.Unknown)))
+                {
+                    var json = $"{{\"{union.Discriminator}\":\"{member.Wire}\"}}";
+                    var value = System.Text.Json.JsonSerializer.Deserialize(json, type)!;
+                    Assert.That(value.GetType().FullName, Is.EqualTo(member.Member), json);
+                    Assert.That(value.GetType().BaseType, Is.EqualTo(type), member.Member);
+                    Assert.That(System.Text.Json.JsonSerializer.Serialize(value, type), Does.StartWith(json.TrimEnd('}')), member.Member);
+                }
+            }
+
+            Assert.That(NameTables.Union("NoSuchUnion"), Is.Null);
+        });
+    }
+
     private static T Constant<T>(string member) => (T)typeof(T).GetField(member, BindingFlags.Public | BindingFlags.Static)!.GetValue(null)!;
 
     private static ChartAssemblyInput Build(string entry, Action<object> configure)
@@ -146,10 +173,10 @@ public sealed class NameTablesCrossCheckTests
         if (type.IsArray) return TypeText(type.GetElementType()!) + "[]";
         if (type == typeof(int)) return "int";
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>)) return $"Dictionary<{TypeText(type.GetGenericArguments()[0])}, {TypeText(type.GetGenericArguments()[1])}>";
-        // Hand-written types that overrides.json names are written by their full name; generated ones (classes and the
-        // open literal union structs) by their simple name.
+        // Hand-written types that overrides.json names are written by their full name; generated ones (classes, the open
+        // literal union structs and the discriminated unions) by their simple name.
         return type == typeof(ChartSize) || type == typeof(ContinuousMarkCrossSection)
-            || (type.GetCustomAttribute<JsonConverterAttribute>() is not null && NameTables.StringUnion(type.FullName!) is null)
+            || (type.GetCustomAttribute<JsonConverterAttribute>() is not null && NameTables.StringUnion(type.FullName!) is null && NameTables.Union(type.FullName!) is null)
             ? type.FullName!
             : type.Name;
     }

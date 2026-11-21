@@ -81,11 +81,41 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
           optional: (p.flags & ts.SymbolFlags.Optional) !== 0,
           type: mapNode(decl.type, `${path}.${p.name}`),
         };
+        if (isNullable(decl.type)) prop.nullable = true;
         const doc = docOf(p);
         if (doc) prop.doc = doc;
         return [prop];
       })
       .sort((a, b) => ordinal(a.name, b.name));
+
+  /** A declared type that is a union with the `null` literal, looked through parentheses only (not through aliases). */
+  const isNullable = (node: ts.TypeNode): boolean => {
+    while (ts.isParenthesizedTypeNode(node)) node = node.type;
+    return ts.isUnionTypeNode(node) && node.types.some((n) => ts.isLiteralTypeNode(n) && n.literal.kind === ts.SyntaxKind.NullKeyword);
+  };
+
+  /** Named unions by alias symbol: the mapped union, stored under the alias name when the queue reaches the symbol. */
+  const namedUnions = new Map<ts.Symbol, IrType>();
+  /** Aliases whose type is being mapped, and whether it met the alias again (it refers to itself). */
+  const aliasesInProgress = new Map<ts.Symbol, { recursive: boolean }>();
+
+  /** An interface the IR records as an object (not as a record): it extends something or has no index signature. */
+  const isObjectInterface = (symbol: ts.Symbol): boolean => {
+    const decls = (symbol.declarations ?? []).filter(ts.isInterfaceDeclaration);
+    if (decls.length === 0) return false;
+    return decls.some((d) => d.heritageClauses?.length) || !decls.some((d) => d.members.some(ts.isIndexSignatureDeclaration));
+  };
+
+  /** A union of at least two members, each an inline object, a ref to an object interface or a ref to a named union. */
+  const isNamedUnionShape = (t: IrType): boolean =>
+    t.kind === 'union' &&
+    t.members.length >= 2 &&
+    t.members.every((m) => {
+      if (m.kind === 'object') return true;
+      if (m.kind !== 'ref') return false;
+      const symbol = symbols.get(m.name);
+      return symbol !== undefined && (namedUnions.has(symbol) || isObjectInterface(symbol));
+    });
 
   const mapUnion = (nodes: readonly ts.TypeNode[], path: string): IrType => {
     const members = nodes
@@ -152,6 +182,17 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
       if (parts.length > 1 && parts.every((p) => p.isStringLiteral())) {
         return { kind: 'literalUnion', values: parts.map((p) => (p as ts.StringLiteralType).value) };
       }
+      // `SemanticTarget['visual']`: one object type (not an array, a tuple or a function), mapped by its members.
+      if (
+        !resolved.isUnionOrIntersection() &&
+        resolved.flags & ts.TypeFlags.Object &&
+        !checker.isArrayType(resolved) &&
+        !checker.isTupleType(resolved) &&
+        resolved.getCallSignatures().length === 0 &&
+        checker.getIndexInfosOfType(resolved).length === 0
+      ) {
+        return { kind: 'object', props: propsOf(resolved, path) };
+      }
     }
     return { kind: 'unsupported', text: node.getText() };
   }
@@ -208,7 +249,26 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
     if (!decl) return { kind: 'unsupported', text: node.getText() };
     if (ts.isTypeAliasDeclaration(decl)) {
       if (decl.typeParameters?.length) return { kind: 'unsupported', text: node.getText() };
-      return mapNode(decl.type, path);
+      if (namedUnions.has(symbol)) return { kind: 'ref', name: symbol.name };
+      // Met again while its own type is mapped: a ref, which holds only if the alias turns out a named union.
+      const inProgress = aliasesInProgress.get(symbol);
+      if (inProgress) {
+        inProgress.recursive = true;
+        return { kind: 'ref', name: symbol.name };
+      }
+      const state = { recursive: false };
+      aliasesInProgress.set(symbol, state);
+      const mapped = mapNode(decl.type, path);
+      aliasesInProgress.delete(symbol);
+      if (!isNamedUnionShape(mapped)) {
+        if (state.recursive) {
+          throw new Error(`${symbol.name} refers to itself (at ${path}); only a named union (a union of objects) may, because the IR inlines any other alias.`);
+        }
+        return mapped; // any other alias is inlined
+      }
+      namedUnions.set(symbol, mapped);
+      enqueue(symbol);
+      return { kind: 'ref', name: symbol.name };
     }
     if (ts.isInterfaceDeclaration(decl)) {
       if (decl.typeParameters?.length || args.length) return { kind: 'unsupported', text: node.getText() };
@@ -245,6 +305,12 @@ export function extractTypes(packageDir: string): Record<string, IrNamedType> {
   while (queue.length > 0) {
     const symbol = queue.shift()!;
     if (symbol.name in types) continue;
+    const union = namedUnions.get(symbol);
+    if (union) {
+      const doc = docOf(symbol);
+      types[symbol.name] = doc ? { ...union, doc } : union;
+      continue;
+    }
     if (!(symbol.flags & ts.SymbolFlags.Interface)) throw new Error(`${symbol.name} is not an interface.`);
     types[symbol.name] = mapInterface(symbol);
   }

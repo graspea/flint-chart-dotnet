@@ -45,6 +45,10 @@ internal sealed record PresetNames(string Type, string Method, string Options);
 /// static readonly field of each.</summary>
 internal sealed record StringUnionNames(string Name, ConstantName[] Literals);
 
+/// <summary>A generated discriminated union, namespace-qualified: the wire name of its discriminator, each literal with its
+/// derived class (namespace-qualified), and the class that holds a literal this version does not know.</summary>
+internal sealed record UnionNames(string Name, string Discriminator, ConstantName[] Members, string Unknown);
+
 /// <summary>
 /// The C# names of the catalog (design §12.7). The arrays are written by the csharp-names emitter
 /// (<c>Generated/NameTables.g.cs</c>); the lookups are built from them on first use.
@@ -62,6 +66,7 @@ internal static partial class NameTables
     private static Dictionary<string, string>? _seriesCountAxes;
     private static Dictionary<string, ClassNames>? _classes;
     private static Dictionary<string, StringUnionNames>? _stringUnions;
+    private static Dictionary<string, UnionNames>? _unions;
 
     public static TemplateNames? Template(string chartType) => Find(ref _templates, Templates, t => t.Name, chartType);
 
@@ -104,23 +109,10 @@ internal static partial class NameTables
     }
 
     /// <summary>A generated open literal union struct by its simple name (<c>PointInk</c>) or namespace-qualified name.</summary>
-    public static StringUnionNames? StringUnion(string name)
-    {
-        var unions = _stringUnions;
-        if (unions is null)
-        {
-            unions = new Dictionary<string, StringUnionNames>(StringComparer.Ordinal);
-            foreach (var u in StringUnions)
-            {
-                unions[u.Name] = u;
-                unions[SimpleName(u.Name)] = u;
-            }
+    public static StringUnionNames? StringUnion(string name) => ByName(ref _stringUnions, StringUnions, u => u.Name, name);
 
-            _stringUnions = unions;
-        }
-
-        return unions.TryGetValue(name, out var found) ? found : null;
-    }
+    /// <summary>A generated discriminated union by its simple name (<c>ChartUpdateOp</c>) or namespace-qualified name.</summary>
+    public static UnionNames? Union(string name) => ByName(ref _unions, Unions, u => u.Name, name);
 
     /// <summary>The object forms of the hand-written unions, written and checked as classes; their string, <c>false</c> and
     /// boolean forms are handled by type name in <c>ValueWriter</c> and <c>SpecShape</c>.</summary>
@@ -155,6 +147,26 @@ internal static partial class NameTables
     {
         cache ??= source.ToDictionary(c => c.Wire, c => c.Member, StringComparer.Ordinal);
         return cache.TryGetValue(key, out var found) ? found : null;
+    }
+
+    /// <summary>An entry by its namespace-qualified name or its simple name.</summary>
+    private static T? ByName<T>(ref Dictionary<string, T>? cache, T[] source, Func<T, string> nameOf, string name)
+        where T : class
+    {
+        var byName = cache;
+        if (byName is null)
+        {
+            byName = new Dictionary<string, T>(StringComparer.Ordinal);
+            foreach (var entry in source)
+            {
+                byName[nameOf(entry)] = entry;
+                byName[SimpleName(nameOf(entry))] = entry;
+            }
+
+            cache = byName;
+        }
+
+        return byName.TryGetValue(name, out var found) ? found : null;
     }
 
     private static T? Find<T>(ref Dictionary<string, T>? cache, T[] source, Func<T, string> keyOf, string key)

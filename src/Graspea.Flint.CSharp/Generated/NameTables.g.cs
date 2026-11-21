@@ -1526,4 +1526,8 @@ internal static partial class NameTables
         new("navigate", "Navigate", "Graspea.Flint.NavigateOptions"),
         new("select", "Select", "Graspea.Flint.SelectOptions"),
     ];
+
+    internal static readonly UnionNames[] Unions =
+    [
+    ];
 }
