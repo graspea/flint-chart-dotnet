@@ -1,5 +1,5 @@
 // Runtime probes behind the facts the design cites as probed (design §7.2): null handling and row shapes, the backends
-// that apply the theme (by preset id or an object's `extends`), names of Object.prototype used as ids, the inference of the values .NET writes, the Date.parse results the validator relies on, the channel types it ports, and the channels the assemblers read per chart type (every catalog channel on Excel and Image-Charts, the undeclared ones on the layout backends).
+// that apply the theme (by preset id or an object's `extends`), names of Object.prototype used as ids, the inference of the values .NET writes, the Date.parse results the validator relies on, the channel types it ports, the values convertTemporalData writes, and the channels the assemblers read per chart type (every catalog channel on Excel and Image-Charts, the undeclared ones on the layout backends).
 // `npm run generate` (its fixtures step) records the output per version in tests/fixtures/flint-chart@<version>/probes.json;
 // a unit test that cites a probe fact names that file, and test/probes.test.ts keeps the pinned version's record equal to
 // a fresh run.
@@ -19,6 +19,13 @@ export interface ProbeResults {
   dateParse: Record<string, 'parses' | 'NaN'>;
   /** The type `resolveChannelSemantics` gives the probe's channel, with ` snapshots` when it reads the dates as snapshots. */
   channelTypes: Record<string, string>;
+  /** The document and the channel each `channelTypes` probe resolves, so that a port can resolve the same one. */
+  channelTypeInputs: Record<string, { channel: string; input: Input }>;
+  /**
+   * What `convertTemporalData([{ f: value }, { f: companion }], { f: type })` writes into the first row, by value and
+   * semantic type (`untyped`: no semantic type): the table Excel reads, with the decision whether `f` is temporal.
+   */
+  temporalConversion: { companion: string; converted: Record<string, Record<string, unknown>> };
   /** The channels `assembleExcel` and `assembleImageCharts` read, and the undeclared channels the four layout assemblers
    * read, per chart type and base (src/extract/channel-reads.ts). */
   channelReads: ChannelReads;
@@ -120,11 +127,18 @@ const dateParseProbes = [
 const months = (from: number, count: number, step = 1) =>
   Array.from({ length: count }, (_, i) => new Date(Date.UTC(2024, from + i * step, 1)).toISOString().slice(0, 10));
 const days = (count: number, step = 1) => Array.from({ length: count }, (_, i) => new Date(Date.UTC(2024, 0, 1 + i * step)).toISOString().slice(0, 10));
+const iso = (ms: number) => new Date(ms).toISOString();
+/** The given day of consecutive months of 2024 from month `from` (0 = January). */
+const monthDays = (from: number, count: number, day: number) => Array.from({ length: count }, (_, i) => iso(Date.UTC(2024, from + i, day)).slice(0, 10));
+/** The last days of consecutive quarters from the first of `year`. */
+const quarterEnds = (year: number, count: number) => Array.from({ length: count }, (_, i) => iso(Date.UTC(year, 3 * (i + 1), 0)).slice(0, 10));
 
 /**
  * One channel of a chart over one field (`resolveChannelSemantics` with the chart type, as every backend calls it): dates
- * on a banded axis read as snapshots or a time scale (`readsAsSnapshots`), the spellings a YearMonth or Date semantic type
- * rewrites (`parseTemporalByType`), and the strings untyped inference reads as dates (`isUnambiguousDateString`).
+ * on a banded axis read as snapshots or a time scale (`readsAsSnapshots`; among them 9 to 50 dates a month, a quarter or
+ * about two weeks apart, and dates with a time of day, which flint-chart 1.1 reads by their cadence), the spellings a
+ * YearMonth or Date semantic type rewrites (`parseTemporalByType`), and the strings untyped inference reads as dates
+ * (`isUnambiguousDateString`).
  */
 const channelTypeProbes: Record<string, { chartType: string; values: unknown[]; semanticType?: string; channel?: string }> = {
   'banded x, 3 dates': { chartType: 'Bar Chart', values: ['2024-01-15', '2024-06-15', '2025-01-15'] },
@@ -141,6 +155,29 @@ const channelTypeProbes: Record<string, { chartType: string; values: unknown[]; 
   'banded x, 10 dates with an offset, 2 days apart': {
     chartType: 'Bar Chart',
     values: Array.from({ length: 10 }, (_, i) => `2024-01-${String(1 + i * 2).padStart(2, '0')}T00:00:00+00:00`),
+  },
+  'banded x, 10 dates on the 15th of consecutive months': { chartType: 'Bar Chart', values: monthDays(0, 10, 15) },
+  'banded x, Date on the 15th of 10 consecutive months': { chartType: 'Bar Chart', values: monthDays(0, 10, 15), semanticType: 'Date' },
+  'banded x, 10 quarter ends': { chartType: 'Bar Chart', values: quarterEnds(2022, 10) },
+  'banded x, 9 quarter ends and one far': { chartType: 'Bar Chart', values: [...quarterEnds(2010, 9), '2020-06-30'] },
+  'banded x, 10 semi-monthly dates': {
+    chartType: 'Bar Chart',
+    values: Array.from({ length: 10 }, (_, i) => `2024-${String(Math.floor(i / 2) + 1).padStart(2, '0')}-${i % 2 ? '15' : '01'}`),
+  },
+  'banded x, 10 dates 2 and 3 days apart': { chartType: 'Bar Chart', values: [0, 2, 5, 7, 10, 12, 15, 17, 20, 22].map((d) => iso(Date.UTC(2024, 0, 1 + d)).slice(0, 10)) },
+  'banded x, 10 weekly dates with irregular gaps': { chartType: 'Bar Chart', values: [0, 7, 14, 22, 28, 35, 42, 50, 56, 63].map((d) => iso(Date.UTC(2024, 0, 1 + d)).slice(0, 10)) },
+  'banded x, 9 hours UTC and one far': {
+    chartType: 'Bar Chart',
+    values: [...Array.from({ length: 9 }, (_, i) => iso(Date.UTC(2024, 0, 1, i))), iso(Date.UTC(2024, 0, 10))],
+  },
+  'banded x, 9 days at 10:00Z and one far': {
+    chartType: 'Bar Chart',
+    values: [...Array.from({ length: 9 }, (_, i) => iso(Date.UTC(2024, 0, 1 + i, 10))), iso(Date.UTC(2024, 5, 1, 10))],
+  },
+  'banded x, 10 months on the 5th at 10:00Z': { chartType: 'Bar Chart', values: Array.from({ length: 10 }, (_, i) => iso(Date.UTC(2024, i, 5, 10))) },
+  'banded x, 9 months on the 5th at 10:00Z every other month and one far': {
+    chartType: 'Bar Chart',
+    values: [...Array.from({ length: 9 }, (_, i) => iso(Date.UTC(2024, 2 * i, 5, 10))), iso(Date.UTC(2028, 0, 5, 10))],
   },
   'banded x, Year 2000 to 2008 and 2024': { chartType: 'Bar Chart', values: [...Array.from({ length: 9 }, (_, i) => 2000 + i), 2024], semanticType: 'Year' },
   'banded x, YearMonth numbers 202501, 202503, 202507': { chartType: 'Bar Chart', values: [202501, 202503, 202507], semanticType: 'YearMonth' },
@@ -162,12 +199,44 @@ const channelTypeProbes: Record<string, { chartType: string; values: unknown[]; 
   'line x, untyped "Stage 1"': { chartType: 'Line Chart', values: ['Stage 1', 'Stage 2'] },
 };
 
+/** The document of a channel-type probe: rows of `f` and a row number `n`, `f` on the probe's channel. */
+function channelTypeInput({ chartType, values, semanticType, channel = 'x' }: (typeof channelTypeProbes)[string]): { channel: string; input: Input } {
+  const encodings = channel === 'x' ? { x: { field: 'f' }, y: { field: 'n' } } : { x: { field: 'n' }, [channel]: { field: 'f' } };
+  return {
+    channel,
+    input: {
+      data: { values: values.map((v, i) => ({ f: v, n: i + 1 })) },
+      chart_spec: { chartType, encodings },
+      ...(semanticType ? { semantic_types: { f: semanticType } } : {}),
+    },
+  };
+}
+
+/**
+ * The first-row values of the conversion probe, each beside {@link TEMPORAL_COMPANION} (a plain date, so that a column of
+ * dates reads as temporal untyped too): midnights and times of day in the ISO spellings, with and without a zone, padded,
+ * out of range, and the spellings `parseTemporalByType` or `expandToFullYear` rewrite.
+ */
+const temporalConversionValues = [
+  '2024-01-15', '2024-01-15T00:00:00', '2024-01-15T00:00:00.000', '2024-01-15T00:00:00.0001', '2024-01-15T00:00:00Z',
+  '2024-01-15t00:00:00z', '2024-01-15T00:00:00+05:00', '2024-01-15T00:00:00-12:00', '2024-01-15T00:00:00+05', '2024-01-15T00:00',
+  '2024-01-15 00:00:00', '  2024-01-15T00:00:00  ', '2024-01-15T00:00:00\n', '2024-02-30T00:00:00', '2024-01-15T10:00:00',
+  '2024-01-15T10:00', '2024-01-15 10:00', '2024-01-15T10:00:00Z', '2024-01-15T10:00:00+0530', '2024-01-15T10:00:00+05',
+  '2024-01-15T10:00:00.5', '2024-01-15T25:61:00', '20240115', '2024/01/15', 'Jan 2024', '98',
+];
+
+/** The semantic types of the conversion probe, from the finest grain to the coarsest; `untyped` gives none. */
+const temporalConversionTypes = ['untyped', 'Timestamp', 'DateTime', 'Hour', 'Date', 'Day', 'YearMonth', 'Month', 'YearQuarter', 'Quarter', 'Year', 'Decade'];
+
+const TEMPORAL_COMPANION = '2024-03-01';
+
 const sortedBackends = (set: Set<Backend>) => BACKENDS.filter((b) => set.has(b));
 
 /** Runs the probes; `cases` (the fixture and crafted cases of the set just extracted) supply the read probe's fixture bases. */
 export async function runProbes(cases: readonly CaseLine[]): Promise<ProbeResults> {
   const flint = (await import('flint-chart')) as unknown as Record<string, Assembler> & {
     inferVisCategory: (values: unknown[]) => string;
+    convertTemporalData: (data: Record<string, unknown>[], semanticTypes: Record<string, string>) => Record<string, unknown>[];
     resolveChannelSemantics: (
       encodings: Record<string, unknown>,
       data: unknown[],
@@ -228,23 +297,40 @@ export async function runProbes(cases: readonly CaseLine[]): Promise<ProbeResult
 
     const dateParse = Object.fromEntries(dateParseProbes.map((s) => [s, Number.isNaN(Date.parse(s)) ? 'NaN' : 'parses'])) as ProbeResults['dateParse'];
 
+    const channelTypeInputs = Object.fromEntries(Object.entries(channelTypeProbes).map(([name, probe]) => [name, channelTypeInput(probe)]));
     const channelTypes = Object.fromEntries(
-      Object.entries(channelTypeProbes).map(([name, { chartType, values, semanticType, channel = 'x' }]) => {
-        const data = values.map((v, i) => ({ f: v, n: i + 1 }));
-        const encodings = channel === 'x' ? { x: { field: 'f' }, y: { field: 'n' } } : { x: { field: 'n' }, [channel]: { field: 'f' } };
-        const resolved = flint.resolveChannelSemantics(encodings, data, semanticType ? { f: semanticType } : {}, undefined, { chartType })[channel];
+      Object.entries(channelTypeInputs).map(([name, { channel, input }]) => {
+        const { data, chart_spec: spec, semantic_types: semanticTypes } = structuredClone(input) as Record<string, any>;
+        const resolved = flint.resolveChannelSemantics(spec.encodings, data.values, semanticTypes ?? {}, undefined, { chartType: spec.chartType })[channel];
         return [name, `${resolved.type}${resolved.snapshots ? ' snapshots' : ''}`];
       }),
     );
+
+    const temporalConversion = {
+      companion: TEMPORAL_COMPANION,
+      converted: Object.fromEntries(
+        temporalConversionValues.map((value) => [
+          value,
+          Object.fromEntries(
+            temporalConversionTypes.map((type) => [
+              type,
+              flint.convertTemporalData([{ f: value }, { f: TEMPORAL_COMPANION }], type === 'untyped' ? {} : { f: type })[0]!.f,
+            ]),
+          ),
+        ]),
+      ),
+    };
 
     const channelReads = probeChannelReads(flint as unknown as Record<string, unknown>, cases);
 
     return {
       channelReads,
+      channelTypeInputs,
       channelTypes,
       dateParse,
       nullHandling,
       prototypeKeys,
+      temporalConversion,
       themeBackends: {
         unknownPresetThrows: sortedBackends(unknownPresetThrows),
         unknownExtendsThrows: sortedBackends(unknownExtendsThrows),

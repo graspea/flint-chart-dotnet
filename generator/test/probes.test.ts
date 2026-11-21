@@ -196,6 +196,109 @@ describe(`probes: documented facts (flint-chart ${DOCUMENTED})`, () => {
   });
 });
 
+// The snapshot reads and the temporal conversion the validator ports from flint-chart 1.0.1 (src/Graspea.Flint/Validation/Rules/
+// TemporalParse.cs, FieldTypes.cs); pinned to that record. tests/Graspea.Flint.Tests/Parity/ChannelTypesTests.cs and
+// TemporalConversionTests.cs check the validator against the record of the pinned version.
+describe('probes: temporal facts (flint-chart 1.0.1)', () => {
+  let results: ProbeResults;
+
+  before(() => {
+    results = JSON.parse(readFileSync(record('1.0.1'), 'utf8')) as ProbeResults;
+  });
+
+  // source: src/core/decisions.ts:127-145 of flint-chart 1.0.1 (readsAsSnapshots: from 9 to 50 dates, a time off midnight
+  // UTC reads as a run of time; calendar dates off the 1st of the month are indexed by day, so dates a month, a quarter
+  // or about two weeks apart fill under half the days between the first and the last at their GCD step of one day)
+  it('records how 9 to 50 dates on a banded axis read', () => {
+    const probed = [
+      'banded x, 10 dates on the 15th of consecutive months',
+      'banded x, Date on the 15th of 10 consecutive months',
+      'banded x, 10 quarter ends',
+      'banded x, 9 quarter ends and one far',
+      'banded x, 10 semi-monthly dates',
+      'banded x, 10 dates 2 and 3 days apart',
+      'banded x, 10 weekly dates with irregular gaps',
+      'banded x, 9 hours UTC and one far',
+      'banded x, 9 days at 10:00Z and one far',
+      'banded x, 10 months on the 5th at 10:00Z',
+      'banded x, 9 months on the 5th at 10:00Z every other month and one far',
+    ];
+    assert.deepEqual(Object.fromEntries(probed.map((p) => [p, results.channelTypes[p]])), {
+      'banded x, 10 dates on the 15th of consecutive months': 'ordinal snapshots',
+      'banded x, Date on the 15th of 10 consecutive months': 'ordinal snapshots',
+      'banded x, 10 quarter ends': 'ordinal snapshots',
+      'banded x, 9 quarter ends and one far': 'ordinal snapshots',
+      'banded x, 10 semi-monthly dates': 'ordinal snapshots',
+      'banded x, 10 dates 2 and 3 days apart': 'ordinal snapshots',
+      'banded x, 10 weekly dates with irregular gaps': 'ordinal snapshots',
+      'banded x, 9 hours UTC and one far': 'temporal',
+      'banded x, 9 days at 10:00Z and one far': 'temporal',
+      'banded x, 10 months on the 5th at 10:00Z': 'temporal',
+      'banded x, 9 months on the 5th at 10:00Z every other month and one far': 'temporal',
+    });
+  });
+
+  // source: src/probes.ts (each channel-type probe resolves one channel of its own document, which the record keeps so
+  // that a port can resolve the same document)
+  it('records the document of every channel-type probe', () => {
+    assert.deepEqual(Object.keys(results.channelTypeInputs).sort(), Object.keys(results.channelTypes).sort());
+    const probe = results.channelTypeInputs['banded y, 3 dates']!;
+    assert.equal(probe.channel, 'y');
+    assert.deepEqual(probe.input, {
+      data: { values: [{ f: '2024-01-15', n: 1 }, { f: '2024-06-15', n: 2 }, { f: '2025-01-15', n: 3 }] },
+      chart_spec: { chartType: 'Bar Chart', encodings: { x: { field: 'n' }, y: { field: 'f' } } },
+    });
+    assert.deepEqual(results.channelTypeInputs['banded x, YearMonth numbers 202501, 202503, 202507']!.input.semantic_types, { f: 'YearMonth' });
+  });
+
+  // source: src/core/resolve-semantics.ts:428-483 of flint-chart 1.0.1 (convertTemporalData: a key of the first row is
+  // temporal by its values or its semantic type; a value is rewritten only by parseTemporalByType, src/core/temporal-
+  // parse.ts:92-110, whose YearMonth parsers read "Jan 2024" and whose Date parsers, also DateTime's, read "20240115" and
+  // "2024/01/15", by that Date parse of an untyped full date that does not open as an ISO date, or, for a Year or Decade,
+  // by expandToFullYear, :412-419; an ISO date-time, with or without a zone, stays as given)
+  it('records what convertTemporalData writes', () => {
+    const values = [
+      '2024-01-15',
+      '2024-01-15T00:00:00',
+      '2024-01-15T00:00:00.000',
+      '2024-01-15T00:00:00.0001',
+      '2024-01-15T00:00:00Z',
+      '2024-01-15t00:00:00z',
+      '2024-01-15T00:00:00+05:00',
+      '2024-01-15T00:00:00-12:00',
+      '2024-01-15T00:00:00+05',
+      '2024-01-15T00:00',
+      '2024-01-15 00:00:00',
+      '  2024-01-15T00:00:00  ',
+      '2024-01-15T00:00:00\n',
+      '2024-02-30T00:00:00',
+      '2024-01-15T10:00:00',
+      '2024-01-15T10:00',
+      '2024-01-15 10:00',
+      '2024-01-15T10:00:00Z',
+      '2024-01-15T10:00:00+0530',
+      '2024-01-15T10:00:00+05',
+      '2024-01-15T10:00:00.5',
+      '2024-01-15T25:61:00',
+      '20240115',
+      '2024/01/15',
+      'Jan 2024',
+      '98',
+    ];
+    const types = ['untyped', 'Timestamp', 'DateTime', 'Hour', 'Date', 'Day', 'YearMonth', 'Month', 'YearQuarter', 'Quarter', 'Year', 'Decade'];
+    const rewritten: Record<string, Record<string, string>> = {
+      '20240115': { untyped: '2024-01-15', DateTime: '2024-01-15', Date: '2024-01-15' },
+      '2024/01/15': { untyped: '2024-01-15', DateTime: '2024-01-15', Date: '2024-01-15' },
+      'Jan 2024': { YearMonth: '2024-01' },
+      '98': { Year: '1998', Decade: '1998' },
+    };
+    assert.deepEqual(results.temporalConversion, {
+      companion: '2024-03-01',
+      converted: Object.fromEntries(values.map((v) => [v, Object.fromEntries(types.map((t) => [t, rewritten[v]?.[t] ?? v]))])),
+    });
+  });
+});
+
 // Image-Charts joined the SDK on flint-chart 1.0.1 (design part 9 §14.8.1); its facts are pinned to that record, which
 // docs/validation-codes.md cites.
 describe('probes: Image-Charts facts (flint-chart 1.0.1)', () => {
