@@ -207,6 +207,9 @@ Graspea.Flint.ChoroplethMapStyle.Default = 0 -> Graspea.Flint.ChoroplethMapStyle
 Graspea.Flint.ChoroplethMapStyle.Light = 2 -> Graspea.Flint.ChoroplethMapStyle
 Graspea.Flint.ChoroplethMapStyle.Minimal = 6 -> Graspea.Flint.ChoroplethMapStyle
 Graspea.Flint.ChoroplethMapStyle.Muted = 3 -> Graspea.Flint.ChoroplethMapStyle
+Graspea.Flint.DivergingNeutral
+Graspea.Flint.DivergingNeutral.IsBreak.get -> bool
+Graspea.Flint.DivergingNeutral.Width.get -> double?
 Graspea.Flint.DonutChartBuilder<TRow>.SliceNames(Graspea.Flint.DonutChartSliceNames value) -> Graspea.Flint.DonutChartBuilder<TRow>!
 Graspea.Flint.DonutChartSliceNames
 Graspea.Flint.DonutChartSliceNames.Auto = 1 -> Graspea.Flint.DonutChartSliceNames
@@ -429,6 +432,10 @@ Graspea.Flint.RegionAnnotationSpec.X.get -> System.Text.Json.Nodes.JsonNode?
 Graspea.Flint.RegionAnnotationSpec.X.set -> void
 Graspea.Flint.RegionAnnotationSpec.Y.get -> System.Text.Json.Nodes.JsonNode?
 Graspea.Flint.RegionAnnotationSpec.Y.set -> void
+Graspea.Flint.SemanticAnnotation.DivergingNeutral.get -> Graspea.Flint.DivergingNeutral?
+Graspea.Flint.SemanticAnnotation.DivergingNeutral.set -> void
+Graspea.Flint.SemanticAnnotation.PercentScale.get -> Graspea.Flint.PercentScale?
+Graspea.Flint.SemanticAnnotation.PercentScale.set -> void
 Graspea.Flint.SemanticElement
 Graspea.Flint.SemanticElement.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.SemanticElement.Extensions.set -> void
@@ -439,6 +446,8 @@ Graspea.Flint.SemanticElement.Value.get -> System.Collections.Generic.Dictionary
 Graspea.Flint.SemanticElement.Value.init -> void
 Graspea.Flint.Serialization.ChartUpdateOpConverter
 Graspea.Flint.Serialization.ChartUpdateOpConverter.ChartUpdateOpConverter() -> void
+Graspea.Flint.Serialization.DivergingNeutralConverter
+Graspea.Flint.Serialization.DivergingNeutralConverter.DivergingNeutralConverter() -> void
 Graspea.Flint.Serialization.FilterValueConverter
 Graspea.Flint.Serialization.FilterValueConverter.FilterValueConverter() -> void
 Graspea.Flint.Serialization.FreeformOverlayBodyConverter
@@ -687,12 +696,16 @@ const Graspea.Flint.FlintUpstream.Version = "1.1.1" -> string!
 override Graspea.Flint.AnnotateEnclosureOp.Op.get -> string!
 override Graspea.Flint.AnnotateRegionOp.Op.get -> string!
 override Graspea.Flint.AnnotateTextOp.Op.get -> string!
+override Graspea.Flint.DivergingNeutral.ToString() -> string!
 override Graspea.Flint.FreeformCloneBody.Type.get -> string!
 override Graspea.Flint.FreeformSvgBody.Type.get -> string!
 override Graspea.Flint.PercentScale.GetHashCode() -> int
 override Graspea.Flint.PercentScale.ToString() -> string!
 override Graspea.Flint.Serialization.ChartUpdateOpConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ChartUpdateOp!
 override Graspea.Flint.Serialization.ChartUpdateOpConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ChartUpdateOp! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.DivergingNeutralConverter.HandleNull.get -> bool
+override Graspea.Flint.Serialization.DivergingNeutralConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.DivergingNeutral!
+override Graspea.Flint.Serialization.DivergingNeutralConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.DivergingNeutral! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.FilterValueConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.FilterValue!
 override Graspea.Flint.Serialization.FilterValueConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.FilterValue! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.FreeformOverlayBodyConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.FreeformOverlayBody!
@@ -724,6 +737,8 @@ override Graspea.Flint.SetStyleOp.Op.get -> string!
 override Graspea.Flint.SetViewportOp.Op.get -> string!
 override Graspea.Flint.UnknownChartUpdateOp.Op.get -> string!
 override Graspea.Flint.UnknownFreeformOverlayBody.Type.get -> string!
+static Graspea.Flint.DivergingNeutral.Break.get -> Graspea.Flint.DivergingNeutral!
+static Graspea.Flint.DivergingNeutral.implicit operator Graspea.Flint.DivergingNeutral!(double width) -> Graspea.Flint.DivergingNeutral!
 static Graspea.Flint.InteractionDefaults.implicit operator Graspea.Flint.InteractionDefaults!(bool enabled) -> Graspea.Flint.InteractionDefaults!
 static Graspea.Flint.PercentScale.operator !=(Graspea.Flint.PercentScale left, Graspea.Flint.PercentScale right) -> bool
 static Graspea.Flint.PercentScale.operator ==(Graspea.Flint.PercentScale left, Graspea.Flint.PercentScale right) -> bool

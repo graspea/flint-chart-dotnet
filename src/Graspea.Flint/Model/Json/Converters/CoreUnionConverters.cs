@@ -104,6 +104,43 @@ public sealed class ChannelTitleConverter : JsonConverter<ChannelTitle>
     }
 }
 
+/// <summary>Wire form <c>number | false</c> of <see cref="DivergingNeutral"/>: <c>null</c> reads as
+/// <see cref="DivergingNeutral.Break"/>, as flint-chart reads it; the number is read strictly, whatever the caller's options
+/// are. Infrastructure: public only so that a host source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public sealed class DivergingNeutralConverter : JsonConverter<DivergingNeutral>
+{
+    /// <summary>Reads <c>null</c> as <see cref="DivergingNeutral.Break"/> instead of leaving the member unset: flint-chart
+    /// tests the member against <c>undefined</c>, so <c>null</c> is a break like <c>false</c>.</summary>
+    public override bool HandleNull => true;
+
+    /// <inheritdoc/>
+    public override DivergingNeutral Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
+        reader.TokenType switch
+        {
+            JsonTokenType.Null or JsonTokenType.False => DivergingNeutral.Break,
+            JsonTokenType.Number => reader.GetDouble(),
+            _ => throw new JsonException("divergingNeutral must be a number or false."),
+        };
+
+    /// <inheritdoc/>
+    public override void Write(Utf8JsonWriter writer, DivergingNeutral value, JsonSerializerOptions options)
+    {
+        if (value is null)
+        {
+            writer.WriteNullValue();
+        }
+        else if (value.Width is { } width)
+        {
+            writer.WriteNumberValue(width);
+        }
+        else
+        {
+            writer.WriteBooleanValue(false);
+        }
+    }
+}
+
 /// <summary>Wire form <c>string | string[]</c> of <see cref="ColorScheme"/>. Infrastructure: public only so that a host
 /// source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
 [EditorBrowsable(EditorBrowsableState.Never)]

@@ -7,6 +7,12 @@ All notable changes to this project are documented in this file. The format foll
 ### Added
 
 - `ChartAssemblyInput.Updates` (`updates`, `flint-chart` 1.1.0+), a list of `ChartUpdate`: the notes, overlays, emphasis and viewport the chart applies once it is drawn, kept with the spec. Only the interactive runtime applies them, on Vega-Lite only; a static assembly on any backend draws the chart without them. Each op of a `ChartUpdate` is the class its `op` names (`SetStyleOp`, `AnnotateTextOp`, `AnnotateRegionOp`, `AnnotateEnclosureOp`, `SetViewportOp`, `SetOrderOp`, `SetOverlayOp`, `SetFreeformOverlayOp`, `SetDataOp`, and the deprecated `SetAnnotationOp`); an op this version does not know reads as `UnknownChartUpdateOp` and is written back as read.
+- `SemanticAnnotation.PercentScale` (`percentScale`, `flint-chart` 1.1.0+): how a percentage field's numbers are stored, `PercentScale.Fraction` (0.45 is 45%) or `PercentScale.Percent` (45 is 45%).
+- `SemanticAnnotation.DivergingNeutral` (`divergingNeutral`, `flint-chart` 1.1.0+), a `DivergingNeutral`: the half-width of the neutral class around a diverging midpoint, in the field's units (`DivergingNeutral = 0.1`), or `DivergingNeutral.Break` (`false`), which makes the midpoint a break.
+
+### Changed
+
+- `updates`, `percentScale` and `divergingNeutral` no longer land in `Extensions` (`ChartAssemblyInput.Extensions`, `SemanticAnnotation.Extensions`): `FlintJson` reads them into the typed members. A value of another type, which was kept as given, now throws `JsonException` on read: an `updates` that is not an array of objects, an op that is not an object with a string `op`, a `percentScale` that is not a non-empty string, and a `divergingNeutral` that is not a number, `false` or `null`. A `divergingNeutral` of `null` reads as `DivergingNeutral.Break` and is written as `false`, which `flint-chart` reads the same way. A value set in `Extensions` is still written as before, and read back into the typed member.
 
 ## [1.0.1.1-preview.2] - 2026-11-09
 

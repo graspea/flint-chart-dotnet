@@ -125,6 +125,8 @@ public sealed class CoreParityTests
                 SortOrder = ["low", "high"],
                 Colors = new() { ["low"] = "#0793AB" },
                 Polarity = Polarity.LowerIsBetter,
+                DivergingNeutral = 5,
+                PercentScale = PercentScale.Percent,
             })),
             new("ChartChrome (object)", t => UnionMember(t["ChartSpec"]!["props"]!.AsArray().First(p => p!["name"]!.GetValue<string>() == "chrome")!, "type", 1),
                 () => InSpec(new ChartChrome()), () => InSpec(new ChartChrome { Header = true, Footer = false, Logos = true })),

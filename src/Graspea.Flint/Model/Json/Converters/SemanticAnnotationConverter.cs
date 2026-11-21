@@ -24,9 +24,11 @@ public sealed class SemanticAnnotationConverter : JsonConverter<SemanticAnnotati
             IntrinsicDomain = dto.IntrinsicDomain,
             Unit = dto.Unit,
             DivergingMidpoint = dto.DivergingMidpoint,
+            DivergingNeutral = dto.DivergingNeutral,
             SortOrder = dto.SortOrder,
             Colors = dto.Colors,
             Polarity = dto.Polarity,
+            PercentScale = dto.PercentScale,
             Extensions = dto.Extensions,
         };
     }
@@ -34,7 +36,7 @@ public sealed class SemanticAnnotationConverter : JsonConverter<SemanticAnnotati
     /// <inheritdoc/>
     public override void Write(Utf8JsonWriter writer, SemanticAnnotation value, JsonSerializerOptions options)
     {
-        if (value is { IntrinsicDomain: null, Unit: null, DivergingMidpoint: null, SortOrder: null, Colors: null, Polarity: null }
+        if (value is { IntrinsicDomain: null, Unit: null, DivergingMidpoint: null, DivergingNeutral: null, SortOrder: null, Colors: null, Polarity: null, PercentScale: null }
             && value.Extensions is not { Count: > 0 })
         {
             StringBacked.Write<SemanticType>(writer, value.Type.Name);
@@ -47,9 +49,11 @@ public sealed class SemanticAnnotationConverter : JsonConverter<SemanticAnnotati
             IntrinsicDomain = value.IntrinsicDomain,
             Unit = value.Unit,
             DivergingMidpoint = value.DivergingMidpoint,
+            DivergingNeutral = value.DivergingNeutral,
             SortOrder = value.SortOrder,
             Colors = value.Colors,
             Polarity = value.Polarity,
+            PercentScale = value.PercentScale,
             Extensions = value.Extensions,
         };
         JsonSerializer.Serialize(writer, dto, FlintJsonContext.Default.SemanticAnnotationDto);
@@ -75,6 +79,10 @@ internal sealed class SemanticAnnotationDto
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public double? DivergingMidpoint { get; set; }
 
+    [JsonPropertyName("divergingNeutral")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public DivergingNeutral? DivergingNeutral { get; set; }
+
     [JsonPropertyName("sortOrder")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string[]? SortOrder { get; set; }
@@ -87,6 +95,10 @@ internal sealed class SemanticAnnotationDto
     [JsonPropertyName("polarity")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public Polarity? Polarity { get; set; }
+
+    [JsonPropertyName("percentScale")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public PercentScale? PercentScale { get; set; }
 
     [JsonExtensionData]
     public Dictionary<string, JsonElement>? Extensions { get; set; }

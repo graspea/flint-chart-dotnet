@@ -151,6 +151,29 @@ public sealed class CoreUnionConverterTests
         Assert.That(JsonSerializer.Deserialize<PercentScale?>("null"), Is.Null);
     }
 
+    // source: flint-chart 1.1.1 src/core/field-semantics.ts:93 (divergingNeutral?: number | false) and
+    // src/core/resolve-semantics.ts:737-739 (a number >= 0 is the half-width; null, like false, is a break, since only
+    // `=== undefined` means unset); the maintainer's decision (DivergingNeutral: implicit from double, Break written as false,
+    // null read as Break, a negative number kept)
+    [Test]
+    public void DivergingNeutral_NumberAndBreak_RoundTrip()
+    {
+        DivergingNeutral band = 0.1;
+        Assert.That((band.Width, band.IsBreak), Is.EqualTo(((double?)0.1, false)));
+        Assert.That(JsonSerializer.Serialize(band), Is.EqualTo("0.1"));
+        Assert.That(JsonSerializer.Serialize(DivergingNeutral.Break), Is.EqualTo("false"));
+        Assert.That((DivergingNeutral.Break.Width, DivergingNeutral.Break.IsBreak), Is.EqualTo(((double?)null, true)));
+        Assert.That(JsonSerializer.Deserialize<DivergingNeutral>("false")!.IsBreak, Is.True);
+        var fromNull = JsonSerializer.Deserialize<DivergingNeutral>("null");
+        Assert.That(fromNull, Is.Not.Null);
+        Assert.That(fromNull!.IsBreak, Is.True);
+        Assert.That(JsonSerializer.Serialize(fromNull), Is.EqualTo("false"));
+        Assert.That(JsonSerializer.Deserialize<DivergingNeutral>("0")!.Width, Is.EqualTo(0));
+        Assert.That(JsonSerializer.Deserialize<DivergingNeutral>("-0.5")!.Width, Is.EqualTo(-0.5));
+        Assert.That(((DivergingNeutral)(-2)).Width, Is.EqualTo(-2), "a negative width is kept; the validator reports it");
+        Assert.That((band.ToString(), DivergingNeutral.Break.ToString()), Is.EqualTo(("0.1", "false")));
+    }
+
     // source: design §5.2 (unknown keys round-trip through Extensions and are written last)
     [Test]
     public void ObjectForms_UnknownKeys_RoundTripAfterKnownMembers()
@@ -170,7 +193,7 @@ public sealed class CoreUnionConverterTests
             ChartChrome.None, new ChartChrome { Footer = false }, (ChartSource)"s", new ChartSource { Text = "t", Href = "h" },
             (ChannelTitle)"Revenue", ChannelTitle.None, (AssistedTargeting)true, new AssistedTargeting { MaxDistance = 8, Details = false },
             new TargetDetails { Fields = ["a"], MaxRows = 1 }, Polarity.HigherIsBetter, new PercentScale("fraction"),
-            (ColorScheme)"viridis", (ColorScheme)new[] { "#000", "#fff" },
+            (ColorScheme)"viridis", (ColorScheme)new[] { "#000", "#fff" }, (DivergingNeutral)0.25, DivergingNeutral.Break,
         ];
         foreach (var value in values)
         {
@@ -179,7 +202,8 @@ public sealed class CoreUnionConverterTests
     }
 
     // source: design §5.1 (a value of another shape is malformed input: JsonException); D:2168 (chrome is false or an
-    // object, never true), D:4831 (the object form of source requires text)
+    // object, never true), D:4831 (the object form of source requires text); flint-chart 1.1.1
+    // src/core/field-semantics.ts:93 (divergingNeutral is a number or false, never true, a string or an object)
     [TestCase(typeof(ChartChrome), "true")]
     [TestCase(typeof(ChartChrome), "\"none\"")]
     [TestCase(typeof(ChartSource), "1")]
@@ -191,6 +215,10 @@ public sealed class CoreUnionConverterTests
     [TestCase(typeof(ColorScheme), "{}")]
     [TestCase(typeof(AssistedTargeting), "\"off\"")]
     [TestCase(typeof(TargetDetails), "[]")]
+    [TestCase(typeof(DivergingNeutral), "true")]
+    [TestCase(typeof(DivergingNeutral), "\"0.1\"")]
+    [TestCase(typeof(DivergingNeutral), "{}")]
+    [TestCase(typeof(DivergingNeutral), "[0.1]")]
     public void Deserialize_OtherShapes_ThrowJsonException(Type type, string json)
     {
         Assert.That((Action)(() => JsonSerializer.Deserialize(json, type)), Throws.InstanceOf<JsonException>());
