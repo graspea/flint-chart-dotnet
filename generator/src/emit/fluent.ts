@@ -74,7 +74,7 @@ function live<T>(items: T[], path: (item: T) => string, obsolete: ReadonlyMap<st
 
 export function fluentModel(ir: Ir, overrides: Overrides): FluentTemplate[] {
   const { catalog, obsolete } = facadeCatalog(ir);
-  const names = catalogNames(catalog, overrides.renames);
+  const names = catalogNames(catalog, overrides.renames, overrides.pending);
   const constant = (path: string, value: string) => overrides.renames[path] ?? pascal(value);
   const typeOwners = new Map<string, string>();
   const claimType = (name: string, path: string) => {

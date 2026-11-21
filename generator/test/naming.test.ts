@@ -118,6 +118,18 @@ describe('naming', () => {
     assert.throws(() => catalogNames(ir.catalog, { 'Line Chart/enum/showPoints': 'Dots' }), /renames\["Line Chart\/enum\/showPoints"\].*matches nothing/);
   });
 
+  // source: docs/generator.md "Failure policy" (an overrides.json entry that matches nothing fails generation, unless its
+  // path is listed in pending; an entry written ahead applies once the pin has the path)
+  it('catalogNames lets a template rename listed in pending match nothing, and applies it once the path exists', () => {
+    const ir = syntheticIr();
+    const renames = { 'Line Chart/enum/style': 'LineStyle', 'Line Chart/property/gone': 'Gone' };
+    const names = catalogNames(ir.catalog, renames, ['Line Chart/enum/style', 'Line Chart/property/gone']);
+    assert.equal(names.members.get('Line Chart')!.properties.has('gone'), false);
+    assert.throws(() => catalogNames(ir.catalog, renames, ['Line Chart/enum/style']), /renames\["Line Chart\/property\/gone"\].*matches nothing/);
+    ir.catalog.chartTypes[0].backends.vegalite.properties.push({ key: 'style', label: 'Style', type: 'discrete', options: [{ value: 'a', label: 'A' }] });
+    assert.equal(catalogNames(ir.catalog, renames, ['Line Chart/enum/style', 'Line Chart/property/gone']).members.get('Line Chart')!.enums.get('style'), 'LineStyle');
+  });
+
   // source: design §7.6 rule 3 (an enum whose key repeats the template name, such as Regression regressionMethod ->
   // RegressionRegressionMethod, fails generation until renames["<Template>/enum/<key>"] names it)
   it('enumName fails on a doubled template token unless renamed', () => {

@@ -10,7 +10,8 @@ import type { Ir } from '../src/ir.ts';
 // Runs the naming rules against the committed IR (design §10.1: the committed IR is an admissible source).
 describe('naming on the committed IR', () => {
   const ir = JSON.parse(readFileSync(new URL('../ir/flint-ir.json', import.meta.url), 'utf8')) as Ir;
-  const names = catalogNames(ir.catalog, loadOverrides(new URL('../overrides.json', import.meta.url).pathname).renames);
+  const overrides = loadOverrides(new URL('../overrides.json', import.meta.url).pathname);
+  const names = catalogNames(ir.catalog, overrides.renames, overrides.pending);
 
   // source: ir/flint-ir.json catalog.chartTypes (one entry per chart type; 48 on 0.5.1, design §2) and §7.6 rule 6 (two
   // entries equal after stripping fail)

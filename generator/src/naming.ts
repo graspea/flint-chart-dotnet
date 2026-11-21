@@ -188,9 +188,10 @@ export interface CatalogNames {
 /**
  * Rules 2, 3 and 6 over the whole catalog; fails on any entry or member collision. Template renames
  * (`<Template>/channel/<ch>`, `<Template>/property/<key>`, `<Template>/enum/<key>` for a property that is discrete on
- * some backend, `<Template>/enum/<key>/<value>` for one of its option values) are applied; one that matches nothing fails.
+ * some backend, `<Template>/enum/<key>/<value>` for one of its option values) are applied; one that matches nothing fails,
+ * unless `pending` lists its path (an entry written ahead for a flint-chart version that is not pinned yet).
  */
-export function catalogNames(catalog: IrCatalog, renames: Readonly<Record<string, string>>): CatalogNames {
+export function catalogNames(catalog: IrCatalog, renames: Readonly<Record<string, string>>, pending: readonly string[] = []): CatalogNames {
   const union = (t: IrChartType, pick: (b: IrBackendTemplate) => string[]) => [...new Set(Object.values(t.backends).flatMap(pick))].sort(ordinal);
   const used = new Set<string>();
   const members = new Map<string, TemplateMemberNames>();
@@ -213,7 +214,8 @@ export function catalogNames(catalog: IrCatalog, renames: Readonly<Record<string
     for (const key of discrete) names.enums.set(key, enumName(t.name, key, renames));
     members.set(t.name, names);
   }
-  const stale = Object.keys(renames).filter((k) => k.includes('/') && !used.has(k));
+  const ahead = new Set(pending);
+  const stale = Object.keys(renames).filter((k) => k.includes('/') && !used.has(k) && !ahead.has(k));
   if (stale.length > 0) throw new Error(`${stale.map((k) => `renames["${k}"]`).join(', ')}: template rename that matches nothing.`);
   return { entries: entryNames(catalog.chartTypes.map((t) => t.name)), members };
 }
