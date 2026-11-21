@@ -521,7 +521,7 @@ function buildPass(
     if (u.discName === u.name || u.discName === 'Extensions') errors.push(`${u.name}: the discriminator ${u.disc} gives the member name ${u.discName}, which the class declares`);
     const qualified = (cls: string) => `${u.namespace}.${cls}`;
     unionShapes.push({ name: qualified(u.name), discriminator: u.disc, members: u.members.map((m) => ({ literal: m.literal, cls: qualified(m.cls) })), unknown: qualified(u.unknown) });
-    const files = unionFiles(ir, u);
+    const files = unionFiles(ir, u, use.docs(u.name));
     rendered.set(`${u.folder}/${u.name}.g.cs`, files.base);
     rendered.set(`${u.folder}/${u.unknown}.g.cs`, files.unknown);
     rendered.set(`Json/${u.name}Converter.g.cs`, files.converter);
@@ -619,9 +619,10 @@ function buildPass(
 /**
  * The files of a discriminated union besides its derived classes: the abstract base, which only the generated classes
  * can derive from (docs/versioning.md), the class for a discriminator this version does not know, and the converter,
- * whose logic is the hand-written DiscriminatedUnion helper.
+ * whose logic is the hand-written DiscriminatedUnion helper. A `docs` entry for the alias is a remark of the base, after
+ * the list of classes.
  */
-function unionFiles(ir: Ir, u: UnionPlan): Record<'base' | 'unknown' | 'converter', { content: string; api: string[] }> {
+function unionFiles(ir: Ir, u: UnionPlan, docs: string | undefined): Record<'base' | 'unknown' | 'converter', { content: string; api: string[] }> {
   const full = `${u.namespace}.${u.name}`;
   const unknownFull = `${u.namespace}.${u.unknown}`;
   const disc = `\`${u.disc}\``;
@@ -631,7 +632,9 @@ function unionFiles(ir: Ir, u: UnionPlan): Record<'base' | 'unknown' | 'converte
     docComment(
       '',
       u.doc ?? `The \`${u.name}\` union.`,
-      `One of the classes told apart by ${disc}: ${listed}.\n\`${u.unknown}\` holds an ${disc} this version does not know.`,
+      [`One of the classes told apart by ${disc}: ${listed}.\n\`${u.unknown}\` holds an ${disc} this version does not know.`, docs]
+        .filter((r): r is string => !!r)
+        .join('\n\n'),
     ) +
     `[JsonConverter(typeof(${u.name}Converter))]\npublic abstract partial class ${u.name}\n{\n` +
     docComment('    ', 'Only the generated classes derive from this class.') +

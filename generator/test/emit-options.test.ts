@@ -869,6 +869,29 @@ internal sealed partial class FlintUnionJsonContext : JsonSerializerContext;
     assert.throws(() => emitOptions(ir, overrides({ renames: { 'OverlayBody[svg]': 'Svg' } })), /renames:OverlayBody\[svg\]/);
   });
 
+  // source: overrides.schema.json "docs" (IR path of a type or type member -> remark text) and docs/generator.md
+  // "Discriminated unions" (the base's path is the alias, an inline member's is <Alias>[<literal>]); an entry that
+  // matches nothing fails generation
+  it('appends a docs override on the union and on an inline member as a remark', () => {
+    const result = emitOptions(
+      updateIr(),
+      overrides({ docs: { ChartUpdateOp: 'One operation of a chart update.', 'ChartUpdateOp[set-style]': 'Write it before the notes.' } }),
+    );
+    assert.ok(
+      fileContent(result, 'Updates/ChartUpdateOp.g.cs').includes(
+        '/// <remarks>\n/// One of the classes told apart by <c>op</c>: <c>SetStyleOp</c> (<c>set-style</c>) and <c>AnnotateRegionOp</c> (<c>annotate-region</c>).\n' +
+          '/// <c>UnknownChartUpdateOp</c> holds an <c>op</c> this version does not know.\n///\n/// One operation of a chart update.\n/// </remarks>\n' +
+          '[JsonConverter(typeof(ChartUpdateOpConverter))]\n',
+      ),
+    );
+    assert.ok(
+      fileContent(result, 'Updates/SetStyleOp.g.cs').includes(
+        '/// <remarks>Write it before the notes.</remarks>\n[JsonNumberHandling(JsonNumberHandling.Strict)]\npublic sealed partial class SetStyleOp : ChartUpdateOp\n',
+      ),
+    );
+    assert.throws(() => emitOptions(updateIr(), overrides({ docs: { OtherOp: 'Gone.' } })), /docs:OtherOp/);
+  });
+
   // source: docs/generator.md "Discriminated unions" (a discriminated union: every member an object that declares one member
   // name as required with a string literal type, the literals distinct; any other named union fails with the unions message)
   it('fails on a named union that is not discriminated and maps it through unions', () => {
