@@ -132,8 +132,9 @@ internal sealed class ValueWriter
                 return null; // the object form needs its text, which a null or absent text cannot set
             case "Graspea.Flint.ChartChrome" when item.Kind == JsonItemKind.False:
                 return $"{Flint("ChartChrome")}.None";
-            case "Graspea.Flint.AssistedTargeting" or "Graspea.Flint.TargetDetails" when item.IsBoolean:
-                return item.Kind == JsonItemKind.True ? "true" : "false";
+            case "Graspea.Flint.AssistedTargeting" or "Graspea.Flint.TargetDetails" or "Graspea.Flint.SparseFill" or "Graspea.Flint.TitleWrap"
+                or "Graspea.Flint.InteractionDefaults" when item.IsBoolean:
+                return item.Kind == JsonItemKind.True ? "true" : "false"; // the boolean form; the object form is written as a class below
         }
 
         if (type.EndsWith("[]", StringComparison.Ordinal))

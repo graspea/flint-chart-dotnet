@@ -302,8 +302,9 @@ internal static class SpecShape
                 return; // the string form; the object form is checked as a class below
             case "Graspea.Flint.ChartChrome" when value.Kind == JsonItemKind.False:
                 return;
-            case "Graspea.Flint.AssistedTargeting" or "Graspea.Flint.TargetDetails" when value.IsBoolean:
-                return;
+            case "Graspea.Flint.AssistedTargeting" or "Graspea.Flint.TargetDetails" or "Graspea.Flint.SparseFill" or "Graspea.Flint.TitleWrap"
+                or "Graspea.Flint.InteractionDefaults" when value.IsBoolean:
+                return; // the boolean form; the object form is checked as a class below
             case "Graspea.Flint.ChartSource" when value.IsObject && value.Get("text") is null:
                 throw new ShapeException(value, path, $"{path}.text is required.");
         }

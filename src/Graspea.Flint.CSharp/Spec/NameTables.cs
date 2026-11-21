@@ -137,6 +137,15 @@ internal static partial class NameTables
             new("maxDistance", "MaxDistance", "double"),
         ]),
         new("Graspea.Flint.TargetDetails", [new("fields", "Fields", "string[]"), new("maxRows", "MaxRows", "double")]),
+        new("Graspea.Flint.SparseFill",
+        [
+            new("barCap", "BarCap", "double"), new("pointCap", "PointCap", "double"), new("share", "Share", "double"),
+        ]),
+        new("Graspea.Flint.TitleWrap",
+        [
+            new("floor", "Floor", "double"), new("minWidth", "MinWidth", "double"), new("overhang", "Overhang", "double"),
+        ]),
+        new("Graspea.Flint.InteractionDefaults", [new("legend", "Legend", "bool"), new("tooltip", "Tooltip", "bool")]),
     ];
 
     public static string SimpleName(string name) => name.Substring(name.LastIndexOf('.') + 1);

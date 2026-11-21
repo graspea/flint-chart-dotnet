@@ -221,6 +221,108 @@ public sealed class TargetDetailsConverter : JsonConverter<TargetDetails>
     }
 }
 
+/// <summary>Wire form <c>boolean | {barCap?, pointCap?, share?}</c> of <see cref="SparseFill"/>. Infrastructure: public only
+/// so that a host source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public sealed class SparseFillConverter : JsonConverter<SparseFill>
+{
+    /// <inheritdoc/>
+    public override SparseFill Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        switch (reader.TokenType)
+        {
+            case JsonTokenType.True or JsonTokenType.False:
+                return reader.GetBoolean();
+            case JsonTokenType.StartObject:
+                var dto = JsonSerializer.Deserialize(ref reader, FlintJsonContext.Default.SparseFillDto)!;
+                return new SparseFill { BarCap = dto.BarCap, PointCap = dto.PointCap, Share = dto.Share, Extensions = dto.Extensions };
+            default:
+                throw new JsonException("sparseFill must be a boolean or an object.");
+        }
+    }
+
+    /// <inheritdoc/>
+    public override void Write(Utf8JsonWriter writer, SparseFill value, JsonSerializerOptions options)
+    {
+        if (value.Enabled is { } enabled)
+        {
+            writer.WriteBooleanValue(enabled);
+            return;
+        }
+
+        var dto = new SparseFillDto { BarCap = value.BarCap, PointCap = value.PointCap, Share = value.Share, Extensions = value.Extensions };
+        JsonSerializer.Serialize(writer, dto, FlintJsonContext.Default.SparseFillDto);
+    }
+}
+
+/// <summary>Wire form <c>boolean | {floor?, minWidth?, overhang?}</c> of <see cref="TitleWrap"/>. Infrastructure: public only
+/// so that a host source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public sealed class TitleWrapConverter : JsonConverter<TitleWrap>
+{
+    /// <inheritdoc/>
+    public override TitleWrap Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        switch (reader.TokenType)
+        {
+            case JsonTokenType.True or JsonTokenType.False:
+                return reader.GetBoolean();
+            case JsonTokenType.StartObject:
+                var dto = JsonSerializer.Deserialize(ref reader, FlintJsonContext.Default.TitleWrapDto)!;
+                return new TitleWrap { Floor = dto.Floor, MinWidth = dto.MinWidth, Overhang = dto.Overhang, Extensions = dto.Extensions };
+            default:
+                throw new JsonException("titleWrap must be a boolean or an object.");
+        }
+    }
+
+    /// <inheritdoc/>
+    public override void Write(Utf8JsonWriter writer, TitleWrap value, JsonSerializerOptions options)
+    {
+        if (value.Enabled is { } enabled)
+        {
+            writer.WriteBooleanValue(enabled);
+            return;
+        }
+
+        var dto = new TitleWrapDto { Floor = value.Floor, MinWidth = value.MinWidth, Overhang = value.Overhang, Extensions = value.Extensions };
+        JsonSerializer.Serialize(writer, dto, FlintJsonContext.Default.TitleWrapDto);
+    }
+}
+
+/// <summary>Wire form <c>boolean | {legend?, tooltip?}</c> of <see cref="InteractionDefaults"/>. Infrastructure: public only
+/// so that a host source-generated <see cref="JsonSerializerContext"/> can instantiate it.</summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public sealed class InteractionDefaultsConverter : JsonConverter<InteractionDefaults>
+{
+    /// <inheritdoc/>
+    public override InteractionDefaults Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        switch (reader.TokenType)
+        {
+            case JsonTokenType.True or JsonTokenType.False:
+                return reader.GetBoolean();
+            case JsonTokenType.StartObject:
+                var dto = JsonSerializer.Deserialize(ref reader, FlintJsonContext.Default.InteractionDefaultsDto)!;
+                return new InteractionDefaults { Legend = dto.Legend, Tooltip = dto.Tooltip, Extensions = dto.Extensions };
+            default:
+                throw new JsonException("interaction_spec.defaults must be a boolean or an object.");
+        }
+    }
+
+    /// <inheritdoc/>
+    public override void Write(Utf8JsonWriter writer, InteractionDefaults value, JsonSerializerOptions options)
+    {
+        if (value.Enabled is { } enabled)
+        {
+            writer.WriteBooleanValue(enabled);
+            return;
+        }
+
+        var dto = new InteractionDefaultsDto { Legend = value.Legend, Tooltip = value.Tooltip, Extensions = value.Extensions };
+        JsonSerializer.Serialize(writer, dto, FlintJsonContext.Default.InteractionDefaultsDto);
+    }
+}
+
 /// <summary>The object form of <see cref="ChartChrome"/>; owns the wire names.</summary>
 [JsonNumberHandling(JsonNumberHandling.Strict)]
 internal sealed class ChartChromeDto
@@ -279,6 +381,54 @@ internal sealed class TargetDetailsDto
 
     [JsonPropertyName("maxRows")]
     public double? MaxRows { get; set; }
+
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? Extensions { get; set; }
+}
+
+/// <summary>The object form of <see cref="SparseFill"/>; owns the wire names.</summary>
+[JsonNumberHandling(JsonNumberHandling.Strict)]
+internal sealed class SparseFillDto
+{
+    [JsonPropertyName("barCap")]
+    public double? BarCap { get; set; }
+
+    [JsonPropertyName("pointCap")]
+    public double? PointCap { get; set; }
+
+    [JsonPropertyName("share")]
+    public double? Share { get; set; }
+
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? Extensions { get; set; }
+}
+
+/// <summary>The object form of <see cref="TitleWrap"/>; owns the wire names.</summary>
+[JsonNumberHandling(JsonNumberHandling.Strict)]
+internal sealed class TitleWrapDto
+{
+    [JsonPropertyName("floor")]
+    public double? Floor { get; set; }
+
+    [JsonPropertyName("minWidth")]
+    public double? MinWidth { get; set; }
+
+    [JsonPropertyName("overhang")]
+    public double? Overhang { get; set; }
+
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? Extensions { get; set; }
+}
+
+/// <summary>The object form of <see cref="InteractionDefaults"/>; owns the wire names.</summary>
+[JsonNumberHandling(JsonNumberHandling.Strict)]
+internal sealed class InteractionDefaultsDto
+{
+    [JsonPropertyName("legend")]
+    public bool? Legend { get; set; }
+
+    [JsonPropertyName("tooltip")]
+    public bool? Tooltip { get; set; }
 
     [JsonExtensionData]
     public Dictionary<string, JsonElement>? Extensions { get; set; }

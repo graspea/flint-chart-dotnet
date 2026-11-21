@@ -17,10 +17,13 @@ namespace Graspea.Flint.Serialization;
 [JsonSerializable(typeof(ChartSourceDto))]
 [JsonSerializable(typeof(EncodingValue))]
 [JsonSerializable(typeof(ContinuousMarkCrossSectionDto))]
+[JsonSerializable(typeof(InteractionDefaultsDto))]
 [JsonSerializable(typeof(MinorGridSpecDto))]
 [JsonSerializable(typeof(RuleSpecDto))]
 [JsonSerializable(typeof(SemanticAnnotation))]
 [JsonSerializable(typeof(SemanticAnnotationDto))]
+[JsonSerializable(typeof(SparseFillDto))]
 [JsonSerializable(typeof(TargetDetailsDto))]
 [JsonSerializable(typeof(Theming.ThemeSpec))]
+[JsonSerializable(typeof(TitleWrapDto))]
 internal sealed partial class FlintJsonContext : JsonSerializerContext;
