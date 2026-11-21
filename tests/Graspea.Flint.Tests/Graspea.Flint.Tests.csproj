@@ -29,6 +29,10 @@
   <ItemGroup>
     <!-- The discriminated union converter logic, tested over test-only unions: no generated union exists on every pin. -->
     <Compile Include="../../src/Graspea.Flint/Model/Json/Converters/DiscriminatedUnion.cs" LinkBase="Linked" />
+    <!-- The type resolution and the temporal conversion the validator ports, checked against the probe record
+         (Parity/ChannelTypesTests.cs, TemporalConversionTests.cs): no public member returns a resolved type. -->
+    <Compile Include="../../src/Graspea.Flint/Validation/Rules/FieldTypes.cs;../../src/Graspea.Flint/Validation/Rules/TemporalParse.cs;../../src/Graspea.Flint/Validation/Rules/Js.cs" LinkBase="Linked" />
+    <Compile Include="../../src/Graspea.Flint/Model/CatalogTables.cs;../../src/Graspea.Flint/Generated/Tables/CatalogTables.g.cs" LinkBase="Linked" />
   </ItemGroup>
 
 </Project>
