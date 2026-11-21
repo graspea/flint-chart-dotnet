@@ -1,6 +1,9 @@
 // Crafted contract cases (design §10.3): one small document per validator rule that the TEST_GENERATORS corpus never
-// makes an assembler throw or warn on. The fixtures step records each one on every backend with recordOutcome, like the
-// corpus, so the contract tests compare the validator with upstream on these rules too. Only documents the SDK model can
+// makes an assembler throw or warn on, and per fact that a later flint-chart changes and the validator must follow (the
+// snapshot cadences, the ISO date-times Excel reads after its temporal conversion, the option objects a map property
+// accepts, the options and updates the assemblers of 1.1 throw on). The fixtures step records each one on every backend
+// with recordOutcome, like the corpus, for the version it runs on, so the contract tests compare the validator with
+// upstream on these rules too. Only documents the SDK model can
 // express are listed (an absent `encodings` reads back as `{}`, a `null` theme_spec is not written).
 import type { Input } from './fixtures.ts';
 
@@ -61,9 +64,44 @@ const table = (chartType: string, values: unknown[], encodings: unknown, semanti
   ...(semantic_types ? { semantic_types } : {}),
 });
 
-const ohlc = (dates: unknown[]): Doc =>
+const ohlc = (dates: unknown[], semantic_types?: Record<string, string>): Doc =>
   table('Candlestick Chart', dates.map((day, i) => ({ day, open: 10 + i, high: 12 + i, low: 9 + i, close: 11 + i })),
-    { x: { field: 'day' }, open: { field: 'open' }, high: { field: 'high' }, low: { field: 'low' }, close: { field: 'close' } });
+    { x: { field: 'day' }, open: { field: 'open' }, high: { field: 'high' }, low: { field: 'low' }, close: { field: 'close' } }, semantic_types);
+
+/** A Pyramid Chart of two age bands per wave; the waves are the color groups Excel counts after its temporal conversion. */
+const pyramid = (waves: [unknown, unknown], semantic_types?: Record<string, string>): Doc =>
+  table('Pyramid Chart', ['a', 'b'].flatMap((age, i) => waves.map((wave, j) => ({ age, wave, revenue: 1 + 2 * i + j }))),
+    { x: { field: 'revenue' }, y: { field: 'age' }, color: { field: 'wave' } }, semantic_types);
+
+/** A Radar Chart with a categorical x of metrics, which Excel counts after its temporal conversion. */
+const radar = (metrics: unknown[], semantic_types?: Record<string, string>): Doc =>
+  table('Radar Chart', metrics.map((day, i) => ({ day, revenue: 10 + i })), { x: { field: 'day', type: 'nominal' }, y: { field: 'revenue' } }, semantic_types);
+
+const iso = (ms: number) => new Date(ms).toISOString();
+
+/** A Map of two points with the given chart properties. */
+const points = (chartProperties?: Record<string, unknown>, change: (i: Doc) => void = () => {}): Doc => {
+  const input: Doc = {
+    data: { values: [{ lon: 10, lat: 50, width: 1 }, { lon: 14, lat: 52, width: 2 }] },
+    chart_spec: { chartType: 'Map', encodings: { longitude: { field: 'lon' }, latitude: { field: 'lat' } }, ...(chartProperties ? { chartProperties } : {}) },
+  };
+  change(input);
+  return input;
+};
+
+/** A Choropleth of two countries with the given chart properties. */
+const choropleth = (chartProperties: Record<string, unknown>): Doc => ({
+  data: { values: [{ country: 'France', revenue: 10 }, { country: 'Spain', revenue: 20 }] },
+  chart_spec: { chartType: 'Choropleth', encodings: { id: { field: 'country' }, color: { field: 'revenue' } }, chartProperties },
+});
+
+const boundaryUrl = 'https://example.com/regions.json';
+
+const scatter = (change: (i: Doc) => void = () => {}): Doc =>
+  chart('Scatter Plot', (i) => {
+    i.chart_spec.encodings = { x: { field: 'revenue' }, y: { field: 'cost' } };
+    change(i);
+  });
 
 /** A Boxplot over dates on x (Excel needs a categorical x): snapshots read as ordinal, a run of time as temporal. */
 const boxplot = (dates: unknown[], semanticType?: string): Doc => ({
@@ -189,6 +227,39 @@ const cases: Array<[string, Doc, true?]> = [
   ['waterfall of a quantitative YearMonth y', table('Waterfall Chart', [{ step: 'a', month: 202501 }, { step: 'b', month: 202502 }, { step: 'c', month: 405003 }], { x: { field: 'step' }, y: { field: 'month', type: 'quantitative' } }, { month: 'YearMonth' })],
   ['candlestick with a null first date', ohlc([null, '2025-01-02', '2025-01-03'])],
   ['candlestick with month-name dates out of order', ohlc(['Jan 2, 2025', 'Jan 1, 2025'])],
+  ['boxplot x of 9 hours UTC and one far', boxplot([...Array.from({ length: 9 }, (_, i) => iso(Date.UTC(2024, 0, 1, i))), iso(Date.UTC(2024, 0, 10))])],
+  ['boxplot x of 9 days at 10:00Z and one far', boxplot([...Array.from({ length: 9 }, (_, i) => iso(Date.UTC(2024, 0, 1 + i, 10))), iso(Date.UTC(2024, 5, 1, 10))])],
+  ['boxplot x of 9 dates at 10:00Z stepped by whole months', boxplot(['2020-01', '2020-02', '2020-04', '2020-07', '2020-11', '2021-04', '2021-10', '2022-05', '2023-01'].map((m) => `${m}-15T10:00:00Z`))],
+  ['boxplot x of 10 quarter ends', boxplot(Array.from({ length: 10 }, (_, i) => iso(Date.UTC(2022, 3 * (i + 1), 0)).slice(0, 10)))],
+  ['boxplot x of 10 dates on the 15th of consecutive months', boxplot(Array.from({ length: 10 }, (_, i) => iso(Date.UTC(2024, i, 15)).slice(0, 10)))],
+  ['boxplot x of 10 semi-monthly dates', boxplot(Array.from({ length: 10 }, (_, i) => `2024-${String(Math.floor(i / 2) + 1).padStart(2, '0')}-${i % 2 ? '15' : '01'}`))],
+  ['candlestick with a Date midnight 12 hours behind UTC and a time that day', ohlc(['2024-01-15T00:00:00-12:00', '2024-01-15T06:00:00Z'], { day: 'Date' })],
+  ['candlestick with Date midnights in two zones out of order', ohlc(['2024-01-15T00:00:00+05:00', '2024-01-15T00:00:00Z'], { day: 'Date' })],
+  ['candlestick with DateTime midnights in two zones', ohlc(['2024-01-15T00:00:00+05:00', '2024-01-15T00:00:00Z'], { day: 'DateTime' })],
+  ['pyramid with a Date color of one midnight as a timestamp and a date', pyramid(['2024-01-15T00:00:00', '2024-01-15'], { wave: 'Date' })],
+  ['pyramid with an untyped color of one time in two spellings', pyramid(['2024-01-15T10:00', '2024-01-15T10:00:00'])],
+  ['radar with one Date metric as midnights in two zones and a date', radar(['2025-01-01T00:00:00Z', '2025-01-01T00:00:00+02:00', '2025-01-02'], { day: 'Date' })],
+  ['radar with DateTime midnights in two zones and a date', radar(['2025-01-01T00:00:00Z', '2025-01-01T00:00:00+02:00', '2025-01-02'], { day: 'DateTime' })],
+  ['radar with an untyped time in two spellings', radar(['2024-01-15T10:00', '2024-01-15T10:00:00', '2024-01-16T10:00:00'])],
+  ['map with a boundary file', points({ boundaries: { url: boundaryUrl } })],
+  ['map with a boundary file of unknown ids', points({ boundaries: { url: boundaryUrl, ids: 'state-codes' } })],
+  ['map with a map style of its own', points({ mapStyle: { base: 'dark', sea: '#000000' } })],
+  ['map with an empty map style', points({ mapStyle: {} })],
+  ['choropleth with a boundary file', choropleth({ boundaries: { url: boundaryUrl, ids: 'as-is', key: 'name' } })],
+  ['choropleth with inline boundary shapes', choropleth({ boundaries: { values: { type: 'Topology', objects: {}, arcs: [] }, feature: 'countries', ids: 'as-is', key: 'name' } })],
+  ['choropleth with both a boundary URL and inline shapes', choropleth({ boundaries: { url: boundaryUrl, values: {}, ids: 'as-is', key: 'name' } })],
+  ['choropleth with a map style of its own', choropleth({ mapStyle: { base: 'atlas', land: '#eeeeee' } })],
+  ['choropleth with an empty map style', choropleth({ mapStyle: {} })],
+  ['map with a strokeWidth and no order', points(undefined, (i) => (i.chart_spec.encodings.strokeWidth = { field: 'width' }))],
+  ['bar with a null note', bar((i) => (i.options = { notes: [null] }))],
+  ['bar with a note without a key', bar((i) => (i.options = { notes: [{ text: 'Peak' }] }))],
+  ['bar with a note on a row without text', bar((i) => (i.options = { notes: [{ key: { city: 'Seattle' } }] }))],
+  ['bar with a null region', bar((i) => (i.options = { regions: [null] }))],
+  ['bar with a region whose x is a string', bar((i) => (i.options = { regions: [{ text: 'Launch', x: 'Seattle' }] }))],
+  ['bar with a theme whose compile defaults hold a null region', bar((i) => (i.theme_spec = { compileDefaults: { regions: [null] } }))],
+  ['scatter with a null enclosure', scatter((i) => (i.options = { enclosures: [null] }))],
+  ['scatter with an enclosure whose targets are a string', scatter((i) => (i.options = { enclosures: [{ targets: 'Seattle' }] }))],
+  ['bar with a null update', bar((i) => (i.updates = [null]))],
 ];
 
 export function probeCases(): ProbeCase[] {

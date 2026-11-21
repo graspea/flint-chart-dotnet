@@ -348,7 +348,10 @@ describe('probes: Image-Charts facts (flint-chart 1.0.1)', () => {
     assert.deepEqual(excel['Pie Chart']['slice and value'], ['color', 'column', 'row', 'size', 'strokeDash']);
     assert.deepEqual(excel.Histogram['y measure'], ['color', 'column', 'row', 'x', 'y']);
     assert.deepEqual(excel.Histogram['x and y measures'], ['color', 'column', 'row', 'x']);
-    assert.deepEqual(excel['Candlestick Chart']['Candlestick Chart|#4'], ['close', 'color', 'column', 'detail', 'group', 'high', 'low', 'open', 'row', 'x']);
+    // (the stock chart's base is a fixture case, the smallest of its shape that assembles, so it is read by shape, not by id)
+    const stock = Object.values(excel['Candlestick Chart']);
+    assert.ok(stock.length > 0);
+    for (const reads of stock) assert.deepEqual(reads, ['close', 'color', 'column', 'detail', 'group', 'high', 'low', 'open', 'row', 'x']);
   });
 
   // source: src/image-charts/assemble.ts (no category or measure resolves without encodings; a null channel is skipped;

@@ -34,9 +34,6 @@
       "Candlestick Chart|#3": {
         "case": "Candlestick Chart|#3"
       },
-      "Candlestick Chart|#4": {
-        "case": "Candlestick Chart|#4"
-      },
       "Chart.js: Bubble *|#0": {
         "case": "Chart.js: Bubble *|#0"
       },
@@ -66,9 +63,6 @@
       },
       "Chart.js: Slope|#2": {
         "case": "Chart.js: Slope|#2"
-      },
-      "Choropleth|#1": {
-        "case": "Choropleth|#1"
       },
       "Connected Scatter Plot|#4": {
         "case": "Connected Scatter Plot|#4"
@@ -126,9 +120,6 @@
       },
       "ECharts: Parallel Coordinates *|#1": {
         "case": "ECharts: Parallel Coordinates *|#1"
-      },
-      "ECharts: Radar|#0": {
-        "case": "ECharts: Radar|#0"
       },
       "ECharts: Sankey|#1": {
         "case": "ECharts: Sankey|#1"
@@ -193,9 +184,6 @@
       "Image-Charts: Core Templates|#3": {
         "case": "Image-Charts: Core Templates|#3"
       },
-      "Image-Charts: Core Templates|#5": {
-        "case": "Image-Charts: Core Templates|#5"
-      },
       "KPI Card|#1": {
         "case": "KPI Card|#1"
       },
@@ -246,6 +234,21 @@
       },
       "Plotly: Facets|#2": {
         "case": "Plotly: Facets|#2"
+      },
+      "Probe|#102": {
+        "case": "Probe|#102"
+      },
+      "Probe|#108": {
+        "case": "Probe|#108"
+      },
+      "Probe|#117": {
+        "case": "Probe|#117"
+      },
+      "Probe|#118": {
+        "case": "Probe|#118"
+      },
+      "Probe|#125": {
+        "case": "Probe|#125"
       },
       "Probe|#15": {
         "case": "Probe|#15"
@@ -832,10 +835,10 @@
           "Facet: Rows|#0": [
             "group"
           ],
-          "Image-Charts: Core Templates|#5": [
+          "Plotly: Facets|#2": [
             "group"
           ],
-          "Plotly: Facets|#2": [
+          "Probe|#125": [
             "group"
           ],
           "Probe|#75": [],
@@ -1735,13 +1738,13 @@
             "x2",
             "y2"
           ],
-          "Image-Charts: Core Templates|#5": [
-            "group",
-            "x2",
-            "y2"
-          ],
           "Plotly: Facets|#2": [
             "group",
+            "y2"
+          ],
+          "Probe|#125": [
+            "group",
+            "x2",
             "y2"
           ],
           "Probe|#75": [
@@ -2098,8 +2101,7 @@
           "y measure": []
         },
         "Choropleth": {
-          "Choropleth|#1": [
-            "column",
+          "Probe|#117": [
             "row",
             "x"
           ],
@@ -2490,6 +2492,11 @@
             "row",
             "x"
           ],
+          "Probe|#118": [
+            "group",
+            "row",
+            "x"
+          ],
           "Probe|#19": [
             "group",
             "row",
@@ -2761,12 +2768,12 @@
             "group",
             "strokeDash"
           ],
-          "Image-Charts: Core Templates|#5": [
-            "group"
-          ],
           "Plotly: Facets|#2": [
             "group",
             "strokeDash"
+          ],
+          "Probe|#125": [
+            "group"
           ],
           "Probe|#75": [],
           "Probe|#76": [],
@@ -3132,7 +3139,7 @@
           ]
         },
         "Choropleth": {
-          "Choropleth|#1": [
+          "Probe|#117": [
             "column",
             "row",
             "x",
@@ -3481,6 +3488,13 @@
             "x",
             "y"
           ],
+          "Probe|#118": [
+            "column",
+            "group",
+            "row",
+            "x",
+            "y"
+          ],
           "Probe|#19": [
             "column",
             "group",
@@ -3783,10 +3797,10 @@
           "Facet: Rows|#0": [
             "group"
           ],
-          "Image-Charts: Core Templates|#5": [
+          "Plotly: Facets|#2": [
             "group"
           ],
-          "Plotly: Facets|#2": [
+          "Probe|#125": [
             "group"
           ],
           "Probe|#75": [
@@ -4112,7 +4126,7 @@
           ]
         },
         "Candlestick Chart": {
-          "Candlestick Chart|#4": [
+          "Probe|#102": [
             "close",
             "color",
             "column",
@@ -4432,7 +4446,7 @@
           ]
         },
         "Radar Chart": {
-          "ECharts: Radar|#0": [
+          "Probe|#108": [
             "color",
             "column",
             "row",
@@ -4455,7 +4469,7 @@
           ]
         },
         "Scatter Plot": {
-          "Image-Charts: Core Templates|#5": [
+          "Probe|#125": [
             "color",
             "column",
             "group",
@@ -4975,7 +4989,7 @@
           ]
         },
         "Scatter Plot": {
-          "Image-Charts: Core Templates|#5": [
+          "Probe|#125": [
             "color",
             "column",
             "group",
