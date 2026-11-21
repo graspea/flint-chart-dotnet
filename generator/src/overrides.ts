@@ -13,7 +13,8 @@ export interface Overrides {
   ignoredOptions: Record<string, string[]>;
   imageChartsChannels: Record<string, string[]>;
   imageChartsReads: Record<string, string[]>;
-  imageChartsSource: Record<string, string>;
+  /** Per Image-Charts source file: its reviewed sha256, or several of which any is accepted. */
+  imageChartsSource: Record<string, string | string[]>;
   keepObsolete: string[];
   pending: string[];
 }

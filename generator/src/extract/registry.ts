@@ -49,8 +49,8 @@ export interface CatalogOverrides {
   imageChartsChannels: Record<string, string[]>;
   /** Chart type of IMAGE_CHARTS_TYPE_MAP -> the channels assembleImageCharts reads, as the read probe finds them. */
   imageChartsReads: Record<string, string[]>;
-  /** Package-relative path -> the reviewed sha256 of an Image-Charts source file. */
-  imageChartsSource: Record<string, string>;
+  /** Package-relative path -> the reviewed sha256 of an Image-Charts source file, or several of which any is accepted. */
+  imageChartsSource: Record<string, string | string[]>;
   /** IR paths of entries written ahead for an upstream version that is not pinned yet. */
   pending?: string[];
 }
@@ -211,10 +211,10 @@ function imageChartsTemplates(flint: Record<string, unknown>, packageDir: string
   // passes unseen; widen SYNTHETIC_BASES if a sync ever slips through.
   for (const file of IMAGE_CHARTS_SOURCES) {
     const actual = createHash('sha256').update(readFileSync(join(packageDir, file))).digest('hex');
-    const reviewed = overrides.imageChartsSource[file];
-    if (actual !== reviewed) {
+    const reviewed = [overrides.imageChartsSource[file] ?? []].flat();
+    if (!reviewed.includes(actual)) {
       errors.push(
-        `${file} has sha256 ${actual}, but imageChartsSource in overrides.json records ${reviewed ?? 'none'}: review src/Graspea.Flint/Validation/Rules/ImageCharts.cs, imageChartsChannels and the consumed-channel exemptions (ImageCharts.ReadsUndeclared and its mirror in src/Graspea.Flint.CSharp/Spec/CatalogCheck.cs) against the new file, then update the fingerprint`,
+        `${file} has sha256 ${actual}, but imageChartsSource in overrides.json records ${reviewed.join(' or ') || 'none'}: review src/Graspea.Flint/Validation/Rules/ImageCharts.cs, imageChartsChannels and the consumed-channel exemptions (ImageCharts.ReadsUndeclared and its mirror in src/Graspea.Flint.CSharp/Spec/CatalogCheck.cs) against the new file, then update the fingerprint`,
       );
     }
   }

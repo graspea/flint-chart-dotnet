@@ -8,7 +8,7 @@
   "properties": {
     "$schema": { "type": "string" },
     "unions": {
-      "description": "IR path -> C# type for a construct the type mapping cannot map (union, any, unknown, a template property whose kind differs across backends). Value: a fully qualified hand-written type such as Graspea.Flint.ContinuousMarkCrossSection, or JsonNode for an explicitly accepted opaque member.",
+      "description": "IR path -> C# type for a construct the type mapping cannot map (union, a named union that is not discriminated, any, unknown, a tuple of other than numbers, a template property whose kind differs across backends). At the path of an array of a union or of unknown, JsonNode maps the array as a whole. Value: a fully qualified hand-written type such as Graspea.Flint.ContinuousMarkCrossSection, or JsonNode for an explicitly accepted opaque member.",
       "type": "object",
       "additionalProperties": { "type": "string", "minLength": 1 }
     },
@@ -28,7 +28,7 @@
       }
     },
     "renames": {
-      "description": "IR path (type member, catalog constant, or <Template>/property/<key>, <Template>/channel/<channel>, <Template>/enum/<key>, <Template>/enum/<key>/<value>) -> C# name. Template paths rename the builder method of a channel or property, the enum of a discrete property, or one enum member (the value is the raw string, or the JSON of another value); the wire value never changes.",
+      "description": "IR path (type member, catalog constant, <Alias>[<literal>] for the derived class of an inline member of a discriminated union, or <Template>/property/<key>, <Template>/channel/<channel>, <Template>/enum/<key>, <Template>/enum/<key>/<value>) -> C# name. Template paths rename the builder method of a channel or property, the enum of a discrete property, or one enum member (the value is the raw string, or the JSON of another value); the wire value never changes.",
       "type": "object",
       "additionalProperties": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" }
     },
@@ -79,13 +79,13 @@
       }
     },
     "imageChartsSource": {
-      "description": "The reviewed sha256 (lowercase hex) of src/image-charts/assemble.ts and src/image-charts/chart-types.ts of the pinned flint-chart, the files the hand-written Image-Charts parts are read from: the throw rules (src/Graspea.Flint/Validation/Rules/ImageCharts.cs), imageChartsChannels and the channels the validator knows Image-Charts reads though its template leaves them undeclared. Extraction fails when the installed files differ; review those parts against the new files, then record the new values.",
+      "description": "The reviewed sha256 (lowercase hex) of src/image-charts/assemble.ts and src/image-charts/chart-types.ts of the pinned flint-chart, the files the hand-written Image-Charts parts are read from: the throw rules (src/Graspea.Flint/Validation/Rules/ImageCharts.cs), imageChartsChannels and the channels the validator knows Image-Charts reads though its template leaves them undeclared. Per file one value, or a list of reviewed values of which any is accepted (a file that changed between upstream versions without changing those parts). Extraction fails when the installed file matches none; review those parts against the new file, then record its value.",
       "type": "object",
       "additionalProperties": false,
       "required": ["src/image-charts/assemble.ts", "src/image-charts/chart-types.ts"],
       "properties": {
-        "src/image-charts/assemble.ts": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-        "src/image-charts/chart-types.ts": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        "src/image-charts/assemble.ts": { "$ref": "#/$defs/reviewedSha256" },
+        "src/image-charts/chart-types.ts": { "$ref": "#/$defs/reviewedSha256" }
       }
     },
     "pending": {
@@ -99,6 +99,15 @@
       "type": "array",
       "items": { "type": "string", "minLength": 1 },
       "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "reviewedSha256": {
+      "oneOf": [
+        { "$ref": "#/$defs/sha256" },
+        { "type": "array", "items": { "$ref": "#/$defs/sha256" }, "minItems": 1, "uniqueItems": true }
+      ]
     }
   }
 }

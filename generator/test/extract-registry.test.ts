@@ -140,7 +140,8 @@ describe('extract/registry', () => {
   it('fails when an Image-Charts source differs from the reviewed fingerprint', () => {
     const module = flint as unknown as Record<string, unknown>;
     for (const file of ['src/image-charts/assemble.ts', 'src/image-charts/chart-types.ts']) {
-      assert.equal(imageChartsSource[file], createHash('sha256').update(readFileSync(join(flintPackageDir(), file))).digest('hex'), file);
+      const actual = createHash('sha256').update(readFileSync(join(flintPackageDir(), file))).digest('hex');
+      assert.ok([imageChartsSource[file]].flat().includes(actual), `${file} ${actual}`);
     }
     const changed = { ...imageChartsSource, 'src/image-charts/assemble.ts': '0'.repeat(64) };
     assert.throws(
@@ -149,6 +150,19 @@ describe('extract/registry', () => {
     );
     const missing = Object.fromEntries(Object.entries(imageChartsSource).filter(([k]) => k !== 'src/image-charts/chart-types.ts'));
     assert.throws(() => extract(module, { imageChartsSource: missing }), /src\/image-charts\/chart-types\.ts has sha256 [0-9a-f]{64}, but imageChartsSource in overrides\.json records none/);
+  });
+
+  // source: overrides.schema.json "imageChartsSource" (a file may list several reviewed sha256 values; any listed value is
+  // accepted, none of them fails with every listed value) and the installed src/image-charts files
+  it('accepts an Image-Charts source whose sha256 is one of several reviewed values', () => {
+    const module = flint as unknown as Record<string, unknown>;
+    const listed = Object.fromEntries(Object.entries(imageChartsSource).map(([file, sha]) => [file, ['0'.repeat(64), ...[sha].flat()]]));
+    assert.doesNotThrow(() => extract(module, { imageChartsSource: listed }));
+    const other = { ...listed, 'src/image-charts/assemble.ts': ['0'.repeat(64), '1'.repeat(64)] };
+    assert.throws(
+      () => extract(module, { imageChartsSource: other }),
+      /src\/image-charts\/assemble\.ts has sha256 [0-9a-f]{64}, but imageChartsSource in overrides\.json records 0{64} or 1{64}: review /,
+    );
   });
 
   // source: src/image-charts/assemble.ts of flint-chart 1.0.1: what assembleImageCharts reads (x, y, color and group on
