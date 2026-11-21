@@ -6,7 +6,7 @@ namespace Graspea.Flint;
 
 /// <summary>
 /// The document flint-chart assembles: <c>data</c>, <c>semantic_types</c>, <c>chart_spec</c>, <c>theme_spec</c>,
-/// <c>options</c>, <c>field_display_names</c> and <c>interaction_spec</c>. Serialise it with <see cref="Serialization.FlintJson"/>; the wire
+/// <c>options</c>, <c>field_display_names</c>, <c>interaction_spec</c> and <c>updates</c>. Serialise it with <see cref="Serialization.FlintJson"/>; the wire
 /// shape is attached to the types, so any <see cref="JsonSerializerOptions"/> produce the same document.
 /// </summary>
 [JsonNumberHandling(JsonNumberHandling.Strict)]
@@ -50,6 +50,15 @@ public sealed partial class ChartAssemblyInput
     [JsonPropertyName("interaction_spec")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public InteractionSpec? InteractionSpec { get; set; }
+
+    /// <summary>The <c>updates</c> member (flint-chart 1.1.0+): notes, overlays, emphasis and a viewport the chart applies once
+    /// it is drawn, kept with the spec so a copied spec keeps them; a host's own update with the same <c>id</c> replaces the
+    /// spec's. Applied by the interactive runtime only (<c>mountChart</c>, <c>&lt;FlintChart&gt;</c>), on Vega-Lite only; a
+    /// static assembly, on every backend, draws the chart without them and adds the info warning
+    /// <c>updates-not-compiled</c>.</summary>
+    [JsonPropertyName("updates")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public List<ChartUpdate>? Updates { get; set; }
 
     /// <summary>Members this version does not model; written after the known members.</summary>
     [JsonExtensionData]

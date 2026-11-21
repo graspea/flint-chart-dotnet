@@ -111,6 +111,7 @@ public sealed class CoreParityTests
                 input.Options = new AssembleOptions();
                 input.FieldDisplayNames = new() { ["revenue"] = "Revenue" };
                 input.InteractionSpec = new InteractionSpec { Interactions = [] };
+                input.Updates = [new ChartUpdate { Id = "note", Ops = [] }];
                 return Wire(input);
             }),
             new("ChartSpec", t => Type(t, "ChartSpec"), () => Wire(Input())["chart_spec"]!, () => Wire(Input(FullSpec()))["chart_spec"]!),

@@ -269,8 +269,9 @@ public sealed class CatalogCheckTests
         }));
         Assert.That(issues[0].End, Is.EqualTo(19));
 
-        // source: flint-chart 1.0.0 d.ts (interaction_spec; chart_spec label, source and chrome are modelled)
-        var modelled = Check("{\"interaction_spec\":{},\"chart_spec\":{\"chartType\":\"Line Chart\",\"label\":\"L\",\"source\":\"S\",\"chrome\":false,\"encodings\":{\"x\":\"a\",\"y\":\"b\"}}}");
+        // source: flint-chart 1.0.0 d.ts (interaction_spec; chart_spec label, source and chrome are modelled) and flint-chart
+        // 1.1.1 src/core/types.ts:1456 (updates, modelled as ChartAssemblyInput.Updates)
+        var modelled = Check("{\"interaction_spec\":{},\"updates\":[],\"chart_spec\":{\"chartType\":\"Line Chart\",\"label\":\"L\",\"source\":\"S\",\"chrome\":false,\"encodings\":{\"x\":\"a\",\"y\":\"b\"}}}");
         Assert.That(modelled.Where(i => i.Code == "unknown_key").Select(Describe), Is.Empty);
     }
 

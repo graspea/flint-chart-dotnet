@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+### Added
+
+- `ChartAssemblyInput.Updates` (`updates`, `flint-chart` 1.1.0+), a list of `ChartUpdate`: the notes, overlays, emphasis and viewport the chart applies once it is drawn, kept with the spec. Only the interactive runtime applies them, on Vega-Lite only; a static assembly on any backend draws the chart without them. Each op of a `ChartUpdate` is the class its `op` names (`SetStyleOp`, `AnnotateTextOp`, `AnnotateRegionOp`, `AnnotateEnclosureOp`, `SetViewportOp`, `SetOrderOp`, `SetOverlayOp`, `SetFreeformOverlayOp`, `SetDataOp`, and the deprecated `SetAnnotationOp`); an op this version does not know reads as `UnknownChartUpdateOp` and is written back as read.
+
 ## [1.0.1.1-preview.2] - 2026-11-09
 
 Tracks `flint-chart` 1.0.1 (npm), as 1.0.1.1-preview.1 does; no upstream sync, so no IR diff. The hand-written surface only grows (no `PublicAPI` removal); the validation outcome changes are listed under Changed and Fixed.

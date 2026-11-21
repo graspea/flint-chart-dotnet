@@ -99,6 +99,8 @@ Graspea.Flint.CanvasTreatmentContain.Keys.get -> string?
 Graspea.Flint.CanvasTreatmentContain.Keys.set -> void
 Graspea.Flint.CanvasTreatmentContain.Width.get -> double?
 Graspea.Flint.CanvasTreatmentContain.Width.set -> void
+Graspea.Flint.ChartAssemblyInput.Updates.get -> System.Collections.Generic.List<Graspea.Flint.ChartUpdate!>?
+Graspea.Flint.ChartAssemblyInput.Updates.set -> void
 Graspea.Flint.ChartOverlaySpec
 Graspea.Flint.ChartOverlaySpec.ChartOverlaySpec() -> void
 Graspea.Flint.ChartOverlaySpec.Data.get -> Graspea.Flint.ChartOverlaySpecData?
