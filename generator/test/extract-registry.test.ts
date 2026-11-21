@@ -24,9 +24,10 @@ describe('extract/registry', () => {
   const discretePairs = (c: IrCatalog) =>
     new Set(allProperties(c).filter(({ p }) => p.type === 'discrete').map(({ t, p }) => `${t.name}/${p.key}`));
 
-  const { imageChartsChannels, imageChartsReads, imageChartsSource, acceptsSource } = loadOverrides(new URL('../overrides.json', import.meta.url).pathname);
-  const overrides = { backendsApplyingTheme: ['vegalite', 'plotly'], hostStateKeys: ['sort'], ignoredOptions: {}, imageChartsChannels, imageChartsReads, imageChartsSource, acceptsSource };
-  const extract = (module: Record<string, unknown>, change: Partial<typeof overrides> & { pending?: string[] } = {}) =>
+  // The committed entries, with pending: entries written ahead for a later flint-chart match nothing on the pin.
+  const { imageChartsChannels, imageChartsReads, imageChartsSource, acceptsSource, pending } = loadOverrides(new URL('../overrides.json', import.meta.url).pathname);
+  const overrides = { backendsApplyingTheme: ['vegalite', 'plotly'], hostStateKeys: ['sort'], ignoredOptions: {}, imageChartsChannels, imageChartsReads, imageChartsSource, acceptsSource, pending };
+  const extract = (module: Record<string, unknown>, change: Partial<typeof overrides> = {}) =>
     extractCatalog(module, flintPackageDir(), { ...overrides, ...change });
   const map = (flint as unknown as { IMAGE_CHARTS_TYPE_MAP: Record<string, Record<string, string | boolean>> }).IMAGE_CHARTS_TYPE_MAP;
 
@@ -61,7 +62,7 @@ describe('extract/registry', () => {
     const without = (name: string) => Object.fromEntries(Object.entries(imageChartsChannels).filter(([k]) => k !== name));
     assert.throws(() => extract(module, { imageChartsChannels: without('Sparkline') }), /imageChartsChannels\["Sparkline"\] is missing/);
     assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, Heatmap: ['x'] } }), /imageChartsChannels\["Heatmap"\] matches no chart type/);
-    assert.doesNotThrow(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, Heatmap: ['x'] }, pending: ['catalog.chartTypes[Heatmap].backends.image-charts'] }));
+    assert.doesNotThrow(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, Heatmap: ['x'] }, pending: [...pending, 'catalog.chartTypes[Heatmap].backends.image-charts'] }));
     assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, toString: ['x'] } }), /imageChartsChannels\["toString"\] matches no chart type/);
     assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, 'Bar Chart': ['x', 'y', 'size'] } }), /lists size, which no other backend/);
     assert.throws(() => extract(module, { imageChartsChannels: { ...imageChartsChannels, 'Bar Chart': ['x', 'y', 'column'] } }), /lists column, on which assembleImageCharts throws/);
@@ -85,7 +86,7 @@ describe('extract/registry', () => {
     const without = Object.fromEntries(Object.entries(imageChartsReads).filter(([k]) => k !== 'Sparkline'));
     assert.throws(() => extract(module, { imageChartsReads: without }), /imageChartsReads\["Sparkline"\] is missing/);
     assert.throws(() => extract(module, { imageChartsReads: { ...imageChartsReads, Heatmap: ['x'] } }), /imageChartsReads\["Heatmap"\] matches no chart type/);
-    assert.doesNotThrow(() => extract(module, { imageChartsReads: { ...imageChartsReads, Heatmap: ['x'] }, pending: ['catalog.chartTypes[Heatmap].backends.image-charts'] }));
+    assert.doesNotThrow(() => extract(module, { imageChartsReads: { ...imageChartsReads, Heatmap: ['x'] }, pending: [...pending, 'catalog.chartTypes[Heatmap].backends.image-charts'] }));
   });
 
   // source: docs/generator.md "Failure policy" and src/extract/channel-reads.ts (a change in a src/core helper the
@@ -252,7 +253,7 @@ describe('extract/registry', () => {
   it('fails on an acceptsSource entry that matches no accepting property, unless pending lists it', () => {
     const module = flint as unknown as Record<string, unknown>;
     const ahead = { boundaries: { 'src/chart-types/boundaries.ts': '0'.repeat(64) } };
-    assert.throws(() => extract(module, { acceptsSource: ahead }), /acceptsSource\["boundaries"\] matches no catalog property with an accepts predicate/);
+    assert.throws(() => extract(module, { acceptsSource: ahead, pending: [] }), /acceptsSource\["boundaries"\] matches no catalog property with an accepts predicate/);
     assert.doesNotThrow(() => extract(module, { acceptsSource: ahead, pending: ['acceptsSource[boundaries]'] }));
   });
 

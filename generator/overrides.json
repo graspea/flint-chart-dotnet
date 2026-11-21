@@ -2,12 +2,30 @@
   "$schema": "./overrides.schema.json",
   "unions": {
     "AssembleOptions.continuousMarkCrossSection": "Graspea.Flint.ContinuousMarkCrossSection",
+    "AssembleOptions.enclosures[].targets": "JsonNode",
+    "AssembleOptions.notes[].key{*}": "JsonNode",
+    "AssembleOptions.regions[].x": "JsonNode",
+    "AssembleOptions.regions[].y": "JsonNode",
+    "AssembleOptions.sparseFill": "Graspea.Flint.SparseFill",
+    "AssembleOptions.titleWrap": "Graspea.Flint.TitleWrap",
     "BandGeometry.group.gap": "Graspea.Flint.Theming.ThemeLength",
     "BandGeometry.group.spacing": "Graspea.Flint.Theming.ThemeLength",
     "BrushZoomOptions.guide": "JsonNode",
+    "ChartOverlaySpec.data.values[]{*}": "JsonNode",
+    "ChartUpdateOp[annotate-text].target": "Graspea.Flint.UpdateTarget",
+    "ChartUpdateOp[set-annotation].target": "Graspea.Flint.UpdateTarget",
+    "ChartUpdateOp[set-data].value.rows[]{*}": "JsonNode",
+    "ChartUpdateOp[set-order].values": "JsonNode",
+    "ChartUpdateOp[set-style].targets[]": "Graspea.Flint.UpdateTarget",
+    "ChartUpdateOp[set-viewport].value.x": "JsonNode",
+    "ChartUpdateOp[set-viewport].value.y": "JsonNode",
     "ClickGroupFocusOptions.groupBy": "JsonNode",
+    "EnclosureAnnotationSpec.targets[]": "Graspea.Flint.UpdateTarget",
     "FilterControlsOptions.fields": "JsonNode",
     "FilterControlsOptions.initial{*}": "JsonNode",
+    "FreeformCloneBody.targets[]": "Graspea.Flint.UpdateTarget",
+    "FreeformOverlayTransform.scale": "JsonNode",
+    "FreeformSvgBody.content": "string",
     "HoverGroupFocusOptions.groupBy": "JsonNode",
     "InspectIndexOptions.guide": "JsonNode",
     "InspectIndexOptions.selector": "JsonNode",
@@ -19,12 +37,24 @@
     "InteractionEntry.options{*}": "JsonNode",
     "InteractionPresetOptions.lasso-select.guide": "JsonNode",
     "InteractionSpec.assistedTargeting": "Graspea.Flint.AssistedTargeting",
+    "InteractionSpec.defaults": "Graspea.Flint.InteractionDefaults",
     "LinkedBrushOptions.groupBy": "JsonNode",
     "LinkedBrushOptions.guide": "JsonNode",
+    "NoteTextStyle.fontWeight": "Graspea.Flint.Theming.TypeWeight",
+    "OverlayStyleSpec.fontWeight": "Graspea.Flint.Theming.TypeWeight",
+    "OverlayStyleSpec.strokeDash": "Graspea.Flint.StrokeDash",
     "Radar Chart/property/filled": "JsonNode",
+    "RegionAnnotationSpec.x": "JsonNode",
+    "RegionAnnotationSpec.y": "JsonNode",
     "SelectOptions.guide": "JsonNode",
     "ThemeChartDefaults{*}{*}": "JsonNode",
     "ThemeCompileDefaults.continuousMarkCrossSection": "Graspea.Flint.ContinuousMarkCrossSection",
+    "ThemeCompileDefaults.enclosures[].targets": "JsonNode",
+    "ThemeCompileDefaults.notes[].key{*}": "JsonNode",
+    "ThemeCompileDefaults.regions[].x": "JsonNode",
+    "ThemeCompileDefaults.regions[].y": "JsonNode",
+    "ThemeCompileDefaults.sparseFill": "Graspea.Flint.SparseFill",
+    "ThemeCompileDefaults.titleWrap": "Graspea.Flint.TitleWrap",
     "ThemeLabelFit.rowLimit": "Graspea.Flint.Theming.ThemeLength",
     "ThemeLabelFit.turnedLimit": "Graspea.Flint.Theming.ThemeLength",
     "ThemeLabels.overflow": "Graspea.Flint.Theming.LabelOverflow",
@@ -39,7 +69,8 @@
     "ThemeStructure.grid.minor": "Graspea.Flint.Theming.MinorGridSpec",
     "ThemeStructure.grid.zero": "Graspea.Flint.Theming.RuleSpec",
     "TypeRole.size": "JsonNode",
-    "TypeRole.weight": "Graspea.Flint.Theming.TypeWeight"
+    "TypeRole.weight": "Graspea.Flint.Theming.TypeWeight",
+    "UpdateRegionSelector.key{*}": "JsonNode"
   },
   "flatten": [
     "InteractionPresetOptions.click-annotate",
@@ -56,6 +87,7 @@
   },
   "renames": {
     "Boxplot/enum/whiskerMethod/minmax": "MinMax",
+    "Map/enum/mapStyle": "MapStyle",
     "Regression/enum/regressionMethod": "RegressionMethod",
     "Tree/enum/orient/LR": "LeftToRight",
     "Tree/enum/orient/TB": "TopToBottom",
@@ -66,6 +98,8 @@
   "docs": {
     "AssembleOptions": "The Excel and Image-Charts backends read no member of these options.",
     "AssembleOptions.maxStretch": "When this member is absent, the flint-chart 1.0.0 layout uses 1.5 (DEFAULT_MAX_STRETCH, src/core/compute-layout.ts:180), not the 2 stated above.",
+    "ChartUpdateOp": "One operation of a chart update, chosen by `op`.",
+    "ChartUpdateOp[set-annotation]": "Deprecated by flint-chart 1.1.0, which still reads it as `annotate-text` and reports it as a `deprecated_op` warning; flint-chart 2.0 removes it. Write `AnnotateTextOp`, which it means.",
     "ThemeCompileDefaults.maxStretch": "When this member is absent, the flint-chart 1.0.0 layout uses 1.5 (DEFAULT_MAX_STRETCH, src/core/compute-layout.ts:180), not the 2 stated above.",
     "ThemeSpec": "Applied by the Vega-Lite and Plotly backends; the ECharts, Chart.js, Excel and Image-Charts backends ignore theme_spec (recorded probe against flint-chart 1.0.1)."
   },
@@ -255,8 +289,56 @@
     ]
   },
   "imageChartsSource": {
-    "src/image-charts/assemble.ts": "703abf7b05f7a4917bcc5689f00da35c8e6d684997da46b340a92b93c8920c24",
+    "src/image-charts/assemble.ts": [
+      "703abf7b05f7a4917bcc5689f00da35c8e6d684997da46b340a92b93c8920c24",
+      "191dafb0cda1684b0cd9120ce7dabc6f9036b15377dec251f09e5018b10bef19"
+    ],
     "src/image-charts/chart-types.ts": "455d017af24a1b1830051255e878eae24e9b28df47e7a406d2fe814afa65fef8"
   },
-  "pending": []
+  "acceptsSource": {
+    "boundaries": {
+      "src/chart-types/boundaries.ts": "fa2f2d9121b9672369b2f89dbc595cf9189505fa2f583309660145f1fa12e3f0"
+    },
+    "mapStyle": {
+      "src/vegalite/templates/map-style.ts": "300132fa949f199326b6016bec90a6afc587862296c978cb6aeaa0209637e557"
+    }
+  },
+  "pending": [
+    "AssembleOptions.enclosures[].targets",
+    "AssembleOptions.notes[].key{*}",
+    "AssembleOptions.regions[].x",
+    "AssembleOptions.regions[].y",
+    "AssembleOptions.sparseFill",
+    "AssembleOptions.titleWrap",
+    "ChartOverlaySpec.data.values[]{*}",
+    "ChartUpdateOp",
+    "ChartUpdateOp[annotate-text].target",
+    "ChartUpdateOp[set-annotation]",
+    "ChartUpdateOp[set-annotation].target",
+    "ChartUpdateOp[set-data].value.rows[]{*}",
+    "ChartUpdateOp[set-order].values",
+    "ChartUpdateOp[set-style].targets[]",
+    "ChartUpdateOp[set-viewport].value.x",
+    "ChartUpdateOp[set-viewport].value.y",
+    "EnclosureAnnotationSpec.targets[]",
+    "FreeformCloneBody.targets[]",
+    "FreeformOverlayTransform.scale",
+    "FreeformSvgBody.content",
+    "InteractionSpec.defaults",
+    "Map/enum/mapStyle",
+    "NoteTextStyle.fontWeight",
+    "OverlayStyleSpec.fontWeight",
+    "OverlayStyleSpec.strokeDash",
+    "RegionAnnotationSpec.x",
+    "RegionAnnotationSpec.y",
+    "ThemeCompileDefaults.enclosures[].targets",
+    "ThemeCompileDefaults.notes[].key{*}",
+    "ThemeCompileDefaults.regions[].x",
+    "ThemeCompileDefaults.regions[].y",
+    "ThemeCompileDefaults.sparseFill",
+    "ThemeCompileDefaults.titleWrap",
+    "UpdateRegionSelector.key{*}",
+    "acceptsSource[boundaries]",
+    "acceptsSource[mapStyle]"
+  ]
 }
