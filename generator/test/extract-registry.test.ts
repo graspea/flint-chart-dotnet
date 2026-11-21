@@ -296,11 +296,16 @@ describe('extract/registry', () => {
     assert.ok(discretePairs(catalog).size > 0);
   });
 
-  // source: design §2 Channels (constant 26 + theta = 27; text only in channelGroups)
-  it('derives a channel union of 27 names that contains theta and not text', () => {
-    assert.equal(catalog.channels.length, 27);
+  // source: design §2 Channels (the core constant plus every channel a template declares; theta is declared by Excel Pie
+  // and Donut only) and the committed ir/flint-ir.json catalog.channels of the pinned version
+  it('derives the channel union of the core constant and every declared channel', () => {
+    assert.deepEqual(catalog.channels, committed.channels);
     assert.ok(catalog.channels.includes('theta'));
-    assert.ok(!catalog.channels.includes('text'));
+    for (const t of catalog.chartTypes) {
+      for (const [backend, b] of Object.entries(t.backends)) {
+        for (const ch of b.channels) assert.ok(catalog.channels.includes(ch), `${t.name} on ${backend}: ${ch}`);
+      }
+    }
   });
 
   // source: design §10.4 test 3 (registry facts: channels are recorded per backend; on 0.5.1 Line Chart has strokeDash on

@@ -33,7 +33,6 @@ public sealed class GeneratedConstantsTests
     {
         Assert.That(StaticValues<Channel>().Select(v => v.Name), Is.EquivalentTo(CommittedIr.Strings(CommittedIr.FacadeCatalog["channels"])));
         Assert.That(Channel.Theta.Name, Is.EqualTo("theta"));
-        Assert.That(typeof(Channel).GetField("Text"), Is.Null);
     }
 
     // source: ir/flint-ir.json catalog.semanticTypes (verbatim names) and generator/overrides.json renames (Name -> NameType)

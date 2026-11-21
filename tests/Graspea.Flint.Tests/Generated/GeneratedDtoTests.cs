@@ -42,13 +42,14 @@ public sealed class GeneratedDtoTests
         Assert.That(JsonSerializer.Serialize(Options(), HostContext.Default.AssembleOptions), Is.EqualTo(expected));
     }
 
-    // source: design §4.1 (options.background stays reachable through Extensions) and §5.2 (extensions written last)
+    // source: design §4.1 (an option this version does not model stays reachable through Extensions) and §5.2
+    // (extensions written last); "futureOption" is declared by no flint-chart version
     [Test]
     public void AssembleOptions_UnknownMember_RoundTripsThroughExtensions()
     {
-        const string json = """{"addTooltips":false,"background":"#fff"}""";
+        const string json = """{"addTooltips":false,"futureOption":"#fff"}""";
         var read = JsonSerializer.Deserialize<AssembleOptions>(json)!;
-        Assert.That(read.Extensions!["background"].GetString(), Is.EqualTo("#fff"));
+        Assert.That(read.Extensions!["futureOption"].GetString(), Is.EqualTo("#fff"));
         Assert.That(JsonSerializer.Serialize(read), Is.EqualTo(json));
     }
 

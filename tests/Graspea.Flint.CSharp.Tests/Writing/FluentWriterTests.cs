@@ -85,13 +85,14 @@ public sealed class FluentWriterTests
     }
 
     // source: design §12.4.1 ("chartType not in the catalog" -> Chart.Of(new ChartType("Image Chart"), …); a channel not on
-    // the facade -> Encode(Channel.X, …) or Encode(new Channel("text"), …); any other key -> Property)
+    // the facade -> Encode(Channel.X, …) or Encode(new Channel("glyph"), …), a channel no flint-chart version declares;
+    // any other key -> Property)
     [Test]
     public void Convert_UnknownChartType_UsesChartOf()
     {
-        var chain = Chain(Convert(Doc("Image Chart", "{\"x\":\"a\",\"text\":\"b\"}", specExtra: "\"chartProperties\":{\"fit\":\"cover\"},")));
+        var chain = Chain(Convert(Doc("Image Chart", "{\"x\":\"a\",\"glyph\":\"b\"}", specExtra: "\"chartProperties\":{\"fit\":\"cover\"},")));
 
-        Assert.That(chain, Is.EqualTo(new[] { "Chart.Of(new ChartType(\"Image Chart\"), Rows)", ".Encode(Channel.X, r => r.A)", ".Encode(new Channel(\"text\"), r => r.B)", ".Property(\"fit\", \"cover\")", ".Build();" }));
+        Assert.That(chain, Is.EqualTo(new[] { "Chart.Of(new ChartType(\"Image Chart\"), Rows)", ".Encode(Channel.X, r => r.A)", ".Encode(new Channel(\"glyph\"), r => r.B)", ".Property(\"fit\", \"cover\")", ".Build();" }));
     }
 
     // source: design §12.4.1 (a channel the template's facade lacks -> Encode with the Channel constant)
@@ -202,7 +203,7 @@ public sealed class FluentWriterTests
     [Test]
     public void Convert_DisplayNamesThemeOptionsExtensions()
     {
-        var chain = Chain(Convert(Doc("Bar Chart", "{\"x\":\"a\"}", extra: "\"field_display_names\":{\"a\":\"Alpha\",\"z\":\"Zed\"},\"theme_spec\":\"no-such\",\"options\":{\"maxStretch\":1.5,\"continuousMarkCrossSection\":{\"x\":1,\"y\":2,\"seriesCountAxis\":\"auto\"},\"background\":\"#fff\"},\"layout_spec\":{\"zoom\":true},")));
+        var chain = Chain(Convert(Doc("Bar Chart", "{\"x\":\"a\"}", extra: "\"field_display_names\":{\"a\":\"Alpha\",\"z\":\"Zed\"},\"theme_spec\":\"no-such\",\"options\":{\"maxStretch\":1.5,\"continuousMarkCrossSection\":{\"x\":1,\"y\":2,\"seriesCountAxis\":\"auto\"},\"futureOption\":\"#fff\"},\"layout_spec\":{\"zoom\":true},")));
 
         Assert.That(chain, Is.EqualTo(new[]
         {
@@ -211,7 +212,7 @@ public sealed class FluentWriterTests
             ".DisplayName(r => r.A, \"Alpha\")",
             ".DisplayName(\"z\", \"Zed\")",
             ".Theme(new ThemePreset(\"no-such\"))",
-            ".Options(o => { o.MaxStretch = 1.5; o.ContinuousMarkCrossSection = ContinuousMarkCrossSection.Axes(1, 2, seriesCountAxis: SeriesCountAxis.Auto); o.Extensions = new() { [\"background\"] = Json(\"\\\"#fff\\\"\") }; })",
+            ".Options(o => { o.MaxStretch = 1.5; o.ContinuousMarkCrossSection = ContinuousMarkCrossSection.Axes(1, 2, seriesCountAxis: SeriesCountAxis.Auto); o.Extensions = new() { [\"futureOption\"] = Json(\"\\\"#fff\\\"\") }; })",
             ".Configure(d => (d.Extensions ??= new())[\"layout_spec\"] = Json(\"\"\"{\"zoom\":true}\"\"\"))",
             ".Build();",
         }));
