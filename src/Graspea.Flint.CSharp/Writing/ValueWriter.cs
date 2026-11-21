@@ -135,6 +135,8 @@ internal sealed class ValueWriter
             case "Graspea.Flint.AssistedTargeting" or "Graspea.Flint.TargetDetails" or "Graspea.Flint.SparseFill" or "Graspea.Flint.TitleWrap"
                 or "Graspea.Flint.InteractionDefaults" when item.IsBoolean:
                 return item.Kind == JsonItemKind.True ? "true" : "false"; // the boolean form; the object form is written as a class below
+            case "Graspea.Flint.UpdateTarget" when Selector(item) is { } selector:
+                return selector; // a key or where selector alone; any other target is written as a class below
         }
 
         if (type.EndsWith("[]", StringComparison.Ordinal))
@@ -148,7 +150,7 @@ internal sealed class ValueWriter
             var items = new List<string>();
             foreach (var entry in item.Items)
             {
-                var value = entry.IsNull && IsReference(element) ? "null!" : Typed(entry, element);
+                var value = !entry.IsNull ? Typed(entry, element) : element == "JsonNode?" ? "null" : IsReference(element) ? "null!" : null;
                 if (value is null)
                 {
                     return null;
@@ -231,6 +233,36 @@ internal sealed class ValueWriter
         }
 
         return $"{TypeName("Graspea.Flint.InteractionEntry")}.{preset.Method}({string.Join(", ", arguments)})";
+    }
+
+    /// <summary>
+    /// <c>UpdateTarget.Key(new() { … })</c> or <c>UpdateTarget.Where(new() { … })</c>, with the <c>visual</c> as the second
+    /// argument when there is one, for a target whose only member is a <c>select</c> that has a key or a where (not both), at
+    /// most a visual and nothing else, each written exactly; null otherwise, and the target is written as a class
+    /// (<c>new UpdateTarget { Select = new TargetSelector { … } }</c>).
+    /// </summary>
+    private string? Selector(JsonItem item)
+    {
+        if (!item.IsObject || item.Members.Count != 1 || item.Get("select") is not { IsObject: true } select
+            || select.Members.Any(m => m.Key is not ("key" or "where" or "visual")))
+        {
+            return null;
+        }
+
+        var key = select.Get("key");
+        var where = select.Get("where");
+        if ((key is null) == (where is null))
+        {
+            return null;
+        }
+
+        var arguments = new List<string?> { key is not null ? Typed(key, "Dictionary<string, JsonNode?>") : Typed(where!, "Dictionary<string, Graspea.Flint.FilterValue>") };
+        if (select.Get("visual") is { } visual)
+        {
+            arguments.Add(Typed(visual, "Graspea.Flint.TargetVisual"));
+        }
+
+        return arguments.Contains(null) ? null : $"{TypeName("Graspea.Flint.UpdateTarget")}.{(key is not null ? "Key" : "Where")}({string.Join(", ", arguments)})";
     }
 
     /// <summary><c>new T { … }</c> for a generated class: typed members where they write the value, the rest (unknown keys,

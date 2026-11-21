@@ -68,9 +68,10 @@ refuses these names with exit code 2, and the default name avoids them: `Graspea
 (`Chart`, `ChartAssemblyInput`, `ChartData`, `ChartEncoding`, `ChartSpec`, `ChartTemplate`, `ChartType`, `Channel`,
 `SemanticType`, `SemanticAnnotation`, `EncodingType`, `EncodingValue`, `Aggregate`, `SortOrder`, `SeriesCountAxis`,
 `ThemePreset`, `FlintBackend`, `FlintJson`, `RowOptions`, `ValidationResult`), the per-template enums (such as
-`LineChartInterpolate`) and the option and theme classes with their member types (such as `AssembleOptions`,
-`ChartSize`, `ThemeInk`), and the .NET types the output names (`JsonArray`, `JsonDocument`, `JsonElement`, `JsonNode`,
-`JsonPropertyName`, `JsonTypeInfo`, `RequiresDynamicCode`, `RequiresUnreferencedCode`, `LazyInitializer`,
+`LineChartInterpolate`), the option and theme classes with their member types (such as `AssembleOptions`,
+`ChartSize`, `ThemeInk`), the hand-written union types with the classes they hold (such as `UpdateTarget`,
+`TargetVisual`, `FilterValue`), and the .NET types the output names (`JsonArray`, `JsonDocument`, `JsonElement`,
+`JsonNode`, `JsonPropertyName`, `JsonTypeInfo`, `RequiresDynamicCode`, `RequiresUnreferencedCode`, `LazyInitializer`,
 `CancellationToken`, `DateOnly`, `DateTime`, `DateTimeOffset`, `IAsyncEnumerable`, `IEnumerable`, `Stream`, `Task`,
 `ValueTask`). The member names `Row`, `Rows`, `Values`, `Template`, `Build`, `BuildAsync`, `WriteAsync`, `Validate`,
 `Json` and `WithData` are refused as well.

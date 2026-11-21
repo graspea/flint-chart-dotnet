@@ -154,6 +154,12 @@ public sealed class CSharpTextTests
     [TestCase("JsonArray")]
     [TestCase("AreaChartInterpolate")]
     [TestCase("ThemeInk")]
+    [TestCase("TargetDetails")]
+    [TestCase("UpdateTarget")]
+    [TestCase("TargetVisual")]
+    [TestCase("TargetSelector")]
+    [TestCase("FilterValue")]
+    [TestCase("SemanticElement")]
     public void ReservedClassNames_HoldTheTypesTheOutputNames(string name)
     {
         Assert.That(CSharpText.ReservedClassNames, Does.Contain(name));

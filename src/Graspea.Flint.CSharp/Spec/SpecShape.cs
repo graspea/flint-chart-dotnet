@@ -253,7 +253,8 @@ internal static class SpecShape
 
     /// <summary>A value of a model or name-table type: <c>string</c>, <c>double</c>, <c>bool</c>, <c>JsonNode</c>, arrays,
     /// string- and integer-keyed maps, <c>ChartSize</c>, <c>ContinuousMarkCrossSection</c>, a theme union, a string-backed
-    /// literal, an open literal union struct or a generated class. Every type is nullable except the <c>!</c> forms.</summary>
+    /// literal, an open literal union struct, a generated class or a class of <see cref="NameTables.UnionObjectForms"/> (such
+    /// as <c>UpdateTarget</c> and the classes it holds). Every type is nullable except the <c>!</c> forms.</summary>
     internal static void Typed(JsonItem value, string type, string path)
     {
         if (type is "JsonNode" or "JsonNode?")

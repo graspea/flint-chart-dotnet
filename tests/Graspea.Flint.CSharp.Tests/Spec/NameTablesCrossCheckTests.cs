@@ -98,14 +98,14 @@ public sealed class NameTablesCrossCheckTests
     {
         var type = Library.GetType(name, throwOnError: true)!;
         var members = NameTables.Class(name)!.Members;
-        var json = "{" + string.Join(",", members.Select(m => $"\"{m.Wire}\":{(m.Type switch { "double" => "1", "double[]" => "[1]", "string[]" => "[\"a\"]", "bool" or "Graspea.Flint.TargetDetails" => "true", _ => "\"a\"" })}")) + "}";
+        var json = "{" + string.Join(",", members.Select(m => $"\"{m.Wire}\":{Sample(m.Type)}")) + "}";
         var value = System.Text.Json.JsonSerializer.Deserialize(json, type)!;
         Assert.That(type.GetProperty("Extensions")!.GetValue(value), Is.Null, json);
         foreach (var member in members)
         {
             var property = type.GetProperty(member.Name);
             Assert.That(property, Is.Not.Null, $"{name}.{member.Name}");
-            Assert.That(TypeText(property!.PropertyType), Is.EqualTo(member.Type), $"{name}.{member.Name}");
+            Assert.That(TypeText(property!.PropertyType), Is.EqualTo(member.Type.Replace("?", string.Empty)), $"{name}.{member.Name}");
             Assert.That(property.GetValue(value), Is.Not.Null, $"{name}.{member.Name}");
         }
     }
@@ -153,6 +153,19 @@ public sealed class NameTablesCrossCheckTests
             Assert.That(NameTables.Union("NoSuchUnion"), Is.Null);
         });
     }
+
+    /// <summary>A JSON value the member type reads into a non-null value: a number, an array of one item, a string, true for
+    /// the booleans, an empty object for a map or a class of the tables.</summary>
+    private static string Sample(string type) => type switch
+    {
+        "double" => "1",
+        "double[]" or "JsonNode?[]" => "[1]",
+        "string[]" => "[\"a\"]",
+        "bool" or "Graspea.Flint.TargetDetails" => "true",
+        _ when type.EndsWith("[]", StringComparison.Ordinal) => $"[{Sample(type[..^2])}]",
+        _ when type.StartsWith("Dictionary<", StringComparison.Ordinal) || NameTables.Class(type) is not null => "{}",
+        _ => "\"a\"",
+    };
 
     private static T Constant<T>(string member) => (T)typeof(T).GetField(member, BindingFlags.Public | BindingFlags.Static)!.GetValue(null)!;
 

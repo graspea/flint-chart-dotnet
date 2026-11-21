@@ -231,7 +231,9 @@ internal static class CSharpText
             }
         }
 
-        foreach (var type in NameTables.Classes)
+        // The hand-written union types are named where a generated member holds one; the classes their object forms hold
+        // (TargetDetails, TargetVisual, …) only through the union.
+        foreach (var type in NameTables.Classes.Concat(NameTables.UnionObjectForms))
         {
             names.Add(NameTables.SimpleName(type.Name));
             foreach (var member in type.Members)

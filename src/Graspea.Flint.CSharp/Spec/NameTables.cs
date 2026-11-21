@@ -117,8 +117,9 @@ internal static partial class NameTables
     /// <summary>A generated discriminated union by its simple name (<c>ChartUpdateOp</c>) or namespace-qualified name.</summary>
     public static UnionNames? Union(string name) => ByName(ref _unions, Unions, u => u.Name, name);
 
-    /// <summary>The object forms of the hand-written unions, written and checked as classes; their string, <c>false</c> and
-    /// boolean forms are handled by type name in <c>ValueWriter</c> and <c>SpecShape</c>.</summary>
+    /// <summary>The object forms of the hand-written unions and the hand-written classes they hold, written and checked as
+    /// classes; their string, <c>false</c> and boolean forms, and the factories of the <c>UpdateTarget</c> selectors, are handled
+    /// by type name in <c>ValueWriter</c> and <c>SpecShape</c>.</summary>
     internal static readonly ClassNames[] UnionObjectForms =
     [
         new("Graspea.Flint.Theming.RuleSpec",
@@ -149,6 +150,22 @@ internal static partial class NameTables
             new("floor", "Floor", "double"), new("minWidth", "MinWidth", "double"), new("overhang", "Overhang", "double"),
         ]),
         new("Graspea.Flint.InteractionDefaults", [new("legend", "Legend", "bool"), new("tooltip", "Tooltip", "bool")]),
+        new("Graspea.Flint.UpdateTarget",
+        [
+            new("elements", "Elements", "Graspea.Flint.SemanticElement[]"), new("select", "Select", "Graspea.Flint.TargetSelector"),
+            new("visual", "Visual", "Graspea.Flint.TargetVisual"),
+        ]),
+        new("Graspea.Flint.TargetVisual", [new("kind", "Kind", "string"), new("role", "Role", "string")]),
+        new("Graspea.Flint.SemanticElement",
+        [
+            new("records", "Records", "Dictionary<string, JsonNode?>[]"), new("value", "Value", "Dictionary<string, JsonNode?>"),
+        ]),
+        new("Graspea.Flint.TargetSelector",
+        [
+            new("key", "Key", "Dictionary<string, JsonNode?>"), new("visual", "Visual", "Graspea.Flint.TargetVisual"),
+            new("where", "Where", "Dictionary<string, Graspea.Flint.FilterValue>"),
+        ]),
+        new("Graspea.Flint.FilterValue", [new("in", "In", "JsonNode?[]"), new("range", "Range", "JsonNode?[]")]),
     ];
 
     public static string SimpleName(string name) => name.Substring(name.LastIndexOf('.') + 1);
