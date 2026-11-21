@@ -99,6 +99,24 @@ public sealed class CoreParityTests
         return Wire(input)["options"]!["continuousMarkCrossSection"]!;
     }
 
+    private static JsonNode InOptions(AssembleOptions options, string member)
+    {
+        var input = Input();
+        input.Options = options;
+        return Wire(input)["options"]![member]!;
+    }
+
+    private static JsonNode InDefaults(InteractionDefaults defaults)
+    {
+        var input = Input();
+        input.InteractionSpec = new InteractionSpec { Interactions = [], Defaults = defaults };
+        return Wire(input)["interaction_spec"]!["defaults"]!;
+    }
+
+    /// <summary>The type of a member of a named IR type, such as <c>AssembleOptions.sparseFill</c>.</summary>
+    private static JsonNode MemberType(JsonNode types, string type, string member) =>
+        types[type]!["props"]!.AsArray().First(p => p!["name"]!.GetValue<string>() == member)!["type"]!;
+
     public static IEnumerable<TestCaseData> Forms()
     {
         Form[] forms =
@@ -128,6 +146,9 @@ public sealed class CoreParityTests
                 DivergingNeutral = 5,
                 PercentScale = PercentScale.Percent,
             })),
+            new("DivergingNeutral (number)", t => MemberType(t, "SemanticAnnotation", "divergingNeutral")["members"]![0]!,
+                () => InAnnotation(new SemanticAnnotation { Type = SemanticType.Correlation, DivergingNeutral = 0.1 })["divergingNeutral"]!,
+                () => InAnnotation(new SemanticAnnotation { Type = SemanticType.Correlation, DivergingNeutral = 0.1 })["divergingNeutral"]!),
             new("ChartChrome (object)", t => UnionMember(t["ChartSpec"]!["props"]!.AsArray().First(p => p!["name"]!.GetValue<string>() == "chrome")!, "type", 1),
                 () => InSpec(new ChartChrome()), () => InSpec(new ChartChrome { Header = true, Footer = false, Logos = true })),
             new("ChartSource (object)", t => UnionMember(t["ChartSpec"]!["props"]!.AsArray().First(p => p!["name"]!.GetValue<string>() == "source")!, "type", 1),
@@ -140,14 +161,24 @@ public sealed class CoreParityTests
             new("ChartData (values)", t => UnionMember(t, "ChartData", 0), () => Wire(Input())["data"]!, () => Wire(Input())["data"]!),
             new("ChartData (url)", t => UnionMember(t, "ChartData", 1), () => Wire(Input(data: ChartData.FromUrl("https://example.com/rows.json")))["data"]!, () => Wire(Input(data: ChartData.FromUrl("https://example.com/rows.json")))["data"]!),
             new("ContinuousMarkCrossSection (number)", t => UnionMember(t, "ContinuousMarkCrossSection", 0), () => InCrossSection(12.5), () => InCrossSection(12.5)),
+            new("SparseFill (object)", t => MemberType(t, "AssembleOptions", "sparseFill")["members"]![1]!,
+                () => InOptions(new AssembleOptions { SparseFill = new SparseFill() }, "sparseFill"),
+                () => InOptions(new AssembleOptions { SparseFill = new SparseFill { Share = 0.5, BarCap = 12, PointCap = 30 } }, "sparseFill")),
+            new("TitleWrap (object)", t => MemberType(t, "AssembleOptions", "titleWrap")["members"]![1]!,
+                () => InOptions(new AssembleOptions { TitleWrap = new TitleWrap() }, "titleWrap"),
+                () => InOptions(new AssembleOptions { TitleWrap = new TitleWrap { Overhang = 0.1, Floor = 0.6, MinWidth = 240 } }, "titleWrap")),
+            new("InteractionDefaults (object)", t => MemberType(t, "InteractionSpec", "defaults")["members"]![1]!,
+                () => InDefaults(new InteractionDefaults()), () => InDefaults(new InteractionDefaults { Legend = false, Tooltip = true })),
             new("ContinuousMarkCrossSection (axes)", t => UnionMember(t, "ContinuousMarkCrossSection", 1), () => InCrossSection(ContinuousMarkCrossSection.Axes(1, 2)), () => InCrossSection(ContinuousMarkCrossSection.Axes(1, 2, 0.3, 1.5, SeriesCountAxis.Auto))),
         ];
         return forms.Select(f => new TestCaseData(f).SetName($"HandWrittenCore_MatchesIr({f.Name})"));
     }
 
     // source: ir/flint-ir.json types (ChartAssemblyInput, ChartData, ChartSpec with its chrome and source unions, ChartEncoding,
-    // SemanticAnnotation, ChartSize, ContinuousMarkCrossSection, and the AssistedTargetingOptions and TargetDetailsOptions that
-    // the hand-written AssistedTargeting and TargetDetails model): wire names, optionality and kinds; a trivial annotation
+    // SemanticAnnotation with the number form of its divergingNeutral union, ChartSize, ContinuousMarkCrossSection, the
+    // AssistedTargetingOptions and TargetDetailsOptions that the hand-written AssistedTargeting and TargetDetails model, and the
+    // object forms of the AssembleOptions.sparseFill, AssembleOptions.titleWrap and InteractionSpec.defaults unions that the
+    // hand-written SparseFill, TitleWrap and InteractionDefaults model): wire names, optionality and kinds; a trivial annotation
     // is its string form (design §5.2)
     [TestCaseSource(nameof(Forms))]
     public void HandWrittenCore_MatchesIr(Form form)
