@@ -98,7 +98,7 @@
   "docs": {
     "AssembleOptions": "The Excel and Image-Charts backends read no member of these options.",
     "AssembleOptions.maxStretch": "When this member is absent, the flint-chart 1.0.0 layout uses 1.5 (DEFAULT_MAX_STRETCH, src/core/compute-layout.ts:180), not the 2 stated above.",
-    "ChartUpdateOp": "One operation of a chart update, chosen by `op`.",
+    "ChartUpdateOp": "An op is one of the `ops` of a `ChartUpdate`, which groups them under an `id`. flint-chart's interactive runtime (`mountChart`, Vega-Lite only) applies the updates of `ChartAssemblyInput.updates` once the chart is drawn, and a host's own update with the same `id` replaces the spec's; the assemblers of every backend draw the chart without them.",
     "ChartUpdateOp[set-annotation]": "Deprecated by flint-chart 1.1.0, which still reads it as `annotate-text` and reports it as a `deprecated_op` warning; flint-chart 2.0 removes it. Write `AnnotateTextOp`, which it means.",
     "ThemeCompileDefaults.maxStretch": "When this member is absent, the flint-chart 1.0.0 layout uses 1.5 (DEFAULT_MAX_STRETCH, src/core/compute-layout.ts:180), not the 2 stated above.",
     "ThemeSpec": "Applied by the Vega-Lite and Plotly backends; the ECharts, Chart.js, Excel and Image-Charts backends ignore theme_spec (recorded probe against flint-chart 1.0.1)."
