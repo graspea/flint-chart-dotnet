@@ -20,7 +20,7 @@ public sealed class ChannelTypesTests
     /// <summary>The probes the validator leaves undecided, because their values are strings only V8's legacy parser reads.</summary>
     private static readonly Dictionary<string, string> UndecidedHere = new(StringComparer.Ordinal)
     {
-        // source: src/core/decisions.ts:172-213 of flint-chart 1.0.1 (validateTemporalParsing reads each value through
+        // source: src/core/decisions.ts:263-304 of flint-chart 1.1.1 (validateTemporalParsing reads each value through
         // Date.parse; none of these strings is an ISO date, so only V8's legacy parser reads them, ECMA-262 §21.4.3.2)
         ["line x, Date spellings with an invalid day"] = "2025/02/30, a slash date with a day past the month's end",
         ["line x, untyped \"2025/01/15\""] = "2025/01/15, a slash date",

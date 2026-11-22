@@ -58,8 +58,8 @@ internal sealed partial class FieldTypes
     /// usable field (<see cref="FieldType.Absent"/>, or quantitative for a <c>count</c>), an <c>aggregate</c>
     /// (quantitative), or an explicit <c>type</c> other than <c>quantitative</c>. Upstream an explicit type replaces the
     /// decision of the semantic type and the values, and the ISO date hack turns only quantitative into temporal
-    /// (resolve-semantics.ts:547-564); an aggregate makes the channel quantitative (:583-589, :682-689). Left to the rows: a
-    /// field without type or aggregate, and an explicit quantitative type.
+    /// (resolve-semantics.ts:565-582 of flint-chart 1.1.1); an aggregate makes the channel quantitative (:601-607, :700-707).
+    /// Left to the rows: a field without type or aggregate, and an explicit quantitative type.
     /// </summary>
     internal bool SpecDecided(string channel)
     {
@@ -256,9 +256,9 @@ internal sealed partial class FieldTypes
         return undecided ? null : false;
     }
 
-    /// <summary>The <c>temporalKeys</c> test of <c>convertTemporalData</c> (src/core/resolve-semantics.ts:440-445) for one key:
-    /// its semantic type (<see cref="EffectiveSemanticType"/>) has the registry category temporal or is <c>Decade</c>, or its
-    /// values infer as temporal. Null when only <c>Date.parse</c> could decide.</summary>
+    /// <summary>The <c>temporalKeys</c> test of <c>convertTemporalData</c> (src/core/resolve-semantics.ts:452-457 of
+    /// flint-chart 1.1.1) for one key: its semantic type (<see cref="EffectiveSemanticType"/>) has the registry category
+    /// temporal or is <c>Decade</c>, or its values infer as temporal. Null when only <c>Date.parse</c> could decide.</summary>
     private bool? IsTemporalKey(string key)
     {
         var semanticType = EffectiveSemanticType(key);
@@ -276,7 +276,8 @@ internal sealed partial class FieldTypes
         };
     }
 
-    /// <summary><c>toTypeString(semanticTypes[key]) || inferImplicitSemanticType(key, values)</c> (src/core/resolve-semantics.ts:436-439).</summary>
+    /// <summary><c>toTypeString(semanticTypes[key]) || inferImplicitSemanticType(key, values)</c> (src/core/resolve-semantics.ts:448-451
+    /// of flint-chart 1.1.1).</summary>
     private string EffectiveSemanticType(string key) =>
         SuppliedSemanticType(key) is { Length: > 0 } supplied ? supplied : ImplicitYear(key, Values(key));
 
@@ -371,7 +372,7 @@ internal sealed partial class FieldTypes
         };
     }
 
-    /// <summary><c>BANDED_CHART_TYPES</c> of the pinned package (src/core/decisions.ts).</summary>
+    /// <summary><c>BANDED_CHART_TYPES</c> (src/core/decisions.ts:64-67 of flint-chart 1.1.1).</summary>
     private static readonly HashSet<string> BandedChartTypes = new(StringComparer.Ordinal)
     {
         "Bar Chart", "Stacked Bar Chart", "Grouped Bar Chart", "Lollipop Chart", "Bar Table", "Waterfall Chart", "Pyramid Chart",
@@ -498,8 +499,9 @@ internal sealed partial class FieldTypes
         return dates.All(d => d == true) ? "temporal" : null;
     }
 
-    /// <summary>The <c>isDate</c> of 1.0.0's <c>inferVisCategory</c>; a string is a date when <c>isUnambiguousDateString</c>
-    /// holds: an <c>ISO_DATE</c> or US slash date that <c>Date.parse</c> reads, or a full date <c>parseTemporalByType</c> reads.</summary>
+    /// <summary>The <c>isDate</c> of <c>inferVisCategory</c> (src/core/semantic-types.ts:277-281 of flint-chart 1.1.1, as of
+    /// 1.0.0); a string is a date when <c>isUnambiguousDateString</c> holds: an <c>ISO_DATE</c> or US slash date that
+    /// <c>Date.parse</c> reads, or a full date <c>parseTemporalByType</c> reads.</summary>
     private static bool? IsDate(JsonNode? value)
     {
         if (Js.Kind(value) == JsonValueKind.String)

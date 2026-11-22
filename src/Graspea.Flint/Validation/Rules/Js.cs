@@ -235,12 +235,12 @@ internal static partial class Js
     private static readonly object Null = new();
 
     /// <summary>
-    /// Whether V8's <c>Date.parse</c> returns a number, as far as tests/fixtures/flint-chart@1.0.0/probes.json (<c>dateParse</c>)
-    /// records it: an ISO 8601 form of ECMA-262 §21.4.1.32, or the wider form of upstream's <c>ISO_DATE</c> (a space for
-    /// <c>T</c>, an offset without a colon, a longer fraction), parses when its month, day and time of day are in range
-    /// (<c>T24:00</c> too; a day past the month's end rolls over) and not when one is out of range; a US slash date
-    /// <c>M/D/YYYY</c> likewise; a string without an ASCII digit never parses. Null otherwise: V8's legacy parser accepts
-    /// more, such as <c>"Stage 1"</c>.
+    /// Whether V8's <c>Date.parse</c> returns a number, as far as tests/fixtures/flint-chart@1.1.1/probes.json (<c>dateParse</c>,
+    /// unchanged since 1.0.0) records it: an ISO 8601 form of ECMA-262 §21.4.1.32, or the wider form of upstream's
+    /// <c>ISO_DATE</c> (a space for <c>T</c>, an offset without a colon, a longer fraction), parses when its month, day and
+    /// time of day are in range (<c>T24:00</c> too; a day past the month's end rolls over) and not when one is out of range; a
+    /// US slash date <c>M/D/YYYY</c> likewise; a string without an ASCII digit never parses. Null otherwise: V8's legacy parser
+    /// accepts more, such as <c>"Stage 1"</c>.
     /// </summary>
     internal static bool? DateParses(string s)
     {
@@ -336,11 +336,11 @@ internal static partial class Js
     [GeneratedRegex(@"^[+-]?([0-9]+\.?[0-9]*([eE][+-]?[0-9]+)?|\.[0-9]+([eE][+-]?[0-9]+)?)$", RegexOptions.CultureInvariant)]
     private static partial Regex DecimalLiteral();
 
-    /// <summary>Upstream's <c>ISO_DATE</c> (src/core/semantic-types.ts), with the groups of <see cref="IsoDate"/>.</summary>
+    /// <summary>Upstream's <c>ISO_DATE</c> (src/core/semantic-types.ts:252 of flint-chart 1.1.1), with the groups of <see cref="IsoDate"/>.</summary>
     [GeneratedRegex(@"^(?<year>[0-9]{4})-(?<month>[0-9]{2})(-(?<day>[0-9]{2})([T ](?<hour>[0-9]{2}):(?<minute>[0-9]{2})(:(?<second>[0-9]{2})(\.(?<fraction>[0-9]+))?)?(?<offset>Z|[+-][0-9]{2}:?[0-9]{2})?)?)?\z", RegexOptions.CultureInvariant)]
     internal static partial Regex WideIsoDate();
 
-    /// <summary>Upstream's <c>US_SLASH_DATE</c>.</summary>
+    /// <summary>Upstream's <c>US_SLASH_DATE</c> (src/core/semantic-types.ts:254 of flint-chart 1.1.1).</summary>
     [GeneratedRegex(@"^([0-9]{1,2})/([0-9]{1,2})/[0-9]{4}\z", RegexOptions.CultureInvariant)]
     private static partial Regex UsSlashDate();
 

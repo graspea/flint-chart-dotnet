@@ -207,16 +207,16 @@ internal static class Excel
     }
 
     /// <summary>
-    /// Whether Excel reads <paramref name="channel"/> though its template does not declare it (flint-chart 1.0.1
-    /// src/excel/assemble.ts, probes.json <c>channelReads</c>). On the shared path: <c>color</c> of a Grouped Bar Chart with
+    /// Whether Excel reads <paramref name="channel"/> though its template does not declare it (src/excel/assemble.ts of
+    /// flint-chart 1.1.1, probes.json <c>channelReads</c>). On the shared path: <c>color</c> of a Grouped Bar Chart with
     /// no <c>group</c> bound and a <c>color</c> with a field, the group (<see cref="GroupedSeriesChannel"/>); off Pie and Donut, <c>group</c> with a field,
-    /// the series, or without a field beside a <c>color</c> with a field that is not quantitative, a categorical series it displaces (:270-275); <c>strokeDash</c> with a
-    /// field (:293), which splits the series (:403-448), and on a Scatter or Connected Scatter Plot without a series field
-    /// only shows the legend (:587-591); <c>size</c> and <c>order</c> with a field on the XY path (:294-295, :320-377): a
+    /// the series, or without a field beside a <c>color</c> with a field that is not quantitative, a categorical series it displaces (:271-276); <c>strokeDash</c> with a
+    /// field (:294), which splits the series (:404-449), and on a Scatter or Connected Scatter Plot without a series field
+    /// only shows the legend (:588-592); <c>size</c> and <c>order</c> with a field on the XY path (:295-296, :321-378): a
     /// Connected Scatter Plot reads <c>size</c>, a Scatter Plot <c>order</c>, and a Line Chart both when <c>x</c> and
-    /// <c>y</c> are quantitative (:309-314), assumed while the rows that decide it are not known; on a Pie or Donut Chart
+    /// <c>y</c> are quantitative (:310-315), assumed while the rows that decide it are not known; on a Pie or Donut Chart
     /// <c>x</c> while no <c>color</c> is bound (the slice) and <c>y</c> while neither <c>size</c> nor <c>theta</c> is (the
-    /// value, :277-281). A Histogram reads <c>y</c> as the value without an <c>x</c> field (templates/histogram.ts:19, :25).
+    /// value, :278-282). A Histogram reads <c>y</c> as the value without an <c>x</c> field (templates/histogram.ts:19, :25).
     /// Bound is any non-null value (the normalized encodings are truthy objects; a Grouped Bar Chart <c>color</c> also needs a field); a field is a non-empty one of a single
     /// encoding. <c>CatalogCheck</c> of Graspea.Flint.CSharp mirrors this for a template.
     /// </summary>

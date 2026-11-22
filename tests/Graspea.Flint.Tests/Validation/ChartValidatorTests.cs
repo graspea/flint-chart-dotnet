@@ -789,9 +789,9 @@ public sealed partial class ChartValidatorTests
         Assert.That(Issues(Grouped(13), FlintBackend.Excel, "excel_unsupported").Single().Channel, Is.EqualTo(new Channel("group")));
     }
 
-    // source: flint-chart 1.0.0 resolveTemporalEncoding (a temporal x or y on a banded chart type such as Boxplot is ordinal
-    // when readsAsSnapshots, which needs Date.parse) and boxplot.ts (a temporal x throws); design §6 (an undecidable type
-    // reports no Error)
+    // source: resolveTemporalEncoding (src/core/decisions.ts:318-347 of flint-chart 1.1.1, as of 1.0.0: a temporal x or y on
+    // a banded chart type such as Boxplot is ordinal when readsAsSnapshots, :343-345, and up to eight distinct dates are
+    // snapshots, :219) and boxplot.ts:12-13 (a temporal x throws); design §6 (an undecidable type reports no Error)
     [Test]
     public void Excel_BoxplotDateX_ReportsNoErrorWhileSnapshotsAreUndecided()
     {

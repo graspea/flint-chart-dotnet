@@ -494,9 +494,9 @@ internal sealed partial class ValidationRun
     private static partial Regex UnspecifiedDateTime();
 
     /// <summary>
-    /// A <c>TimeSpan</c> of a day or more (<c>"1.02:03:04"</c>), which flint-chart 1.0.0 infers as nominal; shorter ones look
-    /// like a time of day, which may be one, and are not reported (probe <c>valueInference</c>,
-    /// tests/fixtures/flint-chart@1.0.0/probes.json).
+    /// A <c>TimeSpan</c> of a day or more (<c>"1.02:03:04"</c>), which flint-chart infers as nominal (since 1.0.0); shorter ones
+    /// look like a time of day, which may be one, and are not reported (probe <c>valueInference</c>,
+    /// tests/fixtures/flint-chart@1.1.1/probes.json).
     /// </summary>
     [GeneratedRegex(@"^-?\d+\.\d{2}:\d{2}:\d{2}(\.\d+)?$", RegexOptions.CultureInvariant)]
     private static partial Regex DayTimeSpan();

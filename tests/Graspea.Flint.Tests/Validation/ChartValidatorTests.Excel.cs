@@ -86,7 +86,7 @@ public sealed partial class ChartValidatorTests
         yield return SpecCase("waterfall explicit last total", "Waterfall Chart", [("x", "city"), ("y", "revenue")], null, "cannot mark a final total", totals: "last"); // waterfall.ts:32-34
     }
 
-    // source: src/excel/templates/*.ts of flint-chart 1.0.1 (each case names its template line) and src/core/resolve-semantics.ts:547-564, :583-589, :682-689 (the spec decides the type)
+    // source: src/excel/templates/*.ts of flint-chart 1.1.1 (each case names its template line) and src/core/resolve-semantics.ts:565-582, :601-607, :700-707 (the spec decides the type)
     [TestCaseSource(nameof(SpecDecidedExcelRules))]
     public void Excel_SpecDecidedRule_IsReportedWithoutRows(Action<ChartAssemblyInput> spec, string? channel, string reason)
     {
@@ -110,7 +110,7 @@ public sealed partial class ChartValidatorTests
         }
     }
 
-    // source: resolve-semantics.ts:557-564 (ISO hack from quantitative only), :682-689 (aggregate), :547-555 (explicit type over the semantic type)
+    // source: resolve-semantics.ts:575-582 of flint-chart 1.1.1 (ISO hack from quantitative only), :700-707 (aggregate), :565-573 (explicit type over the semantic type)
     [Test]
     public void Excel_TypesTheRowsDecide_AreSkippedWithoutRows()
     {
@@ -246,7 +246,7 @@ public sealed partial class ChartValidatorTests
     }
 
     // source: normalizeChartEncodingAliases (a bound group wins and color stays a channel Excel never reads); verified with
-    // assembleExcel on flint-chart 1.0.1: a nominal group with a quantitative color assembles, a continuous group throws
+    // assembleExcel on flint-chart 1.1.1: a nominal group with a quantitative color assembles, a continuous group throws
     // whatever the color, and an encoding with an empty field still counts as bound
     [Test]
     public void Excel_GroupedBarWithGroup_IgnoresColor()
@@ -297,8 +297,8 @@ public sealed partial class ChartValidatorTests
     private static string[] UnsupportedOnExcel(ChartAssemblyInput input) =>
         Issues(input, FlintBackend.Excel, "unsupported_channel").Select(i => i.Path).ToArray();
 
-    // source: src/excel/assemble.ts:270-275 (seriesCand = encodings.group ? 'group' : a categorical color: the series of
-    // every shared-path template but Pie and Donut, which read none, :277-281); the Excel Line template does not declare
+    // source: src/excel/assemble.ts:271-276 of flint-chart 1.1.1 (seriesCand = encodings.group ? 'group' : a categorical
+    // color: the series of every shared-path template but Pie and Donut, which read none, :278-282); the Excel Line template does not declare
     // group (src/excel/templates/line.ts:8); probes.json channelReads
     [Test]
     public void Excel_GroupOnALineChart_IsReadAsTheSeries()
@@ -315,8 +315,8 @@ public sealed partial class ChartValidatorTests
         }
     }
 
-    // source: src/excel/assemble.ts:293 (dashField = fieldOf('strokeDash')), :403-448 (the series descriptors and formats
-    // off the XY path) and :587-591 (the legend shows for a series or a dash field)
+    // source: src/excel/assemble.ts:294 of flint-chart 1.1.1 (dashField = fieldOf('strokeDash')), :404-449 (the series
+    // descriptors and formats off the XY path) and :588-592 (the legend shows for a series or a dash field)
     [Test]
     public void Excel_StrokeDashWithAField_IsRead()
     {
@@ -332,8 +332,8 @@ public sealed partial class ChartValidatorTests
         }
     }
 
-    // source: src/excel/assemble.ts:294-295 and :320-377 (size and order are read on the XY path: a Scatter or Connected
-    // Scatter Plot, mapping.xy, :282-283, and a Line Chart over quantitative x and y, numericXLine, :309-314)
+    // source: src/excel/assemble.ts:295-296 and :321-378 of flint-chart 1.1.1 (size and order are read on the XY path: a
+    // Scatter or Connected Scatter Plot, mapping.xy, :283-284, and a Line Chart over quantitative x and y, numericXLine, :310-315)
     [Test]
     public void Excel_SizeAndOrder_AreReadOnTheXyPath()
     {
@@ -353,7 +353,7 @@ public sealed partial class ChartValidatorTests
         }
     }
 
-    // source: src/excel/assemble.ts:277-281 (a Pie or Donut Chart takes color, else x, as the slice and size, else theta,
+    // source: src/excel/assemble.ts:278-282 of flint-chart 1.1.1 (a Pie or Donut Chart takes color, else x, as the slice and size, else theta,
     // else y, as the value; a bound encoding of any shape shadows the next) and src/excel/templates/histogram.ts:19, :25
     // (y is the value without an x field)
     [Test]
@@ -411,7 +411,7 @@ public sealed partial class ChartValidatorTests
     private static string[] ExcelErrors(ChartAssemblyInput input) =>
         Issues(input, FlintBackend.Excel, "excel_unsupported").Select(i => $"{i.Path}: {i.Message}").ToArray();
 
-    // source: src/excel/assemble.ts:201, :216, :225 (the templates read convertedData) and src/core/resolve-semantics.ts:428-483
+    // source: src/excel/assemble.ts:202, :217, :226 of flint-chart 1.1.1 (the templates read convertedData) and src/core/resolve-semantics.ts:440-501
     // (convertTemporalData writes every value of a temporal key of the first row as a string: a YearMonth 202501 is
     // "2025-01", a timestamp an ISO date-time, null "null"); src/excel/templates/histogram.ts:25-27 (Number of each value);
     // probe cases "histogram with an empty x field and a numeric empty key", "... a YearMonth empty key" and "histogram of
@@ -441,7 +441,7 @@ public sealed partial class ChartValidatorTests
         }
     }
 
-    // source: src/core/resolve-semantics.ts:428-483 and src/excel/templates/radar.ts:45-47 (String of each converted metric):
+    // source: src/core/resolve-semantics.ts:440-501 of flint-chart 1.1.1 and src/excel/templates/radar.ts:45-47 (String of each converted metric):
     // three spellings of one YearMonth, or of one untyped date, are one metric; probe case "radar with one YearMonth metric
     // in three spellings"
     [Test]
@@ -463,8 +463,8 @@ public sealed partial class ChartValidatorTests
         }
     }
 
-    // source: src/core/resolve-semantics.ts:428-483 and src/excel/templates/pyramid.ts:38-41 (the non-null distinct converted
-    // values): a null date is the string "null", a missing one "undefined", and 2024 and "2024" of a Year are one group, a two-digit Year string is its four-digit year (expandToFullYear, :412-419) and a fractional Year its floor (:458-459);
+    // source: src/core/resolve-semantics.ts:440-501 of flint-chart 1.1.1 and src/excel/templates/pyramid.ts:38-41 (the non-null distinct converted
+    // values): a null date is the string "null", a missing one "undefined", and 2024 and "2024" of a Year are one group, a two-digit Year string is its four-digit year (expandToFullYear, :424-431) and a fractional Year its floor (:475-476);
     // probe cases "pyramid with a date color and a null" and "pyramid with a Year color as numbers and strings"
     [Test]
     public void Excel_PyramidGroups_AreCountedAfterTheTemporalConversion()
@@ -487,7 +487,7 @@ public sealed partial class ChartValidatorTests
         }
     }
 
-    // source: src/core/resolve-semantics.ts:428-483 and src/excel/templates/waterfall.ts:22, :32 (resolveTotalsMode over the
+    // source: src/core/resolve-semantics.ts:440-501 of flint-chart 1.1.1 and src/excel/templates/waterfall.ts:22, :32 (resolveTotalsMode over the
     // finite converted values): YearMonth values are strings, so no last value reconciles; probe case "waterfall of a
     // quantitative YearMonth y"
     [Test]
@@ -505,8 +505,8 @@ public sealed partial class ChartValidatorTests
         }
     }
 
-    // source: src/core/resolve-semantics.ts:428-483 and src/excel/templates/candlestick.ts:40-53 (new Date of each converted
-    // x): a null date is "null", an invalid date; a Date 20250102 is "2025-01-02"; a month-name date is an ISO date; a seconds or a milliseconds timestamp is its ISO instant (isLikelyTimestamp and timestampToMs, :223-231, read at :460-461); probe
+    // source: src/core/resolve-semantics.ts:440-501 of flint-chart 1.1.1 and src/excel/templates/candlestick.ts:40-53 (new Date of each converted
+    // x): a null date is "null", an invalid date; a Date 20250102 is "2025-01-02"; a month-name date is an ISO date; a seconds or a milliseconds timestamp is its ISO instant (isLikelyTimestamp and timestampToMs, :235-243, read at :477-478); probe
     // cases "candlestick with a null first date" and "candlestick with month-name dates out of order"
     [Test]
     public void Excel_CandlestickRows_AreReadAfterTheTemporalConversion()
