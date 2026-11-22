@@ -314,6 +314,62 @@ public sealed class CatalogCheckTests
         Assert.That(Check(json).Where(i => i.Id == "FLINT115").Select(Describe), Is.EqualTo(new[] { expected }));
     }
 
+    private const string BarEncodings = "\"chart_spec\":{\"chartType\":\"Bar Chart\",\"encodings\":{\"x\":\"a\",\"y\":\"b\"}}";
+
+    // source: ValidationRun.AnnotationOptionChecks and AnnotationOptions.Evaluate (invalid_annotation_option: an Error where
+    // the template is on Vega-Lite, an Info on a template Vega-Lite does not have; the options' member, or the theme's
+    // compile defaults where the options leave it out or null, which the typed model does not write) and
+    // src/Graspea.Flint.Generators/README.md (FLINT115: a rule that makes the assemblers throw and needs no data)
+    [TestCase("{\"options\":{\"notes\":[null]}," + BarEncodings + "}", "FLINT115 invalid_annotation_option Error options.notes[0] @1:22")]
+    [TestCase("{\"theme_spec\":{\"compileDefaults\":{\"regions\":[null]}}," + BarEncodings + "}",
+        "FLINT115 invalid_annotation_option Error theme_spec.compileDefaults.regions[0] @1:46")]
+    [TestCase("{\"options\":{\"regions\":null},\"theme_spec\":{\"compileDefaults\":{\"regions\":[null]}}," + BarEncodings + "}",
+        "FLINT115 invalid_annotation_option Error theme_spec.compileDefaults.regions[0] @1:73")]
+    [TestCase("{\"options\":{\"regions\":[{\"text\":\"t\",\"x\":\"ab\",\"placement\":null}]}," + BarEncodings + "}",
+        "FLINT115 invalid_annotation_option Error options.regions[0].x @1:40")]
+    [TestCase("{\"options\":{\"enclosures\":[{\"targets\":[{\"select\":{\"where\":{\"city\":{\"in\":\"x\"}}}}]}]}," + BarEncodings + "}",
+        "FLINT115 invalid_annotation_option Error options.enclosures[0].targets[0].select.where.city.in @1:72")]
+    [TestCase("{\"options\":{\"notes\":[{}]},\"chart_spec\":{\"chartType\":\"Funnel Chart\",\"encodings\":{}}}",
+        "FLINT115 invalid_annotation_option Info options.notes[0].key @1:22")]
+    public void Run_AnnotationOptionVegaLiteThrowsOn_IsFlint115(string json, string expected)
+    {
+        Assert.That(Check(json).Where(i => i.Code == "invalid_annotation_option").Select(Describe), Is.EqualTo(new[] { expected }));
+    }
+
+    // source: design §12.10 (the core's codes equal the validator's data-independent codes with the same severity) over
+    // every fault and non-fault form of AnnotationOptions.Evaluate, run as the corpus test runs the validator
+    [TestCase("\"notes\":[null,{},{\"key\":null},{\"key\":{}},{\"key\":{\"a\":1}},{\"key\":{\"a\":1},\"text\":\"t\"},{\"key\":{\"a\":1},\"text\":null},{\"key\":{\"a\":1},\"text\":\"\"}]")]
+    [TestCase("\"regions\":[null,{},{\"text\":\"t\",\"x\":\"ab\"},{\"text\":\"t\",\"x\":\"ab\",\"placement\":null},{\"text\":\"t\",\"x\":\"ab\",\"placement\":\"top\"},"
+        + "{\"text\":\"t\",\"x\":\"ab\",\"placement\":\"bottom\"},{\"text\":\"t\",\"x\":\"ab\",\"y\":[1]},{\"text\":\"t\",\"x\":\"ab\",\"y\":\"\"},{\"text\":\"t\",\"x\":{\"length\":2}},"
+        + "{\"text\":\"t\",\"x\":{\"length\":0}},{\"text\":\"\",\"x\":\"ab\"},{\"text\":\"t\",\"x\":[1,2]},{\"text\":\"t\",\"x\":5},{\"text\":\"t\",\"x\":\"ab\",\"y\":{\"length\":\"n\"}}]")]
+    [TestCase("\"enclosures\":[null,{},{\"targets\":null},{\"targets\":\"a\"},{\"targets\":5},{\"targets\":{}},{\"targets\":[0,\"\",null,false,[],{}]},{\"targets\":[1]},"
+        + "{\"targets\":[true]},{\"targets\":[\"s\"]},{\"targets\":[{\"select\":null}]},{\"targets\":[{\"select\":5}]},{\"targets\":[{\"select\":{}}]},"
+        + "{\"targets\":[{\"select\":[]}]},{\"targets\":[{\"select\":{\"key\":null}}]},{\"targets\":[{\"select\":{\"key\":{\"a\":1}}}]},{\"targets\":[{\"select\":{\"key\":\"k\"}}]}]")]
+    [TestCase("\"enclosures\":[{\"targets\":[{\"select\":{\"where\":null}}]},{\"targets\":[{\"select\":{\"where\":{\"city\":null}}}]},"
+        + "{\"targets\":[{\"select\":{\"where\":{\"city\":5}}}]},{\"targets\":[{\"select\":{\"where\":{\"city\":{\"in\":\"x\"}}}}]},"
+        + "{\"targets\":[{\"select\":{\"where\":{\"city\":{\"in\":null}}}}]},{\"targets\":[{\"select\":{\"where\":{\"city\":{\"in\":[\"x\"]}}}}]},"
+        + "{\"targets\":[{\"select\":{\"where\":{\"city\":{}}}}]},{\"targets\":[{\"select\":{\"where\":{\"city\":{\"range\":null}}}}]},"
+        + "{\"targets\":[{\"select\":{\"where\":{\"city\":{\"range\":[1,2]}}}}]},{\"targets\":[{\"select\":{\"where\":{\"city\":[]}}}]},"
+        + "{\"targets\":[{\"select\":{\"where\":\"ab\"}}]},{\"targets\":[{\"select\":{\"where\":\"\"}}]},{\"targets\":[{\"select\":{\"where\":5}}]},"
+        + "{\"targets\":[{\"select\":{\"where\":[{\"in\":[]}]}}]},{\"targets\":[{\"select\":{\"where\":{\"a\":{\"in\":[]},\"b\":null}}}]}]")]
+    public void Run_AnnotationOptionForms_EqualTheValidatorWithoutRows(string members)
+    {
+        foreach (var json in new[]
+        {
+            $"{{\"options\":{{{members}}},{BarEncodings}}}",
+            $"{{\"theme_spec\":{{\"compileDefaults\":{{{members}}}}},{BarEncodings}}}",
+            $"{{\"options\":{{}},\"theme_spec\":{{\"extends\":\"nyt\",\"compileDefaults\":{{{members}}}}},\"chart_spec\":{{\"chartType\":\"Funnel Chart\",\"encodings\":{{}}}}}}",
+        })
+        {
+            var expected = ChartTemplate.Create<JsonObject>(FlintJson.Deserialize(json)).Validate().Issues
+                .Where(i => i.Code == "invalid_annotation_option").Select(i => $"{i.Code} {i.Severity} {i.Path}").ToList();
+            var actual = Check(json).Where(i => i.Code == "invalid_annotation_option").Select(i => $"{i.Code} {i.Severity} {i.Path}").ToList();
+
+            Assert.That(expected, Is.Not.Empty, json);
+            Assert.That(actual, Is.EqualTo(expected), json);
+        }
+    }
+
     // source: ValidationRun.PropertyChecks (unknown_chart_property unless a host-state key, continuous_out_of_range),
     // LiteralChecks (invalid_literal), RequiredChannelChecks (required_channel_missing) and CanvasChecks
     // (canvas_too_large), all Info
@@ -402,7 +458,7 @@ public sealed class CatalogCheckTests
         "missing_encodings", "channel_null", "reserved_semantic_type", "series_multiple_channels", "series_channel_not_xy",
         "series_too_few", "series_field_missing", "series_duplicate_field", "series_color_bound", "series_nominal_entry",
         "unknown_chart_property", "continuous_out_of_range", "invalid_literal", "semantic_type_without_field", "canvas_too_large",
-        "required_channel_missing", "retired_member", "update_null", "negative_diverging_neutral",
+        "required_channel_missing", "retired_member", "update_null", "negative_diverging_neutral", "invalid_annotation_option",
     };
 
     // source: design §12.10 (catalog checks: over the fixtures and probe cases, the core's codes equal the validator's

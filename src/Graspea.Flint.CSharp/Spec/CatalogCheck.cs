@@ -108,6 +108,7 @@ internal sealed class CatalogCheck
         AnnotationChecks();
         RequiredChannelChecks(encodings);
         CanvasChecks(chartSpec);
+        AnnotationOptionChecks();
         UpdateChecks();
         UnknownKeys(chartSpec);
     }
@@ -707,6 +708,217 @@ internal sealed class CatalogCheck
             }
         }
     }
+
+    private static readonly string[] AnnotationOptionMembers = ["notes", "regions", "enclosures"];
+
+    /// <summary>The validator's <c>AnnotationOptionChecks</c> and <c>AnnotationOptions.Evaluate</c>: an entry of
+    /// <c>notes</c>, <c>regions</c> or <c>enclosures</c> that the Vega-Lite compile throws on reading (src/vegalite/note-room.ts
+    /// and src/core/target-selector.ts of flint-chart 1.1.1), of <c>options</c> or, for a member the options leave out,
+    /// of <c>theme_spec.compileDefaults</c>; the first fault of each entry in upstream's order. An Error where the template
+    /// is on Vega-Lite, an Info elsewhere. The validator reads the JSON the typed model writes, which leaves out a member
+    /// that is <c>null</c> (an option, a compile default, a region's <c>placement</c>), so these read as absent here.</summary>
+    private void AnnotationOptionChecks()
+    {
+        if (_targets.Length == 0)
+        {
+            return;
+        }
+
+        var options = _spec.Root.Get("options") is { IsObject: true } o ? o : null;
+        var house = _spec.Root.Get("theme_spec") is { IsObject: true } theme && theme.Get("compileDefaults") is { IsObject: true } d ? d : null;
+        foreach (var member in AnnotationOptionMembers)
+        {
+            var (root, value) = Written(options, member) is { } stated ? ("options", stated)
+                : Written(house, member) is { } defaulted ? ("theme_spec.compileDefaults", defaulted)
+                : (null, null);
+            if (value is not { IsArray: true } entries)
+            {
+                continue;
+            }
+
+            var option = $"{root}.{member}";
+            for (var i = 0; i < entries.Items.Count; i++)
+            {
+                var at = $"{option}[{i}]";
+                var entry = entries.Items[i];
+                var fault = member switch
+                {
+                    "notes" => NoteFault(at, entry),
+                    "regions" => RegionFault(at, entry),
+                    _ => EnclosureFault(at, entry),
+                };
+                if (fault is { } f)
+                {
+                    PerTarget("invalid_annotation_option", f.Path, f.Node, t => t.Backend == "vegalite" ? SpecSeverity.Error : SpecSeverity.Info,
+                        (severity, on) => severity == SpecSeverity.Error
+                            ? $"{f.Fact}; {f.Reason}. Throws on {string.Join(", ", on)}."
+                            : $"{f.Fact}; {string.Join(", ", on)} {(on.Count == 1 ? "does" : "do")} not read {option}, but Vega-Lite throws on it.");
+                }
+            }
+        }
+    }
+
+    /// <summary>A member as the typed model writes it: absent when it is <c>null</c>.</summary>
+    private static JsonItem? Written(JsonItem? owner, string key) => owner?.Get(key) is { IsNull: false } value ? value : null;
+
+    private static (string Path, JsonItem Node, string Fact, string Reason)? NoteFault(string at, JsonItem note)
+    {
+        if (note.IsNull)
+        {
+            return (at, note, $"{at} is null", "Vega-Lite reads the key of every note");
+        }
+
+        if (Written(note, "key") is not { } key)
+        {
+            return ($"{at}.key", note, $"{at} has no key", "Vega-Lite reads the fields of every note's key");
+        }
+
+        // A key without fields names no mark, and the text is never read.
+        return EntryCount(key) > 0 && Written(note, "text") is null
+            ? ($"{at}.text", note, $"{at} has a key but no text", "Vega-Lite measures the text of a note whose key names a mark")
+            : null;
+    }
+
+    private static (string Path, JsonItem Node, string Fact, string Reason)? RegionFault(string at, JsonItem region)
+    {
+        if (region.IsNull)
+        {
+            return (at, region, $"{at} is null", "Vega-Lite reads the text of every region");
+        }
+
+        var x = Written(region, "x");
+        var placement = Written(region, "placement");
+        var captionedAtTop = Truthy(Written(region, "text")) && TruthyLength(x) && !TruthyLength(Written(region, "y"))
+            && (placement is null || placement is { IsString: true, Value: "top" });
+        return captionedAtTop && !x!.IsArray
+            ? ($"{at}.x", x, $"{at}.x is {JsonText.Compact(x)}, not an array", "Vega-Lite maps the stretch of a region captioned at the top")
+            : null;
+    }
+
+    private static (string Path, JsonItem Node, string Fact, string Reason)? EnclosureFault(string at, JsonItem enclosure)
+    {
+        if (enclosure.IsNull)
+        {
+            return (at, enclosure, $"{at} is null", "Vega-Lite reads the targets of every enclosure");
+        }
+
+        if (Written(enclosure, "targets") is not { } targets)
+        {
+            return null;
+        }
+
+        if (!targets.IsArray)
+        {
+            return ($"{at}.targets", targets, $"{at}.targets is {JsonText.Compact(targets)}, not an array", "Vega-Lite reads the targets of every enclosure as an array");
+        }
+
+        for (var j = 0; j < targets.Items.Count; j++)
+        {
+            if (TargetFault($"{at}.targets[{j}]", targets.Items[j]) is { } fault)
+            {
+                return fault;
+            }
+        }
+
+        return null;
+    }
+
+    private static (string Path, JsonItem Node, string Fact, string Reason)? TargetFault(string at, JsonItem target)
+    {
+        if (!Truthy(target))
+        {
+            return null;
+        }
+
+        if (!IsObjectOrArray(target))
+        {
+            return (at, target, $"{at} is {JsonText.Compact(target)}", "Vega-Lite looks for a select in every target but null, false, 0 and \"\"");
+        }
+
+        if (target.Get("select") is not { } select)
+        {
+            return null;
+        }
+
+        var sat = $"{at}.select";
+        const string selector = "Vega-Lite reads the where or the key of a target's select";
+        if (!IsObjectOrArray(select))
+        {
+            return (sat, select, $"{sat} is {JsonText.Compact(select)}", selector);
+        }
+
+        if (select.Get("where") is not { } where)
+        {
+            return select.Get("key") is { IsNull: false } ? null : (sat, select, $"{sat} has neither a where nor a key", selector);
+        }
+
+        if (where.IsNull)
+        {
+            return ($"{sat}.where", where, $"{sat}.where is null", "Vega-Lite reads the fields of a select's where");
+        }
+
+        const string condition = "Vega-Lite reads the in or the range of each where condition";
+        if (where.IsString)
+        {
+            // Object.entries of a string: its characters, each a string, which is not a condition.
+            return where.Value!.Length == 0 ? null
+                : ($"{sat}.where.0", where, $"{sat}.where.0 is {JsonText.String(where.Value.Substring(0, 1))}", condition);
+        }
+
+        foreach (var (field, value) in Entries(where))
+        {
+            var cat = $"{sat}.where.{field}";
+            if (!IsObjectOrArray(value))
+            {
+                return (cat, value, $"{cat} is {JsonText.Compact(value)}", condition);
+            }
+
+            if (value.Get("in") is { } members)
+            {
+                if (!members.IsArray)
+                {
+                    return ($"{cat}.in", members, $"{cat}.in is {JsonText.Compact(members)}, not an array", "Vega-Lite maps the in of a where condition");
+                }
+            }
+            else if (value.Get("range") is not { IsNull: false })
+            {
+                return (cat, value, $"{cat} has neither an in nor a range", condition);
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary><c>Object.entries(v)</c> of an object or an array: the members, or each index and element; nothing for a
+    /// number or a boolean (the callers handle a string).</summary>
+    private static List<(string Key, JsonItem Value)> Entries(JsonItem item) =>
+        item.IsObject ? item.Members.Select(m => (m.Key, m.Value)).ToList()
+        : item.Items.Select((v, i) => (i.ToString(CultureInfo.InvariantCulture), v)).ToList();
+
+    /// <summary>The count of <c>Object.entries(v)</c>: members, elements or characters.</summary>
+    private static int EntryCount(JsonItem item) => item.IsObject ? item.Members.Count : item.IsArray ? item.Items.Count : item.IsString ? item.Value!.Length : 0;
+
+    /// <summary>A JSON value as JavaScript's <c>Boolean(v)</c> reads it; an absent value is <c>undefined</c>.</summary>
+    private static bool Truthy(JsonItem? item) => item?.Kind switch
+    {
+        null or JsonItemKind.Null or JsonItemKind.False => false,
+        JsonItemKind.Number => Number(item.Value!) != 0,
+        JsonItemKind.String => item.Value!.Length > 0,
+        _ => true,
+    };
+
+    /// <summary><c>v?.length</c> read as a boolean: a string's or an array's length, an object's <c>length</c> member; a
+    /// number or a boolean has none.</summary>
+    private static bool TruthyLength(JsonItem? item) => item?.Kind switch
+    {
+        JsonItemKind.Array => item.Items.Count > 0,
+        JsonItemKind.Object => Truthy(item.Get("length")),
+        JsonItemKind.String => item.Value!.Length > 0,
+        _ => false,
+    };
+
+    /// <summary>The right-hand side the <c>in</c> operator accepts: an object or an array.</summary>
+    private static bool IsObjectOrArray(JsonItem item) => item.IsObject || item.IsArray;
 
     private void UnknownKeys(JsonItem chartSpec)
     {
