@@ -602,8 +602,10 @@ internal sealed partial class ValidationRun
 
             if (invalidOn.Length > 0)
             {
+                // flint-chart 1.1.0+ appends ", or <acceptsLabel>" for a def with a label (normalize-properties.ts:97).
+                var accepts = invalidOn.Select(t => template[t].Properties[key].AcceptsLabel).Where(l => !string.IsNullOrEmpty(l)).Distinct(StringComparer.Ordinal);
                 Add(IssueSeverity.Warning, Codes.InvalidOptionValue, path,
-                    $"{value.ToJsonString()} is not an option of \"{key}\" on {string.Join(", ", invalidOn.Select(Id))}; upstream drops it (invalid-option-value) and uses the default.");
+                    $"{value.ToJsonString()} is not an option of \"{key}\" on {string.Join(", ", invalidOn.Select(Id))}{string.Concat(accepts.Select(l => $", or {l}"))}; upstream drops it (invalid-option-value) and uses the default.");
             }
 
             var undeclaredOn = targets.Where(t => !template[t].Properties.ContainsKey(key)).ToArray();
@@ -645,9 +647,10 @@ internal sealed partial class ValidationRun
     private string? Retired(FlintBackend b, string member) =>
         CatalogTables.Retired.GetValueOrDefault($"catalog.chartTypes[{input.ChartSpec.ChartType.Name}].backends.{Id(b)}.{member}");
 
-    /// <summary><c>normalizeChartProperties</c>: a value equal to an option value under <c>sameOptionValue</c> (===, or for
-    /// two arrays the same length with every entry ===), or a string equal to an option label ignoring case and surrounding
-    /// whitespace.</summary>
+    /// <summary><c>normalizeChartProperties</c> (src/core/normalize-properties.ts:55-84 of flint-chart 1.1.1): a value equal to
+    /// an option value under <c>sameOptionValue</c> (===, or for two arrays the same length with every entry ===), a value the
+    /// def's <c>accepts</c> predicate holds for (flint-chart 1.1.0+, <see cref="Rules.Accepts"/>), or a string equal to an
+    /// option label ignoring case and surrounding whitespace.</summary>
     private static bool Accepts(PropertyRow property, JsonNode value)
     {
         foreach (var option in property.Options ?? [])
@@ -656,6 +659,11 @@ internal sealed partial class ValidationRun
             {
                 return true;
             }
+        }
+
+        if (Rules.Accepts.Keeps(property, value))
+        {
+            return true;
         }
 
         return Js.Kind(value) == JsonValueKind.String && property.Labels is { } labels

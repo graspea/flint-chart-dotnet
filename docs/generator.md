@@ -321,7 +321,7 @@ These entries were reviewed on `main` while 1.0.1 was pinned. Each path is liste
 | `docs["ChartUpdateOp"]` | | The alias has no JSDoc, so the base's summary is the generic "The `ChartUpdateOp` union.", and the list of classes already says they are told apart by `op`. The remark adds what the d.ts says only on `ChartUpdate` and `ChartAssemblyInput.updates`: an op belongs to an update with an `id`, only the interactive runtime applies the updates (Vega-Lite), and a host's own update replaces the spec's update with the same `id` ([Discriminated unions](#discriminated-unions)) |
 | `docs["ChartUpdateOp[set-annotation]"]` | | Upstream marks the op deprecated with a `@deprecated` tag on its `op` member. The class's summary does not carry the tag. flint-chart 1.1.0 deprecated `set-annotation`: it still reads it as `annotate-text` and reports a `deprecated_op` warning, and 2.0 removes it. The remark says to write `AnnotateTextOp` |
 | `imageChartsSource["src/image-charts/assemble.ts"]` = [1.0.1 value, `191dafb0cda1684b0cd9120ce7dabc6f9036b15377dec251f09e5018b10bef19`] | | The review of the 1.1.0 file, below. Not in `pending`: an extra reviewed value is accepted on any version |
-| `acceptsSource["boundaries"]`, `acceptsSource["mapStyle"]` | | The files the C# predicates are to be ported from, below. In `pending` as `acceptsSource[boundaries]` and `acceptsSource[mapStyle]` |
+| `acceptsSource["boundaries"]`, `acceptsSource["mapStyle"]` | | The files the C# predicates are ported from, below. In `pending` as `acceptsSource[boundaries]` and `acceptsSource[mapStyle]` |
 
 ### Image-Charts review for 1.1.0
 
@@ -340,7 +340,7 @@ Each predicate reads only its own file, so each key has one fingerprint:
 | `boundaries` | `src/chart-types/boundaries.ts` | `fa2f2d9121b9672369b2f89dbc595cf9189505fa2f583309660145f1fa12e3f0` |
 | `mapStyle` | `src/vegalite/templates/map-style.ts` | `300132fa949f199326b6016bec90a6afc587862296c978cb6aeaa0209637e557` |
 
-The C# ports (`Accepts.cs` and its `CatalogCheck.cs` mirror) come with the sync. Until then the validator reports `invalid_option_value` on 1.1.1 for a boundary file or map style that upstream accepts. The crafted cases in `probe-cases.jsonl` ([fixtures.md](fixtures.md)) record upstream accepting them, so their contract tests fail on 1.1.1 until the ports land.
+The C# ports, `src/Graspea.Flint/Validation/Rules/Accepts.cs` and its mirror in `src/Graspea.Flint.CSharp/Spec/CatalogCheck.cs`, are read from these files of 1.1.1. The crafted cases in `probe-cases.jsonl` ([fixtures.md](fixtures.md)) record upstream accepting and rejecting such values, and the contract tests check the validator against them and the catalog checks against the validator.
 
 ## Naming results on the 0.5.1 IR
 

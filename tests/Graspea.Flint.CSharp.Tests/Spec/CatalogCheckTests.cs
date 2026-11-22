@@ -158,6 +158,107 @@ public sealed class CatalogCheckTests
         }
     }
 
+    // source: flint-chart 1.1.1 src/core/normalize-properties.ts:63-65 (a value the def's accepts holds for is kept) with
+    // isBoundaryFile (src/chart-types/boundaries.ts:63-80) for boundaries and isCustomMapStyle
+    // (src/vegalite/templates/map-style.ts:55, :74, :78-84) for mapStyle, which only the Vega-Lite Map and Choropleth declare;
+    // the same cases as the validator's ChartValidatorTests.Warnings_InvalidOptionValue_KeepsWhatAnAcceptsPredicateTakes, and
+    // the core and the validator agree
+    [TestCase("boundaries", "{\"url\":\"https://example.com/regions.json\"}", true)]
+    [TestCase("boundaries", "{\"url\":\"\"}", false)]
+    [TestCase("boundaries", "{\"url\":\"  \"}", false)]
+    [TestCase("boundaries", "{\"url\":\"\\u00a0\\u2028\\ufeff\"}", false)]
+    [TestCase("boundaries", "{\"url\":5}", false)]
+    [TestCase("boundaries", "{\"url\":{\"coarse\":\"coarse.json\"}}", true)]
+    [TestCase("boundaries", "{\"url\":{\"medium\":\"medium.json\"}}", true)]
+    [TestCase("boundaries", "{\"url\":{\"coarse\":\"coarse.json\",\"medium\":\"medium.json\"}}", true)]
+    [TestCase("boundaries", "{\"url\":{\"coarse\":\"coarse.json\",\"medium\":5}}", false)]
+    [TestCase("boundaries", "{\"url\":{\"coarse\":\"coarse.json\",\"medium\":null}}", false)]
+    [TestCase("boundaries", "{\"url\":{\"coarse\":\" \",\"medium\":\"medium.json\"}}", false)]
+    [TestCase("boundaries", "{\"url\":{\"fine\":\"fine.json\"}}", false)]
+    [TestCase("boundaries", "{\"url\":{}}", false)]
+    [TestCase("boundaries", "{\"url\":[\"regions.json\"]}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"values\":{}}", false)]
+    [TestCase("boundaries", "{\"values\":{\"type\":\"Topology\",\"objects\":{},\"arcs\":[]},\"feature\":\"countries\"}", true)]
+    [TestCase("boundaries", "{\"values\":{}}", true)]
+    [TestCase("boundaries", "{\"values\":[]}", false)]
+    [TestCase("boundaries", "{\"values\":\"regions\"}", false)]
+    [TestCase("boundaries", "{\"values\":null,\"url\":\"regions.json\"}", true)]
+    [TestCase("boundaries", "{\"feature\":\"countries\"}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"feature\":null}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"feature\":5}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"feature\":\"\"}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"ids\":\"iso-numeric\"}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"ids\":\"iso3\"}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"ids\":\"iso2\"}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"ids\":\"fips\"}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"ids\":\"as-is\"}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"ids\":\"ISO3\"}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"ids\":\"state-codes\"}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"ids\":null}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"key\":\"name\"}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"key\":\" \"}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"key\":\"\"}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"key\":null}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"key\":5}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"disputed\":\"lines\"}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"disputed\":null}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"disputed\":true}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"attribution\":\"Regions of the sample\"}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"attribution\":{\"text\":\"Regions of the sample\"}}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"attribution\":{\"text\":\"\",\"href\":5}}", true)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"attribution\":{}}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"attribution\":{\"text\":5}}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"attribution\":[]}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"attribution\":null}", false)]
+    [TestCase("boundaries", "{\"url\":\"regions.json\",\"projection\":\"mercator\",\"note\":null}", true)]
+    [TestCase("boundaries", "[]", false)]
+    [TestCase("boundaries", "5", false)]
+    [TestCase("mapStyle", "{\"base\":\"dark\",\"sea\":\"#000000\"}", true)]
+    [TestCase("mapStyle", "{\"land\":\"#eeeeee\"}", true)]
+    [TestCase("mapStyle", "{\"base\":\"minimal\"}", true)]
+    [TestCase("mapStyle", "{\"sea\":\"#e0f0ff\",\"land\":\"#f6f6f4\",\"coast\":\"#999999\",\"border\":\"#ffffff\",\"noData\":\"#dddddd\",\"graticule\":\"#eeeeee\",\"disputed\":\"#888888\"}", true)]
+    [TestCase("mapStyle", "{}", false)]
+    [TestCase("mapStyle", "{\"sea\":\"  \"}", false)]
+    [TestCase("mapStyle", "{\"sea\":\"\"}", false)]
+    [TestCase("mapStyle", "{\"sea\":5}", false)]
+    [TestCase("mapStyle", "{\"sea\":null}", false)]
+    [TestCase("mapStyle", "{\"base\":\"nope\"}", false)]
+    [TestCase("mapStyle", "{\"base\":\"Dark\"}", false)]
+    [TestCase("mapStyle", "{\"base\":null}", false)]
+    [TestCase("mapStyle", "{\"base\":\"dark\",\"water\":\"#000000\"}", false)]
+    [TestCase("mapStyle", "{\"base\":\"dark\",\"sea\":\"#000000\",\"rim\":\"#111111\"}", false)]
+    [TestCase("mapStyle", "[]", false)]
+    [TestCase("mapStyle", "[\"dark\"]", false)]
+    public void Run_ValueAnAcceptsPredicateTakes_IsNotFlint112(string key, string value, bool kept)
+    {
+        using (Assert.EnterMultipleScope())
+        {
+            foreach (var (chartType, encodings) in new[] { ("Map", "{\"longitude\":\"lon\",\"latitude\":\"lat\"}"), ("Choropleth", "{\"id\":\"country\",\"color\":\"revenue\"}") })
+            {
+                var json = Doc(chartType, encodings, specExtra: $"\"chartProperties\":{{\"{key}\":{value}}},");
+                var core = Check(json).Where(i => i.Id == "FLINT112").Select(i => $"{i.Code} {i.Severity} {i.Path}").ToList();
+                var validator = ChartTemplate.Create<JsonObject>(FlintJson.Deserialize(json)).Validate().Issues
+                    .Where(i => i.Code == "invalid_option_value").Select(i => $"{i.Code} {i.Severity} {i.Path}").ToList();
+                Assert.That(core, kept ? Is.Empty : Is.EqualTo(new[] { $"invalid_option_value Warning chart_spec.chartProperties.{key}" }), $"{chartType}, core");
+                Assert.That(validator, Is.EqualTo(core), $"{chartType}, validator");
+            }
+        }
+    }
+
+    // source: flint-chart 1.1.1 src/core/normalize-properties.ts:97 (", or <acceptsLabel>" after the options in the
+    // invalid-option-value warning) and the acceptsLabel of the Vega-Lite Map boundaries in Catalog.g.cs; the validator's
+    // message, as ValidationRun.PropertyChecks writes it
+    [Test]
+    public void Run_ValueAnAcceptsPredicateRejects_NamesWhatItAccepts()
+    {
+        var label = Catalog.ChartType("Map")!.Templates.Single(t => t.Backend == "vegalite").Property("boundaries")!.AcceptsLabel;
+        var json = Doc("Map", "{\"longitude\":\"lon\",\"latitude\":\"lat\"}", specExtra: "\"chartProperties\":{\"boundaries\":{\"wrong\":1}},");
+
+        Assert.That(label, Is.Not.Null.And.Not.Empty);
+        Assert.That(Check(json).Single(i => i.Id == "FLINT112").Message,
+            Is.EqualTo($"{{\"wrong\":1}} is not an option of \"boundaries\" on vegalite, or {label}; upstream drops it (invalid-option-value) and uses the default. (invalid_option_value)"));
+    }
+
     // source: ValidationRun.SemanticTypeChecks (unknown_semantic_type, Warning)
     [Test]
     public void Run_UnregisteredSemanticType_IsFlint113()

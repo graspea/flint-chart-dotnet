@@ -160,7 +160,7 @@ internal sealed class CatalogCheck
         }
     }
 
-    /// <summary>The templates of the Excel shared path (src/excel/assemble.ts:264-310), as the validator's <c>Excel</c>.</summary>
+    /// <summary>The templates of the Excel shared path (src/excel/assemble.ts:265-311 of flint-chart 1.1.1), as the validator's <c>Excel</c>.</summary>
     private static readonly string[] ExcelSharedPath =
         ["Area Chart", "Bar Chart", "Grouped Bar Chart", "Stacked Bar Chart", "Line Chart", "Scatter Plot", "Connected Scatter Plot", "Pie Chart", "Donut Chart"];
 
@@ -431,11 +431,13 @@ internal sealed class CatalogCheck
                     $"flint-chart {Retired(optionRetiredOn[0], option)} removed the option {JsonText.Compact(value)} of \"{key}\" on {string.Join(", ", optionRetiredOn.Select(t => t.Backend))}; upstream drops it (invalid-option-value) and uses the default.");
             }
 
-            var invalidOn = invalid.Except(optionRetiredOn).Select(t => t.Backend).ToList();
-            if (invalidOn.Count > 0)
+            var invalidRows = invalid.Except(optionRetiredOn).ToList();
+            if (invalidRows.Count > 0)
             {
+                // flint-chart 1.1.0+ appends ", or <acceptsLabel>" for a def with a label (normalize-properties.ts:97).
+                var accepts = invalidRows.Select(t => t.Property(key)!.AcceptsLabel).Where(l => !string.IsNullOrEmpty(l)).Distinct(StringComparer.Ordinal);
                 Add("invalid_option_value", SpecSeverity.Warning, path, value,
-                    $"{JsonText.Compact(value)} is not an option of \"{key}\" on {string.Join(", ", invalidOn)}; upstream drops it (invalid-option-value) and uses the default.");
+                    $"{JsonText.Compact(value)} is not an option of \"{key}\" on {string.Join(", ", invalidRows.Select(t => t.Backend))}{string.Concat(accepts.Select(l => $", or {l}"))}; upstream drops it (invalid-option-value) and uses the default.");
             }
 
             var undeclaredOn = _targets.Where(t => t.Property(key) is null).Select(t => t.Backend).ToList();
@@ -470,9 +472,10 @@ internal sealed class CatalogCheck
     /// <summary>The version that retired a member of the template on a backend (<c>generator/retired.json</c>), or null.</summary>
     private string? Retired(BackendTemplateRow t, string member) => Catalog.RetiredIn($"catalog.chartTypes[{ChartTypeName}].backends.{t.Backend}.{member}");
 
-    /// <summary><c>normalizeChartProperties</c>: a value equal to an option value under <c>sameOptionValue</c> (===, or for
-    /// two arrays the same length with every entry ===), or a string equal to an option label ignoring case and surrounding
-    /// whitespace.</summary>
+    /// <summary><c>normalizeChartProperties</c> (src/core/normalize-properties.ts:55-84 of flint-chart 1.1.1): a value equal to
+    /// an option value under <c>sameOptionValue</c> (===, or for two arrays the same length with every entry ===), a value the
+    /// def's <c>accepts</c> predicate holds for (flint-chart 1.1.0+, <see cref="AcceptsKeeps"/>), or a string equal to an
+    /// option label ignoring case and surrounding whitespace.</summary>
     private static bool Accepts(CatalogPropertyRow property, JsonItem value)
     {
         foreach (var option in property.Options ?? [])
@@ -483,9 +486,75 @@ internal sealed class CatalogCheck
             }
         }
 
+        if (AcceptsKeeps(property, value))
+        {
+            return true;
+        }
+
         return value.IsString && property.Labels is { } labels
             && labels.Any(l => string.Equals(l.ToLowerInvariant(), value.Value!.Trim(JsWhiteSpace).ToLowerInvariant(), StringComparison.Ordinal));
     }
+
+    /// <summary>The <c>accepts</c> predicates, as the validator's <c>Accepts.Keeps</c>
+    /// (src/Graspea.Flint/Validation/Rules/Accepts.cs): only where the row carries the accepts label, by the predicate
+    /// ported for its key.</summary>
+    private static bool AcceptsKeeps(CatalogPropertyRow property, JsonItem value) =>
+        property.AcceptsLabel is not null && property.Key switch
+        {
+            "boundaries" => IsBoundaryFile(value),
+            "mapStyle" => IsCustomMapStyle(value),
+            _ => false,
+        };
+
+    /// <summary><c>BOUNDARY_IDS</c> (src/chart-types/boundaries.ts:28).</summary>
+    private static readonly string[] BoundaryIds = ["iso-numeric", "iso3", "iso2", "fips", "as-is"];
+
+    /// <summary><c>MAP_STYLES</c> (src/vegalite/templates/map-style.ts:55).</summary>
+    private static readonly string[] MapStyles = ["auto", "light", "muted", "atlas", "dark", "minimal"];
+
+    /// <summary><c>CUSTOM_COLORS</c> (src/vegalite/templates/map-style.ts:74).</summary>
+    private static readonly string[] CustomColors = ["sea", "land", "coast", "border", "noData", "graticule", "disputed"];
+
+    /// <summary><c>isBoundaryFile</c> (src/chart-types/boundaries.ts:63-80 of flint-chart 1.1.1), as the validator's
+    /// <c>Accepts.IsBoundaryFile</c>: a URL (a non-blank string, or an object with a non-blank <c>coarse</c> or
+    /// <c>medium</c> and nothing else stated for the other) or an object <c>values</c>, not both, with <c>feature</c>,
+    /// <c>ids</c>, <c>key</c>, <c>disputed</c> and <c>attribution</c> well-formed where present (<c>null</c> is
+    /// present).</summary>
+    private static bool IsBoundaryFile(JsonItem value)
+    {
+        if (!value.IsObject)
+        {
+            return false;
+        }
+
+        var url = value.Get("url");
+        var urlOk = IsUrl(url) || (url is { IsObject: true }
+            && (IsUrl(url.Get("coarse")) || IsUrl(url.Get("medium")))
+            && (url.Get("coarse") is not { } coarse || IsUrl(coarse)) && (url.Get("medium") is not { } medium || IsUrl(medium)));
+        var valuesOk = value.Get("values") is { IsObject: true };
+        if (urlOk == valuesOk)
+        {
+            return false;
+        }
+
+        return (value.Get("feature") is not { } feature || feature.IsString)
+            && (value.Get("ids") is not { } ids || (ids.IsString && Array.IndexOf(BoundaryIds, ids.Value) >= 0))
+            && (value.Get("key") is not { } key || (key.IsString && key.Value!.Length > 0))
+            && (value.Get("disputed") is not { } disputed || disputed.IsString)
+            && (value.Get("attribution") is not { } attribution || attribution.IsString || (attribution.IsObject && attribution.Get("text") is { IsString: true }));
+    }
+
+    /// <summary><c>isCustomMapStyle</c> (src/vegalite/templates/map-style.ts:78-84 of flint-chart 1.1.1), as the
+    /// validator's <c>Accepts.IsCustomMapStyle</c>: an object with at least one member, each <c>base</c> naming one of
+    /// <c>MAP_STYLES</c> or a colour of <c>CUSTOM_COLORS</c> set to a non-blank string.</summary>
+    private static bool IsCustomMapStyle(JsonItem value) =>
+        value.IsObject && value.Members.Count > 0 && value.Members.All(m => m.Key == "base"
+            ? m.Value.IsString && Array.IndexOf(MapStyles, m.Value.Value) >= 0
+            : Array.IndexOf(CustomColors, m.Key) >= 0 && m.Value.IsString && m.Value.Value!.Trim(JsWhiteSpace).Length > 0);
+
+    /// <summary><c>isUrl</c> (src/chart-types/boundaries.ts:63): a string that is not blank after <c>trim()</c>; null for
+    /// an absent member (<c>undefined</c>).</summary>
+    private static bool IsUrl(JsonItem? value) => value is { IsString: true } && value.Value!.Trim(JsWhiteSpace).Length > 0;
 
     private static bool SameOptionValue(JsonItem option, JsonItem value) =>
         option.IsArray && value.IsArray

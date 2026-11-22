@@ -33,6 +33,9 @@
          (Parity/ChannelTypesTests.cs, TemporalConversionTests.cs): no public member returns a resolved type. -->
     <Compile Include="../../src/Graspea.Flint/Validation/Rules/FieldTypes.cs;../../src/Graspea.Flint/Validation/Rules/TemporalParse.cs;../../src/Graspea.Flint/Validation/Rules/Js.cs" LinkBase="Linked" />
     <Compile Include="../../src/Graspea.Flint/Model/CatalogTables.cs;../../src/Graspea.Flint/Generated/Tables/CatalogTables.g.cs" LinkBase="Linked" />
+    <!-- Where the accepts predicates apply (ChartValidatorTests.Accepts.cs): no catalog row of a pin lacks the label for a
+         key that has a predicate, so a row without one is built in the test. -->
+    <Compile Include="../../src/Graspea.Flint/Validation/Rules/Accepts.cs" LinkBase="Linked" />
   </ItemGroup>
 
 </Project>
