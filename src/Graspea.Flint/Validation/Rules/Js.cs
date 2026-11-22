@@ -314,6 +314,16 @@ internal static partial class Js
         return time;
     }
 
+    /// <summary><c>Math.round</c> (ECMA-262 §21.3.2.28): the integer closest to <paramref name="x"/>, the one closer to +∞ on a
+    /// tie (2.5 is 3, -2.5 is -2), where .NET's <see cref="Math.Round(double)"/> takes the even one; -0 for x in [-0.5, 0);
+    /// NaN and ±∞ as given.</summary>
+    internal static double Round(double x)
+    {
+        var floor = Math.Floor(x);
+        var rounded = x - floor >= 0.5 ? floor + 1 : floor;
+        return rounded == 0 && double.IsNegative(x) ? -0d : rounded;
+    }
+
     /// <summary><c>String.prototype.trim</c>: WhiteSpace and LineTerminator of ECMA-262 §12.2, §12.3.</summary>
     internal static string Trim(string s) => s.Trim(WhiteSpace);
 

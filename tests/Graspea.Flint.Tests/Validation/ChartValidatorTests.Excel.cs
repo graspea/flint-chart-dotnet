@@ -598,4 +598,42 @@ public sealed partial class ChartValidatorTests
                 "the Date midnight is 1 January 00:00 UTC, before 03:00 UTC");
         }
     }
+
+    // source: src/core/decisions.ts:143-164 (dateCadence: whole months within 4 days whatever the day or time, else the least
+    // gap when it divides every gap, else gaps within a quarter of the usual one, else midnight dates at their common step),
+    // :198-205 and :216-223 (readsAsSnapshots: nine to fifty dates are snapshots when they fill under half the periods) of
+    // flint-chart 1.1.1, :343-345 (snapshots on a banded axis are ordinal) and src/excel/templates/boxplot.ts:12-13 (a
+    // temporal x throws); each outcome from assembleExcel of flint-chart 1.1.1
+    // (TZ=UTC); probe cases "boxplot x of …"
+    [Test]
+    public void Excel_BoxplotDates_ReadAsSnapshotsByTheirCadence()
+    {
+        static string Iso(DateTime d) => d.ToString("yyyy-MM-dd'T'HH:mm:ss'.000Z'", System.Globalization.CultureInfo.InvariantCulture);
+        static string Day(DateTime d) => d.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        ChartAssemblyInput Boxplot(IEnumerable<string> dates) =>
+            ExcelTable(ChartType.Boxplot, [.. dates.SelectMany((d, i) => new[] { new JsonObject { ["day"] = d, ["revenue"] = 10 + i }, new JsonObject { ["day"] = d, ["revenue"] = 20 + i } })], null, ("x", "day"), ("y", "revenue"));
+        var start = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        const string Categorical = "a categorical x field for a native Excel box and whisker chart";
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(ExcelErrors(Boxplot(new[] { "2020-01", "2020-02", "2020-04", "2020-07", "2020-11", "2021-04", "2021-10", "2022-05", "2023-01" }.Select(m => $"{m}-15T10:00:00Z"))),
+                Is.Empty, "dates at 10:00Z stepped by whole months fill a third of the months");
+            Assert.That(ExcelErrors(Boxplot([.. Enumerable.Range(0, 9).Select(h => Iso(start.AddHours(h))), Iso(start.AddDays(9))])), Is.Empty,
+                "nine hours and one far fill few of the hours");
+            Assert.That(ExcelErrors(Boxplot([.. new[] { 0, 1, 2, 4, 7, 8, 9, 11, 12 }.Select(d => Iso(start.AddDays(d).AddHours(10))), Iso(new DateTime(2024, 6, 1, 10, 0, 0, DateTimeKind.Utc))])),
+                Is.Empty, "days at 10:00Z and one far fill few of the days");
+            Assert.That(ExcelErrors(Boxplot([.. Enumerable.Range(0, 9).Select(m => Day(start.AddMonths(m))), "2026-01-01"])), Is.Empty,
+                "nine month starts and one far fill few of the months");
+            Assert.That(ExcelErrors(Boxplot(Enumerable.Range(1, 10).Select(q => Day(new DateTime(2022, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(3 * q).AddDays(-1))))),
+                Has.Length.EqualTo(1).And.Some.Contains(Categorical), "ten quarter ends fill every quarter");
+            Assert.That(ExcelErrors(Boxplot(Enumerable.Range(0, 10).Select(m => Day(start.AddMonths(m).AddDays(14))))),
+                Has.Length.EqualTo(1).And.Some.Contains(Categorical), "the 15th of ten consecutive months fills every month");
+            Assert.That(ExcelErrors(Boxplot(Enumerable.Range(0, 10).Select(i => Day(start.AddMonths(i / 2).AddDays(i % 2 * 14))))),
+                Has.Length.EqualTo(1).And.Some.Contains(Categorical), "the 1st and the 15th keep about one step");
+            Assert.That(ExcelErrors(Boxplot(new[] { 0, 14, 27, 41, 54, 68, 81, 95, 108, 122 }.Select(d => Day(start.AddDays(d))))),
+                Has.Length.EqualTo(1).And.Some.Contains(Categorical), "gaps of 13 and 14 days keep about one step");
+            Assert.That(ExcelErrors(Boxplot(Enumerable.Range(0, 10).Select(m => Iso(start.AddMonths(m).AddDays(4).AddHours(10))))),
+                Has.Length.EqualTo(1).And.Some.Contains(Categorical), "the 5th at 10:00Z of ten consecutive months fills every month");
+        }
+    }
 }

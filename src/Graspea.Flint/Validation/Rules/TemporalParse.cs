@@ -215,10 +215,12 @@ internal static partial class TemporalParse
 }
 
 /// <summary>
-/// <c>readsAsSnapshots</c> of the pinned package (src/core/decisions.ts): whether dates on a banded axis read as a few
-/// snapshots. A value's time (<c>snapshotTime</c>) is decided for numbers (an integer from 1000 to 2999 is a year), four
-/// digits, ISO dates and ISO date-times with <c>Z</c> or an offset; a date-time without one is local time and other strings
-/// need V8's legacy parser, so their time is undecided. The answer is null when the undecided values could change it.
+/// <c>readsAsSnapshots</c> (src/core/decisions.ts:216-223 of flint-chart 1.1.1): whether dates on a banded axis read as a few
+/// snapshots: two to eight distinct dates, or nine to fifty that fill under half the periods between the first and the last
+/// at their cadence (<see cref="Cadence"/>, since flint-chart 1.1.0). A value's time (<c>snapshotTime</c>, :79-90) is decided
+/// for numbers (an integer from 1000 to 2999 is a year), four digits, ISO dates and ISO date-times with <c>Z</c> or an
+/// offset; a date-time without one is local time and other strings need V8's legacy parser, so their time is undecided.
+/// The answer is null when the undecided values could change it.
 /// </summary>
 internal static class Snapshots
 {
@@ -226,6 +228,12 @@ internal static class Snapshots
     private const double MaxCoverage = 0.5;
     private const int MaxBands = 50;
     private const double DayMs = 86_400_000;
+
+    /// <summary><c>MONTH_DAYS</c>, <c>MONTH_SLACK_DAYS</c> and <c>CADENCE_SLACK</c> (src/core/decisions.ts:122-125 of
+    /// flint-chart 1.1.1).</summary>
+    private const double MonthDays = 365.2425 / 12;
+    private const double MonthSlackDays = 4;
+    private const double CadenceSlack = 0.25;
 
     internal static bool? ReadAs(IEnumerable<JsonNode?> values)
     {
@@ -269,34 +277,80 @@ internal static class Snapshots
             return false;
         }
 
-        if (times.Any(t => t % DayMs != 0 || t < MinTime || t > MaxTime))
+        if (times.Any(t => t < MinTime || t > MaxTime))
         {
-            // Off midnight UTC (or outside the dates .NET represents, which no calendar date of a chart is).
-            return times.All(t => t >= MinTime && t <= MaxTime) ? false : null;
+            // The month of a time .NET cannot represent is unknown here (no calendar date of a chart is one).
+            return null;
         }
 
-        var dates = times.Select(t => DateTimeOffset.FromUnixTimeMilliseconds((long)t)).ToArray();
-        var monthly = dates.All(d => d.Day == 1);
-        var index = monthly ? dates.Select(d => (d.Year * 12.0) + d.Month - 1).ToArray() : times.Select(t => Math.Round(t / DayMs)).ToArray();
-        var step = 0d;
-        for (var i = 1; i < index.Length; i++)
+        return Cadence(times) is { } cadence && cadence.Count / cadence.Periods < MaxCoverage;
+    }
+
+    /// <summary>
+    /// <c>dateCadence</c> (src/core/decisions.ts:143-164 of flint-chart 1.1.1, since 1.1.0), as <c>calendarCoverage</c>
+    /// (:198-205) reads it: the dates counted and the periods spanned at their step, or null where they keep none. Whole
+    /// months when every gap is a whole number of months within four days whatever the day or time (quarter ends, the 15th);
+    /// else the least gap when it divides every gap (whole days, weeks, hours); else the usual gap (the median) when every gap
+    /// is within a quarter of a whole number of it (the 1st and the 15th; 13 or 14 days); else, for dates all at midnight UTC,
+    /// their greatest common step; times of day that keep no step have none. <paramref name="times"/> are distinct, ascending
+    /// and within the range of <see cref="DateTimeOffset"/>.
+    /// </summary>
+    private static (double Count, double Periods)? Cadence(double[] times)
+    {
+        var count = times.Length;
+        var span = times[^1] - times[0];
+        var gaps = times.Skip(1).Select((t, i) => t - times[i]).ToArray();
+        var month = times.Select(MonthIndex).ToArray();
+        var monthGaps = month.Skip(1).Select((m, i) => m - month[i]).ToArray();
+        if (Enumerable.Range(0, gaps.Length).All(i => monthGaps[i] > 0 && Math.Abs((gaps[i] / DayMs) - (monthGaps[i] * MonthDays)) <= MonthSlackDays))
         {
-            step = Gcd(step, index[i] - index[i - 1]);
+            var step = monthGaps.Aggregate(0d, Gcd);
+            return (count, ((month[^1] - month[0]) / step) + 1);
         }
 
-        if (!(step > 0))
+        var least = gaps.Min();
+        var common = gaps.Aggregate(0d, Gcd);
+        if (!(least > 0) || !(common > 0))
         {
-            return false;
+            return null;
         }
 
-        var periods = ((index[^1] - index[0]) / step) + 1;
-        return index.Length / periods < MaxCoverage;
+        if (common == least)
+        {
+            return (count, Js.Round(span / least) + 1);
+        }
+
+        var usual = gaps.Order().ElementAt(gaps.Length / 2);
+        if (gaps.All(g => Math.Abs(g - (Math.Max(1, Js.Round(g / usual)) * usual)) <= CadenceSlack * usual))
+        {
+            return (count, Js.Round(span / usual) + 1);
+        }
+
+        return times.All(t => t % DayMs == 0) ? (count, (span / common) + 1) : null;
+    }
+
+    /// <summary><c>getUTCFullYear() * 12 + getUTCMonth()</c> of <c>new Date(time)</c>, which truncates to whole
+    /// milliseconds (TimeClip).</summary>
+    private static double MonthIndex(double time)
+    {
+        var date = DateTimeOffset.FromUnixTimeMilliseconds((long)Math.Truncate(time));
+        return (date.Year * 12.0) + date.Month - 1;
     }
 
     private static readonly double MinTime = DateTimeOffset.MinValue.ToUnixTimeMilliseconds();
     private static readonly double MaxTime = DateTimeOffset.MaxValue.ToUnixTimeMilliseconds();
 
-    private static double Gcd(double a, double b) => b == 0 ? a : Gcd(b, a % b);
+    /// <summary>The <c>gcd</c> of src/core/decisions.ts:92 of flint-chart 1.1.1, over doubles with JavaScript's <c>%</c> (the same
+    /// as .NET's).</summary>
+    private static double Gcd(double a, double b)
+    {
+        while (b != 0)
+        {
+            (a, b) = (b, a % b);
+        }
+
+        return a;
+    }
 
     /// <summary><c>snapshotTime</c>: the time, or null with <paramref name="text"/> set when only V8 could tell it, or null
     /// with <paramref name="text"/> null when the value has none.</summary>
