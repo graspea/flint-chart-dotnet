@@ -18,6 +18,8 @@ independent project, not affiliated with or endorsed by Microsoft.
 Flint.NET 1.1.1.x tracks flint-chart 1.1.1; the first three version parts always equal the pinned upstream release.
 <!-- flint:generated:upstream-version end -->
 
+flint-chart 1.1.0 is skipped on purpose: no Flint.NET 1.1.0.x is released, and 1.1.1.x follows 1.0.1.x.
+
 ## What it is / what it is not
 
 It is:
