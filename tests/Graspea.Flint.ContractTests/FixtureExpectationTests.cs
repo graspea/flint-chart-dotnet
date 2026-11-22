@@ -10,7 +10,8 @@ namespace Graspea.Flint.ContractTests;
 /// The validator agrees with what the pinned assemblers did on every fixture, crafted case and backend (design §6
 /// contract, §10.3 recorded outcomes): a throw is reported as an Error whose code explains the recorded message, no throw
 /// means no throw-class Error, upstream's invalid-option-value warning is reported as invalid_option_value and its
-/// invalid_sort warning as a sort_by_invalid Warning, each the other way round too, and validating for every backend is valid exactly when no backend with the template throws. Gate for the
+/// invalid_sort warning as a sort_by_invalid Warning, each the other way round too, a map_width_without_routes Warning on
+/// Vega-Lite only where upstream warns map-width-without-routes, and validating for every backend is valid exactly when no backend with the template throws. Gate for the
 /// set of <see cref="FlintUpstream.Version"/>.
 /// </summary>
 [Category("Contract")]
@@ -101,6 +102,13 @@ public sealed class FixtureExpectationTests
                     var sortDropped = outcome["warnings"]!.AsArray().Any(w => w!.GetValue<string>() == "invalid_sort");
                     Assert.That(issues.Any(i => i.Code == "sort_by_invalid" && i.Severity == IssueSeverity.Warning), Is.EqualTo(sortDropped),
                         $"{backendId}: upstream {(sortDropped ? "drops" : "keeps")} the sort");
+                    // flint-chart 1.1.x: one direction only, as the rule does not read whether the rows leave a route empty
+                    // (Plotly drops the width without a warning)
+                    if (backendId == "vegalite" && issues.Any(i => i.Code == "map_width_without_routes"))
+                    {
+                        Assert.That(outcome["warnings"]!.AsArray().Select(w => w!.GetValue<string>()), Has.Member("map-width-without-routes"),
+                            "vegalite: upstream keeps the strokeWidth");
+                    }
                 }
             }
 

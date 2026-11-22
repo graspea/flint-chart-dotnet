@@ -34,6 +34,7 @@ internal static class Codes
     internal const string UnknownSemanticType = "unknown_semantic_type";
     internal const string SortByInvalid = "sort_by_invalid";
     internal const string RetiredMember = "retired_member";
+    internal const string MapWidthWithoutRoutes = "map_width_without_routes";
 
     // Info.
     internal const string DataUrlNotFetched = "data_url_not_fetched";

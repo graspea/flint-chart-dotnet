@@ -117,6 +117,7 @@ internal sealed partial class ValidationRun
         AnnotationChecks();
         SortByChecks(spec);
         RequiredChannelChecks(spec);
+        MapRouteChecks(types);
         OptionChecks();
         AnnotationOptionChecks();
         UpdateChecks();
@@ -868,6 +869,33 @@ internal sealed partial class ValidationRun
                     $"\"{channel}\" is not bound; the flint-chart MCP server rejects a \"{spec.ChartType.Name}\" without it, the assemblers accept it.", channel);
             }
         }
+    }
+
+    /// <summary>
+    /// <c>map_width_without_routes</c>: <c>strokeWidth</c> on a Map sets the width of the legs that <c>order</c> joins the
+    /// points into, and a map has no routes unless <c>order</c>, <c>longitude</c> and <c>latitude</c> resolve (a non-empty
+    /// field or a <c>count</c> aggregate). Without routes the Vega-Lite Map deletes the encoding and warns
+    /// <c>map-width-without-routes</c> (src/vegalite/templates/map.ts:1042-1051, map-routes.ts:109-115 of flint-chart
+    /// 1.1.1), and the Plotly Map draws no route (src/plotly/templates/map.ts:190, :362-366), so the width has no effect.
+    /// Not covered: routes that the rows leave empty (fewer than two placed stops in a series), which Vega-Lite reports too.
+    /// </summary>
+    private void MapRouteChecks(FieldTypes types)
+    {
+        if (input.ChartSpec.ChartType.Name != "Map" || types.Of("strokeWidth") is FieldType.Absent)
+        {
+            return;
+        }
+
+        var missing = new[] { "order", "longitude", "latitude" }.Where(ch => types.Of(ch) is FieldType.Absent).ToArray();
+        if (missing.Length == 0)
+        {
+            return;
+        }
+
+        PerTarget(Codes.MapWidthWithoutRoutes, "chart_spec.encodings.strokeWidth",
+            b => b is FlintBackend.VegaLite or FlintBackend.Plotly && template[b].Channels.Contains("strokeWidth") ? IssueSeverity.Warning : null,
+            (_, on) => $"strokeWidth sets the width of a route's legs, and without {string.Join(" and ", missing)} bound the map has none; {string.Join(", ", on.Select(Id))} {(on.Length == 1 ? "drops" : "drop")} it{(on.Contains(FlintBackend.VegaLite) ? " (map-width-without-routes)" : string.Empty)}.",
+            "strokeWidth");
     }
 
     private static bool IsBound(EncodingValue? value) =>
