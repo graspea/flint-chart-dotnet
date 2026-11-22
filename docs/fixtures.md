@@ -1,6 +1,6 @@
 # Fixtures
 
-The contract tests (`tests/Graspea.Flint.ContractTests`) run against a corpus generated from the pinned `flint-chart` package. Each upstream version has its own folder, and folders are append-only: `tests/fixtures/flint-chart@<version>/`. A folder is regenerated for its own version when the SDK covers more of that version: the `flint-chart@1.0.1` folder gained the Image-Charts outcomes and 35 crafted cases, then 33 crafted cases for facts that flint-chart 1.1 changes, and kept its 956 corpus cases. The design is in [part 2 §7.9](design/02-sdk-serialisation-validation-codegen.md) and [part 3 §10.3](design/03-sdk-versioning-runbook-tests-risks.md). The folder is generated; never edit it by hand.
+The contract tests (`tests/Graspea.Flint.ContractTests`) run against a corpus generated from the pinned `flint-chart` package. Each upstream version has its own folder, and folders are append-only: `tests/fixtures/flint-chart@<version>/`. A folder is regenerated for its own version when the SDK covers more of that version: the `flint-chart@1.0.1` folder gained the Image-Charts outcomes and 35 crafted cases, then 33 crafted cases for facts that flint-chart 1.1 changes, and kept its 956 corpus cases. The `flint-chart@1.1.1` folder holds the same 956 corpus cases and 128 crafted cases with the outcomes of 1.1.1; flint-chart 1.1.0, which no release tracks ([versioning.md](versioning.md)), has no folder. The design is in [part 2 §7.9](design/02-sdk-serialisation-validation-codegen.md) and [part 3 §10.3](design/03-sdk-versioning-runbook-tests-risks.md). The folder is generated; never edit it by hand.
 
 ```
 cd generator
@@ -11,7 +11,7 @@ npm run generate -- --check # writes nothing; fails when a generated file would 
 
 ## Provenance
 
-The source is `TEST_GENERATORS` from `flint-chart/test-data` of the pinned package: 128 groups and 934 test cases, covering all 48 chart types. The tarball ships the generators, not their output. The generators call `Math.random` and read the local time zone, so the step:
+The source is `TEST_GENERATORS` from `flint-chart/test-data` of the pinned package: on 1.1.1, 132 groups and 956 test cases, covering all 51 chart types (on 0.5.1, 128 groups, 934 cases and 48 chart types). The tarball ships the generators, not their output. The generators call `Math.random` and read the local time zone, so the step:
 - sets `TZ=UTC`;
 - replaces `Math.random` with a Park-Miller generator (seed 42) before it imports `flint-chart` or `flint-chart/test-data`;
 - runs in a process of its own, because both settings are process-wide.
@@ -76,14 +76,17 @@ The 219 Excel throws by reason:
 
 No corpus fixture produces `invalid-option-value`; the crafted cases do (`option value invalid`, `option array value`).
 
-## Contract results on flint-chart 1.0.1
+## Contract results on flint-chart 1.1.1
 
-- `FixtureRoundTripTests`: every stored fixture of every folder round-trips: 934 on 0.5.1, 956 on 1.0.0 and 956 on 1.0.1.
-- `FixtureExpectationTests`: the 956 corpus cases and the 128 crafted cases of 1.0.1 pass (60 crafted cases on 1.0.0). For each recorded backend: a throw is reported as an Error whose code explains the recorded message (a table maps message prefixes such as `Static series` or `Unknown theme` to codes, and an Excel `validate()` message to `excel_unsupported`, `data_empty`, `data_url_only` or the encodings codes; an unmapped message fails), no non-throwing case gets a throw-class Error, `invalid_option_value` is reported exactly when upstream records `invalid-option-value`, a `sort_by_invalid` Warning exactly when it records `invalid_sort`, and a `map_width_without_routes` Warning on Vega-Lite only where it records `map-width-without-routes` (one direction: the rule does not read whether the rows leave a route empty). `Validate(input, null).IsValid` holds exactly when no backend with the template throws. `FixtureSet_MatchesItsManifest` fails when a file is missing or truncated: the case counts must equal `manifest.json`, every case must have an expectation line, and `upstream` must equal `FlintUpstream.Version`.
+- `FixtureRoundTripTests`: every stored fixture of every folder round-trips: 934 on 0.5.1, and 956 on 1.0.0, 1.0.1 and 1.1.1.
+- `FixtureExpectationTests`: the 956 corpus cases and the 128 crafted cases of 1.1.1 pass (128 crafted cases on 1.0.1, 60 on 1.0.0). For each recorded backend: a throw is reported as an Error whose code explains the recorded message (a table maps message prefixes such as `Static series` or `Unknown theme` to codes, and an Excel `validate()` message to `excel_unsupported`, `data_empty`, `data_url_only` or the encodings codes; an unmapped message fails), no non-throwing case gets a throw-class Error, `invalid_option_value` is reported exactly when upstream records `invalid-option-value`, a `sort_by_invalid` Warning exactly when it records `invalid_sort`, and a `map_width_without_routes` Warning on Vega-Lite only where it records `map-width-without-routes` (one direction: the rule does not read whether the rows leave a route empty). `Validate(input, null).IsValid` holds exactly when no backend with the template throws. `FixtureSet_MatchesItsManifest` fails when a file is missing or truncated: the case counts must equal `manifest.json`, every case must have an expectation line, and `upstream` must equal `FlintUpstream.Version`.
 - The crafted cases found one rule that was wrong: Excel was reported to reject every static series, but it reads an array encoding as an unbound channel and assembles a Line Chart with a static series on `color`.
 - `known-failures.txt` is empty: no fixture needed a model or converter fix.
+- The 1.1.1 folder has the same cases as the 1.0.1 folder. Its probe record differs in `channelTypes`, `temporalConversion` and `channelReads`, and its outcomes as follows. In the corpus, Plotly records 78 `overflow` warnings (71 on 1.0.1) and Vega-Lite 2 `map-total-on-choropleth`; Excel still throws on 218 cases and Image-Charts on 175. Of the crafted cases, 26 change: a malformed note, region or enclosure throws on Vega-Lite (8), a null `updates` entry on the four layout backends (1), Vega-Lite records `invalid-option-value` for a boundary file of unknown ids, an empty map style and a boundary URL beside inline shapes (4) and `map-width-without-routes` for a Map with `strokeWidth` and no `order` (1), and 12 Excel outcomes over dates change (6 Boxplots, 2 Candlestick, 2 Pyramid and 2 Radar Charts).
 
-## Image-Charts on flint-chart 1.0.1
+## Image-Charts on flint-chart 1.0.1 and 1.1.1
+
+The counts are the same on both versions.
 
 - 617 of the 956 corpus cases have an Image-Charts chart type. Image-Charts throws on 175 of them (129 bound facets, 46 Scatter Plots without quantitative `x` and `y`) and records no warnings.
 - 90 of the 128 crafted cases are recorded on Image-Charts; 41 of them throw there.

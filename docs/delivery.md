@@ -18,7 +18,7 @@ Three documents. Members are single lowercase words. The per-chart `input` is an
 
 ```json
 // manifest: the same bytes for every request; ETag = the quoted Hash
-{ "contract": 1, "flint": "1.0.1",
+{ "contract": 1, "flint": "1.1.1",
   "charts": { "revenue-by-month": { "input": { "semantic_types": { }, "chart_spec": { } } },
               "traffic-by-source": { "input": { "chart_spec": { } } },
               "stock-by-warehouse": { "input": { "chart_spec": { } } } },

@@ -138,18 +138,18 @@ IR paths:
 
 `category` lives on each backend entry (`catalog.chartTypes[<name>].backends.<backend>.category`), not on the chart type, because upstream's categories differ between backends (`Lines & Areas` on vegalite, `Line & Area` on the others).
 
-## Channel count: 26, 27 or 28
+## Channel count: 26, 27 or 29
 
-All three numbers appear in upstream material. The generator takes the union, derives it at extraction time and never hard-codes it.
+All three numbers appear in upstream material. The generator takes the union, derives it at extraction time and never hard-codes it. The counts below are those of flint-chart 1.1.1.
 
 | Set | Count | Difference |
 |---|---|---|
-| Core `channels` constant (`T:1988`) | 26 | `radius` and `angle` are in the constant, but no template declares them |
-| Channels declared by templates (all backends) | 25 | adds `theta` (Excel Pie and Donut) |
-| Constant plus declared channels: **the IR `catalog.channels`** | **27** | the 26 plus `theta` |
-| ...plus the members of `channelGroups` | 28 | adds `text`; no template declares it, so it is not emitted |
+| Core `channels` constant (`src/core/types.ts:29-38`) | 26 | `radius` and `angle` are in the constant, but no template declares them |
+| Channels declared by templates (all backends) | 27 | adds `theta` (Excel and Image-Charts Pie and Donut Chart) and, from 1.1.0, `strokeWidth` (Vega-Lite and Plotly Map) and `text` (Vega-Lite and Plotly Map and Choropleth) |
+| Constant plus declared channels: **the IR `catalog.channels`** | **29** | the 26 plus `strokeWidth`, `text` and `theta` |
+| ...plus the members of `channelGroups` (`src/core/types.ts:40-46`) | 29 | adds nothing: `text`, the one group member outside the constant, is declared from 1.1.0 |
 
-`Channel` therefore has 27 constants on 0.5.1, including `Theta` and excluding `Text`. The unit test `GeneratedConstantsTests.Channel_ConstantsEqualTheIrChannelUnion` and the generator test `extract-registry` pin these counts.
+`Channel` therefore has 29 constants on 1.1.1, including `Theta`, `StrokeWidth` and `Text` (27 on 0.5.1 to 1.0.1, where 25 channels are declared, the IR has 27 and `channelGroups` adds `text` as a 28th that is not emitted). The unit test `GeneratedConstantsTests.Channel_ConstantsEqualTheIrChannelUnion` and the generator test `extract-registry` compare the constants and the union with the committed IR.
 
 ## Type mapping of the 0.5.1 d.ts
 

@@ -62,7 +62,7 @@ result.ThrowIfInvalid();   // FlintValidationException carrying every issue
 
 ## Info
 
-From 1.0.0 the front-door checks live in `flint-chart/validate` (`validateChartInput`, `src/validate/index.ts` of the pinned package); `flint-chart-mcp@1.0.0`, the version that matches the pin, calls it before it assembles (`src/render/assemble.ts:42`) and in `validate_chart` with the backend. The line numbers below are those of the sources embedded in the source maps.
+From 1.0.0 the front-door checks live in `flint-chart/validate` (`validateChartInput`, `src/validate/index.ts` of the pinned package); `flint-chart-mcp`, at the version `generator/mcp-pin.json` names for the pin, calls it before it assembles (`src/render/assemble.ts:42` in the source map of its `dist/render/index.js`, unchanged from 1.0.0 to 1.1.1) and in `validate_chart` with the backend. The line numbers below are those of `src/` in the pinned npm package, which ships its sources (from 1.1.1 without source maps).
 
 | Code | Fact |
 |---|---|
