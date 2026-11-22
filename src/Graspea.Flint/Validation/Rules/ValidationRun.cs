@@ -421,6 +421,20 @@ internal sealed partial class ValidationRun
     private void RowValueChecks(JsonArray values)
     {
         var reported = new HashSet<(string Code, string Field)>();
+        var grains = new Dictionary<string, string?>(StringComparer.Ordinal);
+        FieldTypes? types = null;
+        string? CalendarGrain(string field)
+        {
+            if (!grains.TryGetValue(field, out var grain))
+            {
+                types ??= new FieldTypes(input);
+                grain = types.CalendarGrain(field);
+                grains[field] = grain;
+            }
+
+            return grain;
+        }
+
         for (var i = 0; i < values.Count; i++)
         {
             if (values[i] is not JsonObject row)
@@ -430,7 +444,7 @@ internal sealed partial class ValidationRun
 
             foreach (var (field, value) in row)
             {
-                if (RowValueIssue(field, value) is not { } found || !reported.Add((found.Code, field)))
+                if (RowValueIssue(field, value, CalendarGrain) is not { } found || !reported.Add((found.Code, field)))
                 {
                     continue;
                 }
@@ -440,7 +454,7 @@ internal sealed partial class ValidationRun
         }
     }
 
-    private (string Code, string Message)? RowValueIssue(string field, JsonNode? value)
+    private (string Code, string Message)? RowValueIssue(string field, JsonNode? value, Func<string, string?> calendarGrain)
     {
         switch (value)
         {
@@ -451,7 +465,16 @@ internal sealed partial class ValidationRun
             case JsonValue v when v.GetValueKind() == JsonValueKind.Number && IsUnsafeInteger(v.ToJsonString()):
                 return (Codes.LargeInteger, $"\"{field}\" holds {v.ToJsonString()}, beyond 2^53; JavaScript reads it as the nearest double.");
             case JsonValue v when v.GetValueKind() == JsonValueKind.String && UnspecifiedDateTime().IsMatch(v.GetValue<string>()):
-                return (Codes.UnspecifiedDatetime, $"\"{field}\" holds a date and time without a zone (\"{v.GetValue<string>()}\"); it is read in the local time zone of the process that runs flint-chart.");
+                // Under a calendar grain a midnight is its date whatever its zone (readIsoTimestamp, src/core/temporal-parse.ts:87-106
+                // of flint-chart 1.1.1, since 1.1.0), so only a time of day is read in local time.
+                var grain = calendarGrain(field);
+                if (grain is not null && TemporalParse.ReadIsoTimestamp(v, calendarGrain: true) is { Length: 10 })
+                {
+                    return null;
+                }
+
+                return (Codes.UnspecifiedDatetime, $"\"{field}\" holds a date and time without a zone (\"{v.GetValue<string>()}\"); it is read in the local time zone of the process that runs flint-chart."
+                    + (grain is null ? string.Empty : $" Its values at midnight are read as their dates, as its semantic type {grain} is a calendar grain, so the field mixes dates and local times."));
             case JsonValue v when v.GetValueKind() == JsonValueKind.String && DayTimeSpan().IsMatch(v.GetValue<string>()):
                 return (Codes.TimespanAsString, $"\"{field}\" holds a duration string (\"{v.GetValue<string>()}\"), which flint-chart {FlintUpstream.Version} infers as nominal, a category for each value; write the duration as a number.");
             default:

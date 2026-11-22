@@ -672,6 +672,43 @@ public sealed partial class ChartValidatorTests
         Assert.That((issue.Path, issue.Field), Is.EqualTo(("data.values[1].v", "v")));
     }
 
+    // source: src/core/temporal-parse.ts:87-106 and src/core/resolve-semantics.ts:452-457, :466-470 of flint-chart 1.1.1
+    // (every backend converts the rows: a zoneless midnight in a temporal key of the first row whose semantic type is a
+    // calendar grain is its date, a time of day stays zoneless and is read in the viewer's time); convertTemporalData of
+    // flint-chart 1.1.1 on each case; the catalog's Month is ordinal, so a Month key is temporal only when its values read
+    // as dates
+    [Test]
+    public void Infos_UnspecifiedDatetime_SkipsAMidnightReadAsItsDate()
+    {
+        ChartAssemblyInput Rows(JsonNode? first, JsonNode? second, SemanticType? semanticType) => Bar(i =>
+        {
+            JsonObject Row(string city, int revenue, JsonNode? v) => v is null ? new() { ["city"] = city, ["revenue"] = revenue } : new() { ["city"] = city, ["revenue"] = revenue, ["v"] = v };
+            i.Data = ChartData.FromJson([Row("A", 1, first), Row("B", 2, second)]);
+            if (semanticType is { } t)
+            {
+                i.SemanticTypes = new() { ["v"] = t };
+            }
+        });
+        string[] Paths(ChartAssemblyInput input) => [.. Issues(input, null, "unspecified_datetime").Select(i => i.Path)];
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(Paths(Rows(1, "2024-01-15T00:00:00", SemanticType.Date)), Is.Empty, "a Date midnight is its date");
+            Assert.That(Paths(Rows(1, "2024-01-15T00:00:00", SemanticType.YearMonth)), Is.Empty, "a YearMonth midnight is its date");
+            Assert.That(Paths(Rows("2024-01-01T00:00:00", "2024-02-01T00:00", SemanticType.Month)), Is.Empty, "Month midnights that read as dates are dates");
+            Assert.That(Paths(Rows(1, "2024-01-15T00:00:00", SemanticType.DateTime)), Is.EqualTo(new[] { "data.values[1].v" }), "DateTime is no calendar grain");
+            Assert.That(Paths(Rows(1, "2024-01-15T10:00:00", SemanticType.Date)), Is.EqualTo(new[] { "data.values[1].v" }), "a time of day stays local");
+            Assert.That(Paths(Rows("2024-01-15T00:00:00", "2024-01-16T10:00:00", SemanticType.Date)), Is.EqualTo(new[] { "data.values[1].v" }),
+                "the first value read in local time is reported");
+            Assert.That(Paths(Rows("Jan", "2024-01-15T00:00:00", SemanticType.Month)), Is.EqualTo(new[] { "data.values[1].v" }),
+                "a Month key whose values do not read as dates is not converted");
+            Assert.That(Paths(Rows("2024-01-15", "2024-01-16T00:00:00", null)), Is.EqualTo(new[] { "data.values[1].v" }), "untyped: no calendar grain");
+            Assert.That(Paths(Rows(null, "2024-01-15T00:00:00", SemanticType.Date)), Is.EqualTo(new[] { "data.values[1].v" }),
+                "only the keys of the first row are converted");
+            Assert.That(Issues(Rows("2024-01-15T00:00:00", "2024-01-16T10:00:00", SemanticType.Date), null, "unspecified_datetime").Single().Message,
+                Does.Contain("midnight").And.Contain("Date"), "the message says the field's midnights are read as dates");
+        }
+    }
+
     // source: tests/fixtures/flint-chart@1.0.0/probes.json valueInference (TimeSpan "1.02:03:04" and "2.00:00:00" infer
     // nominal; 0.5.1 inferred them temporal)
     [Test]

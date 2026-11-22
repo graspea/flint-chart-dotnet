@@ -323,6 +323,19 @@ internal sealed partial class FieldTypes
             : null;
     }
 
+    /// <summary>
+    /// The calendar grain <c>convertTemporalData</c> reads <paramref name="field"/> under (src/core/resolve-semantics.ts:466
+    /// of flint-chart 1.1.1, since 1.1.0), so that an ISO timestamp of it at midnight is its date whatever its zone: its
+    /// effective semantic type when that is a calendar grain (<see cref="TemporalParse.IsCalendarGrain"/>) and the field is
+    /// a temporal key of the first row. Null otherwise, and where only <c>Date.parse</c> could tell whether the key is
+    /// temporal.
+    /// </summary>
+    internal string? CalendarGrain(string field) =>
+        rows is [JsonObject first, ..] && first.ContainsKey(field) && EffectiveSemanticType(field) is var semanticType
+        && TemporalParse.IsCalendarGrain(semanticType) && IsTemporalKey(field) == true
+            ? semanticType
+            : null;
+
     /// <summary><c>new Set(data.map(r => r[field])).size</c>.</summary>
     internal int DistinctCount(string field) => DistinctCount(Values(field));
 

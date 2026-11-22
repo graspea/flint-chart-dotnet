@@ -43,8 +43,8 @@ Rows are written to JSON when the `ChartData` is created, so later changes to th
 | `float`, `double` | number | quantitative | `NaN` and `±Infinity` are written as `null` |
 | `decimal` | number, digits as stored (`1200.50`) | quantitative | JavaScript reads a double |
 | `DateOnly` | `"2024-01-15"` | temporal | the recommended type for dates |
-| `DateTimeOffset`, `DateTime` (Utc or Local) | ISO 8601 with `Z` or an offset | temporal | an absolute instant |
-| `DateTime` (Unspecified) | `"2024-01-15T10:00:00"` | temporal | read in the time zone of the process that runs flint-chart; Info `unspecified_datetime` |
+| `DateTimeOffset`, `DateTime` (Utc or Local) | ISO 8601 with `Z` or an offset | temporal | an absolute instant; written at midnight in a field of a calendar type, its date (below) |
+| `DateTime` (Unspecified) | `"2024-01-15T10:00:00"` | temporal | read in the time zone of the process that runs flint-chart; Info `unspecified_datetime`. At midnight in a field of a calendar type, its date (below) |
 | `TimeOnly` | `"10:00:00"` | nominal | pass a number (for example `TotalSeconds`) for an axis |
 | `TimeSpan` | `"1.02:03:04"` | nominal (0.5.1: temporal when a day or longer) | each value is a category, not a duration; write `TotalSeconds` as a number instead; Info `timespan_as_string` |
 | enum | member name | nominal | a number would be read as quantitative |
@@ -56,6 +56,8 @@ Rows are written to JSON when the `ChartData` is created, so later changes to th
 | `JsonElement`, `JsonNode` | as given | | |
 
 The table describes the reflection overloads (`RowOptions`). The `JsonTypeInfo` overloads write values exactly as the given metadata does: enums as numbers unless the context sets `UseStringEnumConverter = true`, and a `NaN` or infinite `double` throws unless the row maps it to `null`. For source-generated rows, use `[JsonSourceGenerationOptions(UseStringEnumConverter = true, DefaultIgnoreCondition = JsonIgnoreCondition.Never)]`.
+
+A calendar semantic type (`Year`, `Decade`, `YearMonth`, `Month`, `YearQuarter`, `Quarter`, `Date`, `Day`) makes flint-chart read an ISO timestamp at midnight as its date, whatever its offset (since flint-chart 1.1.0): `DateTime` and `DateTimeOffset` values at midnight annotated `SemanticType.Date` chart as those dates, as `DateOnly` values do. A `Month`, `Quarter` or `Day` field does so only when its values read as dates. A value with a time of day keeps its instant, or without an offset its local reading, so in one `DateTime` (Unspecified) column annotated `Date` the midnights are dates and the other values local times; `DateOnly` avoids that. An untyped field, or one typed `DateTime`, `Hour` or `Timestamp`, keeps the time of every timestamp.
 
 Integer years stay quantitative unless the field is annotated `SemanticType.Year` or `SemanticType.Decade`, or its name contains the token `year` and every value is an integer between 1500 and 2200 with at least two distinct values.
 
