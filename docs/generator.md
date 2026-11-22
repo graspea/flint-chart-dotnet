@@ -494,7 +494,11 @@ every open literal union struct with its literals (`StringUnions`), so the core 
 (`PointInk.Series`), any other string as a string, and an integer-keyed map as `new() { [2] = … }`, and every
 discriminated union (`Unions`): its namespace-qualified base class, the discriminator's wire name, each literal with its
 derived class, and the `Unknown<Alias>` class; the derived classes are in `Classes`, without the discriminator. `Unions` is
-empty on 1.0.1. It reads the shared fluent model, the
+empty on 1.0.1. The core writes a union value as `new <Derived> { … }`, the class its discriminator names, and a
+discriminator no class has as `new Unknown<Alias>("…") { Extensions = … }`. The emitter does not mark the
+[required nullable members](#required-nullable-members), which a class writes as `null` when unset: the core lists them by
+hand (`NameTables.WrittenWhenNull`), leaves such a member out for a JSON `null`, and leaves a value without it to the
+owner's `Extensions`; `NameTablesCrossCheckTests` checks the list against the library. It reads the shared fluent model, the
 constants emitter and the options emitter, so the overrides.json renames apply and its names cannot differ from the
 compiled facades. The file is plain arrays that compile for `netstandard2.0` and `net8.0`; the library gains no public
 type. `tests/Graspea.Flint.CSharp.Tests` (`NameTablesCrossCheckTests`) loads `Graspea.Flint` by reflection and checks
