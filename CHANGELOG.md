@@ -4,12 +4,309 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+## [1.1.1.1-preview.1] - 2026-11-22
+
 Tracks `flint-chart` 1.1.1 (npm). `flint-chart` 1.1.0 is skipped on purpose: no release tracks it ([docs/versioning.md](docs/versioning.md)), so this entry covers 1.1.0 and 1.1.1 against 1.0.1, and names 1.1.0 where a change first appeared upstream. The hand-written surface only grows (no `PublicAPI` removal); the validation outcome changes are listed under Added, Changed and Fixed.
 
 <details>
 <summary>IR diff, flint-chart 1.0.1 → 1.1.1 (from the sync pull request; BREAKING 0 · behavioural 179 · additive 80 · cosmetic 6)</summary>
 
-The release pull request copies the table from the sync pull request here.
+**Channels**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| added | `catalog.channels[strokeWidth]` |  | `"strokeWidth"` | additive |
+| added | `catalog.channels[text]` |  | `"text"` | additive |
+| added | `catalog.chartTypes[Bar Chart].backends.vegalite.channels[detail]` |  | `"detail"` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.plotly.channels[text]` |  | `"text"` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.channels[text]` |  | `"text"` | additive |
+| added | `catalog.chartTypes[Grouped Bar Chart].backends.vegalite.channels[detail]` |  | `"detail"` | additive |
+| added | `catalog.chartTypes[Map].backends.plotly.channels[detail]` |  | `"detail"` | additive |
+| added | `catalog.chartTypes[Map].backends.plotly.channels[order]` |  | `"order"` | additive |
+| added | `catalog.chartTypes[Map].backends.plotly.channels[shape]` |  | `"shape"` | additive |
+| added | `catalog.chartTypes[Map].backends.plotly.channels[strokeWidth]` |  | `"strokeWidth"` | additive |
+| added | `catalog.chartTypes[Map].backends.plotly.channels[text]` |  | `"text"` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.channels[detail]` |  | `"detail"` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.channels[order]` |  | `"order"` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.channels[shape]` |  | `"shape"` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.channels[strokeWidth]` |  | `"strokeWidth"` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.channels[text]` |  | `"text"` | additive |
+| added | `catalog.chartTypes[Stacked Bar Chart].backends.vegalite.channels[detail]` |  | `"detail"` | additive |
+
+**Properties**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[borderWidth]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[boundaries]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[classCount]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[classes]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[fit]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[graticule]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[keyType]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Choropleth].backends.vegalite.properties[mapStyle]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Donut Chart].backends.plotly.properties[sliceNames]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Map].backends.plotly.properties[arrows]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Map].backends.plotly.properties[curve]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.properties[arrows]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.properties[borderWidth]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.properties[boundaries]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.properties[curve]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.properties[fit]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.properties[graticule]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Map].backends.vegalite.properties[mapStyle]` |  | `{…}` | additive |
+| added | `catalog.chartTypes[Pie Chart].backends.plotly.properties[sliceNames]` |  | `{…}` | additive |
+
+**Semantic types**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| changed | `catalog.semanticTypes[Number].doc` | `"Generic number (measure fallback)"` | `"Measure not to be added up (or additivity unknown); totals are Count, Amount, Quantity or Profit"` | cosmetic |
+
+**Input types**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| added | `types.AnnotationSpec` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[background]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[enclosures]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[notes]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[references]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[regions]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[sparseFillBars]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[sparseFill]` |  | `{…}` | additive |
+| added | `types.AssembleOptions.props[titleWrap]` |  | `{…}` | additive |
+| added | `types.CanvasTreatment.props[contain]` |  | `{…}` | additive |
+| added | `types.CanvasTreatment.props[keyScale]` |  | `{…}` | additive |
+| added | `types.CanvasTreatment.props[labelScale]` |  | `{…}` | additive |
+| changed | `types.ChartAssemblyInput.props[chart_spec].type.props[canvasSize].doc` | `"Hard ceiling on the rendered size in pixels (optional).\\n\\nThe final image — a single plot OR an en…` | `"The box the host shows the chart in, in pixels (optional).\\n\\nThe plot — a single plot OR an entire…` | cosmetic |
+| changed | `types.ChartAssemblyInput.props[chart_spec].type.props[chrome].doc` | `` "The house chrome this chart keeps. Unset follows the theme. `false` drops it all; an object\\nturns … `` | `` "The house chrome this chart keeps. Unset follows the theme, except on a map (`Map`,\\n`Choropleth`),… `` | cosmetic |
+| added | `types.ChartAssemblyInput.props[updates]` |  | `{…}` | additive |
+| added | `types.ChartOverlaySpec` |  | `{…}` | additive |
+| changed | `types.ChartSpec.props[canvasSize].doc` | `"Hard ceiling on the rendered size in pixels (optional).\\n\\nThe final image — a single plot OR an en…` | `"The box the host shows the chart in, in pixels (optional).\\n\\nThe plot — a single plot OR an entire…` | cosmetic |
+| changed | `types.ChartSpec.props[chrome].doc` | `` "The house chrome this chart keeps. Unset follows the theme. `false` drops it all; an object\\nturns … `` | `` "The house chrome this chart keeps. Unset follows the theme, except on a map (`Map`,\\n`Choropleth`),… `` | cosmetic |
+| added | `types.ChartUpdate` |  | `{…}` | additive |
+| added | `types.ChartUpdateOp` |  | `{…}` | additive |
+| added | `types.EnclosureAnnotationSpec` |  | `{…}` | additive |
+| added | `types.FreeformCloneBody` |  | `{…}` | additive |
+| added | `types.FreeformOverlayBody` |  | `{…}` | additive |
+| added | `types.FreeformOverlaySpec` |  | `{…}` | additive |
+| added | `types.FreeformOverlayTransform` |  | `{…}` | additive |
+| added | `types.FreeformSvgBody` |  | `{…}` | additive |
+| added | `types.HighlightStyle` |  | `{…}` | additive |
+| added | `types.InteractionSpec.props[defaults]` |  | `{…}` | additive |
+| added | `types.NoteTextStyle` |  | `{…}` | additive |
+| added | `types.OverlayFieldEncoding` |  | `{…}` | additive |
+| added | `types.OverlayStyleSpec` |  | `{…}` | additive |
+| added | `types.RegionAnnotationSpec` |  | `{…}` | additive |
+| added | `types.SemanticAnnotation.props[divergingNeutral]` |  | `{…}` | additive |
+| added | `types.SemanticAnnotation.props[percentScale]` |  | `{…}` | additive |
+| added | `types.SemanticElement` |  | `{…}` | additive |
+| added | `types.SemanticTargetRef` |  | `{…}` | additive |
+| added | `types.StyleSpec` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[background]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[enclosures]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[notes]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[references]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[regions]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[sparseFillBars]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[sparseFill]` |  | `{…}` | additive |
+| added | `types.ThemeCompileDefaults.props[titleWrap]` |  | `{…}` | additive |
+| added | `types.ThemeInteraction.props[highlight]` |  | `{…}` | additive |
+| changed | `types.ThemeLegend.props[swatch].doc` | `` "The symbol beside each name in a key to categories: `auto` (default) takes it from the mark —\\na sq… `` | `` "The symbol beside each name in a key to categories: `auto` (default) takes it from the mark —\\na sq… `` | cosmetic |
+| added | `types.UpdateRegionSelector` |  | `{…}` | additive |
+| added | `types.UpdateTarget` |  | `{…}` | additive |
+
+**Behaviour probes**
+| Change | IR path | Before | After | Severity |
+|---|---|---|---|---|
+| added | `probes.channelReads.bases.Image-Charts: Core Templates\|#5` |  | `{…}` | behavioural |
+| added | `probes.channelReads.bases.Probe\|#101` |  | `{…}` | behavioural |
+| removed | `probes.channelReads.bases.Probe\|#102` | `{…}` |  | behavioural |
+| added | `probes.channelReads.bases.Probe\|#107` |  | `{…}` | behavioural |
+| removed | `probes.channelReads.bases.Probe\|#108` | `{…}` |  | behavioural |
+| added | `probes.channelReads.layoutReads.echarts.Density Plot.Density Plot\|#1[x2]` |  | `"x2"` | behavioural |
+| added | `probes.channelReads.layoutReads.echarts.Density Plot.Density Plot\|#4[x2]` |  | `"x2"` | behavioural |
+| added | `probes.channelReads.layoutReads.echarts.Density Plot.Density Plot\|#5[x2]` |  | `"x2"` | behavioural |
+| added | `probes.channelReads.layoutReads.echarts.Density Plot.x and y measures[x2]` |  | `"x2"` | behavioural |
+| added | `probes.channelReads.layoutReads.echarts.Density Plot.x and y measures[y2]` |  | `"y2"` | behavioural |
+| added | `probes.channelReads.layoutReads.echarts.Density Plot.x category, y measure[y2]` |  | `"y2"` | behavioural |
+| added | `probes.channelReads.layoutReads.echarts.Density Plot.y category, x measure[x2]` |  | `"x2"` | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.Choropleth.Probe\|#117[column]` |  | `"column"` | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.Donut Chart.Probe\|#70[column]` |  | `"column"` | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.Donut Chart.Probe\|#78[column]` |  | `"column"` | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.KPI Card.KPI Card\|#1[column]` |  | `"column"` | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.Map.Probe\|#118[column]` |  | `"column"` | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.Map.Probe\|#19[column]` |  | `"column"` | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.Pie Chart.Probe\|#63[column]` |  | `"column"` | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.Pie Chart.Probe\|#65[column]` |  | `"column"` | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.Pie Chart.Probe\|#81[column]` |  | `"column"` | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.Pie Chart.Probe\|#82[column]` |  | `"column"` | behavioural |
+| removed | `probes.channelReads.layoutReads.plotly.Range Area Chart.Range Area Chart\|#7[detail]` | `"detail"` |  | behavioural |
+| removed | `probes.channelReads.layoutReads.plotly.Slope Chart.Slope Chart\|#5[group]` | `"group"` |  | behavioural |
+| added | `probes.channelReads.layoutReads.plotly.Sparkline.Probe\|#60[column]` |  | `"column"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Choropleth.x and y measures[y2]` |  | `"y2"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Choropleth.x category, y measure[y2]` |  | `"y2"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Choropleth.x category, y measure[y]` |  | `"y"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Choropleth.y measure[y2]` |  | `"y2"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Choropleth.y measure[y]` |  | `"y"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Map.x and y measures[y2]` |  | `"y2"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Map.x category, y measure[y2]` |  | `"y2"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Map.x category, y measure[y]` |  | `"y"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Map.y measure[y2]` |  | `"y2"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Map.y measure[y]` |  | `"y"` | behavioural |
+| added | `probes.channelReads.layoutReads.vegalite.Scatter Plot.Image-Charts: Core Templates\|#5` |  | `[…]` | behavioural |
+| removed | `probes.channelReads.layoutReads.vegalite.Scatter Plot.Probe\|#125` | `[…]` |  | behavioural |
+| added | `probes.channelReads.reads.excel.Candlestick Chart.Probe\|#101` |  | `[…]` | behavioural |
+| removed | `probes.channelReads.reads.excel.Candlestick Chart.Probe\|#102` | `[…]` |  | behavioural |
+| added | `probes.channelReads.reads.excel.Radar Chart.Probe\|#107` |  | `[…]` | behavioural |
+| removed | `probes.channelReads.reads.excel.Radar Chart.Probe\|#108` | `[…]` |  | behavioural |
+| changed | `probes.channelTypes.banded x, 10 dates on the 15th of consecutive months` | `"ordinal snapshots"` | `"temporal"` | behavioural |
+| changed | `probes.channelTypes.banded x, 10 quarter ends` | `"ordinal snapshots"` | `"temporal"` | behavioural |
+| changed | `probes.channelTypes.banded x, 10 semi-monthly dates` | `"ordinal snapshots"` | `"temporal"` | behavioural |
+| changed | `probes.channelTypes.banded x, 10 weekly dates with irregular gaps` | `"ordinal snapshots"` | `"temporal"` | behavioural |
+| changed | `probes.channelTypes.banded x, 9 days at 10:00Z and one far` | `"temporal"` | `"ordinal snapshots"` | behavioural |
+| changed | `probes.channelTypes.banded x, 9 hours UTC and one far` | `"temporal"` | `"ordinal snapshots"` | behavioural |
+| changed | `probes.channelTypes.banded x, 9 months on the 5th at 10:00Z every other month and one far` | `"temporal"` | `"ordinal snapshots"` | behavioural |
+| changed | `probes.channelTypes.banded x, Date on the 15th of 10 consecutive months` | `"ordinal snapshots"` | `"temporal"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .Date` | `"  2024-01-15T00:00:00  "` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .DateTime` | `"  2024-01-15T00:00:00  "` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .Day` | `"  2024-01-15T00:00:00  "` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .Decade` | `"  2024-01-15T00:00:00  "` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .Hour` | `"  2024-01-15T00:00:00  "` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .Month` | `"  2024-01-15T00:00:00  "` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .Quarter` | `"  2024-01-15T00:00:00  "` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .Timestamp` | `"  2024-01-15T00:00:00  "` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .Year` | `"  2024-01-15T00:00:00  "` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .YearMonth` | `"  2024-01-15T00:00:00  "` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .YearQuarter` | `"  2024-01-15T00:00:00  "` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.  2024-01-15T00:00:00  .untyped` | `"  2024-01-15T00:00:00  "` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.Date` | `"2024-01-15 00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.DateTime` | `"2024-01-15 00:00:00"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.Day` | `"2024-01-15 00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.Decade` | `"2024-01-15 00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.Hour` | `"2024-01-15 00:00:00"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.Month` | `"2024-01-15 00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.Quarter` | `"2024-01-15 00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.Timestamp` | `"2024-01-15 00:00:00"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.Year` | `"2024-01-15 00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.YearMonth` | `"2024-01-15 00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.YearQuarter` | `"2024-01-15 00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 00:00:00.untyped` | `"2024-01-15 00:00:00"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.Date` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.DateTime` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.Day` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.Decade` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.Hour` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.Month` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.Quarter` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.Timestamp` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.Year` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.YearMonth` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.YearQuarter` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15 10:00.untyped` | `"2024-01-15 10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.Date` | `"2024-01-15T00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.DateTime` | `"2024-01-15T00:00"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.Day` | `"2024-01-15T00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.Decade` | `"2024-01-15T00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.Hour` | `"2024-01-15T00:00"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.Month` | `"2024-01-15T00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.Quarter` | `"2024-01-15T00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.Timestamp` | `"2024-01-15T00:00"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.Year` | `"2024-01-15T00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.YearMonth` | `"2024-01-15T00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.YearQuarter` | `"2024-01-15T00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00.untyped` | `"2024-01-15T00:00"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.Date` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.DateTime` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.Day` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.Decade` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.Hour` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.Month` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.Quarter` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.Timestamp` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.Year` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.YearMonth` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.YearQuarter` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00
+.untyped` | `"2024-01-15T00:00:00\\n"` | `"2024-01-15T00:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05.Date` | `"2024-01-15T00:00:00+05"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05.Decade` | `"2024-01-15T00:00:00+05"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05.Year` | `"2024-01-15T00:00:00+05"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05.YearMonth` | `"2024-01-15T00:00:00+05"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05.YearQuarter` | `"2024-01-15T00:00:00+05"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05:00.Date` | `"2024-01-15T00:00:00+05:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05:00.Day` | `"2024-01-15T00:00:00+05:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05:00.Decade` | `"2024-01-15T00:00:00+05:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05:00.Month` | `"2024-01-15T00:00:00+05:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05:00.Quarter` | `"2024-01-15T00:00:00+05:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05:00.Year` | `"2024-01-15T00:00:00+05:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05:00.YearMonth` | `"2024-01-15T00:00:00+05:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00+05:00.YearQuarter` | `"2024-01-15T00:00:00+05:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00-12:00.Date` | `"2024-01-15T00:00:00-12:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00-12:00.Day` | `"2024-01-15T00:00:00-12:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00-12:00.Decade` | `"2024-01-15T00:00:00-12:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00-12:00.Month` | `"2024-01-15T00:00:00-12:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00-12:00.Quarter` | `"2024-01-15T00:00:00-12:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00-12:00.Year` | `"2024-01-15T00:00:00-12:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00-12:00.YearMonth` | `"2024-01-15T00:00:00-12:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00-12:00.YearQuarter` | `"2024-01-15T00:00:00-12:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.000.Date` | `"2024-01-15T00:00:00.000"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.000.Day` | `"2024-01-15T00:00:00.000"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.000.Decade` | `"2024-01-15T00:00:00.000"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.000.Month` | `"2024-01-15T00:00:00.000"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.000.Quarter` | `"2024-01-15T00:00:00.000"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.000.Year` | `"2024-01-15T00:00:00.000"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.000.YearMonth` | `"2024-01-15T00:00:00.000"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.000.YearQuarter` | `"2024-01-15T00:00:00.000"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.Date` | `"2024-01-15T00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.Day` | `"2024-01-15T00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.Decade` | `"2024-01-15T00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.Month` | `"2024-01-15T00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.Quarter` | `"2024-01-15T00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.Year` | `"2024-01-15T00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.YearMonth` | `"2024-01-15T00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00.YearQuarter` | `"2024-01-15T00:00:00"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00Z.Date` | `"2024-01-15T00:00:00Z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00Z.Day` | `"2024-01-15T00:00:00Z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00Z.Decade` | `"2024-01-15T00:00:00Z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00Z.Month` | `"2024-01-15T00:00:00Z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00Z.Quarter` | `"2024-01-15T00:00:00Z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00Z.Year` | `"2024-01-15T00:00:00Z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00Z.YearMonth` | `"2024-01-15T00:00:00Z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T00:00:00Z.YearQuarter` | `"2024-01-15T00:00:00Z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.Date` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.DateTime` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.Day` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.Decade` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.Hour` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.Month` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.Quarter` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.Timestamp` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.Year` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.YearMonth` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.YearQuarter` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15T10:00.untyped` | `"2024-01-15T10:00"` | `"2024-01-15T10:00:00"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15t00:00:00z.Date` | `"2024-01-15t00:00:00z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15t00:00:00z.Decade` | `"2024-01-15t00:00:00z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15t00:00:00z.Year` | `"2024-01-15t00:00:00z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15t00:00:00z.YearMonth` | `"2024-01-15t00:00:00z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-01-15t00:00:00z.YearQuarter` | `"2024-01-15t00:00:00z"` | `"2024-01-15"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-02-30T00:00:00.Date` | `"2024-02-30T00:00:00"` | `"2024-02-30"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-02-30T00:00:00.Day` | `"2024-02-30T00:00:00"` | `"2024-02-30"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-02-30T00:00:00.Decade` | `"2024-02-30T00:00:00"` | `"2024-02-30"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-02-30T00:00:00.Month` | `"2024-02-30T00:00:00"` | `"2024-02-30"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-02-30T00:00:00.Quarter` | `"2024-02-30T00:00:00"` | `"2024-02-30"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-02-30T00:00:00.Year` | `"2024-02-30T00:00:00"` | `"2024-02-30"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-02-30T00:00:00.YearMonth` | `"2024-02-30T00:00:00"` | `"2024-02-30"` | behavioural |
+| changed | `probes.temporalConversion.converted.2024-02-30T00:00:00.YearQuarter` | `"2024-02-30T00:00:00"` | `"2024-02-30"` | behavioural |
 
 </details>
 

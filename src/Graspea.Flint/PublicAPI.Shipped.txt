@@ -18,6 +18,44 @@ Graspea.Flint.Aggregate.Aggregate() -> void
 Graspea.Flint.Aggregate.Aggregate(string! name) -> void
 Graspea.Flint.Aggregate.Equals(Graspea.Flint.Aggregate other) -> bool
 Graspea.Flint.Aggregate.Name.get -> string!
+Graspea.Flint.AnnotateEnclosureOp
+Graspea.Flint.AnnotateEnclosureOp.AnnotateEnclosureOp() -> void
+Graspea.Flint.AnnotateEnclosureOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AnnotateEnclosureOp.Extensions.set -> void
+Graspea.Flint.AnnotateEnclosureOp.Name.get -> string?
+Graspea.Flint.AnnotateEnclosureOp.Name.set -> void
+Graspea.Flint.AnnotateEnclosureOp.Value.get -> Graspea.Flint.EnclosureAnnotationSpec?
+Graspea.Flint.AnnotateEnclosureOp.Value.set -> void
+Graspea.Flint.AnnotateRegionOp
+Graspea.Flint.AnnotateRegionOp.AnnotateRegionOp() -> void
+Graspea.Flint.AnnotateRegionOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AnnotateRegionOp.Extensions.set -> void
+Graspea.Flint.AnnotateRegionOp.Name.get -> string?
+Graspea.Flint.AnnotateRegionOp.Name.set -> void
+Graspea.Flint.AnnotateRegionOp.Value.get -> Graspea.Flint.RegionAnnotationSpec?
+Graspea.Flint.AnnotateRegionOp.Value.set -> void
+Graspea.Flint.AnnotateTextOp
+Graspea.Flint.AnnotateTextOp.AnnotateTextOp() -> void
+Graspea.Flint.AnnotateTextOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AnnotateTextOp.Extensions.set -> void
+Graspea.Flint.AnnotateTextOp.Target.get -> Graspea.Flint.UpdateTarget?
+Graspea.Flint.AnnotateTextOp.Target.set -> void
+Graspea.Flint.AnnotateTextOp.Value.get -> Graspea.Flint.AnnotationSpec?
+Graspea.Flint.AnnotateTextOp.Value.set -> void
+Graspea.Flint.AnnotationSpec
+Graspea.Flint.AnnotationSpec.Anchor.get -> string?
+Graspea.Flint.AnnotationSpec.Anchor.set -> void
+Graspea.Flint.AnnotationSpec.AnnotationSpec() -> void
+Graspea.Flint.AnnotationSpec.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AnnotationSpec.Extensions.set -> void
+Graspea.Flint.AnnotationSpec.Highlight.get -> string?
+Graspea.Flint.AnnotationSpec.Highlight.set -> void
+Graspea.Flint.AnnotationSpec.HighlightStyle.get -> Graspea.Flint.HighlightStyle?
+Graspea.Flint.AnnotationSpec.HighlightStyle.set -> void
+Graspea.Flint.AnnotationSpec.Style.get -> Graspea.Flint.NoteTextStyle?
+Graspea.Flint.AnnotationSpec.Style.set -> void
+Graspea.Flint.AnnotationSpec.Text.get -> string?
+Graspea.Flint.AnnotationSpec.Text.set -> void
 Graspea.Flint.AreaChartBuilder<TRow>
 Graspea.Flint.AreaChartBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.AreaChartBuilder<TRow>!
 Graspea.Flint.AreaChartBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.AreaChartBuilder<TRow>!
@@ -74,6 +112,8 @@ Graspea.Flint.AssembleOptions.AspectTolerance.set -> void
 Graspea.Flint.AssembleOptions.AssembleOptions() -> void
 Graspea.Flint.AssembleOptions.AutoFacetWrap.get -> bool?
 Graspea.Flint.AssembleOptions.AutoFacetWrap.set -> void
+Graspea.Flint.AssembleOptions.Background.get -> string?
+Graspea.Flint.AssembleOptions.Background.set -> void
 Graspea.Flint.AssembleOptions.BandBalance.get -> bool?
 Graspea.Flint.AssembleOptions.BandBalance.set -> void
 Graspea.Flint.AssembleOptions.BandStepFit.get -> double?
@@ -100,6 +140,8 @@ Graspea.Flint.AssembleOptions.DefaultBandSize.get -> double?
 Graspea.Flint.AssembleOptions.DefaultBandSize.set -> void
 Graspea.Flint.AssembleOptions.Elasticity.get -> double?
 Graspea.Flint.AssembleOptions.Elasticity.set -> void
+Graspea.Flint.AssembleOptions.Enclosures.get -> Graspea.Flint.AssembleOptionsEnclosures![]?
+Graspea.Flint.AssembleOptions.Enclosures.set -> void
 Graspea.Flint.AssembleOptions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.AssembleOptions.Extensions.set -> void
 Graspea.Flint.AssembleOptions.FacetAspectRatioResistance.get -> double?
@@ -142,8 +184,18 @@ Graspea.Flint.AssembleOptions.MinStep.get -> double?
 Graspea.Flint.AssembleOptions.MinStep.set -> void
 Graspea.Flint.AssembleOptions.MinSubplotSize.get -> double?
 Graspea.Flint.AssembleOptions.MinSubplotSize.set -> void
+Graspea.Flint.AssembleOptions.Notes.get -> Graspea.Flint.AssembleOptionsNotes![]?
+Graspea.Flint.AssembleOptions.Notes.set -> void
+Graspea.Flint.AssembleOptions.References.get -> double[]?
+Graspea.Flint.AssembleOptions.References.set -> void
+Graspea.Flint.AssembleOptions.Regions.get -> Graspea.Flint.AssembleOptionsRegions![]?
+Graspea.Flint.AssembleOptions.Regions.set -> void
 Graspea.Flint.AssembleOptions.RowNamesAbove.get -> Graspea.Flint.AssembleOptionsRowNamesAbove?
 Graspea.Flint.AssembleOptions.RowNamesAbove.set -> void
+Graspea.Flint.AssembleOptions.SparseFill.get -> Graspea.Flint.SparseFill?
+Graspea.Flint.AssembleOptions.SparseFill.set -> void
+Graspea.Flint.AssembleOptions.SparseFillBars.get -> bool?
+Graspea.Flint.AssembleOptions.SparseFillBars.set -> void
 Graspea.Flint.AssembleOptions.StepPadding.get -> double?
 Graspea.Flint.AssembleOptions.StepPadding.set -> void
 Graspea.Flint.AssembleOptions.TargetAspect.get -> double?
@@ -152,6 +204,14 @@ Graspea.Flint.AssembleOptions.TargetBandAr.get -> double?
 Graspea.Flint.AssembleOptions.TargetBandAr.set -> void
 Graspea.Flint.AssembleOptions.ThemeDecisions.get -> bool?
 Graspea.Flint.AssembleOptions.ThemeDecisions.set -> void
+Graspea.Flint.AssembleOptions.TitleWrap.get -> Graspea.Flint.TitleWrap?
+Graspea.Flint.AssembleOptions.TitleWrap.set -> void
+Graspea.Flint.AssembleOptionsEnclosures
+Graspea.Flint.AssembleOptionsEnclosures.AssembleOptionsEnclosures() -> void
+Graspea.Flint.AssembleOptionsEnclosures.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AssembleOptionsEnclosures.Extensions.set -> void
+Graspea.Flint.AssembleOptionsEnclosures.Targets.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.AssembleOptionsEnclosures.Targets.set -> void
 Graspea.Flint.AssembleOptionsLabelStep
 Graspea.Flint.AssembleOptionsLabelStep.AssembleOptionsLabelStep() -> void
 Graspea.Flint.AssembleOptionsLabelStep.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
@@ -160,6 +220,26 @@ Graspea.Flint.AssembleOptionsLabelStep.X.get -> double?
 Graspea.Flint.AssembleOptionsLabelStep.X.set -> void
 Graspea.Flint.AssembleOptionsLabelStep.Y.get -> double?
 Graspea.Flint.AssembleOptionsLabelStep.Y.set -> void
+Graspea.Flint.AssembleOptionsNotes
+Graspea.Flint.AssembleOptionsNotes.AssembleOptionsNotes() -> void
+Graspea.Flint.AssembleOptionsNotes.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AssembleOptionsNotes.Extensions.set -> void
+Graspea.Flint.AssembleOptionsNotes.Key.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.Nodes.JsonNode?>?
+Graspea.Flint.AssembleOptionsNotes.Key.set -> void
+Graspea.Flint.AssembleOptionsNotes.Text.get -> string?
+Graspea.Flint.AssembleOptionsNotes.Text.set -> void
+Graspea.Flint.AssembleOptionsRegions
+Graspea.Flint.AssembleOptionsRegions.AssembleOptionsRegions() -> void
+Graspea.Flint.AssembleOptionsRegions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.AssembleOptionsRegions.Extensions.set -> void
+Graspea.Flint.AssembleOptionsRegions.Placement.get -> string?
+Graspea.Flint.AssembleOptionsRegions.Placement.set -> void
+Graspea.Flint.AssembleOptionsRegions.Text.get -> string?
+Graspea.Flint.AssembleOptionsRegions.Text.set -> void
+Graspea.Flint.AssembleOptionsRegions.X.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.AssembleOptionsRegions.X.set -> void
+Graspea.Flint.AssembleOptionsRegions.Y.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.AssembleOptionsRegions.Y.set -> void
 Graspea.Flint.AssembleOptionsRowNamesAbove
 Graspea.Flint.AssembleOptionsRowNamesAbove.AssembleOptionsRowNamesAbove() -> void
 Graspea.Flint.AssembleOptionsRowNamesAbove.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
@@ -199,6 +279,9 @@ Graspea.Flint.BarChartBuilder<TRow>.Column(Graspea.Flint.ChartEncoding! encoding
 Graspea.Flint.BarChartBuilder<TRow>.Column(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.BarChartBuilder<TRow>!
 Graspea.Flint.BarChartBuilder<TRow>.Column(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.BarChartBuilder<TRow>!
 Graspea.Flint.BarChartBuilder<TRow>.CornerRadius(double value) -> Graspea.Flint.BarChartBuilder<TRow>!
+Graspea.Flint.BarChartBuilder<TRow>.Detail(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.BarChartBuilder<TRow>!
+Graspea.Flint.BarChartBuilder<TRow>.Detail(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.BarChartBuilder<TRow>!
+Graspea.Flint.BarChartBuilder<TRow>.Detail(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.BarChartBuilder<TRow>!
 Graspea.Flint.BarChartBuilder<TRow>.IndependentYAxis(bool value) -> Graspea.Flint.BarChartBuilder<TRow>!
 Graspea.Flint.BarChartBuilder<TRow>.Opacity(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.BarChartBuilder<TRow>!
 Graspea.Flint.BarChartBuilder<TRow>.Opacity(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.BarChartBuilder<TRow>!
@@ -410,10 +493,16 @@ Graspea.Flint.CandlestickChartBuilder<TRow>.X(System.Linq.Expressions.Expression
 Graspea.Flint.CandlestickChartBuilder<TRow>.X(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.CandlestickChartBuilder<TRow>!
 Graspea.Flint.CanvasTreatment
 Graspea.Flint.CanvasTreatment.CanvasTreatment() -> void
+Graspea.Flint.CanvasTreatment.Contain.get -> Graspea.Flint.CanvasTreatmentContain?
+Graspea.Flint.CanvasTreatment.Contain.set -> void
 Graspea.Flint.CanvasTreatment.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.CanvasTreatment.Extensions.set -> void
+Graspea.Flint.CanvasTreatment.KeyScale.get -> double?
+Graspea.Flint.CanvasTreatment.KeyScale.set -> void
 Graspea.Flint.CanvasTreatment.Keys.get -> string?
 Graspea.Flint.CanvasTreatment.Keys.set -> void
+Graspea.Flint.CanvasTreatment.LabelScale.get -> double?
+Graspea.Flint.CanvasTreatment.LabelScale.set -> void
 Graspea.Flint.CanvasTreatment.Names.get -> Graspea.Flint.CanvasTreatmentNames?
 Graspea.Flint.CanvasTreatment.Names.set -> void
 Graspea.Flint.CanvasTreatment.OneKey.get -> Graspea.Flint.CanvasTreatmentOneKey?
@@ -426,6 +515,16 @@ Graspea.Flint.CanvasTreatment.RowNames.get -> double?
 Graspea.Flint.CanvasTreatment.RowNames.set -> void
 Graspea.Flint.CanvasTreatment.TitleScale.get -> double?
 Graspea.Flint.CanvasTreatment.TitleScale.set -> void
+Graspea.Flint.CanvasTreatmentContain
+Graspea.Flint.CanvasTreatmentContain.CanvasTreatmentContain() -> void
+Graspea.Flint.CanvasTreatmentContain.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.CanvasTreatmentContain.Extensions.set -> void
+Graspea.Flint.CanvasTreatmentContain.Height.get -> double?
+Graspea.Flint.CanvasTreatmentContain.Height.set -> void
+Graspea.Flint.CanvasTreatmentContain.Keys.get -> string?
+Graspea.Flint.CanvasTreatmentContain.Keys.set -> void
+Graspea.Flint.CanvasTreatmentContain.Width.get -> double?
+Graspea.Flint.CanvasTreatmentContain.Width.set -> void
 Graspea.Flint.CanvasTreatmentNames
 Graspea.Flint.CanvasTreatmentNames.CanvasTreatmentNames() -> void
 Graspea.Flint.CanvasTreatmentNames.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
@@ -476,6 +575,8 @@ Graspea.Flint.ChartAssemblyInput.SemanticTypes.get -> System.Collections.Generic
 Graspea.Flint.ChartAssemblyInput.SemanticTypes.set -> void
 Graspea.Flint.ChartAssemblyInput.ThemeSpec.get -> Graspea.Flint.ChartTheme?
 Graspea.Flint.ChartAssemblyInput.ThemeSpec.set -> void
+Graspea.Flint.ChartAssemblyInput.Updates.get -> System.Collections.Generic.List<Graspea.Flint.ChartUpdate!>?
+Graspea.Flint.ChartAssemblyInput.Updates.set -> void
 Graspea.Flint.ChartBuilder<TSelf, TRow>
 Graspea.Flint.ChartBuilder<TSelf, TRow>.Annotate(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticAnnotation! annotation) -> TSelf!
 Graspea.Flint.ChartBuilder<TSelf, TRow>.Annotate(string! field, Graspea.Flint.SemanticAnnotation! annotation) -> TSelf!
@@ -555,6 +656,58 @@ Graspea.Flint.ChartEncoding.Title.get -> Graspea.Flint.ChannelTitle?
 Graspea.Flint.ChartEncoding.Title.set -> void
 Graspea.Flint.ChartEncoding.Type.get -> Graspea.Flint.EncodingType?
 Graspea.Flint.ChartEncoding.Type.set -> void
+Graspea.Flint.ChartOverlaySpec
+Graspea.Flint.ChartOverlaySpec.ChartOverlaySpec() -> void
+Graspea.Flint.ChartOverlaySpec.Data.get -> Graspea.Flint.ChartOverlaySpecData?
+Graspea.Flint.ChartOverlaySpec.Data.set -> void
+Graspea.Flint.ChartOverlaySpec.Encodings.get -> Graspea.Flint.ChartOverlaySpecEncodings?
+Graspea.Flint.ChartOverlaySpec.Encodings.set -> void
+Graspea.Flint.ChartOverlaySpec.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.ChartOverlaySpec.Extensions.set -> void
+Graspea.Flint.ChartOverlaySpec.Interactive.get -> bool?
+Graspea.Flint.ChartOverlaySpec.Interactive.set -> void
+Graspea.Flint.ChartOverlaySpec.Layer.get -> string?
+Graspea.Flint.ChartOverlaySpec.Layer.set -> void
+Graspea.Flint.ChartOverlaySpec.Mark.get -> string?
+Graspea.Flint.ChartOverlaySpec.Mark.set -> void
+Graspea.Flint.ChartOverlaySpec.Projectable.get -> bool?
+Graspea.Flint.ChartOverlaySpec.Projectable.set -> void
+Graspea.Flint.ChartOverlaySpec.Role.get -> string?
+Graspea.Flint.ChartOverlaySpec.Role.set -> void
+Graspea.Flint.ChartOverlaySpec.Style.get -> Graspea.Flint.OverlayStyleSpec?
+Graspea.Flint.ChartOverlaySpec.Style.set -> void
+Graspea.Flint.ChartOverlaySpecData
+Graspea.Flint.ChartOverlaySpecData.ChartOverlaySpecData() -> void
+Graspea.Flint.ChartOverlaySpecData.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.ChartOverlaySpecData.Extensions.set -> void
+Graspea.Flint.ChartOverlaySpecData.Values.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.Nodes.JsonNode?>![]?
+Graspea.Flint.ChartOverlaySpecData.Values.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings
+Graspea.Flint.ChartOverlaySpecEncodings.ChartOverlaySpecEncodings() -> void
+Graspea.Flint.ChartOverlaySpecEncodings.Color.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.Color.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.ChartOverlaySpecEncodings.Extensions.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.Latitude.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.Latitude.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.Latitude2.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.Latitude2.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.Longitude.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.Longitude.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.Longitude2.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.Longitude2.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.Order.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.Order.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.Text.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.Text.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.X.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.X.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.X2.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.X2.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.Y.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.Y.set -> void
+Graspea.Flint.ChartOverlaySpecEncodings.Y2.get -> Graspea.Flint.OverlayFieldEncoding?
+Graspea.Flint.ChartOverlaySpecEncodings.Y2.set -> void
 Graspea.Flint.ChartSize
 Graspea.Flint.ChartSize.ChartSize() -> void
 Graspea.Flint.ChartSize.ChartSize(double Width, double Height) -> void
@@ -613,25 +766,79 @@ Graspea.Flint.ChartType.ChartType() -> void
 Graspea.Flint.ChartType.ChartType(string! name) -> void
 Graspea.Flint.ChartType.Equals(Graspea.Flint.ChartType other) -> bool
 Graspea.Flint.ChartType.Name.get -> string!
+Graspea.Flint.ChartUpdate
+Graspea.Flint.ChartUpdate.ChartUpdate() -> void
+Graspea.Flint.ChartUpdate.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.ChartUpdate.Extensions.set -> void
+Graspea.Flint.ChartUpdate.Id.get -> string?
+Graspea.Flint.ChartUpdate.Id.set -> void
+Graspea.Flint.ChartUpdate.Ops.get -> Graspea.Flint.ChartUpdateOp![]?
+Graspea.Flint.ChartUpdate.Ops.set -> void
+Graspea.Flint.ChartUpdateOp
+Graspea.Flint.ChoroplethBoundaries
+Graspea.Flint.ChoroplethBoundaries.Default = 0 -> Graspea.Flint.ChoroplethBoundaries
+Graspea.Flint.ChoroplethBoundaries.NaturalEarth = 2 -> Graspea.Flint.ChoroplethBoundaries
+Graspea.Flint.ChoroplethBoundaries.WorldBank = 1 -> Graspea.Flint.ChoroplethBoundaries
 Graspea.Flint.ChoroplethBuilder<TRow>
+Graspea.Flint.ChoroplethBuilder<TRow>.BorderWidth(double value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.Boundaries(Graspea.Flint.ChoroplethBoundaries value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.ClassCount(double value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.Classes(Graspea.Flint.ChoroplethClasses value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Color(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Detail(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Detail(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Detail(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.Fit(Graspea.Flint.ChoroplethFit value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.Graticule(bool value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Id(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Id(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Id(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.KeyType(Graspea.Flint.ChoroplethKeyType value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Level(Graspea.Flint.ChoroplethLevel value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.MapStyle(Graspea.Flint.ChoroplethMapStyle value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Projection(Graspea.Flint.ChoroplethProjection value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.ProjectionCenter(Graspea.Flint.ChoroplethProjectionCenter value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
 Graspea.Flint.ChoroplethBuilder<TRow>.Region(Graspea.Flint.ChoroplethRegion value) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.Text(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.Text(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethBuilder<TRow>.Text(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ChoroplethBuilder<TRow>!
+Graspea.Flint.ChoroplethClasses
+Graspea.Flint.ChoroplethClasses.Auto = 1 -> Graspea.Flint.ChoroplethClasses
+Graspea.Flint.ChoroplethClasses.Continuous = 5 -> Graspea.Flint.ChoroplethClasses
+Graspea.Flint.ChoroplethClasses.Default = 0 -> Graspea.Flint.ChoroplethClasses
+Graspea.Flint.ChoroplethClasses.Equal = 3 -> Graspea.Flint.ChoroplethClasses
+Graspea.Flint.ChoroplethClasses.Jenks = 4 -> Graspea.Flint.ChoroplethClasses
+Graspea.Flint.ChoroplethClasses.Quantile = 2 -> Graspea.Flint.ChoroplethClasses
+Graspea.Flint.ChoroplethFit
+Graspea.Flint.ChoroplethFit.Auto = 1 -> Graspea.Flint.ChoroplethFit
+Graspea.Flint.ChoroplethFit.Continent = 3 -> Graspea.Flint.ChoroplethFit
+Graspea.Flint.ChoroplethFit.Data = 2 -> Graspea.Flint.ChoroplethFit
+Graspea.Flint.ChoroplethFit.Default = 0 -> Graspea.Flint.ChoroplethFit
+Graspea.Flint.ChoroplethFit.Whole = 4 -> Graspea.Flint.ChoroplethFit
+Graspea.Flint.ChoroplethKeyType
+Graspea.Flint.ChoroplethKeyType.Auto = 1 -> Graspea.Flint.ChoroplethKeyType
+Graspea.Flint.ChoroplethKeyType.CountryName = 5 -> Graspea.Flint.ChoroplethKeyType
+Graspea.Flint.ChoroplethKeyType.Default = 0 -> Graspea.Flint.ChoroplethKeyType
+Graspea.Flint.ChoroplethKeyType.Fips = 7 -> Graspea.Flint.ChoroplethKeyType
+Graspea.Flint.ChoroplethKeyType.Iso2 = 3 -> Graspea.Flint.ChoroplethKeyType
+Graspea.Flint.ChoroplethKeyType.Iso3 = 2 -> Graspea.Flint.ChoroplethKeyType
+Graspea.Flint.ChoroplethKeyType.IsoNumeric = 4 -> Graspea.Flint.ChoroplethKeyType
+Graspea.Flint.ChoroplethKeyType.UsState = 6 -> Graspea.Flint.ChoroplethKeyType
 Graspea.Flint.ChoroplethLevel
 Graspea.Flint.ChoroplethLevel.Auto = 3 -> Graspea.Flint.ChoroplethLevel
 Graspea.Flint.ChoroplethLevel.County = 2 -> Graspea.Flint.ChoroplethLevel
 Graspea.Flint.ChoroplethLevel.Default = 0 -> Graspea.Flint.ChoroplethLevel
 Graspea.Flint.ChoroplethLevel.State = 1 -> Graspea.Flint.ChoroplethLevel
+Graspea.Flint.ChoroplethMapStyle
+Graspea.Flint.ChoroplethMapStyle.Atlas = 4 -> Graspea.Flint.ChoroplethMapStyle
+Graspea.Flint.ChoroplethMapStyle.Auto = 1 -> Graspea.Flint.ChoroplethMapStyle
+Graspea.Flint.ChoroplethMapStyle.Dark = 5 -> Graspea.Flint.ChoroplethMapStyle
+Graspea.Flint.ChoroplethMapStyle.Default = 0 -> Graspea.Flint.ChoroplethMapStyle
+Graspea.Flint.ChoroplethMapStyle.Light = 2 -> Graspea.Flint.ChoroplethMapStyle
+Graspea.Flint.ChoroplethMapStyle.Minimal = 6 -> Graspea.Flint.ChoroplethMapStyle
+Graspea.Flint.ChoroplethMapStyle.Muted = 3 -> Graspea.Flint.ChoroplethMapStyle
 Graspea.Flint.ChoroplethProjection
 Graspea.Flint.ChoroplethProjection.AzimuthalEquidistant = 8 -> Graspea.Flint.ChoroplethProjection
 Graspea.Flint.ChoroplethProjection.ConicEqualArea = 6 -> Graspea.Flint.ChoroplethProjection
@@ -856,6 +1063,9 @@ Graspea.Flint.DensityPlotStackMode
 Graspea.Flint.DensityPlotStackMode.Default = 0 -> Graspea.Flint.DensityPlotStackMode
 Graspea.Flint.DensityPlotStackMode.Layered = 2 -> Graspea.Flint.DensityPlotStackMode
 Graspea.Flint.DensityPlotStackMode.Normalize = 1 -> Graspea.Flint.DensityPlotStackMode
+Graspea.Flint.DivergingNeutral
+Graspea.Flint.DivergingNeutral.IsBreak.get -> bool
+Graspea.Flint.DivergingNeutral.Width.get -> double?
 Graspea.Flint.DonutChartBuilder<TRow>
 Graspea.Flint.DonutChartBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.DonutChartBuilder<TRow>!
 Graspea.Flint.DonutChartBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.DonutChartBuilder<TRow>!
@@ -873,6 +1083,7 @@ Graspea.Flint.DonutChartBuilder<TRow>.ShowValueLabels(bool value) -> Graspea.Fli
 Graspea.Flint.DonutChartBuilder<TRow>.Size(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.DonutChartBuilder<TRow>!
 Graspea.Flint.DonutChartBuilder<TRow>.Size(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.DonutChartBuilder<TRow>!
 Graspea.Flint.DonutChartBuilder<TRow>.Size(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.DonutChartBuilder<TRow>!
+Graspea.Flint.DonutChartBuilder<TRow>.SliceNames(Graspea.Flint.DonutChartSliceNames value) -> Graspea.Flint.DonutChartBuilder<TRow>!
 Graspea.Flint.DonutChartBuilder<TRow>.SortSlices(Graspea.Flint.DonutChartSortSlices value) -> Graspea.Flint.DonutChartBuilder<TRow>!
 Graspea.Flint.DonutChartBuilder<TRow>.Theta(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.DonutChartBuilder<TRow>!
 Graspea.Flint.DonutChartBuilder<TRow>.Theta(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.DonutChartBuilder<TRow>!
@@ -884,6 +1095,11 @@ Graspea.Flint.DonutChartLabelType.Default = 0 -> Graspea.Flint.DonutChartLabelTy
 Graspea.Flint.DonutChartLabelType.None = 5 -> Graspea.Flint.DonutChartLabelType
 Graspea.Flint.DonutChartLabelType.Percent = 4 -> Graspea.Flint.DonutChartLabelType
 Graspea.Flint.DonutChartLabelType.Value = 3 -> Graspea.Flint.DonutChartLabelType
+Graspea.Flint.DonutChartSliceNames
+Graspea.Flint.DonutChartSliceNames.Auto = 1 -> Graspea.Flint.DonutChartSliceNames
+Graspea.Flint.DonutChartSliceNames.Default = 0 -> Graspea.Flint.DonutChartSliceNames
+Graspea.Flint.DonutChartSliceNames.Key = 3 -> Graspea.Flint.DonutChartSliceNames
+Graspea.Flint.DonutChartSliceNames.OnSlices = 2 -> Graspea.Flint.DonutChartSliceNames
 Graspea.Flint.DonutChartSortSlices
 Graspea.Flint.DonutChartSortSlices.Ascending = 3 -> Graspea.Flint.DonutChartSortSlices
 Graspea.Flint.DonutChartSortSlices.Default = 0 -> Graspea.Flint.DonutChartSortSlices
@@ -945,6 +1161,22 @@ Graspea.Flint.EcdfPlotBuilder<TRow>.ShowPoints(bool value) -> Graspea.Flint.Ecdf
 Graspea.Flint.EcdfPlotBuilder<TRow>.X(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.EcdfPlotBuilder<TRow>!
 Graspea.Flint.EcdfPlotBuilder<TRow>.X(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.EcdfPlotBuilder<TRow>!
 Graspea.Flint.EcdfPlotBuilder<TRow>.X(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.EcdfPlotBuilder<TRow>!
+Graspea.Flint.EnclosureAnnotationSpec
+Graspea.Flint.EnclosureAnnotationSpec.Color.get -> string?
+Graspea.Flint.EnclosureAnnotationSpec.Color.set -> void
+Graspea.Flint.EnclosureAnnotationSpec.Connect.get -> string?
+Graspea.Flint.EnclosureAnnotationSpec.Connect.set -> void
+Graspea.Flint.EnclosureAnnotationSpec.EnclosureAnnotationSpec() -> void
+Graspea.Flint.EnclosureAnnotationSpec.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.EnclosureAnnotationSpec.Extensions.set -> void
+Graspea.Flint.EnclosureAnnotationSpec.Shape.get -> string?
+Graspea.Flint.EnclosureAnnotationSpec.Shape.set -> void
+Graspea.Flint.EnclosureAnnotationSpec.Targets.get -> Graspea.Flint.UpdateTarget![]?
+Graspea.Flint.EnclosureAnnotationSpec.Targets.set -> void
+Graspea.Flint.EnclosureAnnotationSpec.Text.get -> string?
+Graspea.Flint.EnclosureAnnotationSpec.Text.set -> void
+Graspea.Flint.EnclosureAnnotationSpec.Width.get -> double?
+Graspea.Flint.EnclosureAnnotationSpec.Width.set -> void
 Graspea.Flint.EncodingType
 Graspea.Flint.EncodingType.EncodingType() -> void
 Graspea.Flint.EncodingType.EncodingType(string! name) -> void
@@ -969,6 +1201,14 @@ Graspea.Flint.FilterControlsOptions.Placement.get -> string?
 Graspea.Flint.FilterControlsOptions.Placement.set -> void
 Graspea.Flint.FilterControlsOptions.Render.get -> bool?
 Graspea.Flint.FilterControlsOptions.Render.set -> void
+Graspea.Flint.FilterValue
+Graspea.Flint.FilterValue.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.FilterValue.Extensions.set -> void
+Graspea.Flint.FilterValue.FilterValue() -> void
+Graspea.Flint.FilterValue.In.get -> System.Text.Json.Nodes.JsonNode?[]?
+Graspea.Flint.FilterValue.In.init -> void
+Graspea.Flint.FilterValue.Range.get -> System.Text.Json.Nodes.JsonNode?[]?
+Graspea.Flint.FilterValue.Range.init -> void
 Graspea.Flint.FlintBackend
 Graspea.Flint.FlintBackend.ChartJs = 2 -> Graspea.Flint.FlintBackend
 Graspea.Flint.FlintBackend.ECharts = 1 -> Graspea.Flint.FlintBackend
@@ -977,6 +1217,51 @@ Graspea.Flint.FlintBackend.ImageCharts = 5 -> Graspea.Flint.FlintBackend
 Graspea.Flint.FlintBackend.Plotly = 3 -> Graspea.Flint.FlintBackend
 Graspea.Flint.FlintBackend.VegaLite = 0 -> Graspea.Flint.FlintBackend
 Graspea.Flint.FlintUpstream
+Graspea.Flint.FreeformCloneBody
+Graspea.Flint.FreeformCloneBody.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.FreeformCloneBody.Extensions.set -> void
+Graspea.Flint.FreeformCloneBody.FreeformCloneBody() -> void
+Graspea.Flint.FreeformCloneBody.Opacity.get -> double?
+Graspea.Flint.FreeformCloneBody.Opacity.set -> void
+Graspea.Flint.FreeformCloneBody.Targets.get -> Graspea.Flint.UpdateTarget![]?
+Graspea.Flint.FreeformCloneBody.Targets.set -> void
+Graspea.Flint.FreeformCloneBody.Transform.get -> Graspea.Flint.FreeformOverlayTransform?
+Graspea.Flint.FreeformCloneBody.Transform.set -> void
+Graspea.Flint.FreeformOverlayBody
+Graspea.Flint.FreeformOverlaySpec
+Graspea.Flint.FreeformOverlaySpec.Body.get -> Graspea.Flint.FreeformOverlayBody![]?
+Graspea.Flint.FreeformOverlaySpec.Body.set -> void
+Graspea.Flint.FreeformOverlaySpec.CoordinateSpace.get -> string?
+Graspea.Flint.FreeformOverlaySpec.CoordinateSpace.set -> void
+Graspea.Flint.FreeformOverlaySpec.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.FreeformOverlaySpec.Extensions.set -> void
+Graspea.Flint.FreeformOverlaySpec.FreeformOverlaySpec() -> void
+Graspea.Flint.FreeformOverlayTransform
+Graspea.Flint.FreeformOverlayTransform.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.FreeformOverlayTransform.Extensions.set -> void
+Graspea.Flint.FreeformOverlayTransform.FreeformOverlayTransform() -> void
+Graspea.Flint.FreeformOverlayTransform.Rotate.get -> double?
+Graspea.Flint.FreeformOverlayTransform.Rotate.set -> void
+Graspea.Flint.FreeformOverlayTransform.Scale.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.FreeformOverlayTransform.Scale.set -> void
+Graspea.Flint.FreeformOverlayTransform.Translate.get -> Graspea.Flint.FreeformOverlayTransformTranslate?
+Graspea.Flint.FreeformOverlayTransform.Translate.set -> void
+Graspea.Flint.FreeformOverlayTransformTranslate
+Graspea.Flint.FreeformOverlayTransformTranslate.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.FreeformOverlayTransformTranslate.Extensions.set -> void
+Graspea.Flint.FreeformOverlayTransformTranslate.FreeformOverlayTransformTranslate() -> void
+Graspea.Flint.FreeformOverlayTransformTranslate.X.get -> double?
+Graspea.Flint.FreeformOverlayTransformTranslate.X.set -> void
+Graspea.Flint.FreeformOverlayTransformTranslate.Y.get -> double?
+Graspea.Flint.FreeformOverlayTransformTranslate.Y.set -> void
+Graspea.Flint.FreeformSvgBody
+Graspea.Flint.FreeformSvgBody.Content.get -> string?
+Graspea.Flint.FreeformSvgBody.Content.set -> void
+Graspea.Flint.FreeformSvgBody.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.FreeformSvgBody.Extensions.set -> void
+Graspea.Flint.FreeformSvgBody.FreeformSvgBody() -> void
+Graspea.Flint.FreeformSvgBody.Transform.get -> Graspea.Flint.FreeformOverlayTransform?
+Graspea.Flint.FreeformSvgBody.Transform.set -> void
 Graspea.Flint.FunnelChartBuilder<TRow>
 Graspea.Flint.FunnelChartBuilder<TRow>.Gap(double value) -> Graspea.Flint.FunnelChartBuilder<TRow>!
 Graspea.Flint.FunnelChartBuilder<TRow>.Orient(Graspea.Flint.FunnelChartOrient value) -> Graspea.Flint.FunnelChartBuilder<TRow>!
@@ -1048,6 +1333,9 @@ Graspea.Flint.GroupedBarChartBuilder<TRow>.Color(string! field, Graspea.Flint.Se
 Graspea.Flint.GroupedBarChartBuilder<TRow>.Column(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.GroupedBarChartBuilder<TRow>!
 Graspea.Flint.GroupedBarChartBuilder<TRow>.Column(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.GroupedBarChartBuilder<TRow>!
 Graspea.Flint.GroupedBarChartBuilder<TRow>.Column(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.GroupedBarChartBuilder<TRow>!
+Graspea.Flint.GroupedBarChartBuilder<TRow>.Detail(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.GroupedBarChartBuilder<TRow>!
+Graspea.Flint.GroupedBarChartBuilder<TRow>.Detail(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.GroupedBarChartBuilder<TRow>!
+Graspea.Flint.GroupedBarChartBuilder<TRow>.Detail(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.GroupedBarChartBuilder<TRow>!
 Graspea.Flint.GroupedBarChartBuilder<TRow>.Dodge(Graspea.Flint.GroupedBarChartDodge value) -> Graspea.Flint.GroupedBarChartBuilder<TRow>!
 Graspea.Flint.GroupedBarChartBuilder<TRow>.Group(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.GroupedBarChartBuilder<TRow>!
 Graspea.Flint.GroupedBarChartBuilder<TRow>.Group(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.GroupedBarChartBuilder<TRow>!
@@ -1096,6 +1384,14 @@ Graspea.Flint.HeatmapYAxisType
 Graspea.Flint.HeatmapYAxisType.Default = 0 -> Graspea.Flint.HeatmapYAxisType
 Graspea.Flint.HeatmapYAxisType.Nominal = 2 -> Graspea.Flint.HeatmapYAxisType
 Graspea.Flint.HeatmapYAxisType.Temporal = 1 -> Graspea.Flint.HeatmapYAxisType
+Graspea.Flint.HighlightStyle
+Graspea.Flint.HighlightStyle.Color.get -> string?
+Graspea.Flint.HighlightStyle.Color.set -> void
+Graspea.Flint.HighlightStyle.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.HighlightStyle.Extensions.set -> void
+Graspea.Flint.HighlightStyle.HighlightStyle() -> void
+Graspea.Flint.HighlightStyle.Width.get -> double?
+Graspea.Flint.HighlightStyle.Width.set -> void
 Graspea.Flint.HistogramBuilder<TRow>
 Graspea.Flint.HistogramBuilder<TRow>.BinCount(double value) -> Graspea.Flint.HistogramBuilder<TRow>!
 Graspea.Flint.HistogramBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.HistogramBuilder<TRow>!
@@ -1159,6 +1455,15 @@ Graspea.Flint.InspectOptions.Selector.get -> System.Text.Json.Nodes.JsonNode?
 Graspea.Flint.InspectOptions.Selector.set -> void
 Graspea.Flint.InspectOptions.Tolerance.get -> double?
 Graspea.Flint.InspectOptions.Tolerance.set -> void
+Graspea.Flint.InteractionDefaults
+Graspea.Flint.InteractionDefaults.Enabled.get -> bool?
+Graspea.Flint.InteractionDefaults.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.InteractionDefaults.Extensions.set -> void
+Graspea.Flint.InteractionDefaults.InteractionDefaults() -> void
+Graspea.Flint.InteractionDefaults.Legend.get -> bool?
+Graspea.Flint.InteractionDefaults.Legend.init -> void
+Graspea.Flint.InteractionDefaults.Tooltip.get -> bool?
+Graspea.Flint.InteractionDefaults.Tooltip.init -> void
 Graspea.Flint.InteractionEntry
 Graspea.Flint.InteractionEntry.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.InteractionEntry.Extensions.set -> void
@@ -1172,6 +1477,8 @@ Graspea.Flint.InteractionEntry.Type.set -> void
 Graspea.Flint.InteractionSpec
 Graspea.Flint.InteractionSpec.AssistedTargeting.get -> Graspea.Flint.AssistedTargeting?
 Graspea.Flint.InteractionSpec.AssistedTargeting.set -> void
+Graspea.Flint.InteractionSpec.Defaults.get -> Graspea.Flint.InteractionDefaults?
+Graspea.Flint.InteractionSpec.Defaults.set -> void
 Graspea.Flint.InteractionSpec.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.InteractionSpec.Extensions.set -> void
 Graspea.Flint.InteractionSpec.InteractionSpec() -> void
@@ -1326,25 +1633,63 @@ Graspea.Flint.LongPressOptions.HoldMs.set -> void
 Graspea.Flint.LongPressOptions.LongPressOptions() -> void
 Graspea.Flint.LongPressOptions.Reset.get -> string![]?
 Graspea.Flint.LongPressOptions.Reset.set -> void
+Graspea.Flint.MapBoundaries
+Graspea.Flint.MapBoundaries.Default = 0 -> Graspea.Flint.MapBoundaries
+Graspea.Flint.MapBoundaries.NaturalEarth = 2 -> Graspea.Flint.MapBoundaries
+Graspea.Flint.MapBoundaries.WorldBank = 1 -> Graspea.Flint.MapBoundaries
 Graspea.Flint.MapBuilder<TRow>
+Graspea.Flint.MapBuilder<TRow>.Arrows(bool value) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.BorderWidth(double value) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Boundaries(Graspea.Flint.MapBoundaries value) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Color(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Curve(Graspea.Flint.MapCurve value) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Detail(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Detail(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Detail(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Fit(Graspea.Flint.MapFit value) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Graticule(bool value) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Latitude(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Latitude(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Latitude(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Longitude(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Longitude(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Longitude(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.MapStyle(Graspea.Flint.MapStyle value) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Opacity(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Opacity(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Opacity(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Order(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Order(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Order(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Projection(Graspea.Flint.MapProjection value) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.ProjectionCenter(Graspea.Flint.MapProjectionCenter value) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Region(Graspea.Flint.MapRegion value) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Shape(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Shape(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Shape(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Size(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Size(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
 Graspea.Flint.MapBuilder<TRow>.Size(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.StrokeWidth(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.StrokeWidth(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.StrokeWidth(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Text(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Text(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapBuilder<TRow>.Text(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.MapBuilder<TRow>!
+Graspea.Flint.MapCurve
+Graspea.Flint.MapCurve.Arc = 2 -> Graspea.Flint.MapCurve
+Graspea.Flint.MapCurve.Auto = 1 -> Graspea.Flint.MapCurve
+Graspea.Flint.MapCurve.Default = 0 -> Graspea.Flint.MapCurve
+Graspea.Flint.MapCurve.GreatCircle = 3 -> Graspea.Flint.MapCurve
+Graspea.Flint.MapCurve.Straight = 4 -> Graspea.Flint.MapCurve
+Graspea.Flint.MapFit
+Graspea.Flint.MapFit.Auto = 1 -> Graspea.Flint.MapFit
+Graspea.Flint.MapFit.Continent = 3 -> Graspea.Flint.MapFit
+Graspea.Flint.MapFit.Data = 2 -> Graspea.Flint.MapFit
+Graspea.Flint.MapFit.Default = 0 -> Graspea.Flint.MapFit
+Graspea.Flint.MapFit.Whole = 4 -> Graspea.Flint.MapFit
 Graspea.Flint.MapProjection
 Graspea.Flint.MapProjection.AzimuthalEquidistant = 8 -> Graspea.Flint.MapProjection
 Graspea.Flint.MapProjection.ConicEqualArea = 6 -> Graspea.Flint.MapProjection
@@ -1382,6 +1727,14 @@ Graspea.Flint.MapRegion.Auto = 1 -> Graspea.Flint.MapRegion
 Graspea.Flint.MapRegion.Default = 0 -> Graspea.Flint.MapRegion
 Graspea.Flint.MapRegion.Us = 2 -> Graspea.Flint.MapRegion
 Graspea.Flint.MapRegion.World = 3 -> Graspea.Flint.MapRegion
+Graspea.Flint.MapStyle
+Graspea.Flint.MapStyle.Atlas = 4 -> Graspea.Flint.MapStyle
+Graspea.Flint.MapStyle.Auto = 1 -> Graspea.Flint.MapStyle
+Graspea.Flint.MapStyle.Dark = 5 -> Graspea.Flint.MapStyle
+Graspea.Flint.MapStyle.Default = 0 -> Graspea.Flint.MapStyle
+Graspea.Flint.MapStyle.Light = 2 -> Graspea.Flint.MapStyle
+Graspea.Flint.MapStyle.Minimal = 6 -> Graspea.Flint.MapStyle
+Graspea.Flint.MapStyle.Muted = 3 -> Graspea.Flint.MapStyle
 Graspea.Flint.MarginalPlotBuilder<TRow>
 Graspea.Flint.MarginalPlotBuilder<TRow>.Bandwidth(double value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
 Graspea.Flint.MarginalPlotBuilder<TRow>.BinCount(double value) -> Graspea.Flint.MarginalPlotBuilder<TRow>!
@@ -1472,6 +1825,52 @@ Graspea.Flint.NetworkGraphLayout
 Graspea.Flint.NetworkGraphLayout.Circular = 1 -> Graspea.Flint.NetworkGraphLayout
 Graspea.Flint.NetworkGraphLayout.Default = 0 -> Graspea.Flint.NetworkGraphLayout
 Graspea.Flint.NetworkGraphLayout.Force = 2 -> Graspea.Flint.NetworkGraphLayout
+Graspea.Flint.NoteTextStyle
+Graspea.Flint.NoteTextStyle.Color.get -> string?
+Graspea.Flint.NoteTextStyle.Color.set -> void
+Graspea.Flint.NoteTextStyle.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.NoteTextStyle.Extensions.set -> void
+Graspea.Flint.NoteTextStyle.FontSize.get -> double?
+Graspea.Flint.NoteTextStyle.FontSize.set -> void
+Graspea.Flint.NoteTextStyle.FontWeight.get -> Graspea.Flint.Theming.TypeWeight?
+Graspea.Flint.NoteTextStyle.FontWeight.set -> void
+Graspea.Flint.NoteTextStyle.NoteTextStyle() -> void
+Graspea.Flint.OverlayFieldEncoding
+Graspea.Flint.OverlayFieldEncoding.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.OverlayFieldEncoding.Extensions.set -> void
+Graspea.Flint.OverlayFieldEncoding.Field.get -> string?
+Graspea.Flint.OverlayFieldEncoding.Field.set -> void
+Graspea.Flint.OverlayFieldEncoding.OverlayFieldEncoding() -> void
+Graspea.Flint.OverlayStyleSpec
+Graspea.Flint.OverlayStyleSpec.Dx.get -> double?
+Graspea.Flint.OverlayStyleSpec.Dx.set -> void
+Graspea.Flint.OverlayStyleSpec.Dy.get -> double?
+Graspea.Flint.OverlayStyleSpec.Dy.set -> void
+Graspea.Flint.OverlayStyleSpec.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.OverlayStyleSpec.Extensions.set -> void
+Graspea.Flint.OverlayStyleSpec.Fill.get -> string?
+Graspea.Flint.OverlayStyleSpec.Fill.set -> void
+Graspea.Flint.OverlayStyleSpec.FillOpacity.get -> double?
+Graspea.Flint.OverlayStyleSpec.FillOpacity.set -> void
+Graspea.Flint.OverlayStyleSpec.FontSize.get -> double?
+Graspea.Flint.OverlayStyleSpec.FontSize.set -> void
+Graspea.Flint.OverlayStyleSpec.FontStyle.get -> string?
+Graspea.Flint.OverlayStyleSpec.FontStyle.set -> void
+Graspea.Flint.OverlayStyleSpec.FontWeight.get -> Graspea.Flint.Theming.TypeWeight?
+Graspea.Flint.OverlayStyleSpec.FontWeight.set -> void
+Graspea.Flint.OverlayStyleSpec.Opacity.get -> double?
+Graspea.Flint.OverlayStyleSpec.Opacity.set -> void
+Graspea.Flint.OverlayStyleSpec.OverlayStyleSpec() -> void
+Graspea.Flint.OverlayStyleSpec.PointRadius.get -> double?
+Graspea.Flint.OverlayStyleSpec.PointRadius.set -> void
+Graspea.Flint.OverlayStyleSpec.Stroke.get -> string?
+Graspea.Flint.OverlayStyleSpec.Stroke.set -> void
+Graspea.Flint.OverlayStyleSpec.StrokeDash.get -> Graspea.Flint.StrokeDash?
+Graspea.Flint.OverlayStyleSpec.StrokeDash.set -> void
+Graspea.Flint.OverlayStyleSpec.StrokeWidth.get -> double?
+Graspea.Flint.OverlayStyleSpec.StrokeWidth.set -> void
+Graspea.Flint.OverlayStyleSpec.TextAlign.get -> string?
+Graspea.Flint.OverlayStyleSpec.TextAlign.set -> void
 Graspea.Flint.ParallelCoordinatesBuilder<TRow>
 Graspea.Flint.ParallelCoordinatesBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.ParallelCoordinatesBuilder<TRow>!
 Graspea.Flint.ParallelCoordinatesBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ParallelCoordinatesBuilder<TRow>!
@@ -1479,6 +1878,11 @@ Graspea.Flint.ParallelCoordinatesBuilder<TRow>.Color(string! field, Graspea.Flin
 Graspea.Flint.ParallelCoordinatesBuilder<TRow>.Detail(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.ParallelCoordinatesBuilder<TRow>!
 Graspea.Flint.ParallelCoordinatesBuilder<TRow>.Detail(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ParallelCoordinatesBuilder<TRow>!
 Graspea.Flint.ParallelCoordinatesBuilder<TRow>.Detail(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.ParallelCoordinatesBuilder<TRow>!
+Graspea.Flint.PercentScale
+Graspea.Flint.PercentScale.Equals(Graspea.Flint.PercentScale other) -> bool
+Graspea.Flint.PercentScale.Name.get -> string!
+Graspea.Flint.PercentScale.PercentScale() -> void
+Graspea.Flint.PercentScale.PercentScale(string! name) -> void
 Graspea.Flint.PieChartBuilder<TRow>
 Graspea.Flint.PieChartBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.PieChartBuilder<TRow>!
 Graspea.Flint.PieChartBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.PieChartBuilder<TRow>!
@@ -1497,6 +1901,7 @@ Graspea.Flint.PieChartBuilder<TRow>.ShowValueLabels(bool value) -> Graspea.Flint
 Graspea.Flint.PieChartBuilder<TRow>.Size(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.PieChartBuilder<TRow>!
 Graspea.Flint.PieChartBuilder<TRow>.Size(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.PieChartBuilder<TRow>!
 Graspea.Flint.PieChartBuilder<TRow>.Size(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.PieChartBuilder<TRow>!
+Graspea.Flint.PieChartBuilder<TRow>.SliceNames(Graspea.Flint.PieChartSliceNames value) -> Graspea.Flint.PieChartBuilder<TRow>!
 Graspea.Flint.PieChartBuilder<TRow>.SortSlices(Graspea.Flint.PieChartSortSlices value) -> Graspea.Flint.PieChartBuilder<TRow>!
 Graspea.Flint.PieChartBuilder<TRow>.Theta(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.PieChartBuilder<TRow>!
 Graspea.Flint.PieChartBuilder<TRow>.Theta(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.PieChartBuilder<TRow>!
@@ -1508,6 +1913,11 @@ Graspea.Flint.PieChartLabelType.Default = 0 -> Graspea.Flint.PieChartLabelType
 Graspea.Flint.PieChartLabelType.None = 5 -> Graspea.Flint.PieChartLabelType
 Graspea.Flint.PieChartLabelType.Percent = 4 -> Graspea.Flint.PieChartLabelType
 Graspea.Flint.PieChartLabelType.Value = 3 -> Graspea.Flint.PieChartLabelType
+Graspea.Flint.PieChartSliceNames
+Graspea.Flint.PieChartSliceNames.Auto = 1 -> Graspea.Flint.PieChartSliceNames
+Graspea.Flint.PieChartSliceNames.Default = 0 -> Graspea.Flint.PieChartSliceNames
+Graspea.Flint.PieChartSliceNames.Key = 3 -> Graspea.Flint.PieChartSliceNames
+Graspea.Flint.PieChartSliceNames.OnSlices = 2 -> Graspea.Flint.PieChartSliceNames
 Graspea.Flint.PieChartSortSlices
 Graspea.Flint.PieChartSortSlices.Ascending = 3 -> Graspea.Flint.PieChartSortSlices
 Graspea.Flint.PieChartSortSlices.Default = 0 -> Graspea.Flint.PieChartSortSlices
@@ -1601,6 +2011,28 @@ Graspea.Flint.RangedDotPlotBuilder<TRow>.X(string! field, Graspea.Flint.Semantic
 Graspea.Flint.RangedDotPlotBuilder<TRow>.Y(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.RangedDotPlotBuilder<TRow>!
 Graspea.Flint.RangedDotPlotBuilder<TRow>.Y(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.RangedDotPlotBuilder<TRow>!
 Graspea.Flint.RangedDotPlotBuilder<TRow>.Y(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.RangedDotPlotBuilder<TRow>!
+Graspea.Flint.RegionAnnotationSpec
+Graspea.Flint.RegionAnnotationSpec.Color.get -> string?
+Graspea.Flint.RegionAnnotationSpec.Color.set -> void
+Graspea.Flint.RegionAnnotationSpec.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.RegionAnnotationSpec.Extensions.set -> void
+Graspea.Flint.RegionAnnotationSpec.Latitude.get -> double[]?
+Graspea.Flint.RegionAnnotationSpec.Latitude.set -> void
+Graspea.Flint.RegionAnnotationSpec.Layer.get -> string?
+Graspea.Flint.RegionAnnotationSpec.Layer.set -> void
+Graspea.Flint.RegionAnnotationSpec.Longitude.get -> double[]?
+Graspea.Flint.RegionAnnotationSpec.Longitude.set -> void
+Graspea.Flint.RegionAnnotationSpec.Opacity.get -> double?
+Graspea.Flint.RegionAnnotationSpec.Opacity.set -> void
+Graspea.Flint.RegionAnnotationSpec.Placement.get -> string?
+Graspea.Flint.RegionAnnotationSpec.Placement.set -> void
+Graspea.Flint.RegionAnnotationSpec.RegionAnnotationSpec() -> void
+Graspea.Flint.RegionAnnotationSpec.Text.get -> string?
+Graspea.Flint.RegionAnnotationSpec.Text.set -> void
+Graspea.Flint.RegionAnnotationSpec.X.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.RegionAnnotationSpec.X.set -> void
+Graspea.Flint.RegionAnnotationSpec.Y.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.RegionAnnotationSpec.Y.set -> void
 Graspea.Flint.RegressionBuilder<TRow>
 Graspea.Flint.RegressionBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.RegressionBuilder<TRow>!
 Graspea.Flint.RegressionBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.RegressionBuilder<TRow>!
@@ -1779,10 +2211,14 @@ Graspea.Flint.SemanticAnnotation.Colors.get -> System.Collections.Generic.Dictio
 Graspea.Flint.SemanticAnnotation.Colors.set -> void
 Graspea.Flint.SemanticAnnotation.DivergingMidpoint.get -> double?
 Graspea.Flint.SemanticAnnotation.DivergingMidpoint.set -> void
+Graspea.Flint.SemanticAnnotation.DivergingNeutral.get -> Graspea.Flint.DivergingNeutral?
+Graspea.Flint.SemanticAnnotation.DivergingNeutral.set -> void
 Graspea.Flint.SemanticAnnotation.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.SemanticAnnotation.Extensions.set -> void
 Graspea.Flint.SemanticAnnotation.IntrinsicDomain.get -> double[]?
 Graspea.Flint.SemanticAnnotation.IntrinsicDomain.set -> void
+Graspea.Flint.SemanticAnnotation.PercentScale.get -> Graspea.Flint.PercentScale?
+Graspea.Flint.SemanticAnnotation.PercentScale.set -> void
 Graspea.Flint.SemanticAnnotation.Polarity.get -> Graspea.Flint.Polarity?
 Graspea.Flint.SemanticAnnotation.Polarity.set -> void
 Graspea.Flint.SemanticAnnotation.SemanticAnnotation() -> void
@@ -1792,6 +2228,14 @@ Graspea.Flint.SemanticAnnotation.Type.get -> Graspea.Flint.SemanticType
 Graspea.Flint.SemanticAnnotation.Type.set -> void
 Graspea.Flint.SemanticAnnotation.Unit.get -> string?
 Graspea.Flint.SemanticAnnotation.Unit.set -> void
+Graspea.Flint.SemanticElement
+Graspea.Flint.SemanticElement.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SemanticElement.Extensions.set -> void
+Graspea.Flint.SemanticElement.Records.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.Nodes.JsonNode?>![]?
+Graspea.Flint.SemanticElement.Records.init -> void
+Graspea.Flint.SemanticElement.SemanticElement() -> void
+Graspea.Flint.SemanticElement.Value.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.Nodes.JsonNode?>?
+Graspea.Flint.SemanticElement.Value.init -> void
 Graspea.Flint.SemanticType
 Graspea.Flint.SemanticType.Equals(Graspea.Flint.SemanticType other) -> bool
 Graspea.Flint.SemanticType.IsRegistered.get -> bool
@@ -1816,23 +2260,35 @@ Graspea.Flint.Serialization.ChartThemeConverter
 Graspea.Flint.Serialization.ChartThemeConverter.ChartThemeConverter() -> void
 Graspea.Flint.Serialization.ChartTypeConverter
 Graspea.Flint.Serialization.ChartTypeConverter.ChartTypeConverter() -> void
+Graspea.Flint.Serialization.ChartUpdateOpConverter
+Graspea.Flint.Serialization.ChartUpdateOpConverter.ChartUpdateOpConverter() -> void
 Graspea.Flint.Serialization.ColorSchemeConverter
 Graspea.Flint.Serialization.ColorSchemeConverter.ColorSchemeConverter() -> void
 Graspea.Flint.Serialization.ContinuousMarkCrossSectionConverter
 Graspea.Flint.Serialization.ContinuousMarkCrossSectionConverter.ContinuousMarkCrossSectionConverter() -> void
+Graspea.Flint.Serialization.DivergingNeutralConverter
+Graspea.Flint.Serialization.DivergingNeutralConverter.DivergingNeutralConverter() -> void
 Graspea.Flint.Serialization.EncodingTypeConverter
 Graspea.Flint.Serialization.EncodingTypeConverter.EncodingTypeConverter() -> void
 Graspea.Flint.Serialization.EncodingValueConverter
 Graspea.Flint.Serialization.EncodingValueConverter.EncodingValueConverter() -> void
+Graspea.Flint.Serialization.FilterValueConverter
+Graspea.Flint.Serialization.FilterValueConverter.FilterValueConverter() -> void
 Graspea.Flint.Serialization.FlintJson
+Graspea.Flint.Serialization.FreeformOverlayBodyConverter
+Graspea.Flint.Serialization.FreeformOverlayBodyConverter.FreeformOverlayBodyConverter() -> void
 Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>
 Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>.IntKeyDictionaryConverter() -> void
+Graspea.Flint.Serialization.InteractionDefaultsConverter
+Graspea.Flint.Serialization.InteractionDefaultsConverter.InteractionDefaultsConverter() -> void
 Graspea.Flint.Serialization.JsonNodePassThroughConverter
 Graspea.Flint.Serialization.JsonNodePassThroughConverter.JsonNodePassThroughConverter() -> void
 Graspea.Flint.Serialization.LabelOverflowConverter
 Graspea.Flint.Serialization.LabelOverflowConverter.LabelOverflowConverter() -> void
 Graspea.Flint.Serialization.MinorGridSpecConverter
 Graspea.Flint.Serialization.MinorGridSpecConverter.MinorGridSpecConverter() -> void
+Graspea.Flint.Serialization.PercentScaleConverter
+Graspea.Flint.Serialization.PercentScaleConverter.PercentScaleConverter() -> void
 Graspea.Flint.Serialization.PointInkConverter
 Graspea.Flint.Serialization.PointInkConverter.PointInkConverter() -> void
 Graspea.Flint.Serialization.PolarityConverter
@@ -1841,20 +2297,34 @@ Graspea.Flint.Serialization.RuleSpecConverter
 Graspea.Flint.Serialization.RuleSpecConverter.RuleSpecConverter() -> void
 Graspea.Flint.Serialization.SemanticAnnotationConverter
 Graspea.Flint.Serialization.SemanticAnnotationConverter.SemanticAnnotationConverter() -> void
+Graspea.Flint.Serialization.SemanticElementConverter
+Graspea.Flint.Serialization.SemanticElementConverter.SemanticElementConverter() -> void
 Graspea.Flint.Serialization.SemanticTypeConverter
 Graspea.Flint.Serialization.SemanticTypeConverter.SemanticTypeConverter() -> void
 Graspea.Flint.Serialization.SeriesCountAxisConverter
 Graspea.Flint.Serialization.SeriesCountAxisConverter.SeriesCountAxisConverter() -> void
 Graspea.Flint.Serialization.SortOrderConverter
 Graspea.Flint.Serialization.SortOrderConverter.SortOrderConverter() -> void
+Graspea.Flint.Serialization.SparseFillConverter
+Graspea.Flint.Serialization.SparseFillConverter.SparseFillConverter() -> void
+Graspea.Flint.Serialization.StrokeDashConverter
+Graspea.Flint.Serialization.StrokeDashConverter.StrokeDashConverter() -> void
 Graspea.Flint.Serialization.TargetDetailsConverter
 Graspea.Flint.Serialization.TargetDetailsConverter.TargetDetailsConverter() -> void
+Graspea.Flint.Serialization.TargetSelectorConverter
+Graspea.Flint.Serialization.TargetSelectorConverter.TargetSelectorConverter() -> void
+Graspea.Flint.Serialization.TargetVisualConverter
+Graspea.Flint.Serialization.TargetVisualConverter.TargetVisualConverter() -> void
 Graspea.Flint.Serialization.ThemeLengthConverter
 Graspea.Flint.Serialization.ThemeLengthConverter.ThemeLengthConverter() -> void
 Graspea.Flint.Serialization.ThemePresetConverter
 Graspea.Flint.Serialization.ThemePresetConverter.ThemePresetConverter() -> void
+Graspea.Flint.Serialization.TitleWrapConverter
+Graspea.Flint.Serialization.TitleWrapConverter.TitleWrapConverter() -> void
 Graspea.Flint.Serialization.TypeWeightConverter
 Graspea.Flint.Serialization.TypeWeightConverter.TypeWeightConverter() -> void
+Graspea.Flint.Serialization.UpdateTargetConverter
+Graspea.Flint.Serialization.UpdateTargetConverter.UpdateTargetConverter() -> void
 Graspea.Flint.Serialization.VerbatimKeyDictionaryConverter<T>
 Graspea.Flint.Serialization.VerbatimKeyDictionaryConverter<T>.VerbatimKeyDictionaryConverter() -> void
 Graspea.Flint.SeriesCountAxis
@@ -1862,6 +2332,80 @@ Graspea.Flint.SeriesCountAxis.Equals(Graspea.Flint.SeriesCountAxis other) -> boo
 Graspea.Flint.SeriesCountAxis.Name.get -> string!
 Graspea.Flint.SeriesCountAxis.SeriesCountAxis() -> void
 Graspea.Flint.SeriesCountAxis.SeriesCountAxis(string! name) -> void
+Graspea.Flint.SetAnnotationOp
+Graspea.Flint.SetAnnotationOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SetAnnotationOp.Extensions.set -> void
+Graspea.Flint.SetAnnotationOp.SetAnnotationOp() -> void
+Graspea.Flint.SetAnnotationOp.Target.get -> Graspea.Flint.UpdateTarget?
+Graspea.Flint.SetAnnotationOp.Target.set -> void
+Graspea.Flint.SetAnnotationOp.Value.get -> Graspea.Flint.AnnotationSpec?
+Graspea.Flint.SetAnnotationOp.Value.set -> void
+Graspea.Flint.SetDataOp
+Graspea.Flint.SetDataOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SetDataOp.Extensions.set -> void
+Graspea.Flint.SetDataOp.SetDataOp() -> void
+Graspea.Flint.SetDataOp.Source.get -> string?
+Graspea.Flint.SetDataOp.Source.set -> void
+Graspea.Flint.SetDataOp.Value.get -> Graspea.Flint.SetDataOpValue?
+Graspea.Flint.SetDataOp.Value.set -> void
+Graspea.Flint.SetDataOpValue
+Graspea.Flint.SetDataOpValue.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SetDataOpValue.Extensions.set -> void
+Graspea.Flint.SetDataOpValue.Rows.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.Nodes.JsonNode?>![]?
+Graspea.Flint.SetDataOpValue.Rows.set -> void
+Graspea.Flint.SetDataOpValue.SetDataOpValue() -> void
+Graspea.Flint.SetFreeformOverlayOp
+Graspea.Flint.SetFreeformOverlayOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SetFreeformOverlayOp.Extensions.set -> void
+Graspea.Flint.SetFreeformOverlayOp.Name.get -> string?
+Graspea.Flint.SetFreeformOverlayOp.Name.set -> void
+Graspea.Flint.SetFreeformOverlayOp.SetFreeformOverlayOp() -> void
+Graspea.Flint.SetFreeformOverlayOp.Value.get -> Graspea.Flint.FreeformOverlaySpec?
+Graspea.Flint.SetFreeformOverlayOp.Value.set -> void
+Graspea.Flint.SetOrderOp
+Graspea.Flint.SetOrderOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SetOrderOp.Extensions.set -> void
+Graspea.Flint.SetOrderOp.Field.get -> string?
+Graspea.Flint.SetOrderOp.Field.set -> void
+Graspea.Flint.SetOrderOp.Scope.get -> string?
+Graspea.Flint.SetOrderOp.Scope.set -> void
+Graspea.Flint.SetOrderOp.SetOrderOp() -> void
+Graspea.Flint.SetOrderOp.Values.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.SetOrderOp.Values.set -> void
+Graspea.Flint.SetOverlayOp
+Graspea.Flint.SetOverlayOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SetOverlayOp.Extensions.set -> void
+Graspea.Flint.SetOverlayOp.Name.get -> string?
+Graspea.Flint.SetOverlayOp.Name.set -> void
+Graspea.Flint.SetOverlayOp.SetOverlayOp() -> void
+Graspea.Flint.SetOverlayOp.Value.get -> Graspea.Flint.ChartOverlaySpec?
+Graspea.Flint.SetOverlayOp.Value.set -> void
+Graspea.Flint.SetStyleOp
+Graspea.Flint.SetStyleOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SetStyleOp.Extensions.set -> void
+Graspea.Flint.SetStyleOp.SetStyleOp() -> void
+Graspea.Flint.SetStyleOp.Targets.get -> Graspea.Flint.UpdateTarget![]?
+Graspea.Flint.SetStyleOp.Targets.set -> void
+Graspea.Flint.SetStyleOp.Value.get -> Graspea.Flint.StyleSpec?
+Graspea.Flint.SetStyleOp.Value.set -> void
+Graspea.Flint.SetViewportOp
+Graspea.Flint.SetViewportOp.Axes.get -> string?
+Graspea.Flint.SetViewportOp.Axes.set -> void
+Graspea.Flint.SetViewportOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SetViewportOp.Extensions.set -> void
+Graspea.Flint.SetViewportOp.SetViewportOp() -> void
+Graspea.Flint.SetViewportOp.Value.get -> Graspea.Flint.SetViewportOpValue?
+Graspea.Flint.SetViewportOp.Value.set -> void
+Graspea.Flint.SetViewportOpValue
+Graspea.Flint.SetViewportOpValue.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SetViewportOpValue.Extensions.set -> void
+Graspea.Flint.SetViewportOpValue.Region.get -> Graspea.Flint.UpdateRegionSelector?
+Graspea.Flint.SetViewportOpValue.Region.set -> void
+Graspea.Flint.SetViewportOpValue.SetViewportOpValue() -> void
+Graspea.Flint.SetViewportOpValue.X.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.SetViewportOpValue.X.set -> void
+Graspea.Flint.SetViewportOpValue.Y.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.SetViewportOpValue.Y.set -> void
 Graspea.Flint.SlopeChartBuilder<TRow>
 Graspea.Flint.SlopeChartBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.SlopeChartBuilder<TRow>!
 Graspea.Flint.SlopeChartBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.SlopeChartBuilder<TRow>!
@@ -1936,6 +2480,17 @@ Graspea.Flint.SparklineInterpolate.Monotone = 2 -> Graspea.Flint.SparklineInterp
 Graspea.Flint.SparklineInterpolate.Step = 3 -> Graspea.Flint.SparklineInterpolate
 Graspea.Flint.SparklineInterpolate.StepAfter = 5 -> Graspea.Flint.SparklineInterpolate
 Graspea.Flint.SparklineInterpolate.StepBefore = 4 -> Graspea.Flint.SparklineInterpolate
+Graspea.Flint.SparseFill
+Graspea.Flint.SparseFill.BarCap.get -> double?
+Graspea.Flint.SparseFill.BarCap.init -> void
+Graspea.Flint.SparseFill.Enabled.get -> bool?
+Graspea.Flint.SparseFill.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.SparseFill.Extensions.set -> void
+Graspea.Flint.SparseFill.PointCap.get -> double?
+Graspea.Flint.SparseFill.PointCap.init -> void
+Graspea.Flint.SparseFill.Share.get -> double?
+Graspea.Flint.SparseFill.Share.init -> void
+Graspea.Flint.SparseFill.SparseFill() -> void
 Graspea.Flint.StackedBarChartBuilder<TRow>
 Graspea.Flint.StackedBarChartBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
 Graspea.Flint.StackedBarChartBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
@@ -1943,6 +2498,9 @@ Graspea.Flint.StackedBarChartBuilder<TRow>.Color(string! field, Graspea.Flint.Se
 Graspea.Flint.StackedBarChartBuilder<TRow>.Column(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
 Graspea.Flint.StackedBarChartBuilder<TRow>.Column(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
 Graspea.Flint.StackedBarChartBuilder<TRow>.Column(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
+Graspea.Flint.StackedBarChartBuilder<TRow>.Detail(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
+Graspea.Flint.StackedBarChartBuilder<TRow>.Detail(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
+Graspea.Flint.StackedBarChartBuilder<TRow>.Detail(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
 Graspea.Flint.StackedBarChartBuilder<TRow>.IndependentYAxis(bool value) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
 Graspea.Flint.StackedBarChartBuilder<TRow>.Row(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
 Graspea.Flint.StackedBarChartBuilder<TRow>.Row(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.StackedBarChartBuilder<TRow>!
@@ -2014,6 +2572,29 @@ Graspea.Flint.StripPlotBuilder<TRow>.X(string! field, Graspea.Flint.SemanticType
 Graspea.Flint.StripPlotBuilder<TRow>.Y(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.StripPlotBuilder<TRow>!
 Graspea.Flint.StripPlotBuilder<TRow>.Y(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.StripPlotBuilder<TRow>!
 Graspea.Flint.StripPlotBuilder<TRow>.Y(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.StripPlotBuilder<TRow>!
+Graspea.Flint.StrokeDash
+Graspea.Flint.StrokeDash.Keyword.get -> string?
+Graspea.Flint.StrokeDash.Lengths.get -> double[]?
+Graspea.Flint.StyleSpec
+Graspea.Flint.StyleSpec.Emphasis.get -> string?
+Graspea.Flint.StyleSpec.Emphasis.set -> void
+Graspea.Flint.StyleSpec.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.StyleSpec.Extensions.set -> void
+Graspea.Flint.StyleSpec.Fill.get -> string?
+Graspea.Flint.StyleSpec.Fill.set -> void
+Graspea.Flint.StyleSpec.MutedOpacity.get -> double?
+Graspea.Flint.StyleSpec.MutedOpacity.set -> void
+Graspea.Flint.StyleSpec.Opacity.get -> double?
+Graspea.Flint.StyleSpec.Opacity.set -> void
+Graspea.Flint.StyleSpec.State.get -> string?
+Graspea.Flint.StyleSpec.State.set -> void
+Graspea.Flint.StyleSpec.Stroke.get -> string?
+Graspea.Flint.StyleSpec.Stroke.set -> void
+Graspea.Flint.StyleSpec.StrokeWidth.get -> double?
+Graspea.Flint.StyleSpec.StrokeWidth.set -> void
+Graspea.Flint.StyleSpec.StyleSpec() -> void
+Graspea.Flint.StyleSpec.Visible.get -> bool?
+Graspea.Flint.StyleSpec.Visible.set -> void
 Graspea.Flint.SunburstChartBuilder<TRow>
 Graspea.Flint.SunburstChartBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.SunburstChartBuilder<TRow>!
 Graspea.Flint.SunburstChartBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.SunburstChartBuilder<TRow>!
@@ -2044,6 +2625,24 @@ Graspea.Flint.TargetDetails.Fields.init -> void
 Graspea.Flint.TargetDetails.MaxRows.get -> double?
 Graspea.Flint.TargetDetails.MaxRows.init -> void
 Graspea.Flint.TargetDetails.TargetDetails() -> void
+Graspea.Flint.TargetSelector
+Graspea.Flint.TargetSelector.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.TargetSelector.Extensions.set -> void
+Graspea.Flint.TargetSelector.Key.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.Nodes.JsonNode?>?
+Graspea.Flint.TargetSelector.Key.init -> void
+Graspea.Flint.TargetSelector.TargetSelector() -> void
+Graspea.Flint.TargetSelector.Visual.get -> Graspea.Flint.TargetVisual?
+Graspea.Flint.TargetSelector.Visual.init -> void
+Graspea.Flint.TargetSelector.Where.get -> System.Collections.Generic.Dictionary<string!, Graspea.Flint.FilterValue!>?
+Graspea.Flint.TargetSelector.Where.init -> void
+Graspea.Flint.TargetVisual
+Graspea.Flint.TargetVisual.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.TargetVisual.Extensions.set -> void
+Graspea.Flint.TargetVisual.Kind.get -> string?
+Graspea.Flint.TargetVisual.Kind.init -> void
+Graspea.Flint.TargetVisual.Role.get -> string?
+Graspea.Flint.TargetVisual.Role.init -> void
+Graspea.Flint.TargetVisual.TargetVisual() -> void
 Graspea.Flint.ThemePreset
 Graspea.Flint.ThemePreset.Equals(Graspea.Flint.ThemePreset other) -> bool
 Graspea.Flint.ThemePreset.Name.get -> string!
@@ -2334,6 +2933,8 @@ Graspea.Flint.Theming.ThemeCompileDefaults.AspectTolerance.get -> double?
 Graspea.Flint.Theming.ThemeCompileDefaults.AspectTolerance.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.AutoFacetWrap.get -> bool?
 Graspea.Flint.Theming.ThemeCompileDefaults.AutoFacetWrap.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.Background.get -> string?
+Graspea.Flint.Theming.ThemeCompileDefaults.Background.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.BandBalance.get -> bool?
 Graspea.Flint.Theming.ThemeCompileDefaults.BandBalance.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.BandStepFit.get -> double?
@@ -2364,6 +2965,8 @@ Graspea.Flint.Theming.ThemeCompileDefaults.DefaultBandSize.get -> double?
 Graspea.Flint.Theming.ThemeCompileDefaults.DefaultBandSize.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.Elasticity.get -> double?
 Graspea.Flint.Theming.ThemeCompileDefaults.Elasticity.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.Enclosures.get -> Graspea.Flint.Theming.ThemeCompileDefaultsEnclosures![]?
+Graspea.Flint.Theming.ThemeCompileDefaults.Enclosures.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.Theming.ThemeCompileDefaults.Extensions.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.FacetAspectRatioResistance.get -> double?
@@ -2406,8 +3009,18 @@ Graspea.Flint.Theming.ThemeCompileDefaults.MinStep.get -> double?
 Graspea.Flint.Theming.ThemeCompileDefaults.MinStep.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.MinSubplotSize.get -> double?
 Graspea.Flint.Theming.ThemeCompileDefaults.MinSubplotSize.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.Notes.get -> Graspea.Flint.Theming.ThemeCompileDefaultsNotes![]?
+Graspea.Flint.Theming.ThemeCompileDefaults.Notes.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.References.get -> double[]?
+Graspea.Flint.Theming.ThemeCompileDefaults.References.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.Regions.get -> Graspea.Flint.Theming.ThemeCompileDefaultsRegions![]?
+Graspea.Flint.Theming.ThemeCompileDefaults.Regions.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.RowNamesAbove.get -> Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove?
 Graspea.Flint.Theming.ThemeCompileDefaults.RowNamesAbove.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.SparseFill.get -> Graspea.Flint.SparseFill?
+Graspea.Flint.Theming.ThemeCompileDefaults.SparseFill.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.SparseFillBars.get -> bool?
+Graspea.Flint.Theming.ThemeCompileDefaults.SparseFillBars.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.StepPadding.get -> double?
 Graspea.Flint.Theming.ThemeCompileDefaults.StepPadding.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.TargetAspect.get -> double?
@@ -2417,6 +3030,14 @@ Graspea.Flint.Theming.ThemeCompileDefaults.TargetBandAr.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.ThemeCompileDefaults() -> void
 Graspea.Flint.Theming.ThemeCompileDefaults.ThemeDecisions.get -> bool?
 Graspea.Flint.Theming.ThemeCompileDefaults.ThemeDecisions.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaults.TitleWrap.get -> Graspea.Flint.TitleWrap?
+Graspea.Flint.Theming.ThemeCompileDefaults.TitleWrap.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsEnclosures
+Graspea.Flint.Theming.ThemeCompileDefaultsEnclosures.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeCompileDefaultsEnclosures.Extensions.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsEnclosures.Targets.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.Theming.ThemeCompileDefaultsEnclosures.Targets.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsEnclosures.ThemeCompileDefaultsEnclosures() -> void
 Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep
 Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.Extensions.set -> void
@@ -2425,6 +3046,26 @@ Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.X.get -> double?
 Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.X.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.Y.get -> double?
 Graspea.Flint.Theming.ThemeCompileDefaultsLabelStep.Y.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsNotes
+Graspea.Flint.Theming.ThemeCompileDefaultsNotes.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeCompileDefaultsNotes.Extensions.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsNotes.Key.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.Nodes.JsonNode?>?
+Graspea.Flint.Theming.ThemeCompileDefaultsNotes.Key.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsNotes.Text.get -> string?
+Graspea.Flint.Theming.ThemeCompileDefaultsNotes.Text.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsNotes.ThemeCompileDefaultsNotes() -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.Extensions.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.Placement.get -> string?
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.Placement.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.Text.get -> string?
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.Text.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.ThemeCompileDefaultsRegions() -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.X.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.X.set -> void
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.Y.get -> System.Text.Json.Nodes.JsonNode?
+Graspea.Flint.Theming.ThemeCompileDefaultsRegions.Y.set -> void
 Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove
 Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.Theming.ThemeCompileDefaultsRowNamesAbove.Extensions.set -> void
@@ -2702,11 +3343,25 @@ Graspea.Flint.Theming.ThemeInkText.ThemeInkText() -> void
 Graspea.Flint.Theming.ThemeInteraction
 Graspea.Flint.Theming.ThemeInteraction.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
 Graspea.Flint.Theming.ThemeInteraction.Extensions.set -> void
+Graspea.Flint.Theming.ThemeInteraction.Highlight.get -> Graspea.Flint.Theming.ThemeInteractionHighlight?
+Graspea.Flint.Theming.ThemeInteraction.Highlight.set -> void
 Graspea.Flint.Theming.ThemeInteraction.SelectionBoundary.get -> Graspea.Flint.Theming.ThemeInteractionSelectionBoundary?
 Graspea.Flint.Theming.ThemeInteraction.SelectionBoundary.set -> void
 Graspea.Flint.Theming.ThemeInteraction.ThemeInteraction() -> void
 Graspea.Flint.Theming.ThemeInteraction.TooltipFormat.get -> string?
 Graspea.Flint.Theming.ThemeInteraction.TooltipFormat.set -> void
+Graspea.Flint.Theming.ThemeInteractionHighlight
+Graspea.Flint.Theming.ThemeInteractionHighlight.Color.get -> string?
+Graspea.Flint.Theming.ThemeInteractionHighlight.Color.set -> void
+Graspea.Flint.Theming.ThemeInteractionHighlight.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.Theming.ThemeInteractionHighlight.Extensions.set -> void
+Graspea.Flint.Theming.ThemeInteractionHighlight.HaloColor.get -> string?
+Graspea.Flint.Theming.ThemeInteractionHighlight.HaloColor.set -> void
+Graspea.Flint.Theming.ThemeInteractionHighlight.HaloWidth.get -> double?
+Graspea.Flint.Theming.ThemeInteractionHighlight.HaloWidth.set -> void
+Graspea.Flint.Theming.ThemeInteractionHighlight.ThemeInteractionHighlight() -> void
+Graspea.Flint.Theming.ThemeInteractionHighlight.Width.get -> double?
+Graspea.Flint.Theming.ThemeInteractionHighlight.Width.set -> void
 Graspea.Flint.Theming.ThemeInteractionSelectionBoundary
 Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.Color.get -> string?
 Graspea.Flint.Theming.ThemeInteractionSelectionBoundary.Color.set -> void
@@ -3305,6 +3960,17 @@ Graspea.Flint.Theming.TypeRole.Weight.set -> void
 Graspea.Flint.Theming.TypeWeight
 Graspea.Flint.Theming.TypeWeight.Keyword.get -> string?
 Graspea.Flint.Theming.TypeWeight.Number.get -> double?
+Graspea.Flint.TitleWrap
+Graspea.Flint.TitleWrap.Enabled.get -> bool?
+Graspea.Flint.TitleWrap.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.TitleWrap.Extensions.set -> void
+Graspea.Flint.TitleWrap.Floor.get -> double?
+Graspea.Flint.TitleWrap.Floor.init -> void
+Graspea.Flint.TitleWrap.MinWidth.get -> double?
+Graspea.Flint.TitleWrap.MinWidth.init -> void
+Graspea.Flint.TitleWrap.Overhang.get -> double?
+Graspea.Flint.TitleWrap.Overhang.init -> void
+Graspea.Flint.TitleWrap.TitleWrap() -> void
 Graspea.Flint.TreeBuilder<TRow>
 Graspea.Flint.TreeBuilder<TRow>.Color(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.TreeBuilder<TRow>!
 Graspea.Flint.TreeBuilder<TRow>.Color(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.TreeBuilder<TRow>!
@@ -3335,6 +4001,30 @@ Graspea.Flint.TreemapBuilder<TRow>.Detail(string! field, Graspea.Flint.SemanticT
 Graspea.Flint.TreemapBuilder<TRow>.Size(Graspea.Flint.ChartEncoding! encoding) -> Graspea.Flint.TreemapBuilder<TRow>!
 Graspea.Flint.TreemapBuilder<TRow>.Size(System.Linq.Expressions.Expression<System.Func<TRow, object?>!>! selector, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.TreemapBuilder<TRow>!
 Graspea.Flint.TreemapBuilder<TRow>.Size(string! field, Graspea.Flint.SemanticType? semanticType = null) -> Graspea.Flint.TreemapBuilder<TRow>!
+Graspea.Flint.UnknownChartUpdateOp
+Graspea.Flint.UnknownChartUpdateOp.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.UnknownChartUpdateOp.Extensions.set -> void
+Graspea.Flint.UnknownChartUpdateOp.UnknownChartUpdateOp(string! op) -> void
+Graspea.Flint.UnknownFreeformOverlayBody
+Graspea.Flint.UnknownFreeformOverlayBody.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.UnknownFreeformOverlayBody.Extensions.set -> void
+Graspea.Flint.UnknownFreeformOverlayBody.UnknownFreeformOverlayBody(string! type) -> void
+Graspea.Flint.UpdateRegionSelector
+Graspea.Flint.UpdateRegionSelector.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.UpdateRegionSelector.Extensions.set -> void
+Graspea.Flint.UpdateRegionSelector.Key.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.Nodes.JsonNode?>?
+Graspea.Flint.UpdateRegionSelector.Key.set -> void
+Graspea.Flint.UpdateRegionSelector.UpdateRegionSelector() -> void
+Graspea.Flint.UpdateTarget
+Graspea.Flint.UpdateTarget.Elements.get -> Graspea.Flint.SemanticElement![]?
+Graspea.Flint.UpdateTarget.Elements.init -> void
+Graspea.Flint.UpdateTarget.Extensions.get -> System.Collections.Generic.Dictionary<string!, System.Text.Json.JsonElement>?
+Graspea.Flint.UpdateTarget.Extensions.set -> void
+Graspea.Flint.UpdateTarget.Select.get -> Graspea.Flint.TargetSelector?
+Graspea.Flint.UpdateTarget.Select.init -> void
+Graspea.Flint.UpdateTarget.UpdateTarget() -> void
+Graspea.Flint.UpdateTarget.Visual.get -> Graspea.Flint.TargetVisual?
+Graspea.Flint.UpdateTarget.Visual.init -> void
 Graspea.Flint.Validation.ChartValidator
 Graspea.Flint.Validation.FlintValidationException
 Graspea.Flint.Validation.FlintValidationException.Issues.get -> System.Collections.Generic.IReadOnlyList<Graspea.Flint.Validation.ValidationIssue!>!
@@ -3416,10 +4106,15 @@ Graspea.Flint.WaterfallChartTotals.Default = 0 -> Graspea.Flint.WaterfallChartTo
 Graspea.Flint.WaterfallChartTotals.First = 3 -> Graspea.Flint.WaterfallChartTotals
 Graspea.Flint.WaterfallChartTotals.Last = 4 -> Graspea.Flint.WaterfallChartTotals
 Graspea.Flint.WaterfallChartTotals.None = 2 -> Graspea.Flint.WaterfallChartTotals
+abstract Graspea.Flint.ChartUpdateOp.Op.get -> string!
+abstract Graspea.Flint.FreeformOverlayBody.Type.get -> string!
 const Graspea.Flint.Delivery.DeliveryContract.Version = 1 -> int
-const Graspea.Flint.FlintUpstream.Version = "1.0.1" -> string!
+const Graspea.Flint.FlintUpstream.Version = "1.1.1" -> string!
 override Graspea.Flint.Aggregate.GetHashCode() -> int
 override Graspea.Flint.Aggregate.ToString() -> string!
+override Graspea.Flint.AnnotateEnclosureOp.Op.get -> string!
+override Graspea.Flint.AnnotateRegionOp.Op.get -> string!
+override Graspea.Flint.AnnotateTextOp.Op.get -> string!
 override Graspea.Flint.Channel.GetHashCode() -> int
 override Graspea.Flint.Channel.ToString() -> string!
 override Graspea.Flint.ChannelTitle.ToString() -> string!
@@ -3427,8 +4122,13 @@ override Graspea.Flint.ChartSize.GetHashCode() -> int
 override Graspea.Flint.ChartType.GetHashCode() -> int
 override Graspea.Flint.ChartType.ToString() -> string!
 override Graspea.Flint.ColorScheme.ToString() -> string!
+override Graspea.Flint.DivergingNeutral.ToString() -> string!
 override Graspea.Flint.EncodingType.GetHashCode() -> int
 override Graspea.Flint.EncodingType.ToString() -> string!
+override Graspea.Flint.FreeformCloneBody.Type.get -> string!
+override Graspea.Flint.FreeformSvgBody.Type.get -> string!
+override Graspea.Flint.PercentScale.GetHashCode() -> int
+override Graspea.Flint.PercentScale.ToString() -> string!
 override Graspea.Flint.Polarity.GetHashCode() -> int
 override Graspea.Flint.Polarity.ToString() -> string!
 override Graspea.Flint.SemanticType.GetHashCode() -> int
@@ -3452,22 +4152,35 @@ override Graspea.Flint.Serialization.ChartThemeConverter.Read(ref System.Text.Js
 override Graspea.Flint.Serialization.ChartThemeConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ChartTheme! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.ChartTypeConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ChartType
 override Graspea.Flint.Serialization.ChartTypeConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ChartType value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.ChartUpdateOpConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ChartUpdateOp!
+override Graspea.Flint.Serialization.ChartUpdateOpConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ChartUpdateOp! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.ColorSchemeConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ColorScheme!
 override Graspea.Flint.Serialization.ColorSchemeConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ColorScheme! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.ContinuousMarkCrossSectionConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ContinuousMarkCrossSection!
 override Graspea.Flint.Serialization.ContinuousMarkCrossSectionConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ContinuousMarkCrossSection! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.DivergingNeutralConverter.HandleNull.get -> bool
+override Graspea.Flint.Serialization.DivergingNeutralConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.DivergingNeutral!
+override Graspea.Flint.Serialization.DivergingNeutralConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.DivergingNeutral! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.EncodingTypeConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.EncodingType
 override Graspea.Flint.Serialization.EncodingTypeConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.EncodingType value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.EncodingValueConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.EncodingValue!
 override Graspea.Flint.Serialization.EncodingValueConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.EncodingValue! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.FilterValueConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.FilterValue!
+override Graspea.Flint.Serialization.FilterValueConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.FilterValue! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.FreeformOverlayBodyConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.FreeformOverlayBody!
+override Graspea.Flint.Serialization.FreeformOverlayBodyConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.FreeformOverlayBody! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> System.Collections.Generic.Dictionary<int, T>!
 override Graspea.Flint.Serialization.IntKeyDictionaryConverter<T>.Write(System.Text.Json.Utf8JsonWriter! writer, System.Collections.Generic.Dictionary<int, T>! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.InteractionDefaultsConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.InteractionDefaults!
+override Graspea.Flint.Serialization.InteractionDefaultsConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.InteractionDefaults! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.JsonNodePassThroughConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> System.Text.Json.Nodes.JsonNode?
 override Graspea.Flint.Serialization.JsonNodePassThroughConverter.Write(System.Text.Json.Utf8JsonWriter! writer, System.Text.Json.Nodes.JsonNode! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.LabelOverflowConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.LabelOverflow!
 override Graspea.Flint.Serialization.LabelOverflowConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.LabelOverflow! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.MinorGridSpecConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.MinorGridSpec!
 override Graspea.Flint.Serialization.MinorGridSpecConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.MinorGridSpec! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.PercentScaleConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.PercentScale
+override Graspea.Flint.Serialization.PercentScaleConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.PercentScale value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.PointInkConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.PointInk
 override Graspea.Flint.Serialization.PointInkConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.PointInk value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.PolarityConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Polarity
@@ -3476,30 +4189,53 @@ override Graspea.Flint.Serialization.RuleSpecConverter.Read(ref System.Text.Json
 override Graspea.Flint.Serialization.RuleSpecConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.RuleSpec! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.SemanticAnnotationConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.SemanticAnnotation!
 override Graspea.Flint.Serialization.SemanticAnnotationConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.SemanticAnnotation! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.SemanticElementConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.SemanticElement!
+override Graspea.Flint.Serialization.SemanticElementConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.SemanticElement! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.SemanticTypeConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.SemanticType
 override Graspea.Flint.Serialization.SemanticTypeConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.SemanticType value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.SeriesCountAxisConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.SeriesCountAxis
 override Graspea.Flint.Serialization.SeriesCountAxisConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.SeriesCountAxis value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.SortOrderConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.SortOrder
 override Graspea.Flint.Serialization.SortOrderConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.SortOrder value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.SparseFillConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.SparseFill!
+override Graspea.Flint.Serialization.SparseFillConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.SparseFill! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.StrokeDashConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.StrokeDash!
+override Graspea.Flint.Serialization.StrokeDashConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.StrokeDash! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.TargetDetailsConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.TargetDetails!
 override Graspea.Flint.Serialization.TargetDetailsConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.TargetDetails! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.TargetSelectorConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.TargetSelector!
+override Graspea.Flint.Serialization.TargetSelectorConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.TargetSelector! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.TargetVisualConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.TargetVisual!
+override Graspea.Flint.Serialization.TargetVisualConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.TargetVisual! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.ThemeLengthConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.ThemeLength!
 override Graspea.Flint.Serialization.ThemeLengthConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.ThemeLength! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.ThemePresetConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.ThemePreset
 override Graspea.Flint.Serialization.ThemePresetConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.ThemePreset value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.TitleWrapConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.TitleWrap!
+override Graspea.Flint.Serialization.TitleWrapConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.TitleWrap! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.TypeWeightConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.Theming.TypeWeight!
 override Graspea.Flint.Serialization.TypeWeightConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.Theming.TypeWeight! value, System.Text.Json.JsonSerializerOptions! options) -> void
+override Graspea.Flint.Serialization.UpdateTargetConverter.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> Graspea.Flint.UpdateTarget!
+override Graspea.Flint.Serialization.UpdateTargetConverter.Write(System.Text.Json.Utf8JsonWriter! writer, Graspea.Flint.UpdateTarget! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.Serialization.VerbatimKeyDictionaryConverter<T>.Read(ref System.Text.Json.Utf8JsonReader reader, System.Type! typeToConvert, System.Text.Json.JsonSerializerOptions! options) -> System.Collections.Generic.Dictionary<string!, T>!
 override Graspea.Flint.Serialization.VerbatimKeyDictionaryConverter<T>.Write(System.Text.Json.Utf8JsonWriter! writer, System.Collections.Generic.Dictionary<string!, T>! value, System.Text.Json.JsonSerializerOptions! options) -> void
 override Graspea.Flint.SeriesCountAxis.GetHashCode() -> int
 override Graspea.Flint.SeriesCountAxis.ToString() -> string!
+override Graspea.Flint.SetAnnotationOp.Op.get -> string!
+override Graspea.Flint.SetDataOp.Op.get -> string!
+override Graspea.Flint.SetFreeformOverlayOp.Op.get -> string!
+override Graspea.Flint.SetOrderOp.Op.get -> string!
+override Graspea.Flint.SetOverlayOp.Op.get -> string!
+override Graspea.Flint.SetStyleOp.Op.get -> string!
+override Graspea.Flint.SetViewportOp.Op.get -> string!
 override Graspea.Flint.SortOrder.GetHashCode() -> int
 override Graspea.Flint.SortOrder.ToString() -> string!
 override Graspea.Flint.ThemePreset.GetHashCode() -> int
 override Graspea.Flint.ThemePreset.ToString() -> string!
 override Graspea.Flint.Theming.PointInk.GetHashCode() -> int
 override Graspea.Flint.Theming.PointInk.ToString() -> string!
+override Graspea.Flint.UnknownChartUpdateOp.Op.get -> string!
+override Graspea.Flint.UnknownFreeformOverlayBody.Type.get -> string!
 override Graspea.Flint.Validation.ValidationIssue.ToString() -> string!
 static Graspea.Flint.Aggregate.operator !=(Graspea.Flint.Aggregate left, Graspea.Flint.Aggregate right) -> bool
 static Graspea.Flint.Aggregate.operator ==(Graspea.Flint.Aggregate left, Graspea.Flint.Aggregate right) -> bool
@@ -3846,12 +4582,15 @@ static Graspea.Flint.ColorScheme.implicit operator Graspea.Flint.ColorScheme?(st
 static Graspea.Flint.ContinuousMarkCrossSection.Axes(double x, double y, double? elasticity = null, double? maxStretch = null, Graspea.Flint.SeriesCountAxis? seriesCountAxis = null) -> Graspea.Flint.ContinuousMarkCrossSection!
 static Graspea.Flint.ContinuousMarkCrossSection.implicit operator Graspea.Flint.ContinuousMarkCrossSection!(double value) -> Graspea.Flint.ContinuousMarkCrossSection!
 static Graspea.Flint.Delivery.ChartManifest.Create(params Graspea.Flint.Delivery.ChartGroup![]! groups) -> Graspea.Flint.Delivery.ChartManifest!
+static Graspea.Flint.DivergingNeutral.Break.get -> Graspea.Flint.DivergingNeutral!
+static Graspea.Flint.DivergingNeutral.implicit operator Graspea.Flint.DivergingNeutral!(double width) -> Graspea.Flint.DivergingNeutral!
 static Graspea.Flint.EncodingType.operator !=(Graspea.Flint.EncodingType left, Graspea.Flint.EncodingType right) -> bool
 static Graspea.Flint.EncodingType.operator ==(Graspea.Flint.EncodingType left, Graspea.Flint.EncodingType right) -> bool
 static Graspea.Flint.EncodingValue.Series(params Graspea.Flint.ChartEncoding![]! e) -> Graspea.Flint.EncodingValue!
 static Graspea.Flint.EncodingValue.Single(Graspea.Flint.ChartEncoding! e) -> Graspea.Flint.EncodingValue!
 static Graspea.Flint.EncodingValue.implicit operator Graspea.Flint.EncodingValue!(Graspea.Flint.ChartEncoding! e) -> Graspea.Flint.EncodingValue!
 static Graspea.Flint.EncodingValue.implicit operator Graspea.Flint.EncodingValue!(string! field) -> Graspea.Flint.EncodingValue!
+static Graspea.Flint.InteractionDefaults.implicit operator Graspea.Flint.InteractionDefaults!(bool enabled) -> Graspea.Flint.InteractionDefaults!
 static Graspea.Flint.InteractionEntry.AccessibleNavigation(Graspea.Flint.AccessibleNavigationOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
 static Graspea.Flint.InteractionEntry.AxisHighlight(Graspea.Flint.AxisHighlightOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
 static Graspea.Flint.InteractionEntry.BrushAngle(Graspea.Flint.SelectOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
@@ -3875,6 +4614,8 @@ static Graspea.Flint.InteractionEntry.LinkedBrush(Graspea.Flint.LinkedBrushOptio
 static Graspea.Flint.InteractionEntry.LongPress(Graspea.Flint.LongPressOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
 static Graspea.Flint.InteractionEntry.Navigate(Graspea.Flint.NavigateOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
 static Graspea.Flint.InteractionEntry.Select(Graspea.Flint.SelectOptions? options = null, string? id = null) -> Graspea.Flint.InteractionEntry!
+static Graspea.Flint.PercentScale.operator !=(Graspea.Flint.PercentScale left, Graspea.Flint.PercentScale right) -> bool
+static Graspea.Flint.PercentScale.operator ==(Graspea.Flint.PercentScale left, Graspea.Flint.PercentScale right) -> bool
 static Graspea.Flint.Polarity.operator !=(Graspea.Flint.Polarity left, Graspea.Flint.Polarity right) -> bool
 static Graspea.Flint.Polarity.operator ==(Graspea.Flint.Polarity left, Graspea.Flint.Polarity right) -> bool
 static Graspea.Flint.RowOptions.Default.get -> Graspea.Flint.RowOptions!
@@ -3896,6 +4637,9 @@ static Graspea.Flint.SeriesCountAxis.operator ==(Graspea.Flint.SeriesCountAxis l
 static Graspea.Flint.SortBy.ExplicitOrder(params string![]! order) -> string!
 static Graspea.Flint.SortOrder.operator !=(Graspea.Flint.SortOrder left, Graspea.Flint.SortOrder right) -> bool
 static Graspea.Flint.SortOrder.operator ==(Graspea.Flint.SortOrder left, Graspea.Flint.SortOrder right) -> bool
+static Graspea.Flint.SparseFill.implicit operator Graspea.Flint.SparseFill!(bool enabled) -> Graspea.Flint.SparseFill!
+static Graspea.Flint.StrokeDash.implicit operator Graspea.Flint.StrokeDash?(double[]? lengths) -> Graspea.Flint.StrokeDash?
+static Graspea.Flint.StrokeDash.implicit operator Graspea.Flint.StrokeDash?(string? keyword) -> Graspea.Flint.StrokeDash?
 static Graspea.Flint.TargetDetails.implicit operator Graspea.Flint.TargetDetails!(bool enabled) -> Graspea.Flint.TargetDetails!
 static Graspea.Flint.ThemePreset.operator !=(Graspea.Flint.ThemePreset left, Graspea.Flint.ThemePreset right) -> bool
 static Graspea.Flint.ThemePreset.operator ==(Graspea.Flint.ThemePreset left, Graspea.Flint.ThemePreset right) -> bool
@@ -3911,6 +4655,9 @@ static Graspea.Flint.Theming.ThemeLength.implicit operator Graspea.Flint.Theming
 static Graspea.Flint.Theming.ThemeLength.implicit operator Graspea.Flint.Theming.ThemeLength?(string? text) -> Graspea.Flint.Theming.ThemeLength?
 static Graspea.Flint.Theming.TypeWeight.implicit operator Graspea.Flint.Theming.TypeWeight!(double number) -> Graspea.Flint.Theming.TypeWeight!
 static Graspea.Flint.Theming.TypeWeight.implicit operator Graspea.Flint.Theming.TypeWeight?(string? keyword) -> Graspea.Flint.Theming.TypeWeight?
+static Graspea.Flint.TitleWrap.implicit operator Graspea.Flint.TitleWrap!(bool enabled) -> Graspea.Flint.TitleWrap!
+static Graspea.Flint.UpdateTarget.Key(System.Collections.Generic.Dictionary<string!, System.Text.Json.Nodes.JsonNode?>! key, Graspea.Flint.TargetVisual? visual = null) -> Graspea.Flint.UpdateTarget!
+static Graspea.Flint.UpdateTarget.Where(System.Collections.Generic.Dictionary<string!, Graspea.Flint.FilterValue!>! where, Graspea.Flint.TargetVisual? visual = null) -> Graspea.Flint.UpdateTarget!
 static Graspea.Flint.Validation.ChartValidator.Validate(Graspea.Flint.ChartAssemblyInput! input, Graspea.Flint.FlintBackend? backend = null) -> Graspea.Flint.Validation.ValidationResult!
 static readonly Graspea.Flint.Aggregate.Average -> Graspea.Flint.Aggregate
 static readonly Graspea.Flint.Aggregate.Count -> Graspea.Flint.Aggregate
@@ -3937,6 +4684,8 @@ static readonly Graspea.Flint.Channel.Row -> Graspea.Flint.Channel
 static readonly Graspea.Flint.Channel.Shape -> Graspea.Flint.Channel
 static readonly Graspea.Flint.Channel.Size -> Graspea.Flint.Channel
 static readonly Graspea.Flint.Channel.StrokeDash -> Graspea.Flint.Channel
+static readonly Graspea.Flint.Channel.StrokeWidth -> Graspea.Flint.Channel
+static readonly Graspea.Flint.Channel.Text -> Graspea.Flint.Channel
 static readonly Graspea.Flint.Channel.Theta -> Graspea.Flint.Channel
 static readonly Graspea.Flint.Channel.Value -> Graspea.Flint.Channel
 static readonly Graspea.Flint.Channel.X -> Graspea.Flint.Channel
@@ -3998,6 +4747,8 @@ static readonly Graspea.Flint.EncodingType.Nominal -> Graspea.Flint.EncodingType
 static readonly Graspea.Flint.EncodingType.Ordinal -> Graspea.Flint.EncodingType
 static readonly Graspea.Flint.EncodingType.Quantitative -> Graspea.Flint.EncodingType
 static readonly Graspea.Flint.EncodingType.Temporal -> Graspea.Flint.EncodingType
+static readonly Graspea.Flint.PercentScale.Fraction -> Graspea.Flint.PercentScale
+static readonly Graspea.Flint.PercentScale.Percent -> Graspea.Flint.PercentScale
 static readonly Graspea.Flint.Polarity.HigherIsBetter -> Graspea.Flint.Polarity
 static readonly Graspea.Flint.Polarity.LowerIsBetter -> Graspea.Flint.Polarity
 static readonly Graspea.Flint.SemanticType.Address -> Graspea.Flint.SemanticType
@@ -4071,6 +4822,7 @@ static readonly Graspea.Flint.Theming.PointInk.Text -> Graspea.Flint.Theming.Poi
 ~override Graspea.Flint.ChartSize.ToString() -> string
 ~override Graspea.Flint.ChartType.Equals(object obj) -> bool
 ~override Graspea.Flint.EncodingType.Equals(object obj) -> bool
+~override Graspea.Flint.PercentScale.Equals(object obj) -> bool
 ~override Graspea.Flint.Polarity.Equals(object obj) -> bool
 ~override Graspea.Flint.SemanticType.Equals(object obj) -> bool
 ~override Graspea.Flint.SeriesCountAxis.Equals(object obj) -> bool
