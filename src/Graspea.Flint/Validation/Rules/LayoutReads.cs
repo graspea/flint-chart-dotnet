@@ -2,11 +2,12 @@ namespace Graspea.Flint.Validation.Rules;
 
 /// <summary>
 /// The channels a layout backend (Vega-Lite, ECharts, Chart.js, Plotly) of the pinned package draws from the field's
-/// values though its template does not declare them; <c>unsupported_channel</c> is not reported for them.
+/// values though its template does not declare them; <c>unsupported_channel</c> is not reported for them. Reviewed by
+/// rendering against flint-chart 1.1.1, whose lines the citations give.
 /// <list type="bullet">
 /// <item><c>column</c> and <c>row</c> with a field (<see cref="FieldTypes.FieldOf"/>) and no <c>count</c> aggregate facet the chart, one panel per value,
 /// each drawing its own subset, on the templates of <see cref="Facets"/>. ECharts and Plotly facet only a template that
-/// declares <c>x</c> or <c>y</c> (src/echarts/assemble.ts:351-361, src/plotly/assemble.ts:332-346), Plotly not one that
+/// declares <c>x</c> or <c>y</c> (src/echarts/assemble.ts:369-379, src/plotly/assemble.ts:355-369), Plotly not one that
 /// sets <c>selfManagesFacets</c> (the Sparkline, src/plotly/templates/sparkline.ts:78). That gate is not the rule: ECharts
 /// also facets the Calendar Heatmap, Funnel Chart, Network Graph and Sankey Diagram, and they stay reported. The faceted
 /// option keeps only the grids, axes, series, tooltip, color and legend, and gives each series an axis index
@@ -14,22 +15,22 @@ namespace Graspea.Flint.Validation.Rules;
 /// not render, and the funnel, graph and sankey series keep the canvas position their template sets
 /// (src/echarts/templates/funnel.ts:140-143, graph.ts:145-148, sankey.ts:152-155), so every panel's chart is drawn in the
 /// same place. Vega-Lite facets only the Ranged Dot Plot, whose template writes every resolved encoding on the top-level
-/// encoding (src/vegalite/templates/scatter.ts:322-327; src/vegalite/assemble.ts:1185-1189 always resolves the two, and
-/// restructureFacets, :1410-1501, makes them the facet). Every Chart.js template declares both channels.</item>
+/// encoding (src/vegalite/templates/scatter.ts:322-327; src/vegalite/assemble.ts:1208-1212 always resolves the two, and
+/// restructureFacets, :1401-1526, makes them the facet). Every Chart.js template declares both channels.</item>
 /// <item><c>group</c> with a field and no <c>count</c> aggregate of a Pyramid Chart on ECharts and Plotly while <c>color</c> does not resolve: its values
-/// are the two sides (src/echarts/templates/pyramid.ts:35, src/plotly/templates/bar.ts:500); both templates draw nothing
-/// unless <c>x</c> and <c>y</c> resolve (pyramid.ts:30, bar.ts:495). A channel resolves as
+/// are the two sides (src/echarts/templates/pyramid.ts:35, src/plotly/templates/bar.ts:506); both templates draw nothing
+/// unless <c>x</c> and <c>y</c> resolve (pyramid.ts:30, bar.ts:501). A channel resolves as
 /// <c>channelSemantics[ch]?.field</c> reads it: a non-empty field, or a <c>count</c> aggregate, which upstream names
-/// <c>_count</c> (src/core/resolve-semantics.ts:625-637). A <c>count</c> aggregate on <c>column</c>, <c>row</c> or <c>group</c>
-/// itself is not exempt, with a field or without: upstream renames the field to <c>_count</c> (:682-685), so the facet is one
+/// <c>_count</c> (src/core/resolve-semantics.ts:643-655). A <c>count</c> aggregate on <c>column</c>, <c>row</c> or <c>group</c>
+/// itself is not exempt, with a field or without: upstream renames the field to <c>_count</c> (:700-703), so the facet is one
 /// panel headed by the count and the split is a constant, and neither draws the field's values.</item>
 /// </list>
 /// </summary>
 internal static class LayoutReads
 {
     /// <summary>The templates whose <c>column</c> and <c>row</c> fields the backend draws as facet panels, each in its own
-    /// grid or subplot, though the template leaves both out (rendered with vega-lite 6.5.0 and echarts 6.1.0; Plotly read
-    /// from its subplot domains and annotations).</summary>
+    /// grid or subplot, though the template leaves both out (rendered with vega-lite 6.5.0, vega 6.4.0 and echarts 6.1.0;
+    /// Plotly read from its subplot domains and annotations).</summary>
     private static readonly HashSet<(FlintBackend Backend, string ChartType)> Facets =
     [
         (FlintBackend.VegaLite, "Ranged Dot Plot"),
@@ -62,7 +63,7 @@ internal static class LayoutReads
             : null;
 
     /// <summary>A non-empty field without a <c>count</c> aggregate: upstream renames a counted field to <c>_count</c>
-    /// (src/core/resolve-semantics.ts:682-685), so the facet or split is by the count, not the field's values.</summary>
+    /// (src/core/resolve-semantics.ts:700-703), so the facet or split is by the count, not the field's values.</summary>
     private static bool HasField(FieldTypes types, string channel) =>
         types.FieldOf(channel) is not null && types.Encoding(channel)?.Aggregate?.Name != "count";
 

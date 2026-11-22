@@ -17,15 +17,16 @@ public sealed partial class ChartValidatorTests
     private static string[] Unsupported(ChartAssemblyInput input, FlintBackend? backend) =>
         Issues(input, backend, "unsupported_channel").Select(i => i.Path).ToArray();
 
-    // source: src/echarts/assemble.ts:351-361 and src/plotly/assemble.ts:332-346 (a column or row field facets the chart when
-    // the template declares x or y; Plotly not where the template lays out its own grid, src/plotly/templates/sparkline.ts:78);
-    // src/vegalite/assemble.ts:1185-1189 with src/vegalite/templates/scatter.ts:322-327 (the Vega-Lite Ranged Dot Plot writes
-    // them on the top-level encoding, which restructureFacets makes the facet). Rendered with vega-lite 6.5.0 and echarts
-    // 6.1.0: one panel per value, headed by the value, each in its own grid. src/echarts/facet.ts:353-359 and :424-428 (the
-    // faceted option keeps grid, axes, series, tooltip, color and legend, and gives each series an axis index): a Calendar
-    // Heatmap loses its calendar and visualMap, and echarts 6.1.0 throws "Heatmap must use with visualMap"; the funnel, graph
-    // and sankey series keep their canvas position (src/echarts/templates/funnel.ts:140-143, graph.ts:145-148,
-    // sankey.ts:152-155), so every panel's chart is drawn in the same place. Those four stay reported.
+    // source: flint-chart 1.1.1 src/echarts/assemble.ts:369-379 and src/plotly/assemble.ts:355-369 (a column or row field
+    // facets the chart when the template declares x or y; Plotly not where the template lays out its own grid,
+    // src/plotly/templates/sparkline.ts:78); src/vegalite/assemble.ts:1208-1212 with src/vegalite/templates/scatter.ts:322-327
+    // (the Vega-Lite Ranged Dot Plot writes them on the top-level encoding, which restructureFacets, :1401-1526, makes the
+    // facet). Rendered with vega-lite 6.5.0, vega 6.4.0 and echarts 6.1.0: one panel per value, headed by the value, each in
+    // its own grid. src/echarts/facet.ts:353-359 and :424-428 (the faceted option keeps grid, axes, series, tooltip, color
+    // and legend, and gives each series an axis index): a Calendar Heatmap loses its calendar and visualMap, and echarts
+    // 6.1.0 throws "Heatmap must use with visualMap"; the funnel, graph and sankey series keep their canvas position
+    // (src/echarts/templates/funnel.ts:140-143, graph.ts:145-148, sankey.ts:152-155), so every panel's chart is drawn in the
+    // same place. Those four stay reported.
     [Test]
     public void Layout_ColumnAndRowOnATemplateThatLeavesThemOut_AreReadWhereTheFacetPanelsDraw()
     {
@@ -57,10 +58,10 @@ public sealed partial class ChartValidatorTests
         }
     }
 
-    // source: src/echarts/templates/pyramid.ts:35 (colorField = color ?? group) and src/plotly/templates/bar.ts:500 (color ||
-    // group): the first two group values are the two sides while color does not resolve, with x and y resolved (pyramid.ts:30,
-    // bar.ts:495 return early without them); a count aggregate resolves, as _count (src/core/resolve-semantics.ts:625-637),
-    // but group itself needs a field without one (:682-685);
+    // source: flint-chart 1.1.1 src/echarts/templates/pyramid.ts:35 (colorField = color ?? group) and
+    // src/plotly/templates/bar.ts:506 (color || group): the first two group values are the two sides while color does not
+    // resolve, with x and y resolved (pyramid.ts:30, bar.ts:501 return early without them); a count aggregate resolves, as
+    // _count (src/core/resolve-semantics.ts:643-655), but group itself needs a field without one (:700-703);
     // the Vega-Lite Pyramid does not read group
     [Test]
     public void Layout_GroupOfAPyramid_IsTheSplitWithoutAColorField()
@@ -84,10 +85,11 @@ public sealed partial class ChartValidatorTests
     }
 
     // source: probes.json channelReads.layoutReads records these three (echarts Waterfall Chart group, vegalite Map row, vegalite
-    // Density Plot y) as reads, but rendered with vega-lite 6.5.0 and echarts 6.1.0 the bound field reaches the spec and not the
-    // chart's marks, so the warning stays: src/echarts/instantiate-spec.ts:447-451 (a legend title); src/vegalite/templates/map.ts:218-226,
-    // :463 and vega-lite src/encoding.ts initEncoding over UNIT_CHANNELS (a facet inside a layer is dropped); src/core/structure.ts:403-416
-    // (an axis title)
+    // Density Plot y) as reads, but rendered with vega-lite 6.5.0, vega 6.4.0 and echarts 6.1.0 the bound field reaches the spec
+    // and not the chart's marks, so the warning stays (flint-chart 1.1.1): src/echarts/instantiate-spec.ts:448-452 (a legend
+    // title); src/vegalite/templates/map.ts:490-498 and :1035 (the encodings go on the layer pointLayer(spec) returns, whose
+    // index depends on the basemap layers) and vega-lite src/encoding.ts initEncoding over UNIT_CHANNELS (a facet inside a
+    // layer is dropped); src/core/structure.ts:403-416 (an axis title)
     [Test]
     public void Layout_NameOnlyAndDroppedChannels_StayUnsupported()
     {

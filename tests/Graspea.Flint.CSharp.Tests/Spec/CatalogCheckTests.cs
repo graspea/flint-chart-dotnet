@@ -108,13 +108,13 @@ public sealed class CatalogCheckTests
         Assert.That(string.Join(" ", validator), Is.EqualTo(expected));
     }
 
-    // source: ValidationRun.UnsupportedChannel and LayoutReads.ReadsUndeclared (flint-chart 1.0.1: a column or row field
+    // source: ValidationRun.UnsupportedChannel and LayoutReads.ReadsUndeclared (flint-chart 1.1.1: a column or row field
     // facets the ECharts Pyramid Chart and Ranged Dot Plot, the Plotly Funnel Chart, Pyramid Chart, Ranged Dot Plot and Rose
-    // Chart, src/echarts/assemble.ts:351-361, src/plotly/assemble.ts:332-346, and the Vega-Lite Ranged Dot Plot,
+    // Chart, src/echarts/assemble.ts:369-379, src/plotly/assemble.ts:355-369, and the Vega-Lite Ranged Dot Plot,
     // src/vegalite/templates/scatter.ts:322-327, not the ECharts Calendar Heatmap or Network Graph, src/echarts/facet.ts:353-359,
     // :424-428; group is the split of an ECharts or Plotly Pyramid Chart while color does not resolve and x and y do, a count
-    // aggregate resolving, src/echarts/templates/pyramid.ts:30-35, src/plotly/templates/bar.ts:495-500,
-    // src/core/resolve-semantics.ts:625-637), where no backend's template declares the channel; the core and the validator agree
+    // aggregate resolving, src/echarts/templates/pyramid.ts:30-35, src/plotly/templates/bar.ts:501-506,
+    // src/core/resolve-semantics.ts:643-655), where no backend's template declares the channel; the core and the validator agree
     [TestCase("Ranged Dot Plot", "{\"x\":\"a\",\"y\":\"b\",\"column\":\"c\"}", "")]
     [TestCase("Ranged Dot Plot", "{\"x\":\"a\",\"y\":\"b\",\"row\":\"\"}", "chart_spec.encodings.row")]
     [TestCase("Funnel Chart", "{\"y\":\"a\",\"size\":\"b\",\"column\":\"c\"}", "")]
