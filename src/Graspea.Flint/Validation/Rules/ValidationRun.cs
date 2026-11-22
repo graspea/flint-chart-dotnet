@@ -933,12 +933,15 @@ internal sealed partial class ValidationRun
     /// on the other backends, which do not read these options.</summary>
     private void AnnotationOptionChecks()
     {
-        if (targets.Length == 0 || (input.Options is null && input.ThemeSpec?.Spec?.CompileDefaults is null))
+        var a = input.Options;
+        var d = input.ThemeSpec?.Spec?.CompileDefaults;
+        // Only notes, regions and enclosures are read, so a document without them is not serialised.
+        if (targets.Length == 0 || (a?.Notes is null && a?.Regions is null && a?.Enclosures is null && d?.Notes is null && d?.Regions is null && d?.Enclosures is null))
         {
             return;
         }
 
-        var options = input.Options is { } o ? JsonSerializer.SerializeToNode(o, FlintJsonContext.Default.AssembleOptions) as JsonObject : null;
+        var options = a is not null ? JsonSerializer.SerializeToNode(a, FlintJsonContext.Default.AssembleOptions) as JsonObject : null;
         var house = input.ThemeSpec?.Spec is { } theme ? JsonSerializer.SerializeToNode(theme, FlintJsonContext.Default.ThemeSpec)?["compileDefaults"] as JsonObject : null;
         foreach (var v in AnnotationOptions.Evaluate(options, house))
         {
