@@ -257,6 +257,23 @@ public sealed class CatalogCheckTests
         }));
     }
 
+    // source: ValidationRun.AnnotationChecks (a negative divergingNeutral, and invalid_literal for a polarity or percentScale
+    // outside the pinned union, in the annotation's declaration order), all Info
+    [Test]
+    public void Run_AnnotationValues_AreFlint116()
+    {
+        var json = "{\"semantic_types\":{\"b\":{\"semanticType\":\"Percentage\",\"percentScale\":\"basis-points\",\"polarity\":\"sideways\",\"divergingNeutral\":-1},"
+            + "\"a\":{\"semanticType\":\"Percentage\",\"percentScale\":\"fraction\",\"polarity\":\"lower-is-better\",\"divergingNeutral\":0}},"
+            + "\"chart_spec\":{\"chartType\":\"Bar Chart\",\"encodings\":{\"x\":\"a\",\"y\":\"b\"}}}";
+
+        Assert.That(Check(json).Select(Describe), Is.EqualTo(new[]
+        {
+            "FLINT116 negative_diverging_neutral Info semantic_types.b.divergingNeutral @1:124",
+            "FLINT116 invalid_literal Info semantic_types.b.polarity @1:94",
+            "FLINT116 invalid_literal Info semantic_types.b.percentScale @1:68",
+        }));
+    }
+
     // source: design §12.6.7 (FLINT140, Info: unknown keys are passed through Extensions, at each key) and the tool's
     // findings (top-level and chart_spec keys)
     [Test]
@@ -284,7 +301,7 @@ public sealed class CatalogCheckTests
         "missing_encodings", "channel_null", "reserved_semantic_type", "series_multiple_channels", "series_channel_not_xy",
         "series_too_few", "series_field_missing", "series_duplicate_field", "series_color_bound", "series_nominal_entry",
         "unknown_chart_property", "continuous_out_of_range", "invalid_literal", "semantic_type_without_field", "canvas_too_large",
-        "required_channel_missing", "retired_member", "update_null",
+        "required_channel_missing", "retired_member", "update_null", "negative_diverging_neutral",
     };
 
     // source: design §12.10 (catalog checks: over the fixtures and probe cases, the core's codes equal the validator's

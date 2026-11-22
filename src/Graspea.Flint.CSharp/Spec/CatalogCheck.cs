@@ -72,7 +72,7 @@ internal sealed class CatalogCheck
         "unknown_theme_preset" => "FLINT114",
         "retired_member" => "FLINT117",
         "unknown_chart_property" or "continuous_out_of_range" or "invalid_literal" or "semantic_type_without_field"
-            or "canvas_too_large" or "required_channel_missing" => "FLINT116",
+            or "canvas_too_large" or "required_channel_missing" or "negative_diverging_neutral" => "FLINT116",
         "unknown_key" => "FLINT140",
         _ => "FLINT115",
     };
@@ -105,6 +105,7 @@ internal sealed class CatalogCheck
         ThemeChecks();
         PropertyChecks(chartSpec);
         LiteralChecks(encodings);
+        AnnotationChecks();
         RequiredChannelChecks(encodings);
         CanvasChecks(chartSpec);
         UpdateChecks();
@@ -526,6 +527,29 @@ internal sealed class CatalogCheck
             "options.continuousMarkCrossSection.seriesCountAxis", NameTables.SeriesCountAxes);
         Literal(_spec.Root.Get("theme_spec")?.Get("compileDefaults")?.Get("continuousMarkCrossSection")?.Get("seriesCountAxis"), NameTables.SeriesCountAxis,
             "theme_spec.compileDefaults.continuousMarkCrossSection.seriesCountAxis", NameTables.SeriesCountAxes);
+    }
+
+    /// <summary>The validator's <c>AnnotationChecks</c>: a negative <c>divergingNeutral</c>, which flint-chart reads as a
+    /// break, and a <c>polarity</c> or <c>percentScale</c> outside the pinned union, in the annotation's declaration order.</summary>
+    private void AnnotationChecks()
+    {
+        foreach (var member in _spec.SemanticTypes is { IsObject: true } types ? types.Members : [])
+        {
+            if (!member.Value.IsObject)
+            {
+                continue;
+            }
+
+            var path = $"semantic_types.{member.Key}";
+            if (member.Value.Get("divergingNeutral") is { IsNumber: true } neutral && Number(neutral.Value!) is { } width && width < 0)
+            {
+                Add("negative_diverging_neutral", SpecSeverity.Info, $"{path}.divergingNeutral", neutral,
+                    $"divergingNeutral {Format(width)} is negative; flint-chart reads a number of at least 0 as the half-width of the neutral class and any other value as a break, as false.");
+            }
+
+            Literal(member.Value.Get("polarity"), NameTables.Polarity, $"{path}.polarity", NameTables.Polarities);
+            Literal(member.Value.Get("percentScale"), NameTables.PercentScale, $"{path}.percentScale", NameTables.PercentScales);
+        }
     }
 
     private void Literal(JsonItem? value, Func<string, string?> lookup, string path, ConstantName[] literals)

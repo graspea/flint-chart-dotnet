@@ -53,6 +53,7 @@ internal static class Codes
     internal const string NullInTemporalField = "null_in_temporal_field";
     internal const string NestedValue = "nested_value";
     internal const string RowsNotInspected = "rows_not_inspected";
+    internal const string NegativeDivergingNeutral = "negative_diverging_neutral";
 
     // Info, ChartGroup.Validate only (design §14.7).
     internal const string FixedTypeMissing = "fixed_type_missing";

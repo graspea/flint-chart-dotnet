@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using System.Globalization;
 using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -113,6 +114,7 @@ internal sealed partial class ValidationRun
         ThemeChecks();
         PropertyChecks(spec);
         LiteralChecks(spec);
+        AnnotationChecks();
         SortByChecks(spec);
         RequiredChannelChecks(spec);
         OptionChecks();
@@ -680,12 +682,41 @@ internal sealed partial class ValidationRun
             "theme_spec.compileDefaults.continuousMarkCrossSection.seriesCountAxis", null);
     }
 
-    private void Literal(string? value, FrozenSet<string> literals, string path, string? channel)
+    private void Literal(string? value, FrozenSet<string> literals, string path, string? channel, string? field = null)
     {
         if (value is not null && !literals.Contains(value))
         {
             Add(IssueSeverity.Info, Codes.InvalidLiteral, path,
-                $"\"{value}\" is not one of {string.Join(", ", literals.Order(StringComparer.Ordinal))} in flint-chart {FlintUpstream.Version}; it is written as given.", channel);
+                $"\"{value}\" is not one of {string.Join(", ", literals.Order(StringComparer.Ordinal))} in flint-chart {FlintUpstream.Version}; it is written as given.", channel, field);
+        }
+    }
+
+    /// <summary>
+    /// The values of an annotation that flint-chart reads without a throw or a warning, but not as written: a
+    /// <c>divergingNeutral</c> below 0, which reads as a break, because only a number of at least 0 is a half-width (flint-chart
+    /// 1.1.1 src/core/resolve-semantics.ts:737-739); a <c>polarity</c> or <c>percentScale</c> outside the literal set, which
+    /// upstream compares with its literals (resolve-semantics.ts:744, :746; src/core/field-semantics.ts:364-365). Each is an
+    /// Info, in the annotation's declaration order.
+    /// </summary>
+    private void AnnotationChecks()
+    {
+        foreach (var (field, annotation) in input.SemanticTypes ?? [])
+        {
+            if (annotation is null)
+            {
+                continue;
+            }
+
+            var path = $"semantic_types.{field}";
+            if (annotation.DivergingNeutral?.Width is { } width && width < 0)
+            {
+                Add(IssueSeverity.Info, Codes.NegativeDivergingNeutral, $"{path}.divergingNeutral",
+                    $"divergingNeutral {width.ToString("R", CultureInfo.InvariantCulture)} is negative; flint-chart reads a number of at least 0 as the half-width of the neutral class and any other value as a break, as false.",
+                    field: field);
+            }
+
+            Literal(annotation.Polarity?.Name, Polarity.Literals, $"{path}.polarity", null, field);
+            Literal(annotation.PercentScale?.Name, PercentScale.Literals, $"{path}.percentScale", null, field);
         }
     }
 

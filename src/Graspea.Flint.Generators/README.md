@@ -94,7 +94,7 @@ The data in the spec is never embedded: `data.values` only shapes the row type a
 | FLINT113 | Warning | `unknown_semantic_type` |
 | FLINT114 | Error | `unknown_theme_preset` (an Info for a template on no backend that applies themes) |
 | FLINT115 | Error | a rule that makes the assemblers throw and needs no data: `missing_encodings`, `channel_null`, `reserved_semantic_type`, the `series_*` rules, `update_null` |
-| FLINT116 | Info | `unknown_chart_property`, `continuous_out_of_range`, `invalid_literal`, `semantic_type_without_field`, `canvas_too_large`, `required_channel_missing` |
+| FLINT116 | Info | `unknown_chart_property`, `continuous_out_of_range`, `invalid_literal`, `semantic_type_without_field`, `canvas_too_large`, `required_channel_missing`, `negative_diverging_neutral` |
 | FLINT117 | Warning | `retired_member`: a channel, property, option value or semantic type the pinned flint-chart removed (`generator/retired.json`) |
 | FLINT120 | Warning | mode B: no member binds a spec field (an Error for a static-series entry) |
 | FLINT121 | Warning | mode B: the member's type does not fit what the spec says about the field |

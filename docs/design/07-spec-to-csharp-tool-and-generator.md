@@ -398,7 +398,7 @@ The ids are recorded with analyzer release tracking: `AnalyzerReleases.Unshipped
 | FLINT113 | Warning | `unknown_semantic_type` | the annotation value |
 | FLINT114 | Error | `unknown_theme_preset` (Vega-Lite and Plotly throw; Info for a template neither has) | the `theme_spec` value |
 | FLINT115 | Error | a throw-class rule that needs no data: `missing_encodings`, `channel_null`, `reserved_semantic_type` for a bound field, `series_multiple_channels`, `series_channel_not_xy`, `series_too_few`, `series_duplicate_field`, `series_color_bound`, `series_nominal_entry` (explicit type or semantic type), `update_null` (flint-chart 1.1.0) | the offending node |
-| FLINT116 | Info | the Info codes that need no data: `unknown_chart_property`, `continuous_out_of_range`, `invalid_literal`, `semantic_type_without_field`, `canvas_too_large`, `required_channel_missing` once the IR carries the heuristic | the node |
+| FLINT116 | Info | the Info codes that need no data: `unknown_chart_property`, `continuous_out_of_range`, `invalid_literal`, `semantic_type_without_field`, `canvas_too_large`, `required_channel_missing` once the IR carries the heuristic, `negative_diverging_neutral` (flint-chart 1.1.0) | the node |
 | FLINT117 | Warning | `retired_member` | the node |
 | FLINT120 | Warning | mode B: no member of `TRow` binds to a spec field (Error when the field is a static-series entry, as `series_field_missing`) | the attribute's type argument; the message names the field and its JSON position |
 | FLINT121 | Warning | mode B: the member's type is incompatible with the field (§12.6.5) | the type argument; the message names the member, its type and the reason |
