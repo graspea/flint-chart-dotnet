@@ -46,6 +46,7 @@ The release pull request copies the table from the sync pull request here.
 
 - A Boxplot over dates with a time of day that keep a step but fill few of its periods (nine hours and a far date, days at 10:00 UTC and a far date, months at 10:00 UTC with gaps between them) is no longer an `excel_unsupported` Error: `flint-chart` 1.1.0 reads them as snapshots, where 1.0.1 read any date off midnight as a run of time.
 - Excel validation no longer reports three groups for a Pyramid Chart whose `color` holds one untyped zoneless time in two spellings beside another time (`2024-01-01T10:00`, `2024-01-01 10:00`, `2025-01-01T10:00`), or one `Date` at midnight in two zones beside another date, nor an out-of-order Candlestick Chart whose `Date` midnight 12 hours behind UTC comes before a time of that day: `flint-chart` 1.1.0 reads two groups, and that date followed by the time.
+- Excel validation no longer reports an order Error for a Candlestick Chart whose `x` mixes date-times without an offset with dates or zoned times (`2025-01-01T13:00:00Z` before `2025-01-01T12:00:00`): `new Date` reads the zoneless ones in the time zone of the process that runs `flint-chart`, so their order, and whether Excel throws, depends on it. A column of zoneless times alone is still checked.
 
 ## [1.0.1.1-preview.2] - 2026-11-09
 

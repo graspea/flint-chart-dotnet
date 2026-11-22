@@ -599,6 +599,25 @@ public sealed partial class ChartValidatorTests
         }
     }
 
+    // source: ECMA-262 Date.parse (a date-time without an offset is local time; a date, Z or an offset is one instant) and
+    // src/excel/templates/candlestick.ts:40-45 of flint-chart 1.1.1 (new Date of each converted x, strictly increasing);
+    // assembleExcel of flint-chart 1.1.1: [13:00Z, 12:00] throws with TZ=UTC and Asia/Tokyo and assembles with
+    // America/New_York, [12:00Z, 13:00] throws with Asia/Tokyo only, [13:00, 12:00] throws in all three
+    [Test]
+    public void Excel_CandlestickDates_MixingZonelessTimesAndInstants_AreUndecided()
+    {
+        JsonObject[] Days(params string[] days) => [.. days.Select((d, i) => new JsonObject { ["day"] = d, ["open"] = 10 + i, ["high"] = 12 + i, ["low"] = 9 + i, ["close"] = 11 + i })];
+        ChartAssemblyInput Stock(JsonObject[] rows) =>
+            ExcelTable(ChartType.CandlestickChart, rows, null, ("x", "day"), ("open", "open"), ("high", "high"), ("low", "low"), ("close", "close"));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(ExcelErrors(Stock(Days("2025-01-01T13:00:00Z", "2025-01-01T12:00:00"))), Is.Empty, "the order depends on the process's time zone");
+            Assert.That(ExcelErrors(Stock(Days("2025-01-01", "2024-12-31T23:00:00"))), Is.Empty, "a date is UTC midnight, the zoneless time local");
+            Assert.That(ExcelErrors(Stock(Days("2025-01-01T13:00:00", "2025-01-01T12:00:00"))), Has.Length.EqualTo(1).And.Some.Contains("strictly increasing"),
+                "zoneless times alone keep their order in every time zone");
+        }
+    }
+
     // source: src/core/decisions.ts:143-164 (dateCadence: whole months within 4 days whatever the day or time, else the least
     // gap when it divides every gap, else gaps within a quarter of the usual one, else midnight dates at their common step),
     // :198-205 and :216-223 (readsAsSnapshots: nine to fifty dates are snapshots when they fill under half the periods) of

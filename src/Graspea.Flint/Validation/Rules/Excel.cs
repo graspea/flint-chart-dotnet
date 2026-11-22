@@ -283,6 +283,16 @@ internal static class Excel
             return;
         }
 
+        // A date-time without an offset is local time to new Date, every other form one instant, so the order of a column
+        // that mixes them depends on the time zone of the process that runs flint-chart: undecided.
+        static bool Zoneless(JsonNode? v) =>
+            Js.Kind(v) == JsonValueKind.String && v!.GetValue<string>() is var s && Js.IsoTime(s) is not null && !Js.IsoDateOnlyOrWithOffset(s);
+        var zoneless = dates.Count(d => d.Present && Zoneless(d.Value));
+        if (zoneless > 0 && zoneless < dates.Count(d => d.Present && Js.Kind(d.Value) is JsonValueKind.String or JsonValueKind.Number))
+        {
+            return;
+        }
+
         var previous = double.NegativeInfinity;
         for (var i = 0; i < dates.Length; i++)
         {
