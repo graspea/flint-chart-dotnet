@@ -109,10 +109,10 @@ Within one line (`X.Y.Z.*`):
 |---|---|
 | The same version as the first three parts | Everything above. A document without a validation `Error` assembles on every backend that has its template. |
 | A newer patch | Expected to work: no upstream release so far has removed anything that makes assembly throw. Members added upstream are unknown to the package: `Validate` reports a new template as `unknown_chart_type`, but `Build()`, `ToJson()` and `Chart.Of` still write it. |
-| A newer minor | The same expectation, weaker: before 1.0 upstream may break things in a minor. |
+| A newer minor | Weaker: behaviour can change. flint-chart 1.1.0 changed how Excel and Image-Charts combine the rows of one category and how dates are read, so some documents show other values, and some Excel charts over dates throw where 1.0.1 assembled them, or the reverse. Members it adds are unknown to the package. |
 | An older version | Documents that use only members the older version has assemble; keys it does not know are ignored; a template or preset added later throws there. Not tested. |
 
-Match the first three parts of the package version to the installed `flint-chart` (or `flint-chart-mcp`) version.
+Match the first three parts of the package version to the installed `flint-chart` (or `flint-chart-mcp`) version. `flint-chart-mcp` depends on `flint-chart` with a caret range, so `npx` brings the newest `flint-chart` that range allows, which can be newer than the server's own version; install both at exact versions where they must match.
 
 ## Older lines
 
