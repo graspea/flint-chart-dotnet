@@ -4,8 +4,20 @@ All notable changes to this project are documented in this file. The format foll
 
 ## [Unreleased]
 
+Tracks `flint-chart` 1.1.1 (npm). `flint-chart` 1.1.0 is skipped on purpose: no release tracks it ([docs/versioning.md](docs/versioning.md)), so this entry covers 1.1.0 and 1.1.1 against 1.0.1, and names 1.1.0 where a change first appeared upstream. The hand-written surface only grows (no `PublicAPI` removal); the validation outcome changes are listed under Added, Changed and Fixed.
+
+<details>
+<summary>IR diff, flint-chart 1.0.1 → 1.1.1 (from the sync pull request; BREAKING 0 · behavioural 179 · additive 80 · cosmetic 6)</summary>
+
+The release pull request copies the table from the sync pull request here.
+
+</details>
+
 ### Added
 
+- The `flint-chart` 1.1.1 catalog: the channels `strokeWidth` and `text` (`Channel.StrokeWidth`, `Channel.Text`); on a Map `order`, `shape`, `strokeWidth`, `text` and `detail`, on a Choropleth `text`, and `detail` on the Vega-Lite Bar, Grouped Bar and Stacked Bar Chart, each with its builder methods (`MapBuilder<TRow>.Order(...)`, `ChoroplethBuilder<TRow>.Text(...)`, …); the Map and Choropleth chart properties `boundaries`, `mapStyle`, `fit`, `graticule` and `borderWidth`, `arrows` and `curve` on the Map, `classes`, `classCount` and `keyType` on the Choropleth, and `sliceNames` on the Plotly Pie and Donut Chart; and the options and theme members the sync pull request lists.
+- The options of `flint-chart` 1.1.x on `AssembleOptions`, and the same members on `ThemeCompileDefaults`: `Background`, `Notes`, `Regions` and `Enclosures` (the annotations a chart is drawn with from the start), `References`, `SparseFill`, `SparseFillBars` and `TitleWrap`; `CanvasTreatment.Contain`, `KeyScale` and `LabelScale`; `InteractionSpec.Defaults`; and `ThemeInteraction.Highlight`.
+- The hand-written types these members and the update ops use: `SparseFill`, `TitleWrap` and `InteractionDefaults` (each `true`/`false`, converted implicitly, or an object), `UpdateTarget` (a target ref, or a selector by key or by condition: `UpdateTarget.Key(...)`, `UpdateTarget.Where(...)`), `StrokeDash` (a keyword such as `"dash"`, or a list of lengths) and `PercentScale`. `flint-cs to-csharp` and `Graspea.Flint.Generators` write each of them typed.
 - `ChartAssemblyInput.Updates` (`updates`, `flint-chart` 1.1.0+), a list of `ChartUpdate`: the notes, overlays, emphasis and viewport the chart applies once it is drawn, kept with the spec. Only the interactive runtime applies them, on Vega-Lite only; a static assembly on any backend draws the chart without them. Each op of a `ChartUpdate` is the class its `op` names (`SetStyleOp`, `AnnotateTextOp`, `AnnotateRegionOp`, `AnnotateEnclosureOp`, `SetViewportOp`, `SetOrderOp`, `SetOverlayOp`, `SetFreeformOverlayOp`, `SetDataOp`, and the deprecated `SetAnnotationOp`); an op this version does not know reads as `UnknownChartUpdateOp` and is written back as read.
 - The Error code `update_null` for a `null` entry of `updates`, which the Vega-Lite, ECharts, Chart.js and Plotly assemblers of `flint-chart` 1.1.1 throw on; Excel and Image-Charts never read `updates` ([docs/validation-codes.md](docs/validation-codes.md)). `flint-cs to-csharp` and `Graspea.Flint.Generators` report it as `FLINT115`.
 - `SemanticAnnotation.PercentScale` (`percentScale`, `flint-chart` 1.1.0+): how a percentage field's numbers are stored, `PercentScale.Fraction` (0.45 is 45%) or `PercentScale.Percent` (45 is 45%).
@@ -24,6 +36,11 @@ All notable changes to this project are documented in this file. The format foll
 - `unspecified_datetime` (Info) is no longer reported for a zoneless value at midnight in a temporal key of the first row whose semantic type is a calendar type: `flint-chart` 1.1.0 reads it as its date. A value of such a field with a time of day is still reported, and the message now says that the field's midnights are read as dates.
 - Validation keeps a chart property value that a template's `accepts` predicate of `flint-chart` 1.1.x takes beside its options, as upstream does (`normalizeChartProperties`): on Vega-Lite a boundary file in `boundaries` (`{ url | values, feature?, ids?, key?, disputed?, attribution? }`) and a map style of the chart's own in `mapStyle` (`{ base?, sea?, land?, coast?, border?, noData?, graticule?, disputed? }`) of a Map or Choropleth are no longer reported as `invalid_option_value`, nor without a backend or as `FLINT112` of `flint-cs to-csharp` and `Graspea.Flint.Generators`. An object the predicate rejects (a blank `url`, both `url` and `values`, `ids` outside the five id kinds, an empty map style, a member that is neither `base` nor one of the style's colours) is still reported, and the message ends, as upstream's warning, with `, or <what the property accepts>`. The Plotly Map and Choropleth declare neither property ([docs/validation-codes.md](docs/validation-codes.md)).
 - With `flint-chart` 1.1.1 (since 1.1.0), Excel and Image-Charts combine several rows on one category and series of a category chart (such as a Bar, Line, Area, Pie or Donut Chart; not a Scatter Plot) by the measure encoding's `aggregate` (`sum`, `count`, `average` or `mean`); without one, by the semantic type's default (a sum for an additive type such as `Amount`, `Count`, `Quantity` or `Profit`, the mean for an intensive one such as `Price` or `Percentage`), else by the mean. `flint-chart` 1.0.1 ignored the `aggregate` there and summed every measure without a mean default. So an untyped numeric field and a `SemanticType.Number` measure, which is no longer additive since 1.1.0, are now averaged where 1.0.1 summed them (use `Amount`, `Count`, `Quantity` or `Profit` for totals); a declared `count`, `average` or `mean` now applies, and a declared `sum` on an intensive type sums. An `aggregate` outside those four falls back to the default without a warning. `count` counts the rows with a numeric measure (on Excel a null counts too). This changes the values of the Excel chart and of the Image-Charts URL for the same document, not whether it assembles: no validation outcome changes. Rows aggregated in C# first, one per category and series, give the same output on both versions.
+- `FlintUpstream.Version` is `1.1.1`.
+
+### Deprecated
+
+- `SetAnnotationOp` (`set-annotation`): `flint-chart` 1.1.0 deprecates it, still reads it as `annotate-text` and reports it as a `deprecated_op` warning; `flint-chart` 2.0 removes it. Write `AnnotateTextOp`.
 
 ### Fixed
 
