@@ -107,6 +107,7 @@ internal sealed class CatalogCheck
         LiteralChecks(encodings);
         RequiredChannelChecks(encodings);
         CanvasChecks(chartSpec);
+        UpdateChecks();
         UnknownKeys(chartSpec);
     }
 
@@ -590,6 +591,26 @@ internal sealed class CatalogCheck
             {
                 Add("canvas_too_large", SpecSeverity.Info, $"chart_spec.{name}", size,
                     $"{Format(width ?? 0)} x {Format(height ?? 0)} exceeds {MaxCanvas} px, the limit of the flint-chart MCP server; the assemblers accept it.");
+            }
+        }
+    }
+
+    /// <summary>A null entry of <c>updates</c> throws on the four layout backends, which read the id of every update; Excel
+    /// and Image-Charts never read them (the validator's <c>UpdateChecks</c>).</summary>
+    private void UpdateChecks()
+    {
+        var on = _targets.Where(t => Array.IndexOf(LayoutBackends, t.Backend) >= 0).Select(t => t.Backend).ToList();
+        if (_spec.Root.Get("updates") is not { IsArray: true } updates || on.Count == 0)
+        {
+            return;
+        }
+
+        for (var i = 0; i < updates.Items.Count; i++)
+        {
+            if (updates.Items[i].IsNull)
+            {
+                Add("update_null", SpecSeverity.Error, $"updates[{i}]", updates.Items[i],
+                    $"updates[{i}] is null; flint-chart reads the id of every update to note that a static output draws the chart without them. Throws on {string.Join(", ", on)}.");
             }
         }
     }

@@ -25,7 +25,7 @@ public sealed class FixtureExpectationTests
         "unknown_chart_type", "chart_type_not_on_backend", "missing_encodings", "channel_null", "data_missing", "unknown_theme_preset",
         "series_multiple_channels", "series_channel_not_xy", "series_too_few", "series_duplicate_field", "series_field_missing",
         "series_color_bound", "series_nominal_entry", "data_empty", "data_url_only", "encodings_empty", "excel_unsupported",
-        "image_charts_unsupported", "row_not_object", "reserved_semantic_type",
+        "image_charts_unsupported", "row_not_object", "reserved_semantic_type", "update_null",
     };
 
     private static readonly string[] SeriesCodes =
@@ -42,6 +42,8 @@ public sealed class FixtureExpectationTests
         (new("^Unknown theme"), ["unknown_theme_preset"]),
         (new(@"^Cannot read properties of (null|undefined) \(reading 'values'\)"), ["data_missing"]),
         (new(@"^Cannot read properties of null \(reading 'field'\)"), ["channel_null"]),
+        // flint-chart 1.1.1 src/core/spec-updates.ts:14: the id of a null entry of updates, on the four layout backends
+        (new(@"^Cannot read properties of null \(reading 'id'\)"), ["update_null"]),
         (new(@"^Cannot read properties of null \(reading |^Cannot create property "), ["row_not_object"]),
         (new("^Cannot convert undefined or null to object"), ["missing_encodings", "row_not_object"]),
         (new(@"^Cannot read properties of undefined \(reading '0'\)"), ["reserved_semantic_type"]),

@@ -116,6 +116,7 @@ internal sealed partial class ValidationRun
         SortByChecks(spec);
         RequiredChannelChecks(spec);
         OptionChecks();
+        UpdateChecks();
         CanvasChecks(spec);
         return issues;
     }
@@ -833,6 +834,26 @@ internal sealed partial class ValidationRun
             PerTarget(Codes.OptionOverriddenByBackend, $"options.{key}",
                 b => NativeBackends.Contains(b) || (CatalogTables.IgnoredOptions.TryGetValue(key, out var on) && on.Contains(b)) ? IssueSeverity.Info : null,
                 (_, on) => $"{string.Join(", ", on.Select(Id))} {(on.Length == 1 ? "does" : "do")} not use \"{key}\"; the option has no effect there.");
+        }
+    }
+
+    /// <summary>
+    /// The four layout backends return their output through <c>noteSpecUpdates</c> (flint-chart 1.1.1
+    /// src/core/spec-updates.ts:8-21; src/vegalite/assemble.ts:952, src/echarts/assemble.ts:612, src/chartjs/assemble.ts:509,
+    /// src/plotly/assemble.ts:737), which reads the <c>id</c> of every entry of a non-empty <c>updates</c> (:9, :14), so a null
+    /// entry throws there. Excel and Image-Charts never read <c>updates</c>. A value of another shape cannot reach the typed
+    /// model: <c>FlintJson</c> refuses it.
+    /// </summary>
+    private void UpdateChecks()
+    {
+        for (var i = 0; i < (input.Updates?.Count ?? 0); i++)
+        {
+            if (input.Updates![i] is null)
+            {
+                var path = $"updates[{i}]";
+                PerTarget(Codes.UpdateNull, path, b => LayoutBackends.Contains(b) ? IssueSeverity.Error : null,
+                    (_, on) => $"{path} is null; flint-chart reads the id of every update to note that a static output draws the chart without them. {Throws(on)}");
+            }
         }
     }
 

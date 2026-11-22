@@ -193,9 +193,10 @@ public sealed class CatalogCheckTests
     }
 
     // source: ValidationRun.Run (missing_encodings), EncodingChecks (channel_null: an Error on the layout backends, an
-    // Info on Excel, reported at the highest), SemanticTypeChecks (reserved_semantic_type for a bound field) and
-    // StaticSeries.Evaluate (the series rules in upstream's order, the first that holds); FLINT115 only, since a null y is
-    // also an unbound required channel
+    // Info on Excel, reported at the highest), SemanticTypeChecks (reserved_semantic_type for a bound field),
+    // StaticSeries.Evaluate (the series rules in upstream's order, the first that holds) and UpdateChecks (update_null: an
+    // Error on the layout backends, nothing on Excel and Image-Charts); FLINT115 only, since a null y is also an unbound
+    // required channel
     [TestCase("{\"chart_spec\":{\"chartType\":\"Line Chart\",\"encodings\":null}}", "FLINT115 missing_encodings Error chart_spec.encodings @1:53")]
     [TestCase("{\"chart_spec\":{\"chartType\":\"Line Chart\",\"encodings\":{\"x\":\"a\",\"y\":null}}}", "FLINT115 channel_null Error chart_spec.encodings.y @1:66")]
     [TestCase("{\"semantic_types\":{\"a\":\"toString\"},\"chart_spec\":{\"chartType\":\"Line Chart\",\"encodings\":{\"x\":\"a\",\"y\":\"b\"}}}", "FLINT115 reserved_semantic_type Error semantic_types.a @1:24")]
@@ -206,6 +207,7 @@ public sealed class CatalogCheckTests
     [TestCase("{\"chart_spec\":{\"chartType\":\"Line Chart\",\"encodings\":{\"x\":\"a\",\"y\":[\"b\",\"b\"]}}}", "FLINT115 series_duplicate_field Error chart_spec.encodings.y @1:62")]
     [TestCase("{\"chart_spec\":{\"chartType\":\"Line Chart\",\"encodings\":{\"x\":\"a\",\"y\":[\"b\",{\"field\":\"c\",\"type\":\"nominal\"}]}}}", "FLINT115 series_nominal_entry Error chart_spec.encodings.y @1:62")]
     [TestCase("{\"chart_spec\":{\"chartType\":\"Line Chart\",\"encodings\":{\"x\":\"a\",\"y\":[\"b\",\"c\"],\"color\":\"d\"}}}", "FLINT115 series_color_bound Error chart_spec.encodings.color @1:76")]
+    [TestCase("{\"updates\":[{},null],\"chart_spec\":{\"chartType\":\"Line Chart\",\"encodings\":{\"x\":\"a\",\"y\":\"b\"}}}", "FLINT115 update_null Error updates[1] @1:16")]
     public void Run_ThrowClassRule_IsFlint115(string json, string expected)
     {
         Assert.That(Check(json).Where(i => i.Id == "FLINT115").Select(Describe), Is.EqualTo(new[] { expected }));
@@ -282,7 +284,7 @@ public sealed class CatalogCheckTests
         "missing_encodings", "channel_null", "reserved_semantic_type", "series_multiple_channels", "series_channel_not_xy",
         "series_too_few", "series_field_missing", "series_duplicate_field", "series_color_bound", "series_nominal_entry",
         "unknown_chart_property", "continuous_out_of_range", "invalid_literal", "semantic_type_without_field", "canvas_too_large",
-        "required_channel_missing", "retired_member",
+        "required_channel_missing", "retired_member", "update_null",
     };
 
     // source: design §12.10 (catalog checks: over the fixtures and probe cases, the core's codes equal the validator's
