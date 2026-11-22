@@ -25,7 +25,7 @@ public sealed class FixtureExpectationTests
         "unknown_chart_type", "chart_type_not_on_backend", "missing_encodings", "channel_null", "data_missing", "unknown_theme_preset",
         "series_multiple_channels", "series_channel_not_xy", "series_too_few", "series_duplicate_field", "series_field_missing",
         "series_color_bound", "series_nominal_entry", "data_empty", "data_url_only", "encodings_empty", "excel_unsupported",
-        "image_charts_unsupported", "row_not_object", "reserved_semantic_type", "update_null",
+        "image_charts_unsupported", "row_not_object", "reserved_semantic_type", "update_null", "invalid_annotation_option",
     };
 
     private static readonly string[] SeriesCodes =
@@ -44,8 +44,14 @@ public sealed class FixtureExpectationTests
         (new(@"^Cannot read properties of null \(reading 'field'\)"), ["channel_null"]),
         // flint-chart 1.1.1 src/core/spec-updates.ts:14: the id of a null entry of updates, on the four layout backends
         (new(@"^Cannot read properties of null \(reading 'id'\)"), ["update_null"]),
+        // flint-chart 1.1.x vegalite: the notes, regions and enclosures of the options read without a guard
+        // (src/vegalite/note-room.ts:177, :247, :255, :335-336; a null row reads a field of the same name)
+        (new(@"^Cannot read properties of null \(reading '(key|text|targets|length)'\)"), ["invalid_annotation_option", "row_not_object"]),
+        (new(@"^Cannot read properties of undefined \(reading 'length'\)|^bounds\.map is not a function|^\(enclosure\.targets \?\? \[\]\)\.flatMap is not a function|^Cannot use 'in' operator to search for '(select|where|in)'"),
+            ["invalid_annotation_option"]),
         (new(@"^Cannot read properties of null \(reading |^Cannot create property "), ["row_not_object"]),
-        (new("^Cannot convert undefined or null to object"), ["missing_encodings", "row_not_object"]),
+        // Object.entries of an absent encodings, of a null row, or (flint-chart 1.1.x vegalite) of a note without a key
+        (new("^Cannot convert undefined or null to object"), ["missing_encodings", "row_not_object", "invalid_annotation_option"]),
         (new(@"^Cannot read properties of undefined \(reading '0'\)"), ["reserved_semantic_type"]),
         // flint-chart 1.0.0 vegalite: the same registry miss, met first by the temporal parser lookup
         (new("^parsers is not iterable"), ["reserved_semantic_type"]),

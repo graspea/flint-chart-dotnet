@@ -118,6 +118,7 @@ internal sealed partial class ValidationRun
         SortByChecks(spec);
         RequiredChannelChecks(spec);
         OptionChecks();
+        AnnotationOptionChecks();
         UpdateChecks();
         CanvasChecks(spec);
         return issues;
@@ -896,6 +897,27 @@ internal sealed partial class ValidationRun
             PerTarget(Codes.OptionOverriddenByBackend, $"options.{key}",
                 b => NativeBackends.Contains(b) || (CatalogTables.IgnoredOptions.TryGetValue(key, out var on) && on.Contains(b)) ? IssueSeverity.Info : null,
                 (_, on) => $"{string.Join(", ", on.Select(Id))} {(on.Length == 1 ? "does" : "do")} not use \"{key}\"; the option has no effect there.");
+        }
+    }
+
+    /// <summary><c>invalid_annotation_option</c>: an entry of <c>notes</c>, <c>regions</c> or <c>enclosures</c> (of the
+    /// options, or of the theme's compile defaults) that Vega-Lite throws on reading (<see cref="AnnotationOptions"/>); Info
+    /// on the other backends, which do not read these options.</summary>
+    private void AnnotationOptionChecks()
+    {
+        if (targets.Length == 0 || (input.Options is null && input.ThemeSpec?.Spec?.CompileDefaults is null))
+        {
+            return;
+        }
+
+        var options = input.Options is { } o ? JsonSerializer.SerializeToNode(o, FlintJsonContext.Default.AssembleOptions) as JsonObject : null;
+        var house = input.ThemeSpec?.Spec is { } theme ? JsonSerializer.SerializeToNode(theme, FlintJsonContext.Default.ThemeSpec)?["compileDefaults"] as JsonObject : null;
+        foreach (var v in AnnotationOptions.Evaluate(options, house))
+        {
+            PerTarget(Codes.InvalidAnnotationOption, v.Path, b => b == FlintBackend.VegaLite ? IssueSeverity.Error : IssueSeverity.Info,
+                (severity, on) => severity == IssueSeverity.Error
+                    ? $"{v.Fact}; {v.Reason}. {Throws(on)}"
+                    : $"{v.Fact}; {string.Join(", ", on.Select(Id))} {(on.Length == 1 ? "does" : "do")} not read {v.Option}, but Vega-Lite throws on it.");
         }
     }
 

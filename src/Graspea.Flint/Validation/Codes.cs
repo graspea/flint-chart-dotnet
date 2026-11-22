@@ -25,6 +25,7 @@ internal static class Codes
     internal const string RowNotObject = "row_not_object";
     internal const string ReservedSemanticType = "reserved_semantic_type";
     internal const string UpdateNull = "update_null";
+    internal const string InvalidAnnotationOption = "invalid_annotation_option";
 
     // Warning where upstream silently drops.
     internal const string UnsupportedChannel = "unsupported_channel";
