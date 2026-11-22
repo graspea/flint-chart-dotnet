@@ -554,7 +554,7 @@ ValidationResult result = ChartValidator.Validate(input); // unknown_chart_type 
 
 ### How to validate
 
-1. In-process pre-flight: `builder.Validate(backend)` or `ChartValidator.Validate(input, backend)`. `Error` = the pinned upstream assembler throws, `Warning` = it silently drops part of the input, `Info` = worth a look. Every code: https://github.com/graspea/flint-chart-dotnet/blob/main/docs/validation-codes.md
+1. In-process pre-flight: `builder.Validate(backend)` or `ChartValidator.Validate(input, backend)`. `Error` = the pinned upstream assembler throws (`invalid_annotation_option` also where Vega-Lite never reads the entry: it judges the options alone), `Warning` = it silently drops part of the input, `Info` = worth a look. Every code: https://github.com/graspea/flint-chart-dotnet/blob/main/docs/validation-codes.md
 2. Authoritative check: the upstream MCP tool `validate_chart` on the JSON (vegalite, echarts and chartjs); on the same server, `show` draws it in a live card with the same report where the host has a card UI, and `render_chart` returns a PNG or SVG. Setup: https://github.com/graspea/flint-chart-dotnet#with-the-upstream-mcp-server
 
 <!-- flint:generated:agent-identifiers start -->
