@@ -283,11 +283,12 @@ internal sealed partial class FieldTypes
     private readonly Dictionary<string, (JsonNode? Value, bool Present)[]?> table = new(StringComparer.Ordinal);
 
     /// <summary>
-    /// <c>row[field]</c> of every row of the table that <c>assembleExcel</c> passes to its templates (src/excel/assemble.ts:201,
-    /// :216, :225): <c>convertTemporalData</c> (src/core/resolve-semantics.ts:428-483) writes each value of a temporal key of
-    /// the first row as a string (<see cref="TemporalParse.Converted"/>), into every row, and leaves every other key as given.
-    /// Null when only <c>Date.parse</c> could tell whether <paramref name="field"/> is temporal and the conversion would change
-    /// one of its values.
+    /// <c>row[field]</c> of every row of the table that <c>assembleExcel</c> passes to its templates (src/excel/assemble.ts:202,
+    /// :217, :226 of flint-chart 1.1.1): <c>convertTemporalData</c> (src/core/resolve-semantics.ts:440-501) writes each value of
+    /// a temporal key of the first row as a string (<see cref="TemporalParse.Converted"/>: since flint-chart 1.1.0 an ISO
+    /// timestamp at midnight is its date under a calendar grain whatever its zone, and a zoneless one is written with seconds
+    /// and <c>T</c>), into every row, and leaves every other key as given. Null when only <c>Date.parse</c> could tell whether
+    /// <paramref name="field"/> is temporal and the conversion would change one of its values.
     /// </summary>
     internal (JsonNode? Value, bool Present)[]? TableValues(string field)
     {

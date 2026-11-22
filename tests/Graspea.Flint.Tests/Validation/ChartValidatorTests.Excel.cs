@@ -526,4 +526,76 @@ public sealed partial class ChartValidatorTests
             Assert.That(ExcelErrors(Stock(Days(1700000000, 1700000000000), SemanticType.Timestamp)), Has.Length.EqualTo(1).And.Some.Contains("strictly increasing"), "a seconds and a milliseconds timestamp of one instant");
         }
     }
+
+    // source: src/core/resolve-semantics.ts:466-470 of flint-chart 1.1.1 (readIsoTimestamp first, a calendar grain being
+    // SEMANTIC_LEVEL >= Date, :360-366), src/core/temporal-parse.ts:87-106 (a midnight under a calendar grain is its date
+    // whatever its zone; a zoneless time is written with seconds and T; a zoned time is kept) and src/excel/templates/radar.ts:45-47;
+    // each outcome from assembleExcel of flint-chart 1.1.1 (TZ=UTC); probe cases "radar with one Date metric as midnights in
+    // two zones and a date", "radar with DateTime midnights in two zones and a date" and "radar with an untyped time in two
+    // spellings"
+    [Test]
+    public void Excel_RadarMetrics_ReadIsoTimestampsAsTheTemporalConversionWritesThem()
+    {
+        JsonObject[] Metrics(params JsonNode[] metrics) => [.. metrics.Select((m, i) => new JsonObject { ["metric"] = m.DeepClone(), ["revenue"] = 10 + i })];
+        ChartAssemblyInput Radar(JsonObject[] rows, SemanticType? semanticType = null) =>
+            ExcelTable(ChartType.RadarChart, rows, semanticType is { } t ? new() { ["metric"] = t } : null, ("x", N("metric")), ("y", "revenue"));
+        var midnights = Metrics("2025-01-01T00:00:00Z", "2025-01-01T00:00:00+02:00", "2025-01-01 00:00");
+        const string Three = "chart_spec.encodings.x: Excel requires at least three metric axes for a radar chart; Excel throws.";
+        using (Assert.EnterMultipleScope())
+        {
+            foreach (var calendar in new[] { SemanticType.Date, SemanticType.Day, SemanticType.Month, SemanticType.YearMonth, SemanticType.Quarter, SemanticType.YearQuarter, SemanticType.Year, SemanticType.Decade })
+            {
+                Assert.That(ExcelErrors(Radar(midnights, calendar)), Is.EqualTo(new[] { Three }), $"{calendar}: midnights in any zone are one date");
+            }
+
+            foreach (var clock in new[] { SemanticType.DateTime, SemanticType.Hour, SemanticType.Timestamp })
+            {
+                Assert.That(ExcelErrors(Radar(midnights, clock)), Is.Empty, $"{clock} is no calendar grain");
+            }
+
+            Assert.That(ExcelErrors(Radar(Metrics("2025-01-01T00:00:00Z", "2025-01-01T00:00:00+02:00", "Jan"), SemanticType.Month)), Is.Empty,
+                "a Month key is temporal only when its values read as dates");
+            Assert.That(ExcelErrors(Radar(Metrics("2025-01-01T00:00:00Z", "2025-01-01T00:00:00+02:00", "Jan"), SemanticType.Date)), Is.EqualTo(new[] { Three }),
+                "a Date key is temporal whatever its values");
+            Assert.That(ExcelErrors(Radar(Metrics("2025-01-01T00:00:00.000", "2025-01-01T00:00:00.0001", "2025-01-01"), SemanticType.Date)), Is.EqualTo(new[] { Three }),
+                "a fraction with a digit past zero is a time of day");
+            Assert.That(ExcelErrors(Radar(Metrics("2025-01-01 10:00", "2025-01-01T10:00", "2025-01-01T10:00:00"))), Is.EqualTo(new[] { Three }),
+                "untyped zoneless times are written with seconds and T");
+            Assert.That(ExcelErrors(Radar(Metrics("2025-01-01T10:00Z", "2025-01-01T10:00:00Z", "2025-01-01T10:00:00.000Z"))), Is.Empty,
+                "untyped zoned times are kept as written");
+        }
+    }
+
+    // source: src/core/resolve-semantics.ts:466-470 and src/core/temporal-parse.ts:87-106 of flint-chart 1.1.1 (as above),
+    // src/excel/templates/pyramid.ts:38-41 (the distinct converted groups) and candlestick.ts:40-45 (new Date of each converted
+    // x, strictly increasing); each outcome from assembleExcel of flint-chart 1.1.1 (TZ=UTC); probe cases "pyramid with a Date
+    // color of one midnight as a timestamp and a date", "pyramid with an untyped color of one time in two spellings",
+    // "candlestick with a Date midnight 12 hours behind UTC and a time that day", "candlestick with Date midnights in two zones
+    // out of order" and "candlestick with DateTime midnights in two zones"
+    [Test]
+    public void Excel_PyramidGroupsAndStockDates_ReadIsoTimestampsAsTheTemporalConversionWritesThem()
+    {
+        JsonObject[] Sides(params JsonNode[] sides) => [.. sides.Select((s, i) => new JsonObject { ["age"] = i % 2 == 0 ? "a" : "b", ["wave"] = s.DeepClone(), ["revenue"] = 1 + i })];
+        ChartAssemblyInput Pyramid(JsonObject[] rows, SemanticType? semanticType = null) =>
+            ExcelTable(ChartType.PyramidChart, rows, semanticType is { } t ? new() { ["wave"] = t } : null, ("x", "revenue"), ("y", "age"), ("color", "wave"));
+        JsonObject[] Days(params JsonNode[] days) => [.. days.Select((d, i) => new JsonObject { ["day"] = d.DeepClone(), ["open"] = 10 + i, ["high"] = 12 + i, ["low"] = 9 + i, ["close"] = 11 + i })];
+        ChartAssemblyInput Stock(JsonObject[] rows, SemanticType semanticType) =>
+            ExcelTable(ChartType.CandlestickChart, rows, new() { ["day"] = semanticType }, ("x", "day"), ("open", "open"), ("high", "high"), ("low", "low"), ("close", "close"));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(ExcelErrors(Pyramid(Sides("2024-01-01T00:00:00Z", "2024-01-01"), SemanticType.Date)), Has.Length.EqualTo(1).And.Some.Contains("(found 1)"),
+                "a Date midnight is its date");
+            Assert.That(ExcelErrors(Pyramid(Sides("2024-01-01T00:00:00Z", "2024-01-01"), SemanticType.DateTime)), Is.Empty, "a DateTime midnight is kept");
+            Assert.That(ExcelErrors(Pyramid(Sides("2024-01-01T00:00:00Z", "2024-01-01T00:00:00+05:00", "2025-01-01"), SemanticType.Date)), Is.Empty,
+                "Date midnights in two zones are one group");
+            Assert.That(ExcelErrors(Pyramid(Sides("2024-01-01T10:00", "2024-01-01 10:00", "2025-01-01T10:00"))), Is.Empty,
+                "two spellings of an untyped zoneless time are one group");
+            Assert.That(ExcelErrors(Stock(Days("2025-01-01T00:00:00+05:00", "2024-12-31T20:00:00Z"), SemanticType.Date)), Has.Length.EqualTo(1).And.Some.Contains("strictly increasing"),
+                "the Date midnight is 1 January UTC, after the 31 December time");
+            Assert.That(ExcelErrors(Stock(Days("2025-01-01T00:00:00+05:00", "2024-12-31T20:00:00Z"), SemanticType.DateTime)), Is.Empty,
+                "the DateTime midnight is 31 December 19:00 UTC, before the next value");
+            Assert.That(ExcelErrors(Stock(Days("2025-01-01T00:00:00-05:00", "2025-01-01T03:00:00Z"), SemanticType.Date)), Is.Empty,
+                "the Date midnight is 1 January 00:00 UTC, before 03:00 UTC");
+        }
+    }
 }

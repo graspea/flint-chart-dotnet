@@ -6,9 +6,11 @@ using System.Text.RegularExpressions;
 namespace Graspea.Flint.Validation.Rules;
 
 /// <summary>
-/// <c>parseTemporalByType</c> of the pinned package (src/core/temporal-parse.ts): the spellings a <c>YearMonth</c>, <c>Date</c>
-/// or <c>DateTime</c> semantic type reads into <c>YYYY-MM</c> or <c>YYYY-MM-DD</c>. Regular expressions and arithmetic only,
-/// so it needs no JavaScript engine. The patterns are JavaScript's: <c>\d</c> is ASCII, <c>\s</c> is ECMA-262 WhiteSpace and
+/// <c>parseTemporalByType</c> of flint-chart 1.1.1 (src/core/temporal-parse.ts:113-131): the spellings a <c>YearMonth</c>,
+/// <c>Date</c> or <c>DateTime</c> semantic type reads into <c>YYYY-MM</c> or <c>YYYY-MM-DD</c>; <c>readIsoTimestamp</c>
+/// (:87-106, since flint-chart 1.1.0), the ISO timestamps <c>convertTemporalData</c> reads first; and the table that
+/// <c>convertTemporalData</c> writes (<see cref="Converted"/>). Regular expressions and arithmetic only, so it needs no
+/// JavaScript engine. The patterns are JavaScript's: <c>\d</c> is ASCII, <c>\s</c> is ECMA-262 WhiteSpace and
 /// LineTerminator, the <c>i</c> flag folds ASCII letters only, and <c>$</c> is the end of the text.
 /// </summary>
 internal static partial class TemporalParse
@@ -81,20 +83,66 @@ internal static partial class TemporalParse
     /// <summary><c>parseTemporalByType(text, 'Date') !== null</c>.</summary>
     internal static bool IsDate(string text) => Js.Trim(text) is { Length: > 0 } t && Read(t, DateParsers) is not null;
 
-    /// <summary>The upper bound of a likely timestamp in seconds (<c>MAX_TIMESTAMP_SEC</c>, src/core/resolve-semantics.ts:220).</summary>
+    /// <summary>The upper bound of a likely timestamp in seconds (<c>MAX_TIMESTAMP_SEC</c>, src/core/resolve-semantics.ts:232 of
+    /// flint-chart 1.1.1).</summary>
     private const double MaxTimestampSeconds = 4102444800;
 
     /// <summary>
-    /// A value of a temporal key as <c>convertTemporalData</c> writes it into the table (src/core/resolve-semantics.ts:452-479):
-    /// the canonical string of a spelling of <paramref name="semanticType"/> (<see cref="Parse"/>), or without a semantic type of
-    /// a full date that does not open as an ISO date; else a number of a <c>Year</c> or <c>Decade</c> as its floor, a likely
-    /// timestamp (<c>isLikelyTimestamp</c>, :223-231: seconds or milliseconds up to 2100) as <c>toISOString()</c>, any other number as
-    /// <c>String(n)</c>; a <c>Year</c> or <c>Decade</c> string of two digits as its four-digit year (<c>expandToFullYear</c>, :412-419);
-    /// anything else as <c>String(v)</c>, so <c>null</c> is <c>"null"</c> and a missing key <c>"undefined"</c>.
+    /// Whether <paramref name="semanticType"/> is a calendar grain: <c>SEMANTIC_LEVEL[st] &gt;= SEMANTIC_LEVEL.Date</c>
+    /// (src/core/resolve-semantics.ts:360-366, :466 of flint-chart 1.1.1). A name of <c>Object.prototype</c> compares false
+    /// there, so the list is explicit. <c>Month</c>, <c>Quarter</c> and <c>Day</c> are ordinal in the catalog: their key is
+    /// temporal only when its values read as dates, so a caller tests the temporal key first.
+    /// </summary>
+    internal static bool IsCalendarGrain(string semanticType) =>
+        semanticType is "Year" or "Decade" or "YearMonth" or "Month" or "YearQuarter" or "Quarter" or "Date" or "Day";
+
+    /// <summary>
+    /// <c>readIsoTimestamp</c> (src/core/temporal-parse.ts:87-106 of flint-chart 1.1.1, since 1.1.0): for a string that is
+    /// an ISO timestamp once trimmed, its date when <paramref name="calendarGrain"/> holds and its time is midnight (no
+    /// digit past zero in the fraction) whatever its zone; else null when it has a zone (it is kept as written); else the
+    /// zoneless timestamp in ISO form, <c>T</c> for a space or a <c>t</c> and seconds added (<c>"2024-01-15 10:00"</c> is
+    /// <c>"2024-01-15T10:00:00"</c>). Null for any other value. No range check: <c>"2024-02-30T00:00:00"</c> of a
+    /// <c>Date</c> is <c>"2024-02-30"</c>.
+    /// </summary>
+    internal static string? ReadIsoTimestamp(JsonNode? value, bool calendarGrain)
+    {
+        if (Js.Kind(value) != JsonValueKind.String || IsoTimestamp().Match(Js.Trim(value!.GetValue<string>())) is not { Success: true } m)
+        {
+            return null;
+        }
+
+        var (day, hours, minutes) = (m.Groups[1].Value, m.Groups[2].Value, m.Groups[3].Value);
+        var seconds = m.Groups[4].Success ? m.Groups[4].Value : "00";
+        var fraction = m.Groups[5].Value;
+        var midnight = hours == "00" && minutes == "00" && seconds == "00" && !fraction.Any(c => c is >= '1' and <= '9');
+        if (calendarGrain && midnight)
+        {
+            return day;
+        }
+
+        return m.Groups[6].Success ? null : $"{day}T{hours}:{minutes}:{seconds}{fraction}";
+    }
+
+    /// <summary><c>ISO_TIMESTAMP</c> (src/core/temporal-parse.ts:87 of flint-chart 1.1.1): its <c>i</c> flag reaches only
+    /// <c>T</c> and <c>Z</c>, and its <c>$</c> is the end of the text.</summary>
+    [GeneratedRegex(@"^([0-9]{4}-[0-9]{2}-[0-9]{2})[Tt ]([0-9]{2}):([0-9]{2})(?::([0-9]{2})(\.[0-9]+)?)?([Zz]|[+-][0-9]{2}(?::?[0-9]{2})?)?\z", RegexOptions.CultureInvariant)]
+    private static partial Regex IsoTimestamp();
+
+    /// <summary>
+    /// A value of a temporal key as <c>convertTemporalData</c> writes it into the table (src/core/resolve-semantics.ts:462-497
+    /// of flint-chart 1.1.1): an ISO timestamp as <see cref="ReadIsoTimestamp"/> reads it, a midnight being its date under a
+    /// calendar grain (<see cref="IsCalendarGrain"/>; since flint-chart 1.1.0); else the canonical string of a spelling of
+    /// <paramref name="semanticType"/> (<see cref="Parse"/>), or without a semantic type of a full date that does not open as an
+    /// ISO date; else a number of a <c>Year</c> or <c>Decade</c> as its floor, a likely timestamp (<c>isLikelyTimestamp</c>,
+    /// :235-243: seconds or milliseconds up to 2100) as <c>toISOString()</c>, any other number as <c>String(n)</c>; a
+    /// <c>Year</c> or <c>Decade</c> string of two digits as its four-digit year (<c>expandToFullYear</c>, :424-431); anything
+    /// else as <c>String(v)</c>, so <c>null</c> is <c>"null"</c> and a missing key <c>"undefined"</c>. JSON holds no
+    /// <c>Date</c> object, so the branch for one (:482-487) never applies.
     /// </summary>
     internal static string Converted(JsonNode? value, bool present, string semanticType)
     {
-        var parsed = Parse(value, semanticType)
+        var parsed = ReadIsoTimestamp(value, IsCalendarGrain(semanticType))
+            ?? Parse(value, semanticType)
             ?? (semanticType.Length == 0 && Js.Kind(value) == JsonValueKind.String && !IsoPrefix().IsMatch(Js.Trim(value!.GetValue<string>())) ? Parse(value, "Date") : null);
         if (parsed is not null)
         {
@@ -128,7 +176,7 @@ internal static partial class TemporalParse
         }
     }
 
-    /// <summary><c>ISO_PREFIX</c> (src/core/resolve-semantics.ts:251).</summary>
+    /// <summary><c>ISO_PREFIX</c> (src/core/resolve-semantics.ts:263 of flint-chart 1.1.1).</summary>
     [GeneratedRegex("^[0-9]{4}-[0-9]{2}", RegexOptions.CultureInvariant)]
     private static partial Regex IsoPrefix();
 

@@ -13,9 +13,11 @@ internal sealed record ThrowReason(string Message, string? Channel, bool FromRow
 /// static series, each template's <c>validate()</c>, the category/measure resolution of the shared path, and the two
 /// throws inside <c>instantiate()</c> (histogram values, radar metrics). Hand-written from src/excel/assemble.ts and
 /// src/excel/templates/*.ts of flint-chart 1.0.0 and pinned to the recorded fixture outcomes. The templates read the rows
-/// after <c>convertTemporalData</c> (src/excel/assemble.ts:201, :216, :225; src/core/resolve-semantics.ts:428-483), which
-/// writes every value of a temporal key of the first row as a string (a <c>YearMonth</c> 202501 is "2025-01", a timestamp
-/// an ISO date-time, null "null"): a histogram's values, the radar metrics, the pyramid groups, the waterfall values and
+/// after <c>convertTemporalData</c> (src/excel/assemble.ts:202, :217, :226; src/core/resolve-semantics.ts:440-501 of
+/// flint-chart 1.1.1), which writes every value of a temporal key of the first row as a string (a <c>YearMonth</c> 202501 is
+/// "2025-01", a timestamp an ISO date-time, null "null"; since flint-chart 1.1.0 an ISO timestamp at midnight is its date
+/// under a calendar grain whatever its zone, and a zoneless one is written with seconds and <c>T</c>): a histogram's values,
+/// the radar metrics, the pyramid groups, the waterfall values and
 /// the stock chart's rows are read from that table (FieldTypes.TableValues), and skip where only <c>Date.parse</c> could
 /// tell whether a key is temporal and the conversion would change its values. The sign checks and the waterfall roles
 /// read the values as given, as the conversion never changes them: no temporal spelling has a sign, a floor keeps it, a
