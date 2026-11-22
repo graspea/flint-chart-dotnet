@@ -9,6 +9,11 @@ namespace Graspea.Flint.Validation.Rules;
 /// src/image-charts/assemble.ts of flint-chart 1.0.1 and pinned to the recorded fixture outcomes. Every condition follows
 /// from the encodings alone except the quantitative x and y of a Scatter Plot: an axis with an explicit type other than
 /// quantitative is decided by the spec (FieldTypes.SpecDecided); any other axis reads the type inferred from the values.
+/// Reviewed against flint-chart 1.1.1: no throw condition or channel read changed. From 1.1.0 the rows of one category
+/// and series are combined by the measure encoding's <c>aggregate</c>, else the semantic type's default, else the mean
+/// (<c>resolvePivotAggregate</c>, src/image-charts/assemble.ts:275 and :357 in 1.1.1), where 1.0.1 ignored the
+/// <c>aggregate</c> and summed a measure without a default; that changes the values in the URL, not when the assembler
+/// throws, so no rule follows it.
 /// </summary>
 internal static class ImageCharts
 {

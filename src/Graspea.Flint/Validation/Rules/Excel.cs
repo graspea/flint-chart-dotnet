@@ -25,6 +25,10 @@ internal sealed record ThrowReason(string Message, string? Channel, bool FromRow
 /// A rule that reads a field's type is reported without the rows when the spec decides that type for every channel the
 /// rule reads (FieldTypes.SpecDecided; FieldTypes.ContinuityDecided for the rules that reject a continuous field); a rule
 /// that reads row values is not.
+/// From flint-chart 1.1.0 the category pivot of the shared path combines the rows of one category and series by the
+/// measure encoding's <c>aggregate</c>, else the semantic type's default, else the mean (<c>resolvePivotAggregate</c>,
+/// src/excel/assemble.ts:452 in 1.1.1), where 1.0.1 ignored the <c>aggregate</c> and summed a measure without a default;
+/// that changes the values Excel writes, not when it throws, so no rule follows it.
 /// </summary>
 internal static class Excel
 {
