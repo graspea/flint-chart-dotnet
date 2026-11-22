@@ -68,6 +68,9 @@ internal static class SpecShape
                 case "interaction_spec":
                     Typed(value, "Graspea.Flint.InteractionSpec", path);
                     break;
+                case "updates":
+                    Typed(value, "Graspea.Flint.ChartUpdate[]", path);
+                    break;
             }
         }
     }
@@ -215,7 +218,8 @@ internal static class SpecShape
                 "divergingMidpoint" => "double",
                 "sortOrder" => "string[]",
                 "colors" => "Dictionary<string, string>",
-                "polarity" => Literal,
+                "polarity" or "percentScale" => Literal,
+                "divergingNeutral" => "Graspea.Flint.DivergingNeutral",
                 _ => null,
             };
             if (type is not null)
@@ -253,9 +257,9 @@ internal static class SpecShape
 
     /// <summary>A value of a model or name-table type: <c>string</c>, <c>double</c>, <c>bool</c>, <c>JsonNode</c>, arrays,
     /// string- and integer-keyed maps, <c>ChartSize</c>, <c>ContinuousMarkCrossSection</c>, a theme union, <c>StrokeDash</c>,
-    /// a string-backed literal, an open literal union struct, a generated class or a class of
-    /// <see cref="NameTables.UnionObjectForms"/> (such as <c>UpdateTarget</c> and the classes it holds). Every type is nullable
-    /// except the <c>!</c> forms.</summary>
+    /// <c>DivergingNeutral</c>, a string-backed literal, an open literal union struct, a generated discriminated union, a
+    /// generated class or a class of <see cref="NameTables.UnionObjectForms"/> (such as <c>UpdateTarget</c> and the classes it
+    /// holds). Every type is nullable except the <c>!</c> forms.</summary>
     internal static void Typed(JsonItem value, string type, string path)
     {
         if (type is "JsonNode" or "JsonNode?")
@@ -303,6 +307,9 @@ internal static class SpecShape
             case "Graspea.Flint.StrokeDash":
                 Require(value.IsString || (value.IsArray && value.Items.All(i => i.IsNumber)), value, path, $"{path} must be a string or an array of numbers.");
                 return;
+            case "Graspea.Flint.DivergingNeutral":
+                Require(value.IsNumber || value.Kind == JsonItemKind.False, value, path, $"{path} must be a number or false.");
+                return;
             case "Graspea.Flint.Theming.RuleSpec" or "Graspea.Flint.Theming.MinorGridSpec" or "Graspea.Flint.ChartSource" when value.IsString:
                 return; // the string form; the object form is checked as a class below
             case "Graspea.Flint.ChartChrome" when value.Kind == JsonItemKind.False:
@@ -340,6 +347,22 @@ internal static class SpecShape
         if (NameTables.StringUnion(type) is not null)
         {
             Require(value.IsString, value, path, $"{path} must be a string.");
+            return;
+        }
+
+        if (NameTables.Union(type) is { } union)
+        {
+            // DiscriminatedUnion.Read: an object with a string discriminator; the class it names reads the rest, and the
+            // unknown class keeps any other value in Extensions.
+            Require(value.IsObject, value, path, $"{path} must be an object.");
+            var tag = value.Get(union.Discriminator);
+            Require(tag is not null, value, path, $"{path} needs {union.Discriminator}.");
+            Require(tag!.IsString, tag, $"{path}.{union.Discriminator}", $"{path}.{union.Discriminator} must be a string.");
+            if (Array.Find(union.Members, m => m.Wire == tag.Value) is { } derived)
+            {
+                Typed(value, derived.Member, path);
+            }
+
             return;
         }
 

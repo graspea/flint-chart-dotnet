@@ -6,7 +6,7 @@ namespace Graspea.Flint.CSharp;
 /// </summary>
 internal sealed class ModelWriter(SpecDocument spec, DataSource source, ValueWriter values)
 {
-    private static readonly string[] Known = ["data", "semantic_types", "chart_spec", "theme_spec", "options", "field_display_names", "interaction_spec"];
+    private static readonly string[] Known = ["data", "semantic_types", "chart_spec", "theme_spec", "options", "field_display_names", "interaction_spec", "updates"];
 
     public WrittenBody Write()
     {
@@ -48,9 +48,9 @@ internal sealed class ModelWriter(SpecDocument spec, DataSource source, ValueWri
             {
                 members.Add($"ThemeSpec = {values.Constant("ThemePreset", theme.Value!, NameTables.ThemePreset(theme.Value!))}");
             }
-            else if (theme.IsObject && NameTables.Class("Graspea.Flint.Theming.ThemeSpec") is { } names)
+            else if (theme.IsObject && NameTables.Class("Graspea.Flint.Theming.ThemeSpec") is { } names && values.Object(names, theme) is { } typed)
             {
-                members.Add($"ThemeSpec = {values.Object(names, theme)}");
+                members.Add($"ThemeSpec = {typed}");
             }
             else
             {
@@ -60,9 +60,9 @@ internal sealed class ModelWriter(SpecDocument spec, DataSource source, ValueWri
 
         if (spec.Root.Get("options") is { } options)
         {
-            if (options.IsObject && NameTables.Class("Graspea.Flint.AssembleOptions") is { } names)
+            if (options.IsObject && NameTables.Class("Graspea.Flint.AssembleOptions") is { } names && values.Object(names, options) is { } typed)
             {
-                members.Add($"Options = {values.Object(names, options)}");
+                members.Add($"Options = {typed}");
             }
             else
             {
@@ -84,13 +84,25 @@ internal sealed class ModelWriter(SpecDocument spec, DataSource source, ValueWri
 
         if (spec.Root.Get("interaction_spec") is { } interaction)
         {
-            if (interaction.IsObject && NameTables.Class("Graspea.Flint.InteractionSpec") is { } names)
+            if (interaction.IsObject && NameTables.Class("Graspea.Flint.InteractionSpec") is { } names && values.Object(names, interaction) is { } typed)
             {
-                members.Add($"InteractionSpec = {values.Object(names, interaction)}");
+                members.Add($"InteractionSpec = {typed}");
             }
             else
             {
                 extensions.Add(Member("interaction_spec"));
+            }
+        }
+
+        if (spec.Root.Get("updates") is { } updates)
+        {
+            if (values.Typed(updates, "Graspea.Flint.ChartUpdate[]") is { } typed)
+            {
+                members.Add($"Updates = {typed}");
+            }
+            else
+            {
+                extensions.Add(Member("updates"));
             }
         }
 

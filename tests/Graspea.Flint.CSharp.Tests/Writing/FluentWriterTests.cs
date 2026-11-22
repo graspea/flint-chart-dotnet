@@ -248,6 +248,33 @@ public sealed class FluentWriterTests
         Assert.That(nulls, Does.Contain(".Configure(d => d.ChartSpec.Source = new ChartSource { Text = \"t\", Extensions = new() { [\"href\"] = Json(\"null\") } })"));
     }
 
+    // source: flint-chart 1.1.1 src/core/types.ts:1456 (updates), src/core/field-semantics.ts:93, :119 (divergingNeutral,
+    // percentScale) and design §12.4.1 (the builder has no method for updates, so they are assigned in Configure, which keeps
+    // them as given; an annotation the builder has a method for is written with it)
+    [Test]
+    public void Convert_Upstream111CoreMembers()
+    {
+        var chain = Chain(Convert(Doc(
+            "Bar Chart",
+            "{\"x\":\"a\",\"y\":\"b\"}",
+            extra: "\"semantic_types\":{\"b\":{\"semanticType\":\"Percentage\",\"percentScale\":\"percent\",\"divergingNeutral\":2.5}},"
+                + "\"updates\":[{\"id\":\"clear\",\"ops\":[{\"op\":\"annotate-text\",\"target\":{\"select\":{\"key\":{\"a\":\"x\"}}},\"value\":null}]}],\"zz\":1,")));
+
+        Assert.That(chain, Is.EqualTo(new[]
+        {
+            "Chart.Bar(Rows)",
+            ".X(r => r.A)",
+            ".Y(r => r.B)",
+            ".Annotate(r => r.B, new SemanticAnnotation { Type = SemanticType.Percentage, PercentScale = PercentScale.Percent, DivergingNeutral = 2.5 })",
+            ".Configure(d => d.Updates = [new ChartUpdate { Id = \"clear\", Ops = [new AnnotateTextOp { Target = UpdateTarget.Key(new() { [\"a\"] = \"x\" }) }] }])",
+            ".Configure(d => (d.Extensions ??= new())[\"zz\"] = Json(\"1\"))",
+            ".Build();",
+        }));
+
+        var untyped = Chain(Convert(Doc("Bar Chart", "{\"x\":\"a\"}", extra: "\"updates\":null,")));
+        Assert.That(untyped, Does.Contain(".Configure(d => (d.Extensions ??= new())[\"updates\"] = Json(\"null\"))"));
+    }
+
     // source: flint-chart 1.0.0 dist/interactive InteractionPresetOptions (one options class per preset) and design §12.3
     // (the fidelity rule: a typed expression only where it writes the input JSON, so an unknown preset, a key beside type, id
     // and options, and an empty options object, which the factory does not write, keep the generic entry)

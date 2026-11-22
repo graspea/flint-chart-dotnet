@@ -49,6 +49,9 @@ internal sealed record StringUnionNames(string Name, ConstantName[] Literals);
 /// derived class (namespace-qualified), and the class that holds a literal this version does not know.</summary>
 internal sealed record UnionNames(string Name, string Discriminator, ConstantName[] Members, string Unknown);
 
+/// <summary>A member of a generated class, namespace-qualified, that is written as <c>null</c> when unset.</summary>
+internal sealed record NullWrittenMember(string Class, string Wire);
+
 /// <summary>
 /// The C# names of the catalog (design §12.7). The arrays are written by the csharp-names emitter
 /// (<c>Generated/NameTables.g.cs</c>); the lookups are built from them on first use.
@@ -167,6 +170,24 @@ internal static partial class NameTables
         ]),
         new("Graspea.Flint.FilterValue", [new("in", "In", "JsonNode?[]"), new("range", "Range", "JsonNode?[]")]),
     ];
+
+    /// <summary>
+    /// The members of the generated classes that are written even when unset, as <c>null</c>
+    /// (<c>[JsonIgnore(Condition = JsonIgnoreCondition.Never)]</c>; docs/generator.md "Required nullable members"): the required
+    /// upstream members whose type admits <c>null</c>, where <c>null</c> is a value, such as the <c>value</c> of an update op
+    /// that clears a note. A writer leaves such a member out for a JSON <c>null</c> and cannot write the class for a value
+    /// without it. The csharp-names emitter does not write this list; <c>NameTablesCrossCheckTests</c> compares it with the
+    /// compiled library, so a version that adds or drops one fails there.
+    /// </summary>
+    internal static readonly NullWrittenMember[] WrittenWhenNull =
+    [
+        new("Graspea.Flint.AnnotateEnclosureOp", "value"), new("Graspea.Flint.AnnotateRegionOp", "value"),
+        new("Graspea.Flint.AnnotateTextOp", "value"), new("Graspea.Flint.SetAnnotationOp", "value"),
+        new("Graspea.Flint.SetFreeformOverlayOp", "value"), new("Graspea.Flint.SetOverlayOp", "value"),
+    ];
+
+    /// <summary>Whether the generated class writes the member as <c>null</c> when it is unset.</summary>
+    public static bool WritesNull(string className, string wire) => Array.Exists(WrittenWhenNull, m => m.Class == className && m.Wire == wire);
 
     public static string SimpleName(string name) => name.Substring(name.LastIndexOf('.') + 1);
 

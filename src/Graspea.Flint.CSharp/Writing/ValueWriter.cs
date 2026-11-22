@@ -128,6 +128,8 @@ internal sealed class ValueWriter
                     : null;
             case "Graspea.Flint.StrokeDash":
                 return item.IsString ? CSharpText.StringLiteral(item.Value!) : Lengths(item);
+            case "Graspea.Flint.DivergingNeutral":
+                return item.Kind == JsonItemKind.False ? $"{Flint("DivergingNeutral")}.Break" : Number(item);
             case "Graspea.Flint.Theming.RuleSpec" or "Graspea.Flint.Theming.MinorGridSpec" or "Graspea.Flint.ChartSource" when item.IsString:
                 return CSharpText.StringLiteral(item.Value!); // the string form; the object form is written as a class below
             case "Graspea.Flint.ChartSource" when item.Get("text") is not { IsString: true }:
@@ -200,7 +202,35 @@ internal sealed class ValueWriter
             return preset;
         }
 
+        if (NameTables.Union(type) is { } discriminated)
+        {
+            return Union(discriminated, item);
+        }
+
         return NameTables.Class(type) is { } names && item.IsObject ? Object(names, item) : null;
+    }
+
+    /// <summary>
+    /// A value of a generated discriminated union: <c>new SetStyleOp { … }</c>, the class its discriminator names, which writes
+    /// the discriminator itself; <c>new UnknownChartUpdateOp("…") { Extensions = … }</c> for a discriminator no class has. Null
+    /// when the value is not an object with a string discriminator (the library refuses it), or when the class cannot write it
+    /// exactly (<see cref="Members"/>).
+    /// </summary>
+    private string? Union(UnionNames union, JsonItem item)
+    {
+        if (!item.IsObject || item.Get(union.Discriminator) is not { IsString: true } tag)
+        {
+            return null;
+        }
+
+        if (Array.Find(union.Members, m => m.Wire == tag.Value) is not { } derived)
+        {
+            var others = item.Members.Where(m => m.Key != union.Discriminator).ToList();
+            var unknown = $"new {TypeName(union.Unknown)}({CSharpText.StringLiteral(tag.Value!)})";
+            return others.Count == 0 ? unknown : $"{unknown} {{ Extensions = {Extensions(others)} }}";
+        }
+
+        return NameTables.Class(derived.Member) is { } names ? Object(names, item, union.Discriminator) : null;
     }
 
     /// <summary>
@@ -228,7 +258,12 @@ internal sealed class ValueWriter
             return null;
         }
 
-        var arguments = new List<string> { options is null ? $"new {TypeName(names.Name)}()" : Object(names, options) };
+        if ((options is null ? $"new {TypeName(names.Name)}()" : Object(names, options)) is not { } written)
+        {
+            return null;
+        }
+
+        var arguments = new List<string> { written };
         if (id is not null)
         {
             arguments.Add($"id: {CSharpText.StringLiteral(id.Value!)}");
@@ -268,10 +303,17 @@ internal sealed class ValueWriter
     }
 
     /// <summary><c>new T { … }</c> for a generated class: typed members where they write the value, the rest (unknown keys,
-    /// nulls, values of another kind) in <c>Extensions</c>.</summary>
-    public string Object(ClassNames names, JsonItem item)
+    /// nulls, values of another kind) in <c>Extensions</c>; null when the class cannot write the value exactly
+    /// (<see cref="Members"/>). The <paramref name="discriminator"/> of a discriminated union's class is left out: the class
+    /// writes it.</summary>
+    public string? Object(ClassNames names, JsonItem item, string? discriminator = null)
     {
-        var (assignments, extensions) = Members(names, item);
+        var (assignments, extensions, exact) = Members(names, item, discriminator);
+        if (!exact)
+        {
+            return null;
+        }
+
         if (extensions.Count > 0)
         {
             assignments.Add($"Extensions = {Extensions(extensions)}");
@@ -281,18 +323,37 @@ internal sealed class ValueWriter
         return assignments.Count == 0 ? $"new {type}()" : $"new {type} {{ {string.Join(", ", assignments)} }}";
     }
 
-    /// <summary>The typed assignments (<c>Name = value</c>) and the members left for <c>Extensions</c>.</summary>
-    public (List<string> Assignments, List<JsonMember> Extensions) Members(ClassNames names, JsonItem item)
+    /// <summary>
+    /// The typed assignments (<c>Name = value</c>) and the members left for <c>Extensions</c>, and whether the class writes
+    /// the value exactly with them. A member the class writes as <c>null</c> when unset (<see cref="NameTables.WrittenWhenNull"/>)
+    /// is left unassigned for a JSON <c>null</c>; the class cannot write the value when such a member is absent, or holds a
+    /// value the member cannot hold, because it would write that member twice or add it. The
+    /// <paramref name="discriminator"/>, which the class writes itself, is skipped.
+    /// </summary>
+    public (List<string> Assignments, List<JsonMember> Extensions, bool Exact) Members(ClassNames names, JsonItem item, string? discriminator = null)
     {
         var assignments = new List<string>();
         var extensions = new List<JsonMember>();
+        var exact = Array.TrueForAll(NameTables.WrittenWhenNull, m => m.Class != names.Name || item.Get(m.Wire) is not null);
         foreach (var member in item.Members)
         {
+            if (member.Key == discriminator)
+            {
+                continue;
+            }
+
             var declared = names.Members.FirstOrDefault(m => m.Wire == member.Key);
+            var writesNull = declared is not null && NameTables.WritesNull(names.Name, member.Key);
+            if (writesNull && member.Value.IsNull)
+            {
+                continue;
+            }
+
             var value = declared is null ? null : Typed(member.Value, declared.Type);
             if (value is null)
             {
                 extensions.Add(member);
+                exact &= !writesNull;
             }
             else
             {
@@ -300,7 +361,7 @@ internal sealed class ValueWriter
             }
         }
 
-        return (assignments, extensions);
+        return (assignments, extensions, exact);
     }
 
     /// <summary><c>new() { ["k"] = Json("…"), … }</c> for an <c>Extensions</c> dictionary.</summary>
@@ -455,6 +516,8 @@ internal sealed class ValueWriter
                 "sortOrder" => Typed(member.Value, "string[]") is { } order ? $"SortOrder = {order}" : null,
                 "colors" => Typed(member.Value, "Dictionary<string, string>") is { } colors ? $"Colors = {colors}" : null,
                 "polarity" => member.Value.IsString ? $"Polarity = {Constant("Polarity", member.Value.Value!, NameTables.Polarity(member.Value.Value!))}" : null,
+                "percentScale" => member.Value.IsString ? $"PercentScale = {Constant("PercentScale", member.Value.Value!, NameTables.PercentScale(member.Value.Value!))}" : null,
+                "divergingNeutral" => Typed(member.Value, "Graspea.Flint.DivergingNeutral") is { } neutral ? $"DivergingNeutral = {neutral}" : null,
                 _ => null,
             };
             if (assignment is null)
@@ -496,7 +559,8 @@ internal sealed class ValueWriter
         int.TryParse(key, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var value) && Invariant(value) == key ? value : null;
 
     private static bool IsReference(string type) =>
-        type is "string" || type.EndsWith("[]", StringComparison.Ordinal) || type.StartsWith("Dictionary<", StringComparison.Ordinal) || NameTables.Class(type) is not null;
+        type is "string" || type.EndsWith("[]", StringComparison.Ordinal) || type.StartsWith("Dictionary<", StringComparison.Ordinal)
+        || NameTables.Class(type) is not null || NameTables.Union(type) is not null;
 
     internal static string Invariant(int value) => value.ToString(CultureInfo.InvariantCulture);
 }

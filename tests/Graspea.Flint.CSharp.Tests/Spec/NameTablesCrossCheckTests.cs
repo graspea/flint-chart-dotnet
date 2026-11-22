@@ -88,6 +88,17 @@ public sealed class NameTablesCrossCheckTests
         }
     }
 
+    // source: the compiled Graspea.Flint (a settable member of a generated class marked [JsonIgnore(Condition = Never)], a
+    // required upstream member whose type admits null, writes null when unset: docs/generator.md "Required nullable members")
+    [Test]
+    public void WrittenWhenNull_MatchesTheLibrary()
+    {
+        var library = NameTables.Classes.SelectMany(c => Library.GetType(c.Name, throwOnError: true)!.GetProperties()
+            .Where(p => p.SetMethod is not null && p.GetCustomAttribute<JsonIgnoreAttribute>()?.Condition == JsonIgnoreCondition.Never)
+            .Select(p => $"{c.Name}.{p.GetCustomAttribute<JsonPropertyNameAttribute>()!.Name}"));
+        Assert.That(NameTables.WrittenWhenNull.Select(m => $"{m.Class}.{m.Wire}"), Is.EquivalentTo(library));
+    }
+
     public static IEnumerable<TestCaseData> UnionObjectForms() =>
         NameTables.UnionObjectForms.Select(c => new TestCaseData(c.Name).SetName($"UnionObjectForm_MatchesTheLibrary({c.Name})"));
 

@@ -214,7 +214,8 @@ internal static class CSharpText
         {
             "Graspea", "System",
             "Aggregate", "AssistedTargeting", "Channel", "ChannelTitle", "Chart", "ChartAssemblyInput", "ChartChrome", "ChartData", "ChartEncoding",
-            "ChartSource", "ChartSpec", "ChartTemplate", "ChartType", "EncodingType", "EncodingValue", "FlintBackend", "FlintJson", "Polarity",
+            "ChartSource", "ChartSpec", "ChartTemplate", "ChartType", "DivergingNeutral", "EncodingType", "EncodingValue", "FlintBackend", "FlintJson",
+            "PercentScale", "Polarity",
             "RowOptions", "SemanticAnnotation", "SemanticType", "SeriesCountAxis", "SortOrder", "TargetDetails", "ThemePreset", "ValidationResult",
             "JsonArray", "JsonDocument", "JsonElement", "JsonNode", "JsonPropertyName", "JsonTypeInfo",
             "RequiresDynamicCode", "RequiresUnreferencedCode", "LazyInitializer",
@@ -229,6 +230,13 @@ internal static class CSharpText
                     names.Add(type);
                 }
             }
+        }
+
+        // A discriminated union's classes are among the generated classes; its unknown class is not.
+        foreach (var union in NameTables.Unions)
+        {
+            names.Add(NameTables.SimpleName(union.Name));
+            names.Add(NameTables.SimpleName(union.Unknown));
         }
 
         // The hand-written union types are named where a generated member holds one; the classes their object forms hold

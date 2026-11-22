@@ -92,6 +92,30 @@ public sealed class ModelWriterTests
         Assert.That(untyped, Does.Contain("[\"source\"] = Json(\"\"\"{\"text\":null}\"\"\"),"));
     }
 
+    // source: flint-chart 1.1.1 src/core/types.ts:1456 (updates), src/core/field-semantics.ts:93, :119 (divergingNeutral,
+    // percentScale) and design §12.4.2 (each member typed where the model writes it exactly, otherwise in Extensions)
+    [Test]
+    public void Convert_Upstream111CoreMembers()
+    {
+        var code = Model(Doc(
+            "Bar Chart",
+            "{\"x\":\"a\",\"y\":\"b\"}",
+            extra: "\"semantic_types\":{\"b\":{\"semanticType\":\"Percentage\",\"percentScale\":\"fraction\",\"divergingNeutral\":0.1},\"c\":{\"semanticType\":\"Profit\",\"divergingNeutral\":false,\"percentScale\":\"basis-points\"}},"
+                + "\"interaction_spec\":{\"interactions\":[]},\"updates\":[{\"id\":\"focus\",\"ops\":[{\"op\":\"set-style\",\"targets\":[{\"select\":{\"key\":{\"a\":\"x\"}}}],\"value\":{\"state\":\"emphasized\"}}]},null],"));
+
+        Assert.That(code, Does.Contain("[\"b\"] = new SemanticAnnotation { Type = SemanticType.Percentage, PercentScale = PercentScale.Fraction, DivergingNeutral = 0.1 },"));
+        Assert.That(code, Does.Contain("[\"c\"] = new SemanticAnnotation { Type = SemanticType.Profit, DivergingNeutral = DivergingNeutral.Break, PercentScale = new PercentScale(\"basis-points\") },"));
+        Assert.That(code, Does.Contain("""
+                        InteractionSpec = new InteractionSpec { Interactions = [] },
+                        Updates = [new ChartUpdate { Id = "focus", Ops = [new SetStyleOp { Targets = [UpdateTarget.Key(new() { ["a"] = "x" })], Value = new StyleSpec { State = "emphasized" } }] }, null!],
+                    };
+            """.Replace("\r\n", "\n")));
+
+        var untyped = Model(Doc("Bar Chart", "{}", extra: "\"semantic_types\":{\"b\":{\"semanticType\":\"Profit\",\"divergingNeutral\":null}},\"updates\":null,"));
+        Assert.That(untyped, Does.Contain("[\"b\"] = new SemanticAnnotation { Type = SemanticType.Profit, Extensions = new() { [\"divergingNeutral\"] = Json(\"null\") } },"));
+        Assert.That(untyped, Does.Contain("[\"updates\"] = Json(\"null\"),"));
+    }
+
     // source: design §12.5.2 and §13.3.3 (parameter: the template from the model, ChartTemplate.Create<Row>(spec))
     [Test]
     public void Convert_Parameter_CreatesTheTemplateFromTheModel()

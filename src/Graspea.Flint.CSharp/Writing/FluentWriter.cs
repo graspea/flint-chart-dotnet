@@ -29,7 +29,7 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
 
         // chart_spec first, so a channel call takes its field's annotation before the remaining annotations are written.
         ChartSpec(chartSpec);
-        foreach (var key in new[] { "semantic_types", "field_display_names", "theme_spec", "options", "interaction_spec" })
+        foreach (var key in new[] { "semantic_types", "field_display_names", "theme_spec", "options", "interaction_spec", "updates" })
         {
             if (spec.Root.Members.FirstOrDefault(m => m.Key == key) is not { } member)
             {
@@ -50,13 +50,16 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
                 case "interaction_spec":
                     Interaction(member);
                     break;
+                case "updates":
+                    Updates(member);
+                    break;
                 default:
                     Options(member);
                     break;
             }
         }
 
-        foreach (var member in spec.Root.Members.Where(m => m.Key is not ("data" or "chart_spec" or "semantic_types" or "field_display_names" or "theme_spec" or "options" or "interaction_spec")))
+        foreach (var member in spec.Root.Members.Where(m => m.Key is not ("data" or "chart_spec" or "semantic_types" or "field_display_names" or "theme_spec" or "options" or "interaction_spec" or "updates")))
         {
             TopExtension(member);
         }
@@ -374,9 +377,8 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
         {
             _calls.Add($".Theme({values.Constant("ThemePreset", theme.Value!, NameTables.ThemePreset(theme.Value!))})");
         }
-        else if (theme.IsObject && NameTables.Class("Graspea.Flint.Theming.ThemeSpec") is { } names)
+        else if (theme.IsObject && NameTables.Class("Graspea.Flint.Theming.ThemeSpec") is { } names && values.Object(names, theme) is { } expression)
         {
-            var expression = values.Object(names, theme);
             if (HoldsNull(theme))
             {
                 _configure.Add($".Configure(d => d.ThemeSpec = {expression})");
@@ -395,13 +397,12 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
     private void Interaction(JsonMember member)
     {
         var interaction = member.Value;
-        if (!interaction.IsObject || NameTables.Class("Graspea.Flint.InteractionSpec") is not { } names)
+        if (!interaction.IsObject || NameTables.Class("Graspea.Flint.InteractionSpec") is not { } names || values.Object(names, interaction) is not { } expression)
         {
             TopExtension(member);
             return;
         }
 
-        var expression = values.Object(names, interaction);
         if (HoldsNull(interaction))
         {
             _configure.Add($".Configure(d => d.InteractionSpec = {expression})");
@@ -421,7 +422,13 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
             return;
         }
 
-        var (assignments, extensions) = values.Members(names, options);
+        var (assignments, extensions, exact) = values.Members(names, options);
+        if (!exact)
+        {
+            TopExtension(member);
+            return;
+        }
+
         var statements = assignments.Select(a => $"o.{a};").ToList();
         if (extensions.Count > 0)
         {
@@ -429,6 +436,20 @@ internal sealed class FluentWriter(SpecDocument spec, DataSource source, IReadOn
         }
 
         _calls.Add(statements.Count == 0 ? ".Options(o => { })" : $".Options(o => {{ {string.Join(" ", statements)} }})");
+    }
+
+    /// <summary>The builder has no method for <c>updates</c>: they are assigned in <c>Configure</c>, which keeps them as given
+    /// (a null member too), or go into <c>Extensions</c> when the typed model cannot write them exactly.</summary>
+    private void Updates(JsonMember member)
+    {
+        if (values.Typed(member.Value, "Graspea.Flint.ChartUpdate[]") is { } updates)
+        {
+            _configure.Add($".Configure(d => d.Updates = {updates})");
+        }
+        else
+        {
+            TopExtension(member);
+        }
     }
 
     /// <summary>Whether a value holds a null anywhere: the builder's JSON copy would drop a known member set to null.</summary>
