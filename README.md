@@ -2,7 +2,7 @@
 
 [![NuGet](https://img.shields.io/nuget/vpre/Graspea.Flint)](https://www.nuget.org/packages/Graspea.Flint)
 <!-- flint:generated:upstream-badge start -->
-[![flint-chart](https://img.shields.io/badge/flint--chart-1.0.1-blue)](https://github.com/microsoft/flint-chart/tree/f098e497f27a2b36daabc33b659c0988c17ac0f2)
+[![flint-chart](https://img.shields.io/badge/flint--chart-1.1.1-blue)](https://github.com/microsoft/flint-chart/tree/cd3c6fb00701e26a3a29ab6499eb2a9f09c599c1)
 [![CI](https://github.com/graspea/flint-chart-dotnet/actions/workflows/ci.yml/badge.svg)](https://github.com/graspea/flint-chart-dotnet/actions/workflows/ci.yml)
 <!-- flint:generated:upstream-badge end -->
 
@@ -15,7 +15,7 @@ independent project, not affiliated with or endorsed by Microsoft.
     dotnet add package Graspea.Flint --prerelease
 
 <!-- flint:generated:upstream-version start -->
-Flint.NET 1.0.1.x tracks flint-chart 1.0.1; the first three version parts always equal the pinned upstream release.
+Flint.NET 1.1.1.x tracks flint-chart 1.1.1; the first three version parts always equal the pinned upstream release.
 <!-- flint:generated:upstream-version end -->
 
 ## What it is / what it is not
@@ -322,12 +322,12 @@ and diagnostics:
 ## Chart catalog
 
 <!-- flint:generated:chart-catalog start -->
-flint-chart 1.0.1 declares 51 chart types. Backend ids map to `FlintBackend`: `vegalite` = `FlintBackend.VegaLite`, `echarts` = `FlintBackend.ECharts`, `chartjs` = `FlintBackend.ChartJs`, `plotly` = `FlintBackend.Plotly`, `excel` = `FlintBackend.Excel`, `image-charts` = `FlintBackend.ImageCharts`. Channels and properties are wire names, the union over the backends of the template; `Validate(backend)` reports one that the target backend does not declare (`unsupported_channel`, `unknown_chart_property`).
+flint-chart 1.1.1 declares 51 chart types. Backend ids map to `FlintBackend`: `vegalite` = `FlintBackend.VegaLite`, `echarts` = `FlintBackend.ECharts`, `chartjs` = `FlintBackend.ChartJs`, `plotly` = `FlintBackend.Plotly`, `excel` = `FlintBackend.Excel`, `image-charts` = `FlintBackend.ImageCharts`. Channels and properties are wire names, the union over the backends of the template; `Validate(backend)` reports one that the target backend does not declare (`unsupported_channel`, `unknown_chart_property`).
 
 | Chart type | Constant and entry | Backends | Channels | Properties |
 |---|---|---|---|---|
 | Area Chart | `ChartType.AreaChart`, `Chart.Area` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, opacity, column, row | independentYAxis, interpolate, opacity, stackMode, xAxisType, yAxisType |
-| Bar Chart | `ChartType.BarChart`, `Chart.Bar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, opacity, column, row | cornerRadius, independentYAxis, showValueLabels, xAxisType, yAxisType |
+| Bar Chart | `ChartType.BarChart`, `Chart.Bar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, detail, opacity, column, row | cornerRadius, independentYAxis, showValueLabels, xAxisType, yAxisType |
 | Bar Table | `ChartType.BarTable`, `Chart.BarTable` | vegalite, plotly | y, x, color, column, row | independentYAxis, maxRows, showPercent |
 | Boxplot | `ChartType.Boxplot`, `Chart.Boxplot` | vegalite, echarts, plotly, excel | x, y, color, opacity, column, row | dodge, includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, showOutliers, showPoints, whiskerMethod |
 | Bubble Chart | `ChartType.BubbleChart`, `Chart.Bubble` | chartjs | x, y, size, color, opacity, column, row | opacity |
@@ -335,28 +335,28 @@ flint-chart 1.0.1 declares 51 chart types. Backend ids map to `FlintBackend`: `v
 | Bump Chart | `ChartType.BumpChart`, `Chart.Bump` | vegalite, echarts, chartjs, plotly | x, y, color, detail, column, row | includeZero_x, includeZero_y, independentYAxis, interpolate, logScale_x, logScale_y |
 | Calendar Heatmap | `ChartType.CalendarHeatmap`, `Chart.CalendarHeatmap` | vegalite, echarts | x, color | cornerRadius |
 | Candlestick Chart | `ChartType.CandlestickChart`, `Chart.Candlestick` | vegalite, echarts, plotly, excel | x, open, high, low, close, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, maWindow, showMA |
-| Choropleth | `ChartType.Choropleth`, `Chart.Choropleth` | vegalite, plotly | id, color, detail | level, projection, projectionCenter, region |
+| Choropleth | `ChartType.Choropleth`, `Chart.Choropleth` | vegalite, plotly | id, color, detail, text | borderWidth, boundaries, classCount, classes, fit, graticule, keyType, level, mapStyle, projection, projectionCenter, region |
 | Combo Chart | `ChartType.ComboChart`, `Chart.Combo` | chartjs | x, y, column, row | cornerRadius |
 | Connected Scatter Plot | `ChartType.ConnectedScatterPlot`, `Chart.ConnectedScatter` | vegalite, echarts, chartjs, plotly, excel | x, y, order, color, detail, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y |
 | Density Contour | `ChartType.DensityContour`, `Chart.DensityContour` | plotly | x, y, column, row | binCount, showPoints |
 | Density Plot | `ChartType.DensityPlot`, `Chart.Density` | vegalite, echarts, plotly | x, color, column, row | bandwidth, independentYAxis, opacity, stackMode |
-| Donut Chart | `ChartType.DonutChart`, `Chart.Donut` | vegalite, plotly, excel, image-charts | size, color, column, row, theta | independentYAxis, innerRadius, labelType, showValueLabels, sortSlices |
+| Donut Chart | `ChartType.DonutChart`, `Chart.Donut` | vegalite, plotly, excel, image-charts | size, color, column, row, theta | independentYAxis, innerRadius, labelType, showValueLabels, sliceNames, sortSlices |
 | Doughnut Chart | `ChartType.DoughnutChart`, `Chart.Doughnut` | chartjs | size, color, column, row | innerRadius, sortSlices |
 | ECDF Plot | `ChartType.EcdfPlot`, `Chart.Ecdf` | vegalite, echarts, chartjs, plotly | x, color, detail, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, showPoints |
 | Funnel Chart | `ChartType.FunnelChart`, `Chart.Funnel` | echarts, plotly, excel | y, size | gap, orient, sort |
 | Gantt Chart | `ChartType.GanttChart`, `Chart.Gantt` | vegalite, echarts, chartjs, plotly | y, x, x2, color, detail, column, row | cornerRadius, includeZero_x, includeZero_y, independentYAxis, intervalLabels, logScale_x, logScale_y, taskHeight |
 | Gauge Chart | `ChartType.GaugeChart`, `Chart.Gauge` | echarts, plotly | size, column | max, min, showProgress |
-| Grouped Bar Chart | `ChartType.GroupedBarChart`, `Chart.GroupedBar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, group, color, column, row | dodge, independentYAxis, showValueLabels |
+| Grouped Bar Chart | `ChartType.GroupedBarChart`, `Chart.GroupedBar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, group, color, detail, column, row | dodge, independentYAxis, showValueLabels |
 | Heatmap | `ChartType.Heatmap`, `Chart.Heatmap` | vegalite, echarts, plotly | x, y, color, column, row | independentYAxis, showValueLabels, xAxisType, yAxisType |
 | Histogram | `ChartType.Histogram`, `Chart.Histogram` | vegalite, echarts, chartjs, plotly, excel | x, color, column, row | binCount, independentYAxis |
 | KPI Card | `ChartType.KpiCard`, `Chart.KpiCard` | vegalite, plotly | metric, value, goal | behindThreshold, layout, style |
 | Line Chart | `ChartType.LineChart`, `Chart.Line` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, strokeDash, detail, opacity, column, row | includeZero_x, includeZero_y, independentYAxis, interpolate, logScale_x, logScale_y, showPoints, xAxisType, yAxisType |
 | Lollipop Chart | `ChartType.LollipopChart`, `Chart.Lollipop` | vegalite, echarts, chartjs, plotly | x, y, color, column, row | dotSize, independentYAxis, showValueLabels, xAxisType, yAxisType |
-| Map | `ChartType.Map`, `Chart.Map` | vegalite, plotly | longitude, latitude, color, size, opacity | projection, projectionCenter, region |
+| Map | `ChartType.Map`, `Chart.Map` | vegalite, plotly | longitude, latitude, color, size, shape, opacity, order, detail, strokeWidth, text | arrows, borderWidth, boundaries, curve, fit, graticule, mapStyle, projection, projectionCenter, region |
 | Marginal Plot | `ChartType.MarginalPlot`, `Chart.Marginal` | vegalite | x, y, color, size, shape, opacity | bandwidth, binCount, includeZero_x, includeZero_y, logScale_x, logScale_y, marginal, opacity, showOutliers, stackMode, whiskerMethod |
 | Network Graph | `ChartType.NetworkGraph`, `Chart.NetworkGraph` | echarts | x, y, size | layout |
 | Parallel Coordinates | `ChartType.ParallelCoordinates`, `Chart.ParallelCoordinates` | echarts | color, detail | (none) |
-| Pie Chart | `ChartType.PieChart`, `Chart.Pie` | vegalite, echarts, chartjs, plotly, excel, image-charts | size, color, column, row, theta | cornerRadius, independentYAxis, innerRadius, labelType, showValueLabels, sortSlices |
+| Pie Chart | `ChartType.PieChart`, `Chart.Pie` | vegalite, echarts, chartjs, plotly, excel, image-charts | size, color, column, row, theta | cornerRadius, independentYAxis, innerRadius, labelType, showValueLabels, sliceNames, sortSlices |
 | Pyramid Chart | `ChartType.PyramidChart`, `Chart.Pyramid` | vegalite, echarts, plotly, excel | x, y, color | showValueLabels |
 | Radar Chart | `ChartType.RadarChart`, `Chart.Radar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, column, row | fillOpacity, filled, includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, shape, strokeWidth |
 | Range Area Chart | `ChartType.RangeAreaChart`, `Chart.RangeArea` | vegalite, echarts, chartjs, plotly | x, y, y2, color, column, row | independentYAxis, interpolate, opacity |
@@ -368,7 +368,7 @@ flint-chart 1.0.1 declares 51 chart types. Backend ids map to `FlintBackend`: `v
 | Scatter Plot | `ChartType.ScatterPlot`, `Chart.Scatter` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, size, shape, detail, opacity, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, opacity |
 | Slope Chart | `ChartType.SlopeChart`, `Chart.Slope` | vegalite, echarts, chartjs, plotly | x, y, color, detail, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, showSeriesInLabel, showText |
 | Sparkline | `ChartType.Sparkline`, `Chart.Sparkline` | vegalite, plotly, image-charts | x, y, color, detail, row, column | baseline, includeZero_x, includeZero_y, interpolate, logScale_x, logScale_y, trendWidth |
-| Stacked Bar Chart | `ChartType.StackedBarChart`, `Chart.StackedBar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, column, row | independentYAxis, showValueLabels, stackMode |
+| Stacked Bar Chart | `ChartType.StackedBarChart`, `Chart.StackedBar` | vegalite, echarts, chartjs, plotly, excel, image-charts | x, y, color, detail, column, row | independentYAxis, showValueLabels, stackMode |
 | Streamgraph | `ChartType.Streamgraph`, `Chart.Streamgraph` | vegalite, echarts, plotly | x, y, color, column, row | independentYAxis, interpolate |
 | Strip Plot | `ChartType.StripPlot`, `Chart.Strip` | vegalite, echarts, chartjs, plotly | x, y, color, size, column, row | includeZero_x, includeZero_y, independentYAxis, logScale_x, logScale_y, opacity, pointSize, stepWidth |
 | Sunburst Chart | `ChartType.SunburstChart`, `Chart.Sunburst` | echarts, excel | color, size, detail, group | innerRadius, labelRotate |
@@ -382,7 +382,7 @@ flint-chart 1.0.1 declares 51 chart types. Backend ids map to `FlintBackend`: `v
 ## Semantic types
 
 <!-- flint:generated:semantic-types start -->
-flint-chart 1.0.1 registers 44 semantic types. Annotate a field with the `SemanticType` constant of the same name (`SemanticType.YearMonth`); a different constant name is given in brackets.
+flint-chart 1.1.1 registers 44 semantic types. Annotate a field with the `SemanticType` constant of the same name (`SemanticType.YearMonth`); a different constant name is given in brackets.
 
 | Group | Semantic types |
 |---|---|
@@ -437,13 +437,13 @@ The authoritative check is upstream's `flint-chart-mcp` server. Its `validate_ch
   "mcpServers": {
     "flint-chart": {
       "command": "npx",
-      "args": ["-y", "flint-chart-mcp@1.0.1"]
+      "args": ["-y", "flint-chart-mcp@1.1.1"]
     }
   }
 }
 ```
 
-The hosted endpoint is `https://flint.data-formulator.ai/mcp`. It runs the version upstream has deployed, which can differ from flint-chart 1.0.1.
+The hosted endpoint is `https://flint.data-formulator.ai/mcp`. It runs the version upstream has deployed, which can differ from flint-chart 1.1.1.
 <!-- flint:generated:mcp-commands end -->
 
 ## For AI agents
@@ -553,15 +553,15 @@ ValidationResult result = ChartValidator.Validate(input); // unknown_chart_type 
 2. Authoritative check: the upstream MCP tool `validate_chart` on the JSON (vegalite, echarts and chartjs); `render_chart` on the same server shows the result. Setup: https://github.com/graspea/flint-chart-dotnet#with-the-upstream-mcp-server
 
 <!-- flint:generated:agent-identifiers start -->
-### Identifiers (flint-chart 1.0.1)
+### Identifiers (flint-chart 1.1.1)
 
 - Backends: `FlintBackend.VegaLite`, `FlintBackend.ECharts`, `FlintBackend.ChartJs`, `FlintBackend.Plotly`, `FlintBackend.Excel`, `FlintBackend.ImageCharts`.
 - Chart types: 51 `ChartType` constants, each with a fluent entry (`ChartType.LineChart` and `Chart.Line(rows)`); see the chart catalog.
-- Channels: `Channel.X`, `Channel.Y`, `Channel.X2`, `Channel.Y2`, `Channel.Id`, `Channel.Color`, `Channel.Opacity`, `Channel.Size`, `Channel.Shape`, `Channel.StrokeDash`, `Channel.Column`, `Channel.Row`, `Channel.Latitude`, `Channel.Longitude`, `Channel.Radius`, `Channel.Detail`, `Channel.Group`, `Channel.Open`, `Channel.High`, `Channel.Low`, `Channel.Close`, `Channel.Angle`, `Channel.Order`, `Channel.Metric`, `Channel.Value`, `Channel.Goal`, `Channel.Theta`.
+- Channels: `Channel.X`, `Channel.Y`, `Channel.X2`, `Channel.Y2`, `Channel.Id`, `Channel.Color`, `Channel.Opacity`, `Channel.Size`, `Channel.Shape`, `Channel.StrokeDash`, `Channel.Column`, `Channel.Row`, `Channel.Latitude`, `Channel.Longitude`, `Channel.Radius`, `Channel.Detail`, `Channel.Group`, `Channel.Open`, `Channel.High`, `Channel.Low`, `Channel.Close`, `Channel.Angle`, `Channel.Order`, `Channel.Metric`, `Channel.Value`, `Channel.Goal`, `Channel.StrokeWidth`, `Channel.Text`, `Channel.Theta`.
 - Semantic types: 44 `SemanticType` constants (`SemanticType.YearMonth`); see the semantic types.
 - Theme presets: `ThemePreset.Apple`, `ThemePreset.Bbc`, `ThemePreset.Cartoon`, `ThemePreset.Datawrapper`, `ThemePreset.DeStijl`, `ThemePreset.Economist`, `ThemePreset.Material`, `ThemePreset.Mckinsey`, `ThemePreset.Nature`, `ThemePreset.Nyt`, `ThemePreset.Pop`, `ThemePreset.PowerBi`, `ThemePreset.PowerBiLight`, `ThemePreset.Swiss`.
-- Upstream MCP server: `npx -y flint-chart-mcp@1.0.1`, tool `validate_chart` (vegalite, echarts and chartjs).
-- Upstream skill for the JSON format: https://github.com/microsoft/flint-chart/blob/f098e497f27a2b36daabc33b659c0988c17ac0f2/agent-skills/flint-chart-author/SKILL.md
+- Upstream MCP server: `npx -y flint-chart-mcp@1.1.1`, tool `validate_chart` (vegalite, echarts and chartjs).
+- Upstream skill for the JSON format: https://github.com/microsoft/flint-chart/blob/cd3c6fb00701e26a3a29ab6499eb2a9f09c599c1/agent-skills/flint-chart-author/SKILL.md
 - Machine-readable catalog: `catalog/catalog.json` in the package, generated from the same data.
 <!-- flint:generated:agent-identifiers end -->
 

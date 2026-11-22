@@ -39,6 +39,8 @@
       "metric",
       "value",
       "goal",
+      "strokeWidth",
+      "text",
       "theta"
     ],
     "chartTypes": [
@@ -542,6 +544,7 @@
               "x",
               "y",
               "color",
+              "detail",
               "opacity",
               "column",
               "row"
@@ -1185,7 +1188,8 @@
             "channels": [
               "id",
               "color",
-              "detail"
+              "detail",
+              "text"
             ],
             "properties": [
               {
@@ -1214,9 +1218,132 @@
             "channels": [
               "id",
               "color",
-              "detail"
+              "detail",
+              "text"
             ],
             "properties": [
+              {
+                "key": "borderWidth",
+                "label": "Border width",
+                "max": 2,
+                "min": 0,
+                "step": 0.1,
+                "type": "continuous"
+              },
+              {
+                "acceptsLabel": "a file { url | values, feature?, ids? (iso-numeric, iso3, iso2, fips, as-is), key?, disputed?, attribution? }",
+                "key": "boundaries",
+                "label": "Boundaries",
+                "options": [
+                  {
+                    "label": "World Bank (official)",
+                    "value": "world-bank"
+                  },
+                  {
+                    "label": "Natural Earth (de facto)",
+                    "value": "natural-earth"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "classCount",
+                "label": "Class count",
+                "max": 9,
+                "min": 3,
+                "step": 1,
+                "type": "continuous"
+              },
+              {
+                "key": "classes",
+                "label": "Classes",
+                "options": [
+                  {
+                    "label": "Auto (quantiles; round steps when diverging)",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "Quantiles (equal counts)",
+                    "value": "quantile"
+                  },
+                  {
+                    "label": "Equal round steps",
+                    "value": "equal"
+                  },
+                  {
+                    "label": "Natural breaks (Jenks)",
+                    "value": "jenks"
+                  },
+                  {
+                    "label": "Continuous",
+                    "value": "continuous"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "fit",
+                "label": "Frame",
+                "options": [
+                  {
+                    "label": "Auto: the country, the region, or the continent the data covers",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "The data, padded",
+                    "value": "data"
+                  },
+                  {
+                    "label": "The data’s continents",
+                    "value": "continent"
+                  },
+                  {
+                    "label": "Whole map",
+                    "value": "whole"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "graticule",
+                "label": "Graticule",
+                "type": "binary"
+              },
+              {
+                "key": "keyType",
+                "label": "Region key",
+                "options": [
+                  {
+                    "label": "Auto-detect",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "ISO 3166-1 alpha-3 (USA)",
+                    "value": "iso3"
+                  },
+                  {
+                    "label": "ISO 3166-1 alpha-2 (US)",
+                    "value": "iso2"
+                  },
+                  {
+                    "label": "ISO 3166-1 numeric (840)",
+                    "value": "iso-numeric"
+                  },
+                  {
+                    "label": "Country name",
+                    "value": "country-name"
+                  },
+                  {
+                    "label": "US state name or USPS code",
+                    "value": "us-state"
+                  },
+                  {
+                    "label": "US FIPS code (state or county)",
+                    "value": "fips"
+                  }
+                ],
+                "type": "discrete"
+              },
               {
                 "key": "level",
                 "label": "Level",
@@ -1232,6 +1359,38 @@
                   {
                     "label": "Zoom: states, then counties",
                     "value": "auto"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "acceptsLabel": "a style of your own { base? (auto, light, muted, atlas, dark, minimal), sea?, land?, coast?, border?, noData?, graticule?, disputed? } in CSS colours",
+                "key": "mapStyle",
+                "label": "Map style",
+                "options": [
+                  {
+                    "label": "From the theme",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "Light",
+                    "value": "light"
+                  },
+                  {
+                    "label": "Muted",
+                    "value": "muted"
+                  },
+                  {
+                    "label": "Atlas (blue water, paper land)",
+                    "value": "atlas"
+                  },
+                  {
+                    "label": "Dark",
+                    "value": "dark"
+                  },
+                  {
+                    "label": "Minimal (outlines)",
+                    "value": "minimal"
                   }
                 ],
                 "type": "discrete"
@@ -1760,6 +1919,25 @@
                   {
                     "label": "None",
                     "value": "none"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "sliceNames",
+                "label": "Slice names",
+                "options": [
+                  {
+                    "label": "Auto",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "On slices",
+                    "value": "onSlices"
+                  },
+                  {
+                    "label": "In a key",
+                    "value": "key"
                   }
                 ],
                 "type": "discrete"
@@ -2426,6 +2604,7 @@
               "y",
               "group",
               "color",
+              "detail",
               "column",
               "row"
             ],
@@ -3180,9 +3359,42 @@
               "latitude",
               "color",
               "size",
-              "opacity"
+              "shape",
+              "opacity",
+              "order",
+              "detail",
+              "strokeWidth",
+              "text"
             ],
             "properties": [
+              {
+                "key": "arrows",
+                "label": "Arrows",
+                "type": "binary"
+              },
+              {
+                "key": "curve",
+                "label": "Route curve",
+                "options": [
+                  {
+                    "label": "Auto: arcs between stops, great circles on a globe or along a track",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "Arcs, bowed left of travel",
+                    "value": "arc"
+                  },
+                  {
+                    "label": "Great circles",
+                    "value": "great-circle"
+                  },
+                  {
+                    "label": "Straight (constant bearing)",
+                    "value": "straight"
+                  }
+                ],
+                "type": "discrete"
+              },
               {
                 "key": "projection",
                 "label": "Projection",
@@ -3398,9 +3610,126 @@
               "latitude",
               "color",
               "size",
-              "opacity"
+              "shape",
+              "opacity",
+              "order",
+              "detail",
+              "strokeWidth",
+              "text"
             ],
             "properties": [
+              {
+                "key": "arrows",
+                "label": "Arrows",
+                "type": "binary"
+              },
+              {
+                "key": "borderWidth",
+                "label": "Border width",
+                "max": 2,
+                "min": 0,
+                "step": 0.1,
+                "type": "continuous"
+              },
+              {
+                "acceptsLabel": "a file { url | values, feature?, ids? (iso-numeric, iso3, iso2, fips, as-is), key?, disputed?, attribution? }",
+                "key": "boundaries",
+                "label": "Boundaries",
+                "options": [
+                  {
+                    "label": "World Bank (official)",
+                    "value": "world-bank"
+                  },
+                  {
+                    "label": "Natural Earth (de facto)",
+                    "value": "natural-earth"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "curve",
+                "label": "Route curve",
+                "options": [
+                  {
+                    "label": "Auto: arcs between stops, great circles on a globe or along a track",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "Arcs, bowed left of travel",
+                    "value": "arc"
+                  },
+                  {
+                    "label": "Great circles",
+                    "value": "great-circle"
+                  },
+                  {
+                    "label": "Straight (constant bearing)",
+                    "value": "straight"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "fit",
+                "label": "Frame",
+                "options": [
+                  {
+                    "label": "Auto: the country, the region, or the continent the data covers",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "The data, padded",
+                    "value": "data"
+                  },
+                  {
+                    "label": "The data’s continents",
+                    "value": "continent"
+                  },
+                  {
+                    "label": "Whole map",
+                    "value": "whole"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "graticule",
+                "label": "Graticule",
+                "type": "binary"
+              },
+              {
+                "acceptsLabel": "a style of your own { base? (auto, light, muted, atlas, dark, minimal), sea?, land?, coast?, border?, noData?, graticule?, disputed? } in CSS colours",
+                "key": "mapStyle",
+                "label": "Map style",
+                "options": [
+                  {
+                    "label": "From the theme",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "Light",
+                    "value": "light"
+                  },
+                  {
+                    "label": "Muted",
+                    "value": "muted"
+                  },
+                  {
+                    "label": "Atlas (blue water, paper land)",
+                    "value": "atlas"
+                  },
+                  {
+                    "label": "Dark",
+                    "value": "dark"
+                  },
+                  {
+                    "label": "Minimal (outlines)",
+                    "value": "minimal"
+                  }
+                ],
+                "type": "discrete"
+              },
               {
                 "key": "projection",
                 "label": "Projection",
@@ -3941,6 +4270,25 @@
                   {
                     "label": "None",
                     "value": "none"
+                  }
+                ],
+                "type": "discrete"
+              },
+              {
+                "key": "sliceNames",
+                "label": "Slice names",
+                "options": [
+                  {
+                    "label": "Auto",
+                    "value": "auto"
+                  },
+                  {
+                    "label": "On slices",
+                    "value": "onSlices"
+                  },
+                  {
+                    "label": "In a key",
+                    "value": "key"
                   }
                 ],
                 "type": "discrete"
@@ -5530,6 +5878,7 @@
               "x",
               "y",
               "color",
+              "detail",
               "column",
               "row"
             ],
@@ -6390,7 +6739,7 @@
         ]
       },
       {
-        "doc": "Generic number (measure fallback)",
+        "doc": "Measure not to be added up (or additivity unknown); totals are Count, Amount, Quantity or Profit",
         "name": "Number",
         "t0": "Measure",
         "t1": "GenericMeasure",
@@ -6747,6 +7096,63 @@
         }
       ]
     },
+    "AnnotationSpec": {
+      "doc": "A caption on one mark, after Blabber's `text`: words beside the mark, haloed in the page, with a\nleader only where the caption is not plainly beside it. A card, a callout box or any other\nstyled note is a `set-overlay` or `set-freeform-overlay`.",
+      "kind": "object",
+      "props": [
+        {
+          "doc": "On a line or area, `segment` (the default) marks the segment that starts\nat the row; `point` marks the row's own point. The last point of a line\nstarts no segment and is always marked at its point.",
+          "name": "anchor",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "segment",
+              "point"
+            ]
+          }
+        },
+        {
+          "doc": "How a note marks what it names: `'none'` leaves it as drawn; `'light'` (the default) lifts a\ndot above its neighbours with a halo, draws a stretch of a line or area again in its ink, and\nfaintly outlines a bar, a cell or a slice; `'strong'` adds a ring round a dot and a full\noutline; `'exclusive'` is strong and recedes every other mark, as `set-style` `emphasized` does.",
+          "name": "highlight",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "none",
+              "light",
+              "strong",
+              "exclusive"
+            ]
+          }
+        },
+        {
+          "doc": "The ring or outline's paint for this note, over the theme's `interaction.highlight`.",
+          "name": "highlightStyle",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "HighlightStyle"
+          }
+        },
+        {
+          "doc": "The caption's type, over the theme's: size in px, weight, ink. Omitted, a note takes the\ntheme's `type.annotation` role, else the axis labels' face and weight a size up in the primary ink.",
+          "name": "style",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "NoteTextStyle"
+          }
+        },
+        {
+          "name": "text",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        }
+      ]
+    },
     "ArcGeometry": {
       "kind": "object",
       "props": [
@@ -6890,6 +7296,14 @@
           "optional": true,
           "type": {
             "kind": "boolean"
+          }
+        },
+        {
+          "doc": "The host page's background, as a CSS colour. A chart with no theme draws on it, and so does a\ntheme whose surface defers to the host (`ink.surface.source: 'host'`); a theme with its own\ncanvas keeps it.",
+          "name": "background",
+          "optional": true,
+          "type": {
+            "kind": "string"
           }
         },
         {
@@ -7052,6 +7466,29 @@
           "optional": true,
           "type": {
             "kind": "number"
+          }
+        },
+        {
+          "doc": "Enclosures the chart is drawn with from the start, as `annotate-enclosure` sets them: where a\ndot they enclose sits at the edge of a continuous axis, the axis is padded by the px the outline\nneeds, so it is drawn whole. Set by the interactive Vega-Lite renderer from the first updates.",
+          "name": "enclosures",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "object",
+              "props": [
+                {
+                  "name": "targets",
+                  "optional": false,
+                  "type": {
+                    "element": {
+                      "kind": "unknown"
+                    },
+                    "kind": "array"
+                  }
+                }
+              ]
+            },
+            "kind": "array"
           }
         },
         {
@@ -7246,6 +7683,94 @@
           }
         },
         {
+          "doc": "Notes the chart is drawn with from the start: each names its mark by the fields of the row the\nmark stands for (`key`) and gives the caption's text. A noted mark at the top of a vertical\nmeasure axis — the tallest bar, the highest point — gets room over it for its caption: the\naxis runs on just far enough for the caption at its nearest seat, ending at a fine round step,\nusing at most a third of the axis. Bars keep their proportions; an axis with a\nstated domain is left as it is. Set by the interactive Vega-Lite renderer from the first\n`annotate-text` updates; a note added later is placed in the room the chart has.",
+          "name": "notes",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "object",
+              "props": [
+                {
+                  "name": "key",
+                  "optional": false,
+                  "type": {
+                    "kind": "record",
+                    "value": {
+                      "kind": "unknown"
+                    }
+                  }
+                },
+                {
+                  "name": "text",
+                  "optional": false,
+                  "type": {
+                    "kind": "string"
+                  }
+                }
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "doc": "Measure values the chart's updates mark across the plot (a `set-overlay` reference rule on y, a\nband of y): the measure axis reaches them, so a line the reader asked for is drawn in the plot\nrather than cut off past its end. Set by the interactive Vega-Lite renderer from the first updates.",
+          "name": "references",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "number"
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "doc": "Regions the chart is drawn with from the start, as `annotate-region` sets them. A captioned\nstretch of x whose marks rise too near the plot's top for its caption to stand clear over them\ngets room as a note does: the measure axis runs on past the stretch's tallest mark, to a fine\nround step, within a third of the axis. A stretch with room above or below its marks, or a\ncaption placed elsewhere, takes none. Set by the interactive Vega-Lite renderer from the first\nupdates.",
+          "name": "regions",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "object",
+              "props": [
+                {
+                  "name": "placement",
+                  "optional": true,
+                  "type": {
+                    "kind": "string"
+                  }
+                },
+                {
+                  "name": "text",
+                  "optional": true,
+                  "type": {
+                    "kind": "string"
+                  }
+                },
+                {
+                  "name": "x",
+                  "optional": true,
+                  "type": {
+                    "element": {
+                      "kind": "unknown"
+                    },
+                    "kind": "array"
+                  }
+                },
+                {
+                  "name": "y",
+                  "optional": true,
+                  "type": {
+                    "element": {
+                      "kind": "unknown"
+                    },
+                    "kind": "array"
+                  }
+                }
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
           "doc": "Internal: the names down y stand on their own line above each bar. The y band starts at\n`scale` times the house band, never under `scale` times the least step nor `minStep` — a\nname's line, its bar and the air between — by the same stretch.",
           "name": "rowNamesAbove",
           "optional": true,
@@ -7267,6 +7792,52 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "doc": "Whether an x axis of few bands fills at least a share of the room the canvas leaves its plot\n(default false): the bands thicken past the sparse-fit ceiling until the plot spans `share` of\nthat room (0.85), a band growing to at most `barCap` px where it holds bars (200) or\n`pointCap` px where it holds points (360). One view, y not banded.",
+          "name": "sparseFill",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "boolean"
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "barCap",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  },
+                  {
+                    "name": "pointCap",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  },
+                  {
+                    "name": "share",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "sparseFillBars",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
           }
         },
         {
@@ -7299,6 +7870,45 @@
           "optional": true,
           "type": {
             "kind": "boolean"
+          }
+        },
+        {
+          "doc": "Whether a themed title wraps to the drawing rather than to the canvas (default false): its block\nis the plot with what stands beside it, which the title may overhang by `overhang` (1.15×),\nnever narrower than `floor` of the canvas (0.6) nor `minWidth` px (320), never wider than the\ncanvas unless the drawing is.",
+          "name": "titleWrap",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "boolean"
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "floor",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  },
+                  {
+                    "name": "minWidth",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  },
+                  {
+                    "name": "overhang",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  }
+                ]
+              }
+            ]
           }
         }
       ]
@@ -7723,6 +8333,50 @@
       "kind": "object",
       "props": [
         {
+          "doc": "The canvas the chart is laid out for, in px, smaller than the one the host states by what the\ndrawing ran past it: the chart is planned again for this room so its keys, labels and title\nstand inside the stated canvas (see `canvasSize`). `keys` holds the keys at the edge they stood\nat, where the fit set no edge of its own, so a smaller plot does not send them to another.",
+          "name": "contain",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "height",
+                "optional": false,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "keys",
+                "optional": true,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "side",
+                    "top",
+                    "bottom"
+                  ]
+                }
+              },
+              {
+                "name": "width",
+                "optional": false,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "doc": "The keys' text set at this share of the library's size, never below the legible floor: a key\nof long names takes less room beside or above the plot. Read by the non-Vega-Lite backends.",
+          "name": "keyScale",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
           "doc": "Every key at one edge: beside the plot, or in one row above or below it.",
           "name": "keys",
           "optional": true,
@@ -7733,6 +8387,14 @@
               "top",
               "bottom"
             ]
+          }
+        },
+        {
+          "doc": "The axis labels on both axes set at this share of the house's size, never below its floor: names\nwrapped onto two lines then take shorter rows, and the chart enters its box with every name whole.",
+          "name": "labelScale",
+          "optional": true,
+          "type": {
+            "kind": "number"
           }
         },
         {
@@ -7901,7 +8563,7 @@
                 }
               },
               {
-                "doc": "Hard ceiling on the rendered size in pixels (optional).\n\nThe final image — a single plot OR an entire facet grid — never exceeds\nthis box. The per-dimension growth allowance is derived from the ratio\nto `baseSize`: `βx = canvasSize.width / baseSize.width`,\n`βy = canvasSize.height / baseSize.height` (each clamped to ≥ 1).\n\nWhen omitted, the ceiling defaults to `baseSize × options.maxStretch`\n(default 1.5×) in each dimension.",
+                "doc": "The box the host shows the chart in, in pixels (optional).\n\nThe plot — a single plot OR an entire facet grid — never stretches past\nit. The per-dimension growth allowance is derived from the ratio\nto `baseSize`: `βx = canvasSize.width / baseSize.width`,\n`βy = canvasSize.height / baseSize.height` (each clamped to ≥ 1).\nThe title, keys and axes stand in the same box: the canvas fit\n(`options.canvasFit`) lays the chart out to read well in it, then,\nwhere the drawing still runs past the box, lays it out again for a\nsmaller room so the plot gives up the room and the keys, labels and\ntitle stand inside it (Vega-Lite; a single view, not a composite).\nWhat it cannot bring within — the plot kept at least half each side,\nno value cut, no label turned — is the host's to scale down into\nthe box, never past 70%, where the fit brings the plot down instead.\n\nWhen omitted, the box defaults to `baseSize × options.maxStretch`\n(default 1.5×) in each dimension.",
                 "name": "canvasSize",
                 "optional": true,
                 "type": {
@@ -7944,7 +8606,7 @@
                 }
               },
               {
-                "doc": "The house chrome this chart keeps. Unset follows the theme. `false` drops it all; an object\nturns off parts: `header` (rules, tabs, wordmarks and logos above or beside the title),\n`footer` (the closing rule and the house's credit beside the source) and `logos` (every\nlogo, header or footer — a footer credit then shows its words). The source line itself is\ndrawn whenever `source` is given.",
+                "doc": "The house chrome this chart keeps. Unset follows the theme, except on a map (`Map`,\n`Choropleth`), which keeps none unless it asks. `false` drops it all; an object\nturns off parts: `header` (rules, tabs, wordmarks and logos above or beside the title),\n`footer` (the closing rule and the house's credit beside the source) and `logos` (every\nlogo, header or footer — a footer credit then shows its words). The source line itself is\ndrawn whenever `source` is given.",
                 "name": "chrome",
                 "optional": true,
                 "type": {
@@ -8193,6 +8855,18 @@
               }
             ]
           }
+        },
+        {
+          "doc": "Updates the chart applies once it is drawn — notes, overlays, emphasis, a viewport — the\nsame updates a host passes to `mountChart` (`options.updates`) or `<FlintChart updates>`,\nkept with the spec so a copied spec keeps them. A host's own update with the same `id`\nreplaces the spec's.\n\nApplied by the interactive runtime only (Vega-Lite). A static output — `assembleVegaLite`'s\nspec, `renderSvg`, the other backends — draws the chart without them, with an `info`\nwarning (`updates-not-compiled`).",
+          "name": "updates",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "ref",
+              "name": "ChartUpdate"
+            },
+            "kind": "array"
+          }
         }
       ]
     },
@@ -8378,6 +9052,186 @@
         }
       ]
     },
+    "ChartOverlaySpec": {
+      "doc": "A retained visual projected through an existing plot's scales. A rule with\nonly `x` or only `y`, and a rect with only `x`/`x2` or only `y`/`y2`, span\nthe plot along the other axis.\n\nOn a map, `longitude` and `latitude` place it through the map's projection\ninstead, as it is panned, zoomed or turned: a point or a text at a place, a\nline through places in order along great circles, a rule from one place\n(`longitude`, `latitude`) to another (`longitude2`, `latitude2`), a rect over\nthe box between them, its edges along meridians and parallels.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "data",
+          "optional": false,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "values",
+                "optional": false,
+                "type": {
+                  "element": {
+                    "kind": "record",
+                    "value": {
+                      "kind": "unknown"
+                    }
+                  },
+                  "kind": "array"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "encodings",
+          "optional": false,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "color",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              },
+              {
+                "name": "latitude",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              },
+              {
+                "name": "latitude2",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              },
+              {
+                "name": "longitude",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              },
+              {
+                "name": "longitude2",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              },
+              {
+                "name": "order",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              },
+              {
+                "name": "text",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              },
+              {
+                "name": "x",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              },
+              {
+                "name": "x2",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              },
+              {
+                "name": "y",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              },
+              {
+                "name": "y2",
+                "optional": true,
+                "type": {
+                  "kind": "ref",
+                  "name": "OverlayFieldEncoding"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "interactive",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "doc": "`over` (the default) draws the overlay above the chart's marks; `under` reads beneath them: a map\nline or rule is cut away wherever the chart draws a mark (a route, its heads, a stop) on it, so a\nreference — the direct way home beside the route taken — stays in the background. Under needs the\nSVG renderer; on canvas it is drawn over.",
+          "name": "layer",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "under",
+              "over"
+            ]
+          }
+        },
+        {
+          "name": "mark",
+          "optional": false,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "line",
+              "point",
+              "rule",
+              "rect",
+              "text"
+            ]
+          }
+        },
+        {
+          "name": "projectable",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
+        },
+        {
+          "name": "role",
+          "optional": false,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "style",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "OverlayStyleSpec"
+          }
+        }
+      ]
+    },
     "ChartSize": {
       "kind": "object",
       "props": [
@@ -8425,7 +9279,7 @@
           }
         },
         {
-          "doc": "Hard ceiling on the rendered size in pixels (optional).\n\nThe final image — a single plot OR an entire facet grid — never exceeds\nthis box. The per-dimension growth allowance is derived from the ratio\nto `baseSize`: `βx = canvasSize.width / baseSize.width`,\n`βy = canvasSize.height / baseSize.height` (each clamped to ≥ 1).\n\nWhen omitted, the ceiling defaults to `baseSize × options.maxStretch`\n(default 1.5×) in each dimension.",
+          "doc": "The box the host shows the chart in, in pixels (optional).\n\nThe plot — a single plot OR an entire facet grid — never stretches past\nit. The per-dimension growth allowance is derived from the ratio\nto `baseSize`: `βx = canvasSize.width / baseSize.width`,\n`βy = canvasSize.height / baseSize.height` (each clamped to ≥ 1).\nThe title, keys and axes stand in the same box: the canvas fit\n(`options.canvasFit`) lays the chart out to read well in it, then,\nwhere the drawing still runs past the box, lays it out again for a\nsmaller room so the plot gives up the room and the keys, labels and\ntitle stand inside it (Vega-Lite; a single view, not a composite).\nWhat it cannot bring within — the plot kept at least half each side,\nno value cut, no label turned — is the host's to scale down into\nthe box, never past 70%, where the fit brings the plot down instead.\n\nWhen omitted, the box defaults to `baseSize × options.maxStretch`\n(default 1.5×) in each dimension.",
           "name": "canvasSize",
           "optional": true,
           "type": {
@@ -8468,7 +9322,7 @@
           }
         },
         {
-          "doc": "The house chrome this chart keeps. Unset follows the theme. `false` drops it all; an object\nturns off parts: `header` (rules, tabs, wordmarks and logos above or beside the title),\n`footer` (the closing rule and the house's credit beside the source) and `logos` (every\nlogo, header or footer — a footer credit then shows its words). The source line itself is\ndrawn whenever `source` is given.",
+          "doc": "The house chrome this chart keeps. Unset follows the theme, except on a map (`Map`,\n`Choropleth`), which keeps none unless it asks. `false` drops it all; an object\nturns off parts: `header` (rules, tabs, wordmarks and logos above or beside the title),\n`footer` (the closing rule and the house's credit beside the source) and `logos` (every\nlogo, header or footer — a footer credit then shows its words). The source line itself is\ndrawn whenever `source` is given.",
           "name": "chrome",
           "optional": true,
           "type": {
@@ -8597,6 +9451,403 @@
           "type": {
             "kind": "string"
           }
+        }
+      ]
+    },
+    "ChartUpdate": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "id",
+          "optional": false,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "ops",
+          "optional": false,
+          "type": {
+            "element": {
+              "kind": "ref",
+              "name": "ChartUpdateOp"
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
+    "ChartUpdateOp": {
+      "kind": "union",
+      "members": [
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "op",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "set-style"
+              }
+            },
+            {
+              "name": "targets",
+              "optional": false,
+              "type": {
+                "element": {
+                  "kind": "ref",
+                  "name": "UpdateTarget"
+                },
+                "kind": "array"
+              }
+            },
+            {
+              "name": "value",
+              "optional": false,
+              "type": {
+                "kind": "ref",
+                "name": "StyleSpec"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "doc": "A caption on one mark, after Blabber's `text`.",
+              "name": "op",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "annotate-text"
+              }
+            },
+            {
+              "name": "target",
+              "optional": false,
+              "type": {
+                "kind": "ref",
+                "name": "UpdateTarget"
+              }
+            },
+            {
+              "name": "value",
+              "nullable": true,
+              "optional": false,
+              "type": {
+                "kind": "ref",
+                "name": "AnnotationSpec"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "op",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "set-annotation"
+              }
+            },
+            {
+              "name": "target",
+              "optional": false,
+              "type": {
+                "kind": "ref",
+                "name": "UpdateTarget"
+              }
+            },
+            {
+              "name": "value",
+              "nullable": true,
+              "optional": false,
+              "type": {
+                "kind": "ref",
+                "name": "AnnotationSpec"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "doc": "Names the region, so several stand together and each clears on its own (`value: null`).",
+              "name": "name",
+              "optional": false,
+              "type": {
+                "kind": "string"
+              }
+            },
+            {
+              "name": "op",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "annotate-region"
+              }
+            },
+            {
+              "name": "value",
+              "nullable": true,
+              "optional": false,
+              "type": {
+                "kind": "ref",
+                "name": "RegionAnnotationSpec"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "doc": "Names the enclosure, so several stand together and each clears on its own (`value: null`).",
+              "name": "name",
+              "optional": false,
+              "type": {
+                "kind": "string"
+              }
+            },
+            {
+              "name": "op",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "annotate-enclosure"
+              }
+            },
+            {
+              "name": "value",
+              "nullable": true,
+              "optional": false,
+              "type": {
+                "kind": "ref",
+                "name": "EnclosureAnnotationSpec"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "axes",
+              "optional": false,
+              "type": {
+                "kind": "literalUnion",
+                "values": [
+                  "x",
+                  "y",
+                  "xy"
+                ]
+              }
+            },
+            {
+              "name": "op",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "set-viewport"
+              }
+            },
+            {
+              "doc": "A box on each axis, or a region of a multi-level projected chart to frame.",
+              "name": "value",
+              "optional": false,
+              "type": {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "region",
+                    "optional": true,
+                    "type": {
+                      "kind": "ref",
+                      "name": "UpdateRegionSelector"
+                    }
+                  },
+                  {
+                    "name": "x",
+                    "optional": true,
+                    "type": {
+                      "elements": [
+                        {
+                          "kind": "unknown"
+                        },
+                        {
+                          "kind": "unknown"
+                        }
+                      ],
+                      "kind": "tuple"
+                    }
+                  },
+                  {
+                    "name": "y",
+                    "optional": true,
+                    "type": {
+                      "elements": [
+                        {
+                          "kind": "unknown"
+                        },
+                        {
+                          "kind": "unknown"
+                        }
+                      ],
+                      "kind": "tuple"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "field",
+              "optional": false,
+              "type": {
+                "kind": "string"
+              }
+            },
+            {
+              "name": "op",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "set-order"
+              }
+            },
+            {
+              "name": "scope",
+              "optional": false,
+              "type": {
+                "kind": "literalUnion",
+                "values": [
+                  "category",
+                  "series",
+                  "facet"
+                ]
+              }
+            },
+            {
+              "name": "values",
+              "optional": false,
+              "type": {
+                "element": {
+                  "kind": "unknown"
+                },
+                "kind": "array"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "name",
+              "optional": false,
+              "type": {
+                "kind": "string"
+              }
+            },
+            {
+              "name": "op",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "set-overlay"
+              }
+            },
+            {
+              "name": "value",
+              "nullable": true,
+              "optional": false,
+              "type": {
+                "kind": "ref",
+                "name": "ChartOverlaySpec"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "name",
+              "optional": false,
+              "type": {
+                "kind": "string"
+              }
+            },
+            {
+              "name": "op",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "set-freeform-overlay"
+              }
+            },
+            {
+              "name": "value",
+              "nullable": true,
+              "optional": false,
+              "type": {
+                "kind": "ref",
+                "name": "FreeformOverlaySpec"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "object",
+          "props": [
+            {
+              "name": "op",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "set-data"
+              }
+            },
+            {
+              "name": "source",
+              "optional": false,
+              "type": {
+                "kind": "literal",
+                "value": "main"
+              }
+            },
+            {
+              "name": "value",
+              "optional": false,
+              "type": {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "rows",
+                    "optional": false,
+                    "type": {
+                      "element": {
+                        "kind": "record",
+                        "value": {
+                          "kind": "unknown"
+                        }
+                      },
+                      "kind": "array"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -8927,6 +10178,72 @@
         }
       ]
     },
+    "EnclosureAnnotationSpec": {
+      "doc": "An outline round sets of marks, after Blabber's `enclose`. Each target is one group, outlined on\nits own; all of them share the caption. Bars, cells and stacks default to a `rect`, other marks to\na `hull`.",
+      "kind": "object",
+      "props": [
+        {
+          "doc": "The outline's, its caption's and its leaders' colour; by default the theme's `interaction.highlight`, else one that reads on the marks and the page.",
+          "name": "color",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Leaders from the shared caption to the outlines: `auto` (the default) draws one to each of two\nor three outlines and none for one or more than three; `all` and `none` say so outright.",
+          "name": "connect",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "auto",
+              "all",
+              "none"
+            ]
+          }
+        },
+        {
+          "name": "shape",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "hull",
+              "rect",
+              "ellipse",
+              "circle"
+            ]
+          }
+        },
+        {
+          "name": "targets",
+          "optional": false,
+          "type": {
+            "element": {
+              "kind": "ref",
+              "name": "UpdateTarget"
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "name": "text",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "The outline's stroke width in px; by default the theme's, else 1.5.",
+          "name": "width",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        }
+      ]
+    },
     "FilterControlsOptions": {
       "kind": "object",
       "props": [
@@ -9092,6 +10409,211 @@
               }
             }
           ]
+        }
+      ]
+    },
+    "FreeformCloneBody": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "opacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "targets",
+          "optional": false,
+          "type": {
+            "element": {
+              "kind": "ref",
+              "name": "UpdateTarget"
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "name": "transform",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "FreeformOverlayTransform"
+          }
+        },
+        {
+          "name": "type",
+          "optional": false,
+          "type": {
+            "kind": "literal",
+            "value": "clone"
+          }
+        }
+      ]
+    },
+    "FreeformOverlayBody": {
+      "kind": "union",
+      "members": [
+        {
+          "kind": "ref",
+          "name": "FreeformSvgBody"
+        },
+        {
+          "kind": "ref",
+          "name": "FreeformCloneBody"
+        }
+      ]
+    },
+    "FreeformOverlaySpec": {
+      "doc": "Named renderer-space presentation, separate from data/scale overlays.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "body",
+          "optional": false,
+          "type": {
+            "element": {
+              "kind": "ref",
+              "name": "FreeformOverlayBody"
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "name": "coordinateSpace",
+          "optional": false,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "plot",
+              "renderer"
+            ]
+          }
+        }
+      ]
+    },
+    "FreeformOverlayTransform": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "rotate",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "scale",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "number"
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "x",
+                    "optional": false,
+                    "type": {
+                      "kind": "number"
+                    }
+                  },
+                  {
+                    "name": "y",
+                    "optional": false,
+                    "type": {
+                      "kind": "number"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "translate",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "x",
+                "optional": false,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "y",
+                "optional": false,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "FreeformSvgBody": {
+      "doc": "SVG markup is serializable; SVGElement supports local application components.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "content",
+          "optional": false,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "string"
+              },
+              {
+                "kind": "unsupported",
+                "text": "SVGElement"
+              }
+            ]
+          }
+        },
+        {
+          "name": "transform",
+          "optional": true,
+          "type": {
+            "kind": "ref",
+            "name": "FreeformOverlayTransform"
+          }
+        },
+        {
+          "name": "type",
+          "optional": false,
+          "type": {
+            "kind": "literal",
+            "value": "svg"
+          }
+        }
+      ]
+    },
+    "HighlightStyle": {
+      "doc": "A ring's or an outline's paint where one update sets its own.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "color",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Stroke width in px of the strong ring or outline; the light one is drawn a little thinner.",
+          "name": "width",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
         }
       ]
     },
@@ -9766,6 +11288,38 @@
           }
         },
         {
+          "doc": "The behaviour every mounted chart has without an entry: a tooltip that reads the nearest mark,\na legend click that dims a group, and on a dense chart a Ctrl/⌘-wheel zoom and drag pan.\n`false` turns all three off; an object turns each off by name. Defaults to on.",
+          "name": "defaults",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "boolean"
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "legend",
+                    "optional": true,
+                    "type": {
+                      "kind": "boolean"
+                    }
+                  },
+                  {
+                    "name": "tooltip",
+                    "optional": true,
+                    "type": {
+                      "kind": "boolean"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "doc": "One entry per interaction. Its type names the preset that makes it, and its options carry its own `reset` list.",
           "name": "interactions",
           "optional": false,
@@ -10172,6 +11726,46 @@
         }
       ]
     },
+    "NoteTextStyle": {
+      "doc": "A caption's type where one note sets its own.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "color",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "fontSize",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "fontWeight",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "number"
+              },
+              {
+                "kind": "literal",
+                "value": "normal"
+              },
+              {
+                "kind": "literal",
+                "value": "bold"
+              }
+            ]
+          }
+        }
+      ]
+    },
     "NumericGuard": {
       "kind": "object",
       "props": [
@@ -10208,6 +11802,162 @@
           "optional": true,
           "type": {
             "kind": "number"
+          }
+        }
+      ]
+    },
+    "OverlayFieldEncoding": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "field",
+          "optional": false,
+          "type": {
+            "kind": "string"
+          }
+        }
+      ]
+    },
+    "OverlayStyleSpec": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "dx",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "dy",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "fill",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "fillOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "fontSize",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "fontStyle",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "normal",
+              "italic"
+            ]
+          }
+        },
+        {
+          "name": "fontWeight",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "number"
+              },
+              {
+                "kind": "literal",
+                "value": "normal"
+              },
+              {
+                "kind": "literal",
+                "value": "bold"
+              }
+            ]
+          }
+        },
+        {
+          "name": "opacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "pointRadius",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "On text, the halo behind the glyphs: the chart's background by default, `'none'` for no halo.",
+          "name": "stroke",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "doc": "Dash and gap lengths in px, or a word: `'dash'` (`'dashed'`) or `'dot'` (`'dotted'`).",
+          "name": "strokeDash",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "element": {
+                  "kind": "number"
+                },
+                "kind": "array"
+              },
+              {
+                "kind": "literal",
+                "value": "dash"
+              },
+              {
+                "kind": "literal",
+                "value": "dashed"
+              },
+              {
+                "kind": "literal",
+                "value": "dot"
+              },
+              {
+                "kind": "literal",
+                "value": "dotted"
+              }
+            ]
+          }
+        },
+        {
+          "name": "strokeWidth",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "textAlign",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "start",
+              "middle",
+              "end"
+            ]
           }
         }
       ]
@@ -10409,6 +12159,115 @@
         }
       ]
     },
+    "RegionAnnotationSpec": {
+      "doc": "A shaded stretch of the plot, after Blabber's `region`. One axis shades a band across the plot,\nboth a box. On a continuous axis a stretch is two bounds, either of which may be `null` (open: the\nplot's end on that side); on a banded axis it is the categories it covers, which must be next to\neach other. The caption is set on the stretch it names, inside where it fits clear of the data,\nelse outside it with a leader.",
+      "kind": "object",
+      "props": [
+        {
+          "doc": "The wash's colour; by default a muted one distinct from the marks and the other regions.",
+          "name": "color",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "latitude",
+          "optional": true,
+          "type": {
+            "elements": [
+              {
+                "kind": "number"
+              },
+              {
+                "kind": "number"
+              }
+            ],
+            "kind": "tuple"
+          }
+        },
+        {
+          "doc": "`under` (the default) reads beneath the marks; `over` washes over them, as on an area chart.",
+          "name": "layer",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "under",
+              "over"
+            ]
+          }
+        },
+        {
+          "doc": "On a map, the region's box in degrees, `[west, east]` and `[south, north]`, in place of `x`\nand `y`: its edges follow the meridians and parallels as the map's projection draws them.\nBoth are needed; a west edge east of the east edge runs across the antimeridian.",
+          "name": "longitude",
+          "optional": true,
+          "type": {
+            "elements": [
+              {
+                "kind": "number"
+              },
+              {
+                "kind": "number"
+              }
+            ],
+            "kind": "tuple"
+          }
+        },
+        {
+          "doc": "The wash's opacity; 0.16 by default, 0.18 over an area chart.",
+          "name": "opacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "Where the caption stands: `top`, `bottom`, `left`, `right`, `center` within the region, `above`\nor `below` it, just past its edge (past the plot for a stretch of x, which spans the plot's\nheight). A region too small for its caption where asked has it placed where it fits. Left out,\nthe clearest place is chosen.",
+          "name": "placement",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "top",
+              "bottom",
+              "left",
+              "right",
+              "center",
+              "above",
+              "below"
+            ]
+          }
+        },
+        {
+          "name": "text",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "x",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "unknown"
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "name": "y",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "unknown"
+            },
+            "kind": "array"
+          }
+        }
+      ]
+    },
     "SelectOptions": {
       "kind": "object",
       "props": [
@@ -10510,6 +12369,23 @@
           }
         },
         {
+          "doc": "How far either side of the diverging midpoint still reads as neither side, for a stepped\ncolour scale: `0.1` makes correlations within ±0.1 one neutral class; `false` makes the\nmidpoint a break, so every class is one side or the other and a small gain never looks like\na small loss. Unset ⇒ the semantic type decides: a type that always diverges (Correlation,\nSentiment) or a stated midpoint gets a neutral class a step wide; one that diverges where its\nvalues cross a sign (Profit, PercentageChange, Temperature) breaks at it.",
+          "name": "divergingNeutral",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "number"
+              },
+              {
+                "kind": "literal",
+                "value": false
+              }
+            ]
+          }
+        },
+        {
           "doc": "Intrinsic domain (value range) of this field's scale.\nOnly for bounded/scaled types — NOT for open-ended measures.\nE.g., [1, 5] for 5-star rating, [0, 100] for score, [-90, 90] for latitude.",
           "name": "intrinsicDomain",
           "optional": true,
@@ -10523,6 +12399,18 @@
               }
             ],
             "kind": "tuple"
+          }
+        },
+        {
+          "doc": "How a percentage field's numbers are stored: `fraction` (0.45 is 45%) or `percent` (45 is\n45%). Unset ⇒ a decisive `intrinsicDomain` says (within ±1 is fractions; reaching 100 is\npercent points), else the values do. State it where the values cannot tell: a growth rate\nstored as fractions mostly past 1 (2.4 is 240%).",
+          "name": "percentScale",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "fraction",
+              "percent"
+            ]
           }
         },
         {
@@ -10562,6 +12450,88 @@
           "optional": true,
           "type": {
             "kind": "string"
+          }
+        }
+      ]
+    },
+    "SemanticElement": {
+      "doc": "Backend-independent meaning and provenance of one resolved chart element.\nConsumers should reason from `value` and `records`, never from renderer metadata.\nExact render lookup belongs to the backend and may map one element to many primitives.",
+      "kind": "object",
+      "props": [
+        {
+          "doc": "Contributing input records when provenance is available; zero or many may support one value.",
+          "name": "records",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "record",
+              "value": {
+                "kind": "unknown"
+              }
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "doc": "Values represented by the mark's channels, or by a semantic control such as a legend item.",
+          "name": "value",
+          "optional": false,
+          "type": {
+            "kind": "record",
+            "value": {
+              "kind": "unknown"
+            }
+          }
+        }
+      ]
+    },
+    "SemanticTargetRef": {
+      "kind": "object",
+      "props": [
+        {
+          "name": "elements",
+          "optional": false,
+          "type": {
+            "element": {
+              "kind": "ref",
+              "name": "SemanticElement"
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "name": "visual",
+          "optional": false,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "kind",
+                "optional": false,
+                "type": {
+                  "kind": "literalUnion",
+                  "values": [
+                    "mark",
+                    "path",
+                    "region",
+                    "widget",
+                    "handle",
+                    "legend",
+                    "axis",
+                    "chart",
+                    "title",
+                    "header"
+                  ]
+                }
+              },
+              {
+                "name": "role",
+                "optional": false,
+                "type": {
+                  "kind": "string"
+                }
+              }
+            ]
           }
         }
       ]
@@ -10690,6 +12660,81 @@
               }
             }
           ]
+        }
+      ]
+    },
+    "StyleSpec": {
+      "kind": "object",
+      "props": [
+        {
+          "doc": "How far the rest recede when the targets are emphasized, as a note's `highlight`: `'light'`\n(the default; the rest keep 0.6 of their opacity and stay readable), `'strong'` (0.35) or\n`'exclusive'` (0.2, only the targets read). Their value labels stay legible: they recede less\nand take the page's ink. `mutedOpacity` states the receded opacity outright.",
+          "name": "emphasis",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "light",
+              "strong",
+              "exclusive"
+            ]
+          }
+        },
+        {
+          "name": "fill",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "mutedOpacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "opacity",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "doc": "`emphasized` and `focused` recede everything else; `emphasis` says how far. `highlighted` gives\nthe targets their mark's hover cue and leaves the rest as drawn.",
+          "name": "state",
+          "optional": true,
+          "type": {
+            "kind": "literalUnion",
+            "values": [
+              "normal",
+              "focused",
+              "emphasized",
+              "highlighted",
+              "muted"
+            ]
+          }
+        },
+        {
+          "name": "stroke",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
+          "name": "strokeWidth",
+          "optional": true,
+          "type": {
+            "kind": "number"
+          }
+        },
+        {
+          "name": "visible",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
+          }
         }
       ]
     },
@@ -11001,6 +13046,14 @@
           }
         },
         {
+          "doc": "The host page's background, as a CSS colour. A chart with no theme draws on it, and so does a\ntheme whose surface defers to the host (`ink.surface.source: 'host'`); a theme with its own\ncanvas keeps it.",
+          "name": "background",
+          "optional": true,
+          "type": {
+            "kind": "string"
+          }
+        },
+        {
           "doc": "Whether a plot with one banded axis leans back where its bands, with the labels it cannot\ndrop, put it outside the shapes a chart of its base takes on its own (default true). That\nrange runs from the base with its height stretched to the base with its width stretched\n(at least 1.25× either side); where it cannot be reached readably, a range half as wide\nagain is aimed for instead.",
           "name": "bandBalance",
           "optional": true,
@@ -11209,6 +13262,29 @@
           }
         },
         {
+          "doc": "Enclosures the chart is drawn with from the start, as `annotate-enclosure` sets them: where a\ndot they enclose sits at the edge of a continuous axis, the axis is padded by the px the outline\nneeds, so it is drawn whole. Set by the interactive Vega-Lite renderer from the first updates.",
+          "name": "enclosures",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "object",
+              "props": [
+                {
+                  "name": "targets",
+                  "optional": false,
+                  "type": {
+                    "element": {
+                      "kind": "unknown"
+                    },
+                    "kind": "array"
+                  }
+                }
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
           "doc": "Resistance to aspect-ratio distortion when faceting.\n\nWhen faceting divides one dimension (e.g. width by column count),\nthe subplot aspect ratio drifts away from the single-plot ratio.\nLine and area charts are very sensitive to this because their\nvisual signal is encoded in slopes and curve shapes.\n\nThis parameter partially compensates by shrinking the undivided\ndimension so the panel aspect ratio stays closer to the original:\n\n  arDrift = facetedAR / baseAR          (< 1 when panel is narrower)\n  correctedDim = dim × arDrift ^ resistance\n\n- 0 (default): no correction — current behavior.\n- 0.3–0.5: moderate resistance (recommended for line / area).\n- 1: fully preserve the single-plot aspect ratio.",
           "name": "facetAspectRatioResistance",
           "optional": true,
@@ -11400,6 +13476,94 @@
           }
         },
         {
+          "doc": "Notes the chart is drawn with from the start: each names its mark by the fields of the row the\nmark stands for (`key`) and gives the caption's text. A noted mark at the top of a vertical\nmeasure axis — the tallest bar, the highest point — gets room over it for its caption: the\naxis runs on just far enough for the caption at its nearest seat, ending at a fine round step,\nusing at most a third of the axis. Bars keep their proportions; an axis with a\nstated domain is left as it is. Set by the interactive Vega-Lite renderer from the first\n`annotate-text` updates; a note added later is placed in the room the chart has.",
+          "name": "notes",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "object",
+              "props": [
+                {
+                  "name": "key",
+                  "optional": false,
+                  "type": {
+                    "kind": "record",
+                    "value": {
+                      "kind": "unknown"
+                    }
+                  }
+                },
+                {
+                  "name": "text",
+                  "optional": false,
+                  "type": {
+                    "kind": "string"
+                  }
+                }
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "doc": "Measure values the chart's updates mark across the plot (a `set-overlay` reference rule on y, a\nband of y): the measure axis reaches them, so a line the reader asked for is drawn in the plot\nrather than cut off past its end. Set by the interactive Vega-Lite renderer from the first updates.",
+          "name": "references",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "number"
+            },
+            "kind": "array"
+          }
+        },
+        {
+          "doc": "Regions the chart is drawn with from the start, as `annotate-region` sets them. A captioned\nstretch of x whose marks rise too near the plot's top for its caption to stand clear over them\ngets room as a note does: the measure axis runs on past the stretch's tallest mark, to a fine\nround step, within a third of the axis. A stretch with room above or below its marks, or a\ncaption placed elsewhere, takes none. Set by the interactive Vega-Lite renderer from the first\nupdates.",
+          "name": "regions",
+          "optional": true,
+          "type": {
+            "element": {
+              "kind": "object",
+              "props": [
+                {
+                  "name": "placement",
+                  "optional": true,
+                  "type": {
+                    "kind": "string"
+                  }
+                },
+                {
+                  "name": "text",
+                  "optional": true,
+                  "type": {
+                    "kind": "string"
+                  }
+                },
+                {
+                  "name": "x",
+                  "optional": true,
+                  "type": {
+                    "element": {
+                      "kind": "unknown"
+                    },
+                    "kind": "array"
+                  }
+                },
+                {
+                  "name": "y",
+                  "optional": true,
+                  "type": {
+                    "element": {
+                      "kind": "unknown"
+                    },
+                    "kind": "array"
+                  }
+                }
+              ]
+            },
+            "kind": "array"
+          }
+        },
+        {
           "doc": "Internal: the names down y stand on their own line above each bar. The y band starts at\n`scale` times the house band, never under `scale` times the least step nor `minStep` — a\nname's line, its bar and the air between — by the same stretch.",
           "name": "rowNamesAbove",
           "optional": true,
@@ -11421,6 +13585,52 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "doc": "Whether an x axis of few bands fills at least a share of the room the canvas leaves its plot\n(default false): the bands thicken past the sparse-fit ceiling until the plot spans `share` of\nthat room (0.85), a band growing to at most `barCap` px where it holds bars (200) or\n`pointCap` px where it holds points (360). One view, y not banded.",
+          "name": "sparseFill",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "boolean"
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "barCap",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  },
+                  {
+                    "name": "pointCap",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  },
+                  {
+                    "name": "share",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "sparseFillBars",
+          "optional": true,
+          "type": {
+            "kind": "boolean"
           }
         },
         {
@@ -11453,6 +13663,45 @@
           "optional": true,
           "type": {
             "kind": "boolean"
+          }
+        },
+        {
+          "doc": "Whether a themed title wraps to the drawing rather than to the canvas (default false): its block\nis the plot with what stands beside it, which the title may overhang by `overhang` (1.15×),\nnever narrower than `floor` of the canvas (0.6) nor `minWidth` px (320), never wider than the\ncanvas unless the drawing is.",
+          "name": "titleWrap",
+          "optional": true,
+          "type": {
+            "kind": "union",
+            "members": [
+              {
+                "kind": "boolean"
+              },
+              {
+                "kind": "object",
+                "props": [
+                  {
+                    "name": "floor",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  },
+                  {
+                    "name": "minWidth",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  },
+                  {
+                    "name": "overhang",
+                    "optional": true,
+                    "type": {
+                      "kind": "number"
+                    }
+                  }
+                ]
+              }
+            ]
           }
         }
       ]
@@ -12367,6 +14616,44 @@
       "kind": "object",
       "props": [
         {
+          "doc": "Paint for the marks an agent or the reader points at with an update: the ring round a dot, the\noutline round a bar, cell, slice or region a note names, and an enclosure's outline. Unset, they\ntake the neutral annotation grey (an enclosure round one colour's cluster takes that colour).",
+          "name": "highlight",
+          "optional": true,
+          "type": {
+            "kind": "object",
+            "props": [
+              {
+                "name": "color",
+                "optional": true,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "name": "haloColor",
+                "optional": true,
+                "type": {
+                  "kind": "string"
+                }
+              },
+              {
+                "name": "haloWidth",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              },
+              {
+                "name": "width",
+                "optional": true,
+                "type": {
+                  "kind": "number"
+                }
+              }
+            ]
+          }
+        },
+        {
           "doc": "Paint for the exterior of a contiguous semantic selection.",
           "name": "selectionBoundary",
           "optional": true,
@@ -12820,7 +15107,7 @@
           }
         },
         {
-          "doc": "The symbol beside each name in a key to categories: `auto` (default) takes it from the mark —\na square for bars, a stroke for lines, the dot's own shape for points; `square`, `circle` or\n`line` (a short stroke) draw that symbol for every mark. A key whose entries are shapes (a\nshape channel) or sizes keeps its own symbols. Vega-Lite only.",
+          "doc": "The symbol beside each name in a key to categories: `auto` (default) takes it from the mark —\na square for bars, a stroke for lines, the dot's own shape for points; `square`, `circle` or\n`line` (a short stroke) draw that symbol for every mark, except that a square or circle is\na filled chip and a line series keeps its stroke. A key whose entries are shapes (a\nshape channel) or sizes keeps its own symbols. Vega-Lite only.",
           "name": "swatch",
           "optional": true,
           "type": {
@@ -15296,11 +17583,40 @@
           }
         }
       ]
+    },
+    "UpdateRegionSelector": {
+      "doc": "Names a region of a multi-level projected chart by the row fields that identify it.",
+      "kind": "object",
+      "props": [
+        {
+          "name": "key",
+          "optional": false,
+          "type": {
+            "kind": "record",
+            "value": {
+              "kind": "unknown"
+            }
+          }
+        }
+      ]
+    },
+    "UpdateTarget": {
+      "kind": "union",
+      "members": [
+        {
+          "kind": "ref",
+          "name": "SemanticTargetRef"
+        },
+        {
+          "kind": "ref",
+          "name": "SemanticTargetSelector"
+        }
+      ]
     }
   },
   "upstream": {
-    "integrity": "sha512-8buLTEwj+DLAufo/2/QZEBU8v+78shKWjj8sWW0tGXQ92UlE7zJoOvJ+CxCO77MY5bRM86ohUrcl/5CMoh3GuQ==",
+    "integrity": "sha512-izhATllY0b9sEPDzobovFQtFlAMK3iBboEzjC4sq/g1gRblfRjCfI1xEny2Ny0rIWgOV8b+69AM/aS+x5aGHSg==",
     "package": "flint-chart",
-    "version": "1.0.1"
+    "version": "1.1.1"
   }
 }

@@ -38,6 +38,8 @@
     "metric",
     "value",
     "goal",
+    "strokeWidth",
+    "text",
     "theta"
   ],
   "chartTypes": [
@@ -541,6 +543,7 @@
             "x",
             "y",
             "color",
+            "detail",
             "opacity",
             "column",
             "row"
@@ -1184,7 +1187,8 @@
           "channels": [
             "id",
             "color",
-            "detail"
+            "detail",
+            "text"
           ],
           "properties": [
             {
@@ -1213,9 +1217,132 @@
           "channels": [
             "id",
             "color",
-            "detail"
+            "detail",
+            "text"
           ],
           "properties": [
+            {
+              "key": "borderWidth",
+              "label": "Border width",
+              "max": 2,
+              "min": 0,
+              "step": 0.1,
+              "type": "continuous"
+            },
+            {
+              "acceptsLabel": "a file { url | values, feature?, ids? (iso-numeric, iso3, iso2, fips, as-is), key?, disputed?, attribution? }",
+              "key": "boundaries",
+              "label": "Boundaries",
+              "options": [
+                {
+                  "label": "World Bank (official)",
+                  "value": "world-bank"
+                },
+                {
+                  "label": "Natural Earth (de facto)",
+                  "value": "natural-earth"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "classCount",
+              "label": "Class count",
+              "max": 9,
+              "min": 3,
+              "step": 1,
+              "type": "continuous"
+            },
+            {
+              "key": "classes",
+              "label": "Classes",
+              "options": [
+                {
+                  "label": "Auto (quantiles; round steps when diverging)",
+                  "value": "auto"
+                },
+                {
+                  "label": "Quantiles (equal counts)",
+                  "value": "quantile"
+                },
+                {
+                  "label": "Equal round steps",
+                  "value": "equal"
+                },
+                {
+                  "label": "Natural breaks (Jenks)",
+                  "value": "jenks"
+                },
+                {
+                  "label": "Continuous",
+                  "value": "continuous"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "fit",
+              "label": "Frame",
+              "options": [
+                {
+                  "label": "Auto: the country, the region, or the continent the data covers",
+                  "value": "auto"
+                },
+                {
+                  "label": "The data, padded",
+                  "value": "data"
+                },
+                {
+                  "label": "The data’s continents",
+                  "value": "continent"
+                },
+                {
+                  "label": "Whole map",
+                  "value": "whole"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "graticule",
+              "label": "Graticule",
+              "type": "binary"
+            },
+            {
+              "key": "keyType",
+              "label": "Region key",
+              "options": [
+                {
+                  "label": "Auto-detect",
+                  "value": "auto"
+                },
+                {
+                  "label": "ISO 3166-1 alpha-3 (USA)",
+                  "value": "iso3"
+                },
+                {
+                  "label": "ISO 3166-1 alpha-2 (US)",
+                  "value": "iso2"
+                },
+                {
+                  "label": "ISO 3166-1 numeric (840)",
+                  "value": "iso-numeric"
+                },
+                {
+                  "label": "Country name",
+                  "value": "country-name"
+                },
+                {
+                  "label": "US state name or USPS code",
+                  "value": "us-state"
+                },
+                {
+                  "label": "US FIPS code (state or county)",
+                  "value": "fips"
+                }
+              ],
+              "type": "discrete"
+            },
             {
               "key": "level",
               "label": "Level",
@@ -1231,6 +1358,38 @@
                 {
                   "label": "Zoom: states, then counties",
                   "value": "auto"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "acceptsLabel": "a style of your own { base? (auto, light, muted, atlas, dark, minimal), sea?, land?, coast?, border?, noData?, graticule?, disputed? } in CSS colours",
+              "key": "mapStyle",
+              "label": "Map style",
+              "options": [
+                {
+                  "label": "From the theme",
+                  "value": "auto"
+                },
+                {
+                  "label": "Light",
+                  "value": "light"
+                },
+                {
+                  "label": "Muted",
+                  "value": "muted"
+                },
+                {
+                  "label": "Atlas (blue water, paper land)",
+                  "value": "atlas"
+                },
+                {
+                  "label": "Dark",
+                  "value": "dark"
+                },
+                {
+                  "label": "Minimal (outlines)",
+                  "value": "minimal"
                 }
               ],
               "type": "discrete"
@@ -1759,6 +1918,25 @@
                 {
                   "label": "None",
                   "value": "none"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "sliceNames",
+              "label": "Slice names",
+              "options": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "On slices",
+                  "value": "onSlices"
+                },
+                {
+                  "label": "In a key",
+                  "value": "key"
                 }
               ],
               "type": "discrete"
@@ -2425,6 +2603,7 @@
             "y",
             "group",
             "color",
+            "detail",
             "column",
             "row"
           ],
@@ -3179,9 +3358,42 @@
             "latitude",
             "color",
             "size",
-            "opacity"
+            "shape",
+            "opacity",
+            "order",
+            "detail",
+            "strokeWidth",
+            "text"
           ],
           "properties": [
+            {
+              "key": "arrows",
+              "label": "Arrows",
+              "type": "binary"
+            },
+            {
+              "key": "curve",
+              "label": "Route curve",
+              "options": [
+                {
+                  "label": "Auto: arcs between stops, great circles on a globe or along a track",
+                  "value": "auto"
+                },
+                {
+                  "label": "Arcs, bowed left of travel",
+                  "value": "arc"
+                },
+                {
+                  "label": "Great circles",
+                  "value": "great-circle"
+                },
+                {
+                  "label": "Straight (constant bearing)",
+                  "value": "straight"
+                }
+              ],
+              "type": "discrete"
+            },
             {
               "key": "projection",
               "label": "Projection",
@@ -3397,9 +3609,126 @@
             "latitude",
             "color",
             "size",
-            "opacity"
+            "shape",
+            "opacity",
+            "order",
+            "detail",
+            "strokeWidth",
+            "text"
           ],
           "properties": [
+            {
+              "key": "arrows",
+              "label": "Arrows",
+              "type": "binary"
+            },
+            {
+              "key": "borderWidth",
+              "label": "Border width",
+              "max": 2,
+              "min": 0,
+              "step": 0.1,
+              "type": "continuous"
+            },
+            {
+              "acceptsLabel": "a file { url | values, feature?, ids? (iso-numeric, iso3, iso2, fips, as-is), key?, disputed?, attribution? }",
+              "key": "boundaries",
+              "label": "Boundaries",
+              "options": [
+                {
+                  "label": "World Bank (official)",
+                  "value": "world-bank"
+                },
+                {
+                  "label": "Natural Earth (de facto)",
+                  "value": "natural-earth"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "curve",
+              "label": "Route curve",
+              "options": [
+                {
+                  "label": "Auto: arcs between stops, great circles on a globe or along a track",
+                  "value": "auto"
+                },
+                {
+                  "label": "Arcs, bowed left of travel",
+                  "value": "arc"
+                },
+                {
+                  "label": "Great circles",
+                  "value": "great-circle"
+                },
+                {
+                  "label": "Straight (constant bearing)",
+                  "value": "straight"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "fit",
+              "label": "Frame",
+              "options": [
+                {
+                  "label": "Auto: the country, the region, or the continent the data covers",
+                  "value": "auto"
+                },
+                {
+                  "label": "The data, padded",
+                  "value": "data"
+                },
+                {
+                  "label": "The data’s continents",
+                  "value": "continent"
+                },
+                {
+                  "label": "Whole map",
+                  "value": "whole"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "graticule",
+              "label": "Graticule",
+              "type": "binary"
+            },
+            {
+              "acceptsLabel": "a style of your own { base? (auto, light, muted, atlas, dark, minimal), sea?, land?, coast?, border?, noData?, graticule?, disputed? } in CSS colours",
+              "key": "mapStyle",
+              "label": "Map style",
+              "options": [
+                {
+                  "label": "From the theme",
+                  "value": "auto"
+                },
+                {
+                  "label": "Light",
+                  "value": "light"
+                },
+                {
+                  "label": "Muted",
+                  "value": "muted"
+                },
+                {
+                  "label": "Atlas (blue water, paper land)",
+                  "value": "atlas"
+                },
+                {
+                  "label": "Dark",
+                  "value": "dark"
+                },
+                {
+                  "label": "Minimal (outlines)",
+                  "value": "minimal"
+                }
+              ],
+              "type": "discrete"
+            },
             {
               "key": "projection",
               "label": "Projection",
@@ -3940,6 +4269,25 @@
                 {
                   "label": "None",
                   "value": "none"
+                }
+              ],
+              "type": "discrete"
+            },
+            {
+              "key": "sliceNames",
+              "label": "Slice names",
+              "options": [
+                {
+                  "label": "Auto",
+                  "value": "auto"
+                },
+                {
+                  "label": "On slices",
+                  "value": "onSlices"
+                },
+                {
+                  "label": "In a key",
+                  "value": "key"
                 }
               ],
               "type": "discrete"
@@ -5529,6 +5877,7 @@
             "x",
             "y",
             "color",
+            "detail",
             "column",
             "row"
           ],
@@ -6389,7 +6738,7 @@
       ]
     },
     {
-      "doc": "Generic number (measure fallback)",
+      "doc": "Measure not to be added up (or additivity unknown); totals are Count, Amount, Quantity or Profit",
       "name": "Number",
       "t0": "Measure",
       "t1": "GenericMeasure",
